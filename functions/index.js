@@ -13,7 +13,7 @@ function isTeacher(event) {
 }
 
 exports.allowTeacherAccountCreation = beforeUserCreated(
-  { secrets: [teacherEmail] },
+  { region: "europe-west3", secrets: [teacherEmail] },
   (event) => {
     if (!isTeacher(event)) {
       throw new HttpsError("permission-denied", "This Google account is not authorized.");
@@ -22,7 +22,7 @@ exports.allowTeacherAccountCreation = beforeUserCreated(
 );
 
 exports.allowTeacherSignIn = beforeUserSignedIn(
-  { secrets: [teacherEmail] },
+  { region: "europe-west3", secrets: [teacherEmail] },
   (event) => {
     if (!isTeacher(event)) {
       throw new HttpsError("permission-denied", "This Google account is not authorized.");
@@ -35,3 +35,4 @@ exports.allowTeacherSignIn = beforeUserSignedIn(
     };
   }
 );
+
