@@ -24,11 +24,13 @@ signInButton.addEventListener("click", async function () {
 
   try {
     const { auth, GoogleAuthProvider, signInWithPopup, signOut } = await loadFirebaseAuth();
-    const result = await signInWithPopup(auth, new GoogleAuthProvider());
+    const provider = new GoogleAuthProvider();
+    provider.setCustomParameters({ prompt: "select_account" });
+    const result = await signInWithPopup(auth, provider);
 
-    if (!result.user.emailVerified) {
+    if (!(await hasTeacherClaim(result.user))) {
       await signOut(auth);
-      throw new Error("Google účet nemá overenú e-mailovú adresu.");
+      throw new Error("Tento účet nemá povolenie učiteľa.");
     }
 
     status.textContent = "Prihlásenie učiteľa bolo overené. Zber žiackych údajov a výsledkov je vypnutý.";
@@ -59,24 +61,28 @@ async function startGoogleSignIn() {
     signInButton.disabled = false;
     status.textContent = "Prihlásenie cez Google je pripravené.";
 
-    onAuthStateChanged(auth, function (user) {
+    onAuthStateChanged(auth, async function (user) {
       if (!user) {
         return;
       }
 
-      if (!user.emailVerified) {
-        status.textContent = "Google účet nemá overenú e-mailovú adresu. Odhlasujem ho.";
-        loadFirebaseAuth().then(function (modules) {
-          return modules.signOut(auth);
-        }).catch(function (error) {
-          status.textContent = "Účet sa nepodarilo odhlásiť: " + error.message;
-        });
-        return;
-      }
+      try {
+        if (!(await hasTeacherClaim(user))) {
+          await loadFirebaseAuth().then(function (modules) {
+            return modules.signOut(auth);
+          });
+          status.textContent = "Tento účet nemá povolenie učiteľa. Boli ste odhlásený.";
+          signInButton.hidden = false;
+          signOutButton.hidden = true;
+          return;
+        }
 
-      status.textContent = "Prihlásenie učiteľa bolo overené. Zber žiackych údajov a výsledkov je vypnutý.";
-      signInButton.hidden = true;
-      signOutButton.hidden = false;
+        status.textContent = "Prihlásenie učiteľa bolo overené. Zber žiackych údajov a výsledkov je vypnutý.";
+        signInButton.hidden = true;
+        signOutButton.hidden = false;
+      } catch (error) {
+        status.textContent = "Nepodarilo sa overiť oprávnenie účtu: " + error.message;
+      }
     }, function (error) {
       status.textContent = "Nepodarilo sa overiť stav prihlásenia: " + error.message;
     });
@@ -99,6 +105,7 @@ function loadFirebaseAuth() {
       return {
         auth: authModule.getAuth(app),
         GoogleAuthProvider: authModule.GoogleAuthProvider,
+        getIdTokenResult: authModule.getIdTokenResult,
         onAuthStateChanged: authModule.onAuthStateChanged,
         signInWithPopup: authModule.signInWithPopup,
         signOut: authModule.signOut
@@ -108,3 +115,14 @@ function loadFirebaseAuth() {
 
   return firebaseAuthPromise;
 }
+
+async function hasTeacherClaim(user) {
+  if (!user.emailVerified) {
+    return false;
+  }
+
+  const { getIdTokenResult } = await loadFirebaseAuth();
+  const token = await getIdTokenResult(user, true);
+  return token.claims.teacher === true;
+}
+
