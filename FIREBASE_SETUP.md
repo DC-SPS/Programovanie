@@ -3,6 +3,7 @@
 ## Aktuálny stav
 
 - Firebase projekt `programovanie-sps` a jeho webová aplikácia sú vytvorené; konfigurácia SDK je v `firebase-config.js`.
+- Statický web je nasadený cez Firebase Hosting na `https://programovanie-sps.web.app`; konfigurácia v `firebase.json` vylučuje zdrojové funkcie, skryté súbory a pravidlá z publikovaného webu. Zdrojový repozitár `DC-SPS/Programovanie` je súkromný; GitHub Pages na aktuálnom GitHub pláne nie je dostupný pre súkromný repozitár.
 - Google provider aj tlačidlo učiteľského prihlásenia zostávajú vypnuté, kým sa nenasadia blokovacie funkcie `allowTeacherAccountCreation` a `allowTeacherSignIn`. Nasadenie vyžaduje Firebase Authentication with Identity Platform a plán Blaze s pripojeným billing účtom; používateľ zvolil zatiaľ nepripájať billing.
 - Cloud Firestore API ešte nie je v projekte povolené. Používateľ zvolil databázu Enterprise v `europe-west3`; jej vytvorenie CLI zatiaľ odmietlo s chybou `SERVICE_DISABLED`. Firestore pravidlá sa preto ešte nedali nasadiť.
 - E-mail učiteľa je pripravený na uloženie do Secret Manageru z ignorovaného `functions/.env.local`; tajomstvo zatiaľ nebolo uložené, pretože projekt nemá aktívnu fakturáciu.
