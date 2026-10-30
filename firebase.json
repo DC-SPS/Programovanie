@@ -13,7 +13,21 @@
       ]
     }
   ],
+  "hosting": {
+    "site": "programovanie-sps",
+    "public": ".",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**",
+      "functions/**",
+      "firestore.rules",
+      "FIREBASE_SETUP.md",
+      "skills-lock.json"
+    ]
+  },
   "firestore": {
     "rules": "firestore.rules"
   }
 }
+
