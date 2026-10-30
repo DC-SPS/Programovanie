@@ -1,0 +1,12 @@
+{
+  "name": "programovanie-auth-guards",
+  "description": "Firebase Authentication blocking rules for the teacher-only login.",
+  "private": true,
+  "engines": {
+    "node": "20"
+  },
+  "main": "index.js",
+  "dependencies": {
+    "firebase-functions": "^6.0.1"
+  }
+}
