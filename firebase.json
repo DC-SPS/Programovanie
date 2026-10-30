@@ -13,7 +13,32 @@
       ]
     }
   ],
+  "hosting": {
+    "site": "programovanie-sps",
+    "public": ".",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**",
+      "functions/**",
+      "firestore.rules",
+      "FIREBASE_SETUP.md",
+      "skills-lock.json"
+    ]
+  },
   "firestore": {
     "rules": "firestore.rules"
+  },
+  "auth": {
+    "providers": {
+      "googleSignIn": {
+        "oAuthBrandDisplayName": "Programovanie SPS",
+        "supportEmail": "dusan.cabala.sps@gmail.com",
+        "authorizedRedirectUris": [
+          "https://programovanie-gules.vercel.app",
+          "https://programovanie-sps.firebaseapp.com/__/auth/handler"
+        ]
+      }
+    }
   }
 }

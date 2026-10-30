@@ -33,6 +33,10 @@ obj/
 *.sln.docstates
 *.vcxproj.user
 
+# Lokálne tajomstvá a nastavenia, ktoré sa nesmú commitovať
+.env.local
+.env.*.local
+
 # Mac / OS dočasné súbory
 .DS_Store
 Thumbs.db
