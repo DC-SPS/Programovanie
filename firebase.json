@@ -28,6 +28,17 @@
   },
   "firestore": {
     "rules": "firestore.rules"
+  },
+  "auth": {
+    "providers": {
+      "googleSignIn": {
+        "oAuthBrandDisplayName": "Programovanie SPS",
+        "supportEmail": "dusan.cabala.sps@gmail.com",
+        "authorizedRedirectUris": [
+          "https://programovanie-gules.vercel.app",
+          "https://programovanie-sps.firebaseapp.com/__/auth/handler"
+        ]
+      }
+    }
   }
 }
-

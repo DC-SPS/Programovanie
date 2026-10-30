@@ -3,87 +3,33 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Prihlásenie do výučbových materiálov cez Google a informácie o ochrane školských údajov.">
-  <title>Prihlásenie | Výučbové materiály</title>
+  <meta name="description" content="Prihlásenie do výučbových materiálov cez povolený Google účet.">
+  <title>Prihlásenie | Programovanie SPS</title>
   <style>
-    :root {
-      color-scheme: light;
-      --bg: #f7f8fa;
-      --surface: #fff;
-      --text: #1c2330;
-      --muted: #5b6678;
-      --accent: #1f6feb;
-      --border: #d9dee7;
-      --notice: #fff4d6;
-    }
-    @media (prefers-color-scheme: dark) {
-      :root:not([data-theme]) {
-        color-scheme: dark;
-        --bg: #12161d;
-        --surface: #1b212b;
-        --text: #e6eaf1;
-        --muted: #9aa6b8;
-        --accent: #5aa2ff;
-        --border: #2d3644;
-        --notice: #3a3017;
-      }
-    }
-    :root[data-theme="light"] { color-scheme: light; }
-    :root[data-theme="dark"] {
-      color-scheme: dark;
-      --bg: #12161d;
-      --surface: #1b212b;
-      --text: #e6eaf1;
-      --muted: #9aa6b8;
-      --accent: #5aa2ff;
-      --border: #2d3644;
-      --notice: #3a3017;
-    }
-    * { box-sizing: border-box; }
-    body { min-height: 100vh; margin: 0; background: var(--bg); color: var(--text); font: 16px/1.6 system-ui, -apple-system, "Segoe UI", sans-serif; }
-    main { width: min(100% - 2rem, 720px); margin: 0 auto; padding: 2rem 0 3rem; }
-    a { color: var(--accent); }
-    .card { margin: 1.25rem 0; padding: 1.25rem; border: 1px solid var(--border); border-radius: 12px; background: var(--surface); }
-    .notice { border-color: #e8c25a; background: var(--notice); }
-    .muted { color: var(--muted); }
-    button { padding: .7rem 1rem; border: 0; border-radius: 8px; background: var(--accent); color: #fff; font: inherit; cursor: pointer; }
-    button:disabled { cursor: not-allowed; opacity: .55; }
-    button:focus-visible, a:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+    :root { color-scheme: light dark; font: 16px/1.6 system-ui, sans-serif; }
+    body { min-height: 100vh; margin: 0; display: grid; place-items: center; background: #f4f6fa; color: #1c2330; }
+    main { width: min(100% - 2rem, 520px); padding: 2rem; border: 1px solid #d9dee7; border-radius: 16px; background: #fff; box-shadow: 0 12px 40px #18243b12; }
+    h1 { margin-top: 0; }
+    p { color: #536176; }
+    button { padding: .75rem 1rem; border: 0; border-radius: 8px; background: #1f6feb; color: #fff; font: inherit; cursor: pointer; }
+    button:disabled { cursor: wait; opacity: .6; }
+    #google-sign-out { margin-left: .5rem; background: #596579; }
     #auth-status { min-height: 3em; }
-    footer { padding-top: 1rem; border-top: 1px solid var(--border); color: var(--muted); }
+    @media (prefers-color-scheme: dark) {
+      body { background: #12161d; color: #e6eaf1; }
+      main { background: #1b212b; border-color: #2d3644; }
+      p { color: #a5b0c0; }
+    }
   </style>
-  <script src="theme.js" defer></script>
   <script type="module" src="login.js"></script>
 </head>
 <body>
   <main>
-    <p><a href="index.html">← Hlavná stránka</a> · <a href="python.html">Kurz Pythonu</a></p>
-    <h1>Prihlásenie alebo registrácia</h1>
-    <p>Prihlás sa svojím Google účtom. Pri prvom prihlásení sa účet vytvorí automaticky; samostatná registrácia heslom sa nepoužíva.</p>
-
-    <section class="card" aria-labelledby="google-title">
-      <h2 id="google-title">Google účet</h2>
-      <p id="auth-status" class="muted" role="status" aria-live="polite">Prihlásenie cez Google čaká na konfiguráciu Firebase. Žiacke účty sú vypnuté.</p>
-      <button id="google-sign-in" type="button" disabled>Pokračovať cez Google</button>
-      <button id="google-sign-out" type="button" hidden>Odhlásiť sa</button>
-    </section>
-
-    <section class="card notice" aria-labelledby="students-title">
-      <h2 id="students-title">Žiacke účty a údaje</h2>
-      <p>Prihlásenie žiakov, zaznamenávanie aktivít, výsledky testov aj e-mailové súhrny zostávajú vypnuté, kým škola neschváli spracúvanie údajov. Kvízy na stránke naďalej vyhodnocujú odpovede iba v prehliadači.</p>
-    </section>
-
-    <section class="card" aria-labelledby="privacy-title">
-      <h2 id="privacy-title">Čo je a nie je chránené</h2>
-      <ul>
-        <li>Učiteľský účet sa overuje na serveri; jeho e-mailová adresa nie je zverejnená na tejto stránke.</li>
-        <li>Prihlásenie učiteľa nezapína zaznamenávanie aktivít, žiacke účty ani e-mailové súhrny.</li>
-        <li>Existujúce prednášky sú statické verejné stránky. Toto prihlásenie ich zatiaľ nezamyká; súkromné údaje ani výsledky žiakov sa v nich neskladujú.</li>
-        <li>Po schválení treba žiakom oznámiť účel spracúvania, kto uvidí údaje, dobu uchovávania a postup pri žiadosti o opravu alebo vymazanie.</li>
-      </ul>
-    </section>
-
-    <footer><a href="FIREBASE_SETUP.md">Pokyny pre správcu Firebase</a></footer>
+    <h1>Prihlásenie</h1>
+    <p>Výučbové stránky sú dostupné iba po prihlásení povoleným Google účtom.</p>
+    <p id="auth-status" role="status" aria-live="polite">Pokračujte cez Google.</p>
+    <button id="google-sign-in" type="button">Pokračovať cez Google</button>
+    <button id="google-sign-out" type="button">Odhlásiť sa</button>
   </main>
 </body>
 </html>

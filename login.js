@@ -1,24 +1,12 @@
-import { firebaseConfig, teacherAuthEnabled } from "./firebase-config.js";
+import { firebaseConfig } from "./firebase-config.js";
 
 const signInButton = document.getElementById("google-sign-in");
 const signOutButton = document.getElementById("google-sign-out");
 const status = document.getElementById("auth-status");
-const hasFirebaseConfig = Object.values(firebaseConfig).every(function (value) {
-  return typeof value === "string" && value.trim().length > 0;
-});
 
-if (teacherAuthEnabled && hasFirebaseConfig) {
-  startGoogleSignIn();
-} else if (teacherAuthEnabled) {
-  status.textContent = "Učiteľské Google prihlásenie je pripravené v aplikácii, ale čaká na konfiguráciu Firebase projektu.";
-}
+signInButton.disabled = false;
 
-signInButton.addEventListener("click", async function () {
-  if (!teacherAuthEnabled || !hasFirebaseConfig) {
-    status.textContent = "Učiteľské prihlásenie čaká na konfiguráciu Firebase.";
-    return;
-  }
-
+signInButton.addEventListener("click", async () => {
   signInButton.disabled = true;
   status.textContent = "Otvára sa prihlásenie cez Google…";
 
@@ -28,101 +16,64 @@ signInButton.addEventListener("click", async function () {
     provider.setCustomParameters({ prompt: "select_account" });
     const result = await signInWithPopup(auth, provider);
 
-    if (!(await hasTeacherClaim(result.user))) {
+    if (result.user.email !== "dusan.cabala.sps@gmail.com" || !result.user.emailVerified) {
       await signOut(auth);
-      throw new Error("Tento účet nemá povolenie učiteľa.");
+      throw new Error("Prístup je povolený iba účtu dusan.cabala.sps@gmail.com.");
     }
 
-    status.textContent = "Prihlásenie učiteľa bolo overené. Zber žiackych údajov a výsledkov je vypnutý.";
-    signInButton.hidden = true;
-    signOutButton.hidden = false;
+    const idToken = await result.user.getIdToken(true);
+    const response = await fetch("/api/session", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ idToken })
+    });
+
+    if (!response.ok) {
+      await signOut(auth);
+      throw new Error("Server neprijal prihlásenie. Skontroluj povolený Google účet.");
+    }
+
+    status.textContent = "Prihlásenie potvrdené. Otvára sa stránka…";
+    const next = new URLSearchParams(window.location.search).get("next");
+    window.location.replace(isLocalPath(next) ? next : "/");
   } catch (error) {
-    status.textContent = "Prihlásenie zlyhalo: " + error.message;
+    status.textContent = "Prihlásenie zlyhalo: " + (error.message || "Neznáma chyba.");
     signInButton.disabled = false;
   }
 });
 
-signOutButton.addEventListener("click", async function () {
+signOutButton.addEventListener("click", async () => {
   try {
     const { auth, signOut } = await loadFirebaseAuth();
     await signOut(auth);
-    signOutButton.hidden = true;
+    await fetch("/api/logout", { method: "POST" });
     signInButton.hidden = false;
     signInButton.disabled = false;
-    status.textContent = "Odhlásený. Účet možno znova prihlásiť cez Google.";
+    status.textContent = "Odhlásenie bolo úspešné.";
   } catch (error) {
-    status.textContent = "Odhlásenie zlyhalo: " + error.message;
+    status.textContent = "Odhlásenie zlyhalo: " + (error.message || "Neznáma chyba.");
   }
 });
 
-async function startGoogleSignIn() {
-  try {
-    const { auth, onAuthStateChanged } = await loadFirebaseAuth();
-    signInButton.disabled = false;
-    status.textContent = "Prihlásenie cez Google je pripravené.";
-
-    onAuthStateChanged(auth, async function (user) {
-      if (!user) {
-        return;
-      }
-
-      try {
-        if (!(await hasTeacherClaim(user))) {
-          await loadFirebaseAuth().then(function (modules) {
-            return modules.signOut(auth);
-          });
-          status.textContent = "Tento účet nemá povolenie učiteľa. Boli ste odhlásený.";
-          signInButton.hidden = false;
-          signOutButton.hidden = true;
-          return;
-        }
-
-        status.textContent = "Prihlásenie učiteľa bolo overené. Zber žiackych údajov a výsledkov je vypnutý.";
-        signInButton.hidden = true;
-        signOutButton.hidden = false;
-      } catch (error) {
-        status.textContent = "Nepodarilo sa overiť oprávnenie účtu: " + error.message;
-      }
-    }, function (error) {
-      status.textContent = "Nepodarilo sa overiť stav prihlásenia: " + error.message;
-    });
-  } catch (error) {
-    status.textContent = "Firebase sa nepodarilo inicializovať: " + error.message;
-  }
-}
-
-let firebaseAuthPromise;
-
+let authPromise;
 function loadFirebaseAuth() {
-  if (!firebaseAuthPromise) {
-    firebaseAuthPromise = Promise.all([
+  if (!authPromise) {
+    authPromise = Promise.all([
       import("https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js"),
       import("https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js")
-    ]).then(function (modules) {
-      const appModule = modules[0];
-      const authModule = modules[1];
+    ]).then(([appModule, authModule]) => {
       const app = appModule.initializeApp(firebaseConfig);
       return {
         auth: authModule.getAuth(app),
         GoogleAuthProvider: authModule.GoogleAuthProvider,
-        getIdTokenResult: authModule.getIdTokenResult,
-        onAuthStateChanged: authModule.onAuthStateChanged,
         signInWithPopup: authModule.signInWithPopup,
         signOut: authModule.signOut
       };
     });
   }
-
-  return firebaseAuthPromise;
+  return authPromise;
 }
 
-async function hasTeacherClaim(user) {
-  if (!user.emailVerified) {
-    return false;
-  }
-
-  const { getIdTokenResult } = await loadFirebaseAuth();
-  const token = await getIdTokenResult(user, true);
-  return token.claims.teacher === true;
+function isLocalPath(path) {
+  return typeof path === "string" && path.startsWith("/") && !path.startsWith("//") && !path.startsWith("/login");
 }
-

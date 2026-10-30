@@ -5,6 +5,5 @@ export const firebaseConfig = {
   appId: "1:861941810404:web:377d799fa6a4ec02df58f1"
 };
 
-export const teacherAuthEnabled = false;
+export const teacherAuthEnabled = true;
 export const studentDataProcessingApproved = false;
-
