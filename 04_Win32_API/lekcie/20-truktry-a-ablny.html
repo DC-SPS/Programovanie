@@ -1,12 +1,90 @@
 <!doctype html>
 <html lang="sk">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#0a1928">
-<title>Lekcia 20: Štruktúry a šablóny | Win32 API</title>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#0a1928"><meta name="description" content="Funkčné a triedne šablóny v modernom C++ a ich použitie pri práci s Win32 aplikáciami."><title>Lekcia 20: Šablóny v C++</title>
 <style>
-:root{color-scheme:dark;--bg:#081522;--surface:#102234;--line:#25415a;--text:#edf6ff;--muted:#a8bdcf;--accent:#38bdf8}*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 50% -20%,#16466b 0,var(--bg) 62%);color:var(--text);font:16px/1.65 system-ui,"Segoe UI",sans-serif}.page{width:min(100% - 2rem,900px);margin:auto;padding:1.5rem 0 4rem}.back{color:#7dd3fc;text-decoration:none;font-weight:700}.top{display:flex;justify-content:space-between;gap:1rem;align-items:center;margin-top:3rem}.tag{color:#7dd3fc;text-transform:uppercase;letter-spacing:.12em;font-size:.76rem;font-weight:800}.count{border:1px solid var(--line);border-radius:999px;padding:.45rem .8rem;color:var(--muted);white-space:nowrap}h1{font-size:clamp(2.2rem,6vw,4rem);line-height:1.08;letter-spacing:-.04em;margin:.6rem 0}.subtitle{font-size:1.2rem;color:var(--muted);margin:.4rem 0 1.5rem}.preview{width:100%;height:auto;display:block;border:1px solid var(--line);border-radius:1.2rem}.panel{margin-top:1.4rem;background:var(--surface);border:1px solid var(--line);border-radius:1rem;padding:1.4rem}.panel h2{margin:.1rem 0 .5rem;font-size:1.2rem}.panel p{margin:0;color:var(--muted)}.pill{display:inline-block;margin-top:1rem;padding:.45rem .7rem;border-radius:999px;background:#172d40;color:#bae6fd;font-weight:700;font-size:.84rem}.nav{display:flex;justify-content:space-between;gap:1rem;margin-top:1.5rem}.nav-link{color:#bae6fd;text-decoration:none;padding:.7rem 1rem;border:1px solid var(--line);border-radius:.7rem}.nav-link:hover{border-color:var(--accent)}.next{background:#075985;border-color:#0ea5e9;color:white}@media(max-width:560px){.top{align-items:flex-start;flex-direction:column}.nav{flex-direction:column}.nav-link{text-align:center}}
-</style>
-</head>
-<body><main class="page"><a class="back" href="../struktura.html">← Osnova kurzu</a><div class="top"><span class="tag">Modul 02 · Úvod do objektového programovania</span><span class="count">Lekcia 20 / 66 · 45 min</span></div><h1>Štruktúry a šablóny</h1><p class="subtitle">Šablóny a generický návrh</p><img class="preview" src="../img/win32-preview-oop.svg" alt="Ilustračný náhľad témy: Štruktúry a šablóny"><section class="panel"><h2>Pripravujeme</h2><p>Táto lekcia je zaradená do osnovy kurzu. Výklad, ukážkový program a cvičenie doplníme neskôr.</p><span class="pill">Win32 API · C++ · Windows</span></section><nav class="nav" aria-label="Navigácia medzi lekciami"><a class="nav-link" href="19-truktry-a-ablny.html">← Predchádzajúca</a><a class="nav-link next" href="21-vstupn-a-vstupn-opercie.html">Nasledujúca →</a></nav></main></body></html>
+:root{color-scheme:dark;--bg:#081522;--surface:#102234;--line:#25415a;--text:#edf6ff;--muted:#a8bdcf;--accent:#38bdf8;--code:#06101a}*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 50% -20%,#16466b 0,var(--bg) 62%);color:var(--text);font:16px/1.7 system-ui,"Segoe UI",sans-serif}.page{width:min(100% - 2rem,960px);margin:auto;padding:1.5rem 0 4rem}.back{color:#7dd3fc;text-decoration:none;font-weight:700}.top{display:flex;justify-content:space-between;gap:1rem;align-items:center;margin-top:2rem}.tag{color:#7dd3fc;text-transform:uppercase;letter-spacing:.12em;font-size:.76rem;font-weight:800}.count,.pill{border:1px solid var(--line);border-radius:999px;padding:.4rem .75rem;color:var(--muted);white-space:nowrap}h1{font-size:clamp(2.2rem,6vw,4rem);line-height:1.08;letter-spacing:-.04em;margin:.6rem 0}.subtitle{font-size:1.2rem;color:var(--muted);margin:.4rem 0 1.5rem}.hero{width:100%;height:auto;display:block;border:1px solid var(--line);border-radius:1.2rem}.panel,.callout{margin:1.2rem 0;background:var(--surface);border:1px solid var(--line);border-radius:1rem;padding:1.2rem 1.4rem}.callout{border-left:4px solid var(--accent)}h2{margin-top:2.1rem;font-size:1.55rem;line-height:1.25}h3{margin-top:1.5rem}a{color:#7dd3fc}.scroll{overflow-x:auto}table{width:100%;border-collapse:collapse;margin:1rem 0}th,td{padding:.7rem;border:1px solid var(--line);text-align:left;vertical-align:top}th{background:#14314a}pre{overflow:auto;padding:1rem;border:1px solid var(--line);border-radius:.8rem;background:var(--code);color:#d9f3ff;font:.9rem/1.55 ui-monospace,Consolas,monospace}code{font-family:ui-monospace,Consolas,monospace}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:.8rem}.tile{background:#0d1e2c;border:1px solid var(--line);border-radius:.8rem;padding:1rem}.tile strong{display:block;color:#bae6fd}.flow{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:.55rem;margin:1rem 0}.flow span{padding:.75rem 1rem;background:#12334b;border:1px solid #286184;border-radius:.7rem}.flow b{color:#7dd3fc}.task{border:1px solid var(--line);border-radius:.8rem;padding:1rem;margin:.8rem 0;background:#0d1e2c}.task h3{margin:.1rem 0 .4rem}.muted{color:var(--muted)}.note{margin:1rem 0;padding:1rem;background:#172b37;border:1px solid #42647a;border-radius:.8rem}.note summary{cursor:pointer;color:#bae6fd;font-weight:800}.nav{display:flex;justify-content:space-between;gap:1rem;margin-top:2rem}.nav-link{color:#bae6fd;text-decoration:none;padding:.7rem 1rem;border:1px solid var(--line);border-radius:.7rem}.nav-link:hover{border-color:var(--accent)}.next{background:#075985;border-color:#0ea5e9;color:white}footer{border-top:1px solid var(--line);margin-top:2rem;padding-top:1rem;color:var(--muted)}@media(max-width:560px){.top{align-items:flex-start;flex-direction:column}.nav{flex-direction:column}.nav-link{text-align:center}}
+</style></head>
+<body><main class="page"><a class="back" href="../struktura.html">← Osnova kurzu</a><div class="top"><span class="tag">Modul 02 · Úvod do objektového programovania</span><span class="count">Lekcia 20 / 66 · 45 min</span></div><h1>Šablóny v C++</h1><p class="subtitle">Napíšeme algoritmus raz a použijeme ho s viacerými dátovými typmi.</p><img class="hero" src="../img/win32-preview-oop.svg" alt="Náhľad témy: generické programovanie v C++">
+<div class="callout"><strong>Začíname kontrolou pracoviska:</strong> Po príchode do učebne si skontroluj svoje miesto, lavicu, stoličku a pridelený počítač s príslušenstvom. Každé poškodenie, chýbajúcu časť alebo inú závadu ihneď oznám vyučujúcemu. Stručný súhrn zistených nedostatkov pošli vyučujúcemu správou cez EduPage. Poškodené alebo nebezpečné zariadenie nepoužívaj.</div>
+<section class="panel"><h2>Ciele hodiny</h2><p>Vysvetlíš generické programovanie, vytvoríš funkčnú šablónu, použiješ ju pre viac typov, vytvoríš jednoduchú triednu šablónu a vysvetlíš, kde sa šablóny používajú v štandardnej knižnici C++.</p></section>
+<h2>Plán 45 minút</h2><div class="scroll"><table><thead><tr><th>Čas</th><th>Činnosť</th></tr></thead><tbody><tr><td>0–5 min</td><td>Opakovanie štruktúr a dátových typov z lekcie 19</td></tr><tr><td>5–12 min</td><td>Problém opakovaných funkcií a nápad šablóny</td></tr><tr><td>12–22 min</td><td>Funkčné šablóny a odvodenie typu</td></tr><tr><td>22–30 min</td><td>Viac typových parametrov</td></tr><tr><td>30–37 min</td><td>Šablónové triedy</td></tr><tr><td>37–42 min</td><td><code>std::vector</code>, evidencia žiakov a Win32</td></tr><tr><td>42–45 min</td><td>Úloha, otázky a zhrnutie</td></tr></tbody></table></div>
+<h2>1. Prečo potrebujeme šablóny?</h2><p>Predstav si, že chceš vrátiť väčšiu z dvoch hodnôt. Samostatná funkcia pre <code>int</code> a ďalšia pre <code>double</code> by opakovali ten istý algoritmus. Šablóna umožňuje napísať všeobecný predpis; kompilátor pri použití vytvorí konkrétnu verziu pre zadaný typ.</p><pre><code>#include &lt;iostream&gt;
+
+int vacsie(int a, int b) {
+    return (a &gt; b) ? a : b;
+}
+
+double vacsieDesatinne(double a, double b) {
+    return (a &gt; b) ? a : b;
+}</code></pre><div class="flow"><span>všeobecný predpis</span><b>→ kompilátor →</b><span><code>int</code> verzia</span><b>+</b><span><code>double</code> verzia</span></div>
+<h2>2. Funkčná šablóna</h2><pre><code>#include &lt;iostream&gt;
+
+template &lt;typename T&gt;
+T vacsie(T a, T b) {
+    return (a &gt; b) ? a : b;
+}
+
+int main() {
+    std::cout &lt;&lt; vacsie(10, 20) &lt;&lt; '\n';
+    std::cout &lt;&lt; vacsie(3.5, 7.2) &lt;&lt; '\n';
+    std::cout &lt;&lt; vacsie('A', 'Z') &lt;&lt; '\n';
+}</code></pre><div class="grid"><div class="tile"><strong><code>template</code></strong>Oznamuje definíciu šablóny.</div><div class="tile"><strong><code>typename T</code></strong><code>T</code> zastupuje typ, ktorý kompilátor určí pri volaní.</div><div class="tile"><strong>Inštanciácia</strong>Kompilátor vytvorí potrebnú konkrétnu podobu pre použité typy.</div></div><p>Operátor <code>&gt;</code> musí byť pre použitý typ definovaný. Šablóna preto neznamená, že ľubovoľný kód funguje s každým typom.</p>
+<h3>Dva typové parametre</h3><p>Ak vstupy nemajú rovnaký typ, môžeme mať dva parametre. Aby sme výsledok určili jednoznačne, táto ukážka vráti pravdivostnú hodnotu:</p><pre><code>template &lt;typename T, typename U&gt;
+bool rovnakeHodnoty(T prva, U druha) {
+    return prva == druha;
+}
+
+// Použitie: rovnakeHodnoty(5, 5.0)</code></pre>
+<h2>3. Šablónová trieda</h2><p>Rovnaký princíp môžeme použiť pre triedu, ktorá uchováva hodnotu ľubovoľného typu.</p><pre><code>#include &lt;iostream&gt;
+#include &lt;string&gt;
+
+template &lt;typename T&gt;
+class Schrank {
+public:
+    explicit Schrank(T hodnota) : hodnota_(hodnota) {}
+
+    void nastav(T novaHodnota) { hodnota_ = novaHodnota; }
+    const T&amp; ziskaj() const { return hodnota_; }
+
+private:
+    T hodnota_;
+};
+
+int main() {
+    Schrank&lt;int&gt; pocet(12);
+    Schrank&lt;double&gt; priemer(1.75);
+    Schrank&lt;std::string&gt; meno("Jana");
+
+    std::cout &lt;&lt; pocet.ziskaj() &lt;&lt; '\n';
+    std::cout &lt;&lt; priemer.ziskaj() &lt;&lt; '\n';
+    std::cout &lt;&lt; meno.ziskaj() &lt;&lt; '\n';
+}</code></pre><p><strong>Pozor pri prepise:</strong> názov triedy musí byť v celom kóde rovnaký a používať bežné latinské znaky ASCII. Tu je bezpečnejšie pomenovať ju <code>Schrank</code>:</p><pre><code>template &lt;typename T&gt;
+class Schrank {
+public:
+    explicit Schrank(T hodnota) : hodnota_(hodnota) {}
+    void nastav(T novaHodnota) { hodnota_ = novaHodnota; }
+    const T&amp; ziskaj() const { return hodnota_; }
+private:
+    T hodnota_;
+};</code></pre>
+<h2>4. Šablóny v štandardnej knižnici</h2><p>Šablóny nie sú iba vlastná učebná konštrukcia. Kontajner <code>std::vector&lt;T&gt;</code> uchováva postupnosť hodnôt typu <code>T</code>; preto môžeme použiť napríklad <code>std::vector&lt;int&gt;</code> aj <code>std::vector&lt;Ziak&gt;</code>.</p><pre><code>#include &lt;string&gt;
+#include &lt;vector&gt;
+
+struct Ziak {
+    std::string meno;
+    int vek;
+    std::string trieda;
+    double priemer;
+};
+
+std::vector&lt;Ziak&gt; ziaci{
+    {"Peter", 17, "3.A", 1.8},
+    {"Jana", 18, "4.B", 1.4}
+};</code></pre><p>Tu sa prepája predchádzajúca hodina: vlastný dátový typ <code>Ziak</code> opisuje jeden záznam a šablóna <code>std::vector&lt;Ziak&gt;</code> uchováva dynamický zoznam takých záznamov.</p>
+<h2>5. Ako súvisia šablóny s Win32 API?</h2><p>Win32 API je natívne rozhranie Windows založené prevažne na funkciách a dátových typoch v štýle C. Jeho štruktúry, napríklad <code>MSG</code> alebo <code>WNDCLASSEXW</code>, nie sú C++ šablóny. Vlastný C++ program však môže používať šablóny pri príprave a spracovaní údajov, ktoré potom odovzdá funkciám Windows.</p><div class="flow"><span>vlastná šablóna C++</span><b>→</b><span>dáta aplikácie</span><b>→</b><span>volanie Win32 API</span></div><p>Šablóna teda nie je súčasťou Win32 API; je to nástroj jazyka C++, ktorý s API môže spolupracovať.</p>
+<h2>Praktické úlohy</h2><div class="task"><h3>A · Univerzálna funkcia <span class="muted">· základná</span></h3><p>Vytvor šablónovú funkciu <code>maximum()</code> a otestuj ju s dvoma celými číslami, dvoma desatinnými číslami a dvoma znakmi.</p><p class="muted"><strong>Očakávaný výsledok:</strong> rovnaká definícia vráti správnu väčšiu hodnotu pre každý z uvedených typov.</p></div><div class="task"><h3>B · Univerzálna schránka <span class="muted">· stredná</span></h3><p>Vytvor triedu <code>Schrank&lt;T&gt;</code> s konštruktorom, metódou <code>nastav()</code> a konštantnou metódou <code>ziskaj()</code>. Vyskúšaj <code>int</code>, <code>double</code> a <code>std::string</code>.</p><p class="muted"><strong>Očakávaný výsledok:</strong> samostatné objekty ukladajú hodnoty odlišných typov bez kopírovania implementácie triedy.</p></div><div class="task"><h3>C · Zoznam žiakov <span class="muted">· rozšírená</span></h3><p>Použi <code>std::vector&lt;Ziak&gt;</code>, vlož aspoň päť záznamov, vypíš ich, nájdi najlepší priemer a vypočítaj priemer triedy.</p><p class="muted"><strong>Očakávaný výsledok:</strong> kontajner obsahuje objekty vlastnej štruktúry a algoritmus pracuje s členmi každého záznamu.</p></div>
+<h2>Ústne otázky</h2><ol><li>Aký problém rieši šablóna v porovnaní s viacerými takmer rovnakými funkciami?</li><li>Čo znamená <code>typename T</code> a kedy sa určí skutočný typ?</li><li>Čo je inštanciácia šablóny?</li><li>Čím sa líši funkčná šablóna od šablónovej triedy?</li><li>Je <code>std::vector</code> šablóna Win32 API? Vysvetli vzťah medzi C++ šablónou a Win32 funkciami.</li></ol>
+<h2>Písomné overenie · 5 otázok</h2><ol><li><strong>Výber:</strong> Na čo slúži <code>template &lt;typename T&gt;</code>? a) deklaruje všeobecný typový parameter b) spúšťa program c) rezervuje pamäť na disku.</li><li><strong>Krátka odpoveď:</strong> Aký typ má <code>T</code> pri volaní <code>vacsi(2, 9)</code> pre funkciu <code>template&lt;typename T&gt; T vacsi(T a,T b)</code>?</li><li><strong>Výber:</strong> Čo vytvára <code>std::vector&lt;Ziak&gt;</code>? a) okno Windows b) dynamický zoznam hodnôt typu <code>Ziak</code> c) jednu funkciu.</li><li><strong>Krátka odpoveď:</strong> Uveď jeden rozdiel medzi funkčnou šablónou a šablónovou triedou.</li><li><strong>Výber:</strong> Sú <code>MSG</code> a <code>WNDCLASSEXW</code> šablóny C++? a) áno, všetky Win32 typy sú šablóny b) nie, sú to štruktúry Win32 API c) áno, pretože obsahujú veľké písmená.</li></ol><details class="note"><summary>Pre učiteľa: odpovede a bodovanie</summary><ol><li>a).</li><li><code>int</code>; oba argumenty sú typu <code>int</code> a kompilátor odvodí <code>T</code>.</li><li>b).</li><li>Funkčná šablóna definuje všeobecnú funkciu; šablónová trieda definuje všeobecnú triedu, z ktorej vytvárame objekty pre konkrétny typ.</li><li>b).</li></ol><p>Odporúčané bodovanie: 1 bod za každú otázku, spolu 5 bodov. Pri otvorenej odpovedi uznajte vecne správne vysvetlenie.</p></details>
+<section class="panel"><h2>Zhrnutie</h2><p>Šablóny umožňujú vytvárať všeobecné funkcie a triedy. Typový parameter zastupuje typ, ktorý kompilátor pozná pri použití šablóny. <code>std::vector&lt;T&gt;</code> je praktický príklad šablóny. Win32 API samo nie je založené na C++ šablónach, no šablóny môžeme používať v aplikácii, ktorá toto API volá.</p></section>
+<nav class="nav" aria-label="Navigácia medzi lekciami"><a class="nav-link" href="19-truktry-a-ablny.html">← Štruktúry</a><a class="nav-link next" href="21-vstupn-a-vstupn-opercie.html">Nasledujúca →</a></nav><footer>C++17 alebo novší · Win32 API · Visual Studio Code s MSVC alebo MinGW-w64</footer></main></body></html>
