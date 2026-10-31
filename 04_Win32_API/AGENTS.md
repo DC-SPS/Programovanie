@@ -61,5 +61,6 @@ Interakcie musia fungovať klávesnicou aj myšou a poskytovať spätnú väzbu.
 ## Vzhľad a odborné zdroje
 
 - Lekcie sú samostatné HTML stránky v `lekcie/`, s navigáciou späť na osnovu a medzi susednými hodinami. Zachovaj jednotnú tmavú paletu kurzu, výraznú typografiu, dobrý kontrast, čitateľnosť na projektore, responzívne zobrazenie a štýly pre tlač. Každá stránka jasne uvádza predmet, 4. ročník SPŠ, modul, číslo hodiny a 45 minút.
-- Každá prednáška v `lekcie/` má na úplnom začiatku spoločné horné okno z koreňového súboru `lesson-top.js`: číslo a názov hodiny, jej krátky opis a ovládateľný 45-minútový časovač (spustiť, pozastaviť, vynulovať). Pri nových lekciách vlož `<script src="../../lesson-top.js" defer></script>`; preber iba tento horný prvok z referenčnej simulácie, nie zvyšok jej rozhrania.
+- Každá prednáška v `lekcie/` má na úplnom začiatku spoločné horné okno z koreňového súboru `lesson-top.js`: číslo a názov hodiny, jej krátky opis, aktuálny čas a dátum vo vybranom UTC posune a ovládateľný 45-minútový časovač (spustiť, pozastaviť, vynulovať). Pri nových lekciách vlož `<script src="../../lesson-top.js" defer></script>`; preber iba tento horný prvok z referenčnej simulácie, nie zvyšok jej rozhrania.
+- Vybraný UTC posun ukladá spoločný skript a používa sa naprieč lekciami Pythonu aj Win32 API.
 - Uprednostňuj primárne zdroje: Microsoft Learn pre Win32, Windows SDK a MSVC, oficiálnu dokumentáciu SQLite pre SQLite. Referenciu ku konkrétnemu API alebo knižnici pridaj pri jej prvom použití; odkazy musia smerovať na konkrétny relevantný zdroj.
