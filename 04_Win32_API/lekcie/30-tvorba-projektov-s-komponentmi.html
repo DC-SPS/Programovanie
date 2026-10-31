@@ -1,12 +1,137 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="sk">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#0a1928">
-<title>Lekcia 30: Tvorba projektov s komponentmi | Win32 API</title>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#081522">
+<meta name="description" content="Lekcia 30: prepájanie natívnych Win32 ovládacích prvkov, ID, WM_COMMAND a aplikačnej logiky v C++.">
+<title>Lekcia 30: Prepojenie komponentov s logikou | Win32 API</title>
 <style>
-:root{color-scheme:dark;--bg:#081522;--surface:#102234;--line:#25415a;--text:#edf6ff;--muted:#a8bdcf;--accent:#38bdf8}*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 50% -20%,#16466b 0,var(--bg) 62%);color:var(--text);font:16px/1.65 system-ui,"Segoe UI",sans-serif}.page{width:min(100% - 2rem,900px);margin:auto;padding:1.5rem 0 4rem}.back{color:#7dd3fc;text-decoration:none;font-weight:700}.top{display:flex;justify-content:space-between;gap:1rem;align-items:center;margin-top:3rem}.tag{color:#7dd3fc;text-transform:uppercase;letter-spacing:.12em;font-size:.76rem;font-weight:800}.count{border:1px solid var(--line);border-radius:999px;padding:.45rem .8rem;color:var(--muted);white-space:nowrap}h1{font-size:clamp(2.2rem,6vw,4rem);line-height:1.08;letter-spacing:-.04em;margin:.6rem 0}.subtitle{font-size:1.2rem;color:var(--muted);margin:.4rem 0 1.5rem}.preview{width:100%;height:auto;display:block;border:1px solid var(--line);border-radius:1.2rem}.panel{margin-top:1.4rem;background:var(--surface);border:1px solid var(--line);border-radius:1rem;padding:1.4rem}.panel h2{margin:.1rem 0 .5rem;font-size:1.2rem}.panel p{margin:0;color:var(--muted)}.pill{display:inline-block;margin-top:1rem;padding:.45rem .7rem;border-radius:999px;background:#172d40;color:#bae6fd;font-weight:700;font-size:.84rem}.nav{display:flex;justify-content:space-between;gap:1rem;margin-top:1.5rem}.nav-link{color:#bae6fd;text-decoration:none;padding:.7rem 1rem;border:1px solid var(--line);border-radius:.7rem}.nav-link:hover{border-color:var(--accent)}.next{background:#075985;border-color:#0ea5e9;color:white}@media(max-width:560px){.top{align-items:flex-start;flex-direction:column}.nav{flex-direction:column}.nav-link{text-align:center}}
-</style>
-</head>
-<body><main class="page"><a class="back" href="../struktura.html">← Osnova kurzu</a><div class="top"><span class="tag">Modul 04 · Tvorba projektov</span><span class="count">Lekcia 30 / 66 · 45 min</span></div><h1>Tvorba projektov s komponentmi</h1><p class="subtitle">Prepojenie komponentov s logikou aplikácie</p><img class="preview" src="../img/win32-preview-projekty.svg" alt="Ilustračný náhľad témy: Tvorba projektov s komponentmi"><section class="panel"><h2>Pripravujeme</h2><p>Táto lekcia je zaradená do osnovy kurzu. Výklad, ukážkový program a cvičenie doplníme neskôr.</p><span class="pill">Win32 API · C++ · Windows</span></section><nav class="nav" aria-label="Navigácia medzi lekciami"><a class="nav-link" href="29-tvorba-projektov-s-komponentmi.html">← Predchádzajúca</a><a class="nav-link next" href="31-formulr.html">Nasledujúca →</a></nav></main><script src="code-tools.js" defer></script></body></html>
+:root{color-scheme:dark;--bg:#081522;--surface:#102234;--line:#25415a;--text:#edf6ff;--muted:#a8bdcf;--accent:#38bdf8;--good:#86efac}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(ellipse at 50% -20%,#16466b 0,var(--bg) 62%);color:var(--text);font:16px/1.65 system-ui,"Segoe UI",sans-serif}.page{width:min(100% - 2rem,940px);margin:auto;padding:1.5rem 0 4rem}.back{color:#7dd3fc;text-decoration:none;font-weight:700}.top{display:flex;justify-content:space-between;gap:1rem;align-items:center;margin-top:2.5rem}.tag{color:#7dd3fc;text-transform:uppercase;letter-spacing:.12em;font-size:.76rem;font-weight:800}.count{border:1px solid var(--line);border-radius:999px;padding:.45rem .8rem;color:var(--muted);white-space:nowrap}h1{font-size:clamp(2.2rem,6vw,4rem);line-height:1.08;letter-spacing:-.04em;margin:.6rem 0}.subtitle{font-size:1.2rem;color:var(--muted);margin:.4rem 0 1.5rem}.hero,.panel{border:1px solid var(--line);border-radius:1rem;background:var(--surface);padding:clamp(1rem,3vw,1.4rem);margin-top:1.2rem}.hero{background:linear-gradient(135deg,#10314a,#0c1e2e)}.hero p,.panel p{color:var(--muted)}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem}.panel h2{margin:0 0 .65rem;font-size:1.25rem}.panel h3{margin:.8rem 0 .3rem}.panel ul,.panel ol{padding-left:1.3rem}.panel li+li{margin-top:.35rem}.flow{display:grid;grid-template-columns:repeat(5,1fr);gap:.6rem}.flow div{padding:.8rem;border:1px solid var(--line);background:#0b1b29;border-radius:.7rem;text-align:center}.flow b{display:block;color:#bae6fd}.flow span{font-size:.87rem;color:var(--muted)}pre{overflow:auto;background:#07111b;border:1px solid var(--line);border-radius:.75rem;padding:1rem;color:#d8ecff;line-height:1.5}code{font-family:Consolas,"Cascadia Code",monospace;font-size:.94em}.schedule{width:100%;border-collapse:collapse}.schedule th,.schedule td{text-align:left;vertical-align:top;padding:.6rem;border-bottom:1px solid var(--line)}.schedule th{color:#bae6fd}.quiz label{display:block;padding:.55rem .7rem;border:1px solid var(--line);border-radius:.65rem;margin:.5rem 0;cursor:pointer}.quiz label:hover{border-color:var(--accent)}button{font:inherit;font-weight:750;border:0;border-radius:.65rem;padding:.7rem 1rem;background:#0284c7;color:white;cursor:pointer}button:hover{background:#0ea5e9}button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid #fde047;outline-offset:3px}#feedback{min-height:1.7em;font-weight:700}.success{color:var(--good)}.error{color:#fca5a5}.nav{display:flex;justify-content:space-between;gap:1rem;margin-top:1.5rem}.nav-link{color:#bae6fd;text-decoration:none;padding:.7rem 1rem;border:1px solid var(--line);border-radius:.7rem}.nav-link:hover{border-color:var(--accent)}.next{background:#075985;border-color:#0ea5e9;color:white}.teacher{border-color:#41604a}footer{color:var(--muted);border-top:1px solid var(--line);padding-top:1rem;margin-top:1.5rem}a{color:#7dd3fc}@media(max-width:700px){.grid{grid-template-columns:1fr}.top{align-items:flex-start;flex-direction:column}.flow{grid-template-columns:1fr 1fr}.schedule th,.schedule td{padding:.45rem .3rem;font-size:.9rem}.nav{flex-direction:column}.nav-link{text-align:center}}@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}@media print{body{background:#fff;color:#111;font-size:11pt}.page{width:100%;padding:0}.back,.nav,button{display:none!important}.hero,.panel,.flow div{background:#fff;color:#111;break-inside:avoid}.hero p,.panel p,.flow span{color:#333}pre{background:#fff;color:#111;white-space:pre-wrap;overflow-wrap:anywhere}.schedule th{color:#111}a{color:#111}}
+</style></head>
+<body><main class="page"><a class="back" href="../struktura.html">← Osnova kurzu</a>
+<div class="top"><span class="tag">Aplikovaná informatika · Modul 04 · Tvorba projektov</span><span class="count">Hodina 30 / 66 · 45 min</span></div>
+<h1>Prepojenie komponentov s logikou aplikácie</h1><p class="subtitle">Od kliknutia na tlačidlo cez WM_COMMAND až po spracovanie vstupu</p>
+<section class="hero"><strong>4. ročník SPŠ · Natívne Win32 C++ · MSVC v143</strong><p>Na hodine 29 sme navrhli formulár z rodičovského okna, popisu, textového poľa a tlačidla. Teraz jeho prvky vytvoríme a prepojíme s logikou: rodič rozpozná oznámenie tlačidla, prečíta meno z poľa a zobrazí odpoveď.</p><span class="pill">BUTTON → WM_COMMAND → ID + BN_CLICKED → GetDlgItem → GetWindowTextW</span></section>
+<section class="panel"><strong>Začiatok hodiny:</strong> skontroluj pracovisko a počítač; závadu ihneď oznám vyučujúcemu. Poškodené alebo nebezpečné zariadenie nepoužívaj. Stručný súhrn pošli cez EduPage podľa pokynov.</section>
+<div class="grid"><section class="panel"><h2>Ciele hodiny</h2><p>Na konci hodiny dokážeš:</p><ul><li>vytvoriť hlavné okno s podradeným prvkom <code>EDIT</code> a <code>BUTTON</code>;</li><li>priradiť ovládacím prvkom jedinečné ID;</li><li>rozpoznať správu <code>WM_COMMAND</code> podľa ID a kódu <code>BN_CLICKED</code>;</li><li>získať handle prvku a bezpečne prečítať jeho text do premennej C++.</li></ul></section><section class="panel"><h2>Prepojenie v kurze</h2><p>Hodina 29 bola o skladbe komponentov. Dnes preskúmame ich spoluprácu v udalostne riadenej aplikácii. V nasledujúcich hodinách sa podrobnejšie zameriame na okno a formulár; tento príklad je malý model toku od ovládacieho prvku po logiku.</p></section></div>
+<section class="panel"><h2>Tok udalosti</h2><div class="flow"><div><b>1 · Vstup</b><span>žiak zadá meno</span></div><div><b>2 · Udalosť</b><span>klikne tlačidlo</span></div><div><b>3 · Oznámenie</b><span>WM_COMMAND</span></div><div><b>4 · Rozpoznanie</b><span>ID + BN_CLICKED</span></div><div><b>5 · Logika</b><span>prečíta a reaguje</span></div></div><p>Ovládací prvok pošle oznámenie rodičovskému oknu. V správe <code>WM_COMMAND</code> obsahuje nízky word <code>wParam</code> ID prvku, vysoký word oznamovací kód a <code>lParam</code> handle ovládacieho prvku. Pri tlačidle kontrolujeme obe hodnoty; samotné ID by nestačilo na rozlíšenie rôznych oznamovacích správ.</p></section>
+<div class="grid"><section class="panel"><h2>Oddelíme vrstvy</h2><ul><li><strong>Win32 rozhranie:</strong> <code>CreateWindowExW</code> vytvorí editovacie pole a tlačidlo; <code>GetDlgItem</code> nájde pole podľa ID.</li><li><strong>Udalosť:</strong> <code>WindowProc</code> rozpozná <code>WM_COMMAND</code>, ID tlačidla a <code>BN_CLICKED</code>.</li><li><strong>C++ logika:</strong> text sa uloží do lokálneho buffera; tu môže aplikácia overiť, či je meno prázdne, a vytvoriť odpoveď.</li><li><strong>Výstup:</strong> <code>MessageBoxW</code> zobrazí výsledok. Neskôr môžeme aktualizovať ovládací prvok alebo aplikačný model.</li></ul></section><section class="panel"><h2>Prečo sú ID dôležité?</h2><p>Viaceré ovládacie prvky posielajú oznámenia tej istej procedúre rodiča. ID je ich stabilný identifikátor v rámci rodičovského okna. Každému prvku, ktorý bude logika rozlišovať, priraď jedinečné ID; handle získaj cez <code>GetDlgItem</code> alebo použi <code>lParam</code> oznámenia.</p><p>Nie každý <code>WM_COMMAND</code> vznikol kliknutím na tlačidlo. Preto overuj identifikátor a kód <code>BN_CLICKED</code>.</p></section></div>
+<section class="panel"><h2>Úplný príklad: pozdrav z textového poľa</h2><pre><code>#define UNICODE
+#define _UNICODE
+#include &lt;windows.h&gt;
+#include &lt;vector&gt;
+#include &lt;string&gt;
+#include &lt;cstddef&gt;
+
+constexpr wchar_t CLASS_NAME[] = L"FormularSKomponentmi";
+constexpr int ID_EDIT_MENO = 1001;
+constexpr int ID_BUTTON_POZDRAV = 1002;
+
+LRESULT CALLBACK WindowProc(HWND hwnd, UINT message,
+                            WPARAM wParam, LPARAM lParam)
+{
+    switch (message) {
+    case WM_CREATE: {
+        const auto* create = reinterpret_cast&lt;LPCREATESTRUCTW&gt;(lParam);
+        HINSTANCE instance = create-&gt;hInstance;
+
+        CreateWindowExW(0, L"STATIC", L"Meno:",
+            WS_CHILD | WS_VISIBLE,
+            20, 22, 70, 24, hwnd, nullptr, instance, nullptr);
+
+        HWND edit = CreateWindowExW(WS_EX_CLIENTEDGE, L"EDIT", L"",
+            WS_CHILD | WS_VISIBLE | WS_TABSTOP | ES_AUTOHSCROLL,
+            95, 18, 230, 28, hwnd,
+            reinterpret_cast&lt;HMENU&gt;(static_cast&lt;INT_PTR&gt;(ID_EDIT_MENO)),
+            instance, nullptr);
+
+        HWND button = CreateWindowExW(0, L"BUTTON", L"Pozdraviť",
+            WS_CHILD | WS_VISIBLE | WS_TABSTOP | BS_PUSHBUTTON,
+            95, 58, 120, 32, hwnd,
+            reinterpret_cast&lt;HMENU&gt;(static_cast&lt;INT_PTR&gt;(ID_BUTTON_POZDRAV)),
+            instance, nullptr);
+
+        if (edit == nullptr || button == nullptr) return -1;
+        return 0;
+    }
+
+    case WM_COMMAND:
+        if (LOWORD(wParam) == ID_BUTTON_POZDRAV &amp;&amp;
+            HIWORD(wParam) == BN_CLICKED) {
+            HWND edit = GetDlgItem(hwnd, ID_EDIT_MENO);
+            if (edit == nullptr) {
+                MessageBoxW(hwnd, L"Textové pole sa nenašlo.",
+                    L"Chyba", MB_OK | MB_ICONERROR);
+                return 0;
+            }
+
+            int length = GetWindowTextLengthW(edit);
+            if (length == 0) {
+                MessageBoxW(hwnd, L"Najprv zadaj meno.",
+                    L"Chýba vstup", MB_OK | MB_ICONINFORMATION);
+                return 0;
+            }
+
+            std::vector&lt;wchar_t&gt; name(static_cast&lt;std::size_t&gt;(length) + 1);
+            int copied = GetWindowTextW(edit, name.data(),
+                                        static_cast&lt;int&gt;(name.size()));
+            if (copied == 0) {
+                MessageBoxW(hwnd, L"Meno sa nepodarilo prečítať.",
+                    L"Chyba čítania", MB_OK | MB_ICONWARNING);
+                return 0;
+            }
+
+            std::wstring greeting = L"Ahoj, ";
+            greeting.append(name.data(), static_cast&lt;std::size_t&gt;(copied));
+            greeting += L"!";
+            MessageBoxW(hwnd, greeting.c_str(), L"Pozdrav",
+                        MB_OK | MB_ICONINFORMATION);
+            return 0;
+        }
+        break;
+
+    case WM_DESTROY:
+        PostQuitMessage(0);
+        return 0;
+    }
+    return DefWindowProcW(hwnd, message, wParam, lParam);
+}
+
+int WINAPI wWinMain(HINSTANCE instance, HINSTANCE, PWSTR, int show)
+{
+    WNDCLASSEXW wc{};
+    wc.cbSize = sizeof(wc);
+    wc.lpfnWndProc = WindowProc;
+    wc.hInstance = instance;
+    wc.hCursor = LoadCursorW(nullptr, IDC_ARROW);
+    wc.hbrBackground = GetSysColorBrush(COLOR_WINDOW);
+    wc.lpszClassName = CLASS_NAME;
+    if (!RegisterClassExW(&amp;wc)) return 1;
+
+    HWND hwnd = CreateWindowExW(0, CLASS_NAME, L"Pozdrav z formulára",
+        WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, 380, 170,
+        nullptr, nullptr, instance, nullptr);
+    if (hwnd == nullptr) return 1;
+
+    ShowWindow(hwnd, show);
+    UpdateWindow(hwnd);
+    MSG msg{};
+    BOOL result;
+    while ((result = GetMessageW(&amp;msg, nullptr, 0, 0)) &gt; 0) {
+        TranslateMessage(&amp;msg);
+        DispatchMessageW(&amp;msg);
+    }
+    return result == -1 ? 1 : static_cast&lt;int&gt;(msg.wParam);
+}</code></pre><h3>Zostavenie a spustenie – MSVC v143</h3><ol><li>Ulož ako <code>formular_udalosti.cpp</code> a otvori Developer Command Prompt for VS 2022 s Windows SDK.</li><li>Zostav: <code>cl /nologo /std:c++17 /EHsc /W4 /DUNICODE /D_UNICODE /Fe:formular_udalosti.exe formular_udalosti.cpp /link /SUBSYSTEM:WINDOWS user32.lib</code></li><li>Spusti <code>formular_udalosti.exe</code>, zadaj meno a klikni na tlačidlo; skús tiež kliknutie s prázdnym vstupom.</li></ol><p><strong>Závislosť:</strong> funkcie okna, ovládacích prvkov, textu a správ poskytuje <code>User32.lib</code>. Vektor a reťazec sú súčasťou štandardnej knižnice C++; ďalšiu systémovú knižnicu nepotrebujeme.</p></section>
+<div class="grid"><section class="panel"><h2>Typické chyby</h2><ul><li>Rodič nemá <code>WS_CHILD</code> alebo handle hlavného okna: prvok sa nevytvorí ako dieťa.</li><li>ID tlačidla sa nezhoduje s kontrolou v <code>WM_COMMAND</code>: kliknutie sa ignoruje.</li><li>Kontroluješ iba <code>LOWORD(wParam)</code>: rovnaká hodnota môže označovať inú notifikáciu.</li><li>Text čítaš do príliš malého buffera: použi <code>GetWindowTextLengthW</code> a rezervuj ešte znak pre terminátor.</li><li>Vrátiš hodnotu z <code>WindowProc</code> pre správu, ktorú nespracúvaš: ostatné správy odovzdaj <code>DefWindowProcW</code>.</li></ul></section><section class="panel"><h2>Otázky počas výkladu</h2><ol><li>Prečo sa ID textového poľa a tlačidla musia líšiť?</li><li>Kde sa nachádza ID ovládacieho prvku v správe <code>WM_COMMAND</code>?</li><li>Prečo veľkosť buffera počítame podľa dĺžky textu plus jeden znak?</li></ol></section></div>
+<section class="panel"><h2>Interaktívna kontrola</h2><p>Ktoré dve podmienky spoločne najlepšie určia, že používateľ klikol na konkrétne tlačidlo?</p><form class="quiz" id="quiz"><fieldset style="border:0;padding:0;margin:0"><legend><strong>Vyber odpoveď:</strong></legend><label><input type="radio" name="answer" value="a"> ID v <code>LOWORD(wParam)</code> aj kód <code>BN_CLICKED</code> v <code>HIWORD(wParam)</code>.</label><label><input type="radio" name="answer" value="b"> Iba text, ktorý je zobrazený na tlačidle.</label><label><input type="radio" name="answer" value="c"> Iba <code>lParam</code> bez ďalšej kontroly.</label></fieldset><button type="submit">Overiť odpoveď</button><p id="feedback" role="status" aria-live="polite"></p></form></section>
+<section class="panel"><h2>Praktická úloha: formulár „Pozdrav“</h2><p><strong>Cieľ:</strong> prepojiť tlačidlo s textovým poľom tak, aby aplikácia reagovala na udalosť a spracovala text.</p><p><strong>Predpoklady:</strong> Windows 10/11, MSVC v143, Windows SDK, VS Code a znalosť registračnej a správovej kostry z hodiny 25.</p><ol><li>Prepíš úplný príklad do <code>formular_udalosti.cpp</code>.</li><li>Zostav aplikáciu príkazom MSVC a oprav prípadné chyby kompilácie alebo linkovania.</li><li>Spusti okno, zadaj meno s diakritikou a klikni na tlačidlo.</li><li>Vyskúšaj prázdne pole a vysvetli, prečo sa zobrazí výzva.</li><li>Ukáž v kóde ID oboch prvkov a podmienku, ktorá filtruje udalosť.</li></ol><p><strong>Očakávaný výsledok:</strong> tlačidlo zobrazí personalizovaný pozdrav; prázdny vstup vyvolá jasnú výzvu; X okna aplikáciu ukončí.</p><p><strong>Kritériá (5 b):</strong> úspešný build a okno (1), správne vytvorené deti a ID (1), správne filtrovanie WM_COMMAND (1), čítanie a spracovanie vstupu (1), ošetrenie prázdneho textu (1).</p><ul><li><strong>Základná:</strong> zostav hotový príklad a otestuj kliknutie.</li><li><strong>Rozširujúca:</strong> zmeň popis a text pozdravu; po stlačení Enter nech sa fokus presunie alebo sa zopakuje akcia podľa návrhu.</li><li><strong>Náročnejšia:</strong> pridaj druhé tlačidlo s vlastným ID na vymazanie obsahu poľa cez <code>SetWindowTextW</code>.</li></ul><p><strong>Samostatná výzva:</strong> rozšír model o rozbaľovací zoznam v ďalšej hodine a nakresli tok udalosti od výberu po aktualizáciu pozdravu.</p></section>
+<section class="panel"><h2>Časový plán · 45 minút</h2><table class="schedule"><thead><tr><th>Čas</th><th>Činnosť</th><th>Výstup</th></tr></thead><tbody><tr><td>0–5</td><td>Kontrola pracoviska a návrat k hodine 29</td><td>Komponenty a ID</td></tr><tr><td>5–12</td><td>Tok udalosti od tlačidla k rodičovi</td><td>Schéma WM_COMMAND</td></tr><tr><td>12–20</td><td>Rozbor LOWORD, HIWORD a BN_CLICKED</td><td>Filtrovanie oznámení</td></tr><tr><td>20–29</td><td>Čítanie textu a väzba na C++ logiku</td><td>Buffer a výstup</td></tr><tr><td>29–39</td><td>Zostavenie a praktické overenie</td><td>Funkčný formulár</td></tr><tr><td>39–42</td><td>Interaktívna kontrola a oprava chýb</td><td>Správne rozpoznaná udalosť</td></tr><tr><td>42–45</td><td>Zhrnutie, otázky a EduPage</td><td>Povinné poznámky</td></tr></tbody></table></section>
+<section class="panel"><h2>Zhrnutie: 6 poznatkov</h2><ol><li>Ovládacie prvky sú podradené okná hlavného formulára.</li><li>Každý prvok, ktorý rozlišujeme, dostane jedinečné ID.</li><li>Rodič dostáva oznámenia tlačidiel cez <code>WM_COMMAND</code>.</li><li><code>LOWORD(wParam)</code> obsahuje ID a <code>HIWORD(wParam)</code> kód oznámenia.</li><li><code>GetDlgItem</code> nájde dieťa podľa ID; <code>GetWindowTextLengthW</code> a <code>GetWindowTextW</code> načítajú jeho text.</li><li>Neznáme správy odovzdávam <code>DefWindowProcW</code>.</li></ol><h3>Kontrolné otázky</h3><ol><li>Aký je rozdiel medzi ID tlačidla a kódom <code>BN_CLICKED</code>?</li><li>Čo vráti <code>GetDlgItem</code> a akú hodnotu použijeme na získanie textu?</li><li>Prečo čítame dĺžku textu pred alokovaním buffera?</li><li>Čo urobí aplikácia s ostatnými správami v <code>WindowProc</code>?</li></ol></section>
+<details class="panel teacher"><summary><strong>Učiteľská časť · odpovede, hodnotenie a podpora</strong></summary><p><strong>Odpovede:</strong> ID označuje konkrétny prvok; <code>BN_CLICKED</code> označuje typ jeho oznámenia. <code>GetDlgItem</code> vráti <code>HWND</code> dieťaťa. Dĺžka umožní alokovať buffer s miestom navyše na nulový terminátor. Ostatné správy delegujeme cez <code>DefWindowProcW</code>.</p><p><strong>Interaktívna kontrola:</strong> správna je A. Pri tlačidle kontrolujeme zdroj (ID) aj oznamovací kód.</p><p><strong>Hodnotenie:</strong> 5 bodov podľa praktických kritérií. Pri nefunkčnom školskom toolchaine uznaj presnú diagnostiku, ale kódové kroky musí žiak vedieť vysvetliť.</p><p><strong>Podpora:</strong> pre žiakov, ktorí potrebujú pomoc, zvýrazni na tabuli tri hodnoty v správe: ID v LOWORD, kód v HIWORD a HWND v lParam. Daj im tabuľku s hodnotami a nech vyznačia, ktorý riadok spustí pozdrav.</p></details>
+<section class="panel"><h2>Poznámky a povinné vedomosti, ktoré si zapamätať z hodiny</h2><ul><li>Kliknutie tlačidla oznámi podradený prvok rodičovi cez <code>WM_COMMAND</code>.</li><li><code>LOWORD(wParam)</code> obsahuje ID prvku a <code>HIWORD(wParam)</code> jeho oznamovací kód, napríklad <code>BN_CLICKED</code>.</li><li>Handle ovládacieho prvku získam cez <code>GetDlgItem</code> a text cez <code>GetWindowTextW</code>.</li><li>Buffer pre text musí mať miesto aj na nulový ukončovací znak.</li><li>Správy, ktoré aplikácia nespracuje, odovzdám <code>DefWindowProcW</code>.</li></ul><p><strong>Nadväznosť:</strong> hodiny 31–32 sa sústredia na hlavné okno a formulár ako celok.</p></section>
+<nav class="nav" aria-label="Navigácia medzi lekciami"><a class="nav-link" href="29-tvorba-projektov-s-komponentmi.html">← Predchádzajúca: Návrh komponentov</a><a class="nav-link next" href="31-formulr.html">Nasledujúca: Okno aplikácie a jeho vlastnosti →</a></nav>
+<footer>Win32 API · Aplikovaná informatika · 4. ročník SPŠ · <a href="https://learn.microsoft.com/en-us/windows/win32/menurc/wm-command">WM_COMMAND</a> · <a href="https://learn.microsoft.com/en-us/windows/win32/controls/bn-clicked">BN_CLICKED</a> · <a href="https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-getdlgitem">GetDlgItem</a> · <a href="https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-getwindowtextlengthw">GetWindowTextLengthW</a></footer>
+</main><script>
+document.getElementById('quiz').addEventListener('submit',function(event){event.preventDefault();const selected=this.querySelector('input[name="answer"]:checked');const feedback=document.getElementById('feedback');if(!selected){feedback.textContent='Najprv vyber jednu odpoveď.';feedback.className='error';return}if(selected.value==='a'){feedback.textContent='Správne. ID vyberie ovládací prvok a BN_CLICKED jeho oznamovací typ.';feedback.className='success'}else{feedback.textContent='Skús znova. Kód udalosti a identifikátor spolu určia zdroj oznámenia.';feedback.className='error'}});
+</script></body></html>
+

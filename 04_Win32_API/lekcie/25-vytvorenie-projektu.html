@@ -1,12 +1,87 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="sk">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#0a1928">
-<title>Lekcia 25: Vytvorenie projektu | Win32 API</title>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#081522">
+<meta name="description" content="Lekcia 25: vytvorenie prvého natívneho Win32 projektu v C++ s MSVC a Windows SDK. ">
+<title>Lekcia 25: Vytvorenie prvého Win32 projektu | Win32 API</title>
 <style>
-:root{color-scheme:dark;--bg:#081522;--surface:#102234;--line:#25415a;--text:#edf6ff;--muted:#a8bdcf;--accent:#38bdf8}*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 50% -20%,#16466b 0,var(--bg) 62%);color:var(--text);font:16px/1.65 system-ui,"Segoe UI",sans-serif}.page{width:min(100% - 2rem,900px);margin:auto;padding:1.5rem 0 4rem}.back{color:#7dd3fc;text-decoration:none;font-weight:700}.top{display:flex;justify-content:space-between;gap:1rem;align-items:center;margin-top:3rem}.tag{color:#7dd3fc;text-transform:uppercase;letter-spacing:.12em;font-size:.76rem;font-weight:800}.count{border:1px solid var(--line);border-radius:999px;padding:.45rem .8rem;color:var(--muted);white-space:nowrap}h1{font-size:clamp(2.2rem,6vw,4rem);line-height:1.08;letter-spacing:-.04em;margin:.6rem 0}.subtitle{font-size:1.2rem;color:var(--muted);margin:.4rem 0 1.5rem}.preview{width:100%;height:auto;display:block;border:1px solid var(--line);border-radius:1.2rem}.panel{margin-top:1.4rem;background:var(--surface);border:1px solid var(--line);border-radius:1rem;padding:1.4rem}.panel h2{margin:.1rem 0 .5rem;font-size:1.2rem}.panel p{margin:0;color:var(--muted)}.pill{display:inline-block;margin-top:1rem;padding:.45rem .7rem;border-radius:999px;background:#172d40;color:#bae6fd;font-weight:700;font-size:.84rem}.nav{display:flex;justify-content:space-between;gap:1rem;margin-top:1.5rem}.nav-link{color:#bae6fd;text-decoration:none;padding:.7rem 1rem;border:1px solid var(--line);border-radius:.7rem}.nav-link:hover{border-color:var(--accent)}.next{background:#075985;border-color:#0ea5e9;color:white}@media(max-width:560px){.top{align-items:flex-start;flex-direction:column}.nav{flex-direction:column}.nav-link{text-align:center}}
-</style>
-</head>
-<body><main class="page"><a class="back" href="../struktura.html">← Osnova kurzu</a><div class="top"><span class="tag">Modul 03 · Prostredie programu</span><span class="count">Lekcia 25 / 66 · 45 min</span></div><h1>Vytvorenie projektu</h1><p class="subtitle">Nový projekt Win32 a jeho konfigurácia</p><img class="preview" src="../img/win32-preview-prostredie.svg" alt="Ilustračný náhľad témy: Vytvorenie projektu"><section class="panel"><h2>Pripravujeme</h2><p>Táto lekcia je zaradená do osnovy kurzu. Výklad, ukážkový program a cvičenie doplníme neskôr.</p><span class="pill">Win32 API · C++ · Windows</span></section><nav class="nav" aria-label="Navigácia medzi lekciami"><a class="nav-link" href="24-hlavn-menu.html">← Predchádzajúca</a><a class="nav-link next" href="26-vytvorenie-projektu.html">Nasledujúca →</a></nav></main><script src="code-tools.js" defer></script></body></html>
+:root{color-scheme:dark;--bg:#081522;--surface:#102234;--line:#25415a;--text:#edf6ff;--muted:#a8bdcf;--accent:#38bdf8;--good:#86efac}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(ellipse at 50% -20%,#16466b 0,var(--bg) 62%);color:var(--text);font:16px/1.65 system-ui,"Segoe UI",sans-serif}.page{width:min(100% - 2rem,940px);margin:auto;padding:1.5rem 0 4rem}.back{color:#7dd3fc;text-decoration:none;font-weight:700}.top{display:flex;justify-content:space-between;gap:1rem;align-items:center;margin-top:2.5rem}.tag{color:#7dd3fc;text-transform:uppercase;letter-spacing:.12em;font-size:.76rem;font-weight:800}.count{border:1px solid var(--line);border-radius:999px;padding:.45rem .8rem;color:var(--muted);white-space:nowrap}h1{font-size:clamp(2.2rem,6vw,4rem);line-height:1.08;letter-spacing:-.04em;margin:.6rem 0}.subtitle{font-size:1.2rem;color:var(--muted);margin:.4rem 0 1.5rem}.hero,.panel{border:1px solid var(--line);border-radius:1rem;background:var(--surface);padding:clamp(1rem,3vw,1.4rem);margin-top:1.2rem}.hero{background:linear-gradient(135deg,#10314a,#0c1e2e)}.hero p,.panel p{color:var(--muted)}.pill{display:inline-block;margin-top:.5rem;padding:.4rem .7rem;border-radius:999px;background:#172d40;color:#bae6fd;font-weight:700;font-size:.84rem}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem}.panel h2{margin:0 0 .65rem;font-size:1.25rem}.panel h3{margin:.8rem 0 .3rem}.panel ul,.panel ol{padding-left:1.3rem}.panel li+li{margin-top:.35rem}.flow{display:grid;grid-template-columns:repeat(4,1fr);gap:.6rem}.flow div{padding:.8rem;border:1px solid var(--line);background:#0b1b29;border-radius:.7rem;text-align:center}.flow b{display:block;color:#bae6fd}.flow span{font-size:.87rem;color:var(--muted)}pre{overflow:auto;background:#07111b;border:1px solid var(--line);border-radius:.75rem;padding:1rem;color:#d8ecff;line-height:1.5}code{font-family:Consolas,"Cascadia Code",monospace;font-size:.94em}.schedule{width:100%;border-collapse:collapse}.schedule th,.schedule td{text-align:left;vertical-align:top;padding:.6rem;border-bottom:1px solid var(--line)}.schedule th{color:#bae6fd}.quiz label{display:block;padding:.55rem .7rem;border:1px solid var(--line);border-radius:.65rem;margin:.5rem 0;cursor:pointer}.quiz label:hover{border-color:var(--accent)}button{font:inherit;font-weight:750;border:0;border-radius:.65rem;padding:.7rem 1rem;background:#0284c7;color:white;cursor:pointer}button:hover{background:#0ea5e9}button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid #fde047;outline-offset:3px}#feedback{min-height:1.7em;font-weight:700}.success{color:var(--good)}.error{color:#fca5a5}.nav{display:flex;justify-content:space-between;gap:1rem;margin-top:1.5rem}.nav-link{color:#bae6fd;text-decoration:none;padding:.7rem 1rem;border:1px solid var(--line);border-radius:.7rem}.nav-link:hover{border-color:var(--accent)}.next{background:#075985;border-color:#0ea5e9;color:white}.teacher{border-color:#41604a}footer{color:var(--muted);border-top:1px solid var(--line);padding-top:1rem;margin-top:1.5rem}a{color:#7dd3fc}@media(max-width:650px){.grid{grid-template-columns:1fr}.top{align-items:flex-start;flex-direction:column}.flow{grid-template-columns:1fr 1fr}.schedule th,.schedule td{padding:.45rem .3rem;font-size:.9rem}.nav{flex-direction:column}.nav-link{text-align:center}}@media print{body{background:white;color:#111;font-size:11pt}.page{width:100%;padding:0}.back,.nav,button{display:none!important}.hero,.panel,.flow div{background:white;color:#111;break-inside:avoid}.hero p,.panel p,.flow span{color:#333}}
+</style></head>
+<body><main class="page"><a class="back" href="../struktura.html">← Osnova kurzu</a>
+<div class="top"><span class="tag">Aplikovaná informatika · Modul 03 · Prostredie programu</span><span class="count">Hodina 25 / 66 · 45 min</span></div>
+<h1>Vytvorenie prvého Win32 projektu</h1><p class="subtitle">Zaregistruj triedu okna, vytvor okno a spusti správovú slučku</p>
+<section class="hero"><strong>4. ročník SPŠ · Natívne Win32 C++ · MSVC v143</strong><p>Po overení nástrojov vytvoríme minimálnu natívnu Windows aplikáciu. Zaregistrujeme vlastnú triedu okna, vytvoríme okno, zobrazíme ho a budeme spracúvať správy Windows.</p><span class="pill">wWinMain → RegisterClassExW → CreateWindowExW → message loop</span></section>
+<section class="panel"><strong>Začiatok hodiny:</strong> skontroluj pracovisko a počítač; závadu ihneď oznám vyučujúcemu. Poškodené alebo nebezpečné zariadenie nepoužívaj. Stručný súhrn pošli cez EduPage podľa pokynov.</section>
+<div class="grid"><section class="panel"><h2>Ciele hodiny</h2><p>Na konci hodiny dokážeš:</p><ul><li>vysvetliť úlohu vstupného bodu <code>wWinMain</code>;</li><li>opísať, prečo sa registruje trieda okna ešte pred jeho vytvorením;</li><li>vytvoriť a zobraziť hlavné okno cez Unicode Win32 funkcie;</li><li>vysvetliť základ správovej slučky a úlohu procedúry okna.</li></ul></section><section class="panel"><h2>Prepojenie</h2><p>Na hodine 24 sme zostavili konzolový C++ program. Teraz voláme skutočné Windows API s hlavičkou Windows SDK. Tento projekt je GUI aplikáciou a používa vstupný bod <code>wWinMain</code>, nie <code>main</code>.</p></section></div>
+<section class="panel"><h2>Životný cyklus prvého okna</h2><div class="flow"><div><b>1 · Vstup</b><span>wWinMain</span></div><div><b>2 · Registrácia</b><span>trieda a WindowProc</span></div><div><b>3 · Vytvorenie</b><span>CreateWindowExW</span></div><div><b>4 · Správy</b><span>slučka a procedúra</span></div></div><p>Trieda okna opisuje spoločné vlastnosti a procedúru, ktorá obsluhuje správy. Samotné okno vzniká až následným volaním <code>CreateWindowExW</code>.</p></section>
+<section class="panel"><h2>Úplný minimálny program</h2><pre><code>#define UNICODE
+#define _UNICODE
+#include &lt;windows.h&gt;
+
+constexpr wchar_t CLASS_NAME[] = L"PrveWin32Okno";
+
+LRESULT CALLBACK WindowProc(
+    HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
+{
+    switch (message) {
+    case WM_DESTROY:
+        PostQuitMessage(0);
+        return 0;
+    }
+    return DefWindowProcW(hwnd, message, wParam, lParam);
+}
+
+int WINAPI wWinMain(
+    HINSTANCE hInstance, HINSTANCE, PWSTR, int nCmdShow)
+{
+    WNDCLASSEXW wc{};
+    wc.cbSize = sizeof(wc);
+    wc.lpfnWndProc = WindowProc;
+    wc.hInstance = hInstance;
+    wc.hCursor = LoadCursorW(nullptr, IDC_ARROW);
+    wc.hbrBackground = GetSysColorBrush(COLOR_WINDOW);
+    wc.lpszClassName = CLASS_NAME;
+
+    if (!RegisterClassExW(&amp;wc)) {
+        return 1;
+    }
+
+    HWND hwnd = CreateWindowExW(
+        0,
+        CLASS_NAME,
+        L"Moja prvá Win32 aplikácia",
+        WS_OVERLAPPEDWINDOW,
+        CW_USEDEFAULT, CW_USEDEFAULT, 640, 400,
+        nullptr, nullptr, hInstance, nullptr);
+
+    if (hwnd == nullptr) {
+        return 1;
+    }
+
+    ShowWindow(hwnd, nCmdShow);
+    UpdateWindow(hwnd);
+
+    MSG message{};
+    BOOL result;
+    while ((result = GetMessageW(&amp;message, nullptr, 0, 0)) &gt; 0) {
+        TranslateMessage(&amp;message);
+        DispatchMessageW(&amp;message);
+    }
+
+    if (result == -1) {
+        return 1;
+    }
+    return static_cast&lt;int&gt;(message.wParam);
+}</code></pre><p><strong>Čo je dôležité:</strong> trieda okna má nastavenú procedúru <code>WindowProc</code>. Po prijatí <code>WM_DESTROY</code> zavoláme <code>PostQuitMessage</code>, aby sa správová slučka ukončila. Ostatné správy necháme na predvolené spracovanie cez <code>DefWindowProcW</code>.</p><p>Na začiatku ešte nekreslíme ani nepridávame ovládacie prvky. Cieľom je najprv dostať spoľahlivé prázdne okno.</p><h3>Zostavenie a spustenie – MSVC v143</h3><ol><li>Otvori pracovný priečinok v VS Code z Developer Command Prompt for VS 2022 (alebo priprav prostredie rovnocenným VS Code taskom).</li><li>Ulož kód ako <code>prve_okno.cpp</code>.</li><li>Zostav presne týmto príkazom MSVC:<br><code>cl /std:c++17 /EHsc /W4 /DUNICODE /D_UNICODE /Fe:prve_okno.exe prve_okno.cpp /link /SUBSYSTEM:WINDOWS user32.lib</code></li><li>Spusti <code>prve_okno.exe</code>. Malo by sa zobraziť prázdne okno s titulkom „Moja prvá Win32 aplikácia“.</li><li>Zatvor okno tlačidlom X; aplikácia má skončiť.</li></ol><p><strong>Závislosť:</strong> použité funkcie okien a správ poskytuje <code>User32.lib</code>. Príklad nepoužíva GDI, preto zatiaľ nepridávame <code>Gdi32.lib</code>. Prepínač <code>/SUBSYSTEM:WINDOWS</code> vytvorí GUI program bez konzolového okna.</p><p class="muted">Toto je natívny Win32 program. Vyžaduje Windows, Windows SDK a pripravené prostredie MSVC. Bežný online kompilátor v Linuxe ho nezostaví ani nespustí.</p></section>
+<div class="grid"><section class="panel"><h2>Štyri kľúčové funkcie</h2><ul><li><code>RegisterClassExW</code> zaregistruje vlastnosti triedy okna.</li><li><code>CreateWindowExW</code> vytvorí konkrétnu inštanciu okna.</li><li><code>ShowWindow</code> zobrazí okno.</li><li><code>GetMessageW</code>, <code>TranslateMessage</code> a <code>DispatchMessageW</code> načítajú a doručia správy.</li></ul></section><section class="panel"><h2>Procedúra okna</h2><p><code>WindowProc</code> prijíma identifikátor okna, kód správy a súvisiace parametre. Program obslúži iba správy, ktoré potrebuje; ostatné odovzdá Windows cez <code>DefWindowProcW</code>.</p><p><code>WM_DESTROY</code> oznamuje zničenie okna. <code>PostQuitMessage(0)</code> vloží správu ukončenia do frontu pre hlavnú slučku.</p></section></div>
+<section class="panel"><h2>Interaktívna kontrola</h2><p>Prečo voláme <code>RegisterClassExW</code> pred <code>CreateWindowExW</code>?</p><form class="quiz" id="quiz"><fieldset style="border:0;padding:0;margin:0"><legend><strong>Vyber odpoveď:</strong></legend><label><input type="radio" name="answer" value="a"> Windows musí najprv poznať názov triedy a jej procedúru okna, podľa ktorej vytvorí okno.</label><label><input type="radio" name="answer" value="b"> Registrácia vytvorí hotové okno a CreateWindowEx ho iba premenuje.</label><label><input type="radio" name="answer" value="c"> RegisterClassExW spúšťa správovú slučku.</label></fieldset><button type="submit">Overiť odpoveď</button><p id="feedback" role="status" aria-live="polite"></p></form></section>
+<section class="panel"><h2>Praktická úloha: prvé okno</h2><p><strong>Cieľ:</strong> zostaviť a spustiť minimálne natívne okno Win32.</p><p><strong>Predpoklady:</strong> Windows 10/11, MSVC v143, Windows SDK, VS Code a znalosť základnej štruktúry C++ programu.</p><ol><li>Otvori workspace z Developer Command Prompt.</li><li>Vytvor <code>prve_okno.cpp</code> a prepíš úplný príklad.</li><li>Zostav ho uvedeným príkazom pre MSVC.</li><li>Spusti výsledné EXE a over titulok okna.</li><li>Zatvor okno a vysvetli vzťah medzi <code>WM_DESTROY</code>, <code>PostQuitMessage</code> a koncom slučky.</li></ol><p><strong>Očakávaný výsledok:</strong> prázdne GUI okno sa zobrazí a po zatvorení proces skončí.</p><p><strong>Kritériá (5 b):</strong> správne zdrojové súbory (1), úspešné zostavenie (1), okno sa zobrazí (1), korektne sa zatvorí (1), žiak vysvetlí registračný a správový tok (1).</p><ul><li><strong>Základná:</strong> uprav iba titulok okna a znovu zostav.</li><li><strong>Rozširujúca:</strong> zmeň predvolenú šírku a výšku okna.</li><li><strong>Náročnejšia:</strong> nájdi v kóde miesto, kde sa obsluhujú ďalšie správy, a vysvetli, čo sa stane, ak ich neobslúžime.</li></ul></section>
+<section class="panel"><h2>Časový plán · 45 minút</h2><table class="schedule"><thead><tr><th>Čas</th><th>Činnosť</th><th>Výstup</th></tr></thead><tbody><tr><td>0–5</td><td>Kontrola pracoviska a zopakovanie prostredia MSVC</td><td>Pripravené nástroje</td></tr><tr><td>5–11</td><td>Motivácia: od konzoly k oknu Windows</td><td>Rozdiel GUI a konzoly</td></tr><tr><td>11–19</td><td>Výklad triedy okna a jej registrácie</td><td>Poradie prípravy okna</td></tr><tr><td>19–28</td><td>Čítanie programu a správovej slučky</td><td>Tok od wWinMain po WindowProc</td></tr><tr><td>28–39</td><td>Zostavenie a spustenie minimálneho okna</td><td>Prvý Win32 projekt</td></tr><tr><td>39–42</td><td>Interaktívna kontrola a spätná väzba</td><td>Overenie poradia krokov</td></tr><tr><td>42–45</td><td>Zhrnutie, kontrolné otázky a EduPage</td><td>Povinné poznámky</td></tr></tbody></table></section>
+<section class="panel"><h2>Zhrnutie: 6 poznatkov</h2><ol><li>GUI aplikácia používa vstupný bod <code>wWinMain</code>.</li><li>Pred vytvorením okna zaregistrujem jeho triedu.</li><li><code>CreateWindowExW</code> vytvorí inštanciu okna.</li><li>Správová slučka načíta správy a doručí ich procedúre okna.</li><li>Neobslúžené správy odovzdám <code>DefWindowProcW</code>.</li><li>Pri <code>WM_DESTROY</code> zavolám <code>PostQuitMessage</code>, aby sa slučka ukončila.</li></ol><h3>Kontrolné otázky</h3><ol><li>Aký je rozdiel medzi triedou okna a konkrétnym oknom?</li><li>Prečo sa registrácia vykonáva pred vytvorením?</li><li>Aká je úloha <code>WindowProc</code>?</li><li>Čo spôsobí ukončenie správovej slučky v tomto príklade?</li></ol></section>
+<details class="panel teacher"><summary><strong>Učiteľská časť · odpovede, hodnotenie a podpora</strong></summary><p><strong>Odpovede:</strong> trieda opisuje správanie a procedúru, okno je konkrétna inštancia; Windows musí triedu poznať pred CreateWindowEx; WindowProc spracúva správy okna; PostQuitMessage vloží WM_QUIT, takže GetMessageW vráti 0 a slučka sa skončí.</p><p><strong>Interaktívna kontrola:</strong> správna je A. Registrácia nepridáva okno na obrazovku; až CreateWindowExW vytvorí jeho inštanciu.</p><p><strong>Hodnotenie:</strong> 5 bodov podľa kritérií praktickej úlohy. Ak sa program nezostaví pre nefunkčné školské prostredie, uznaj diagnostiku konkrétnej chyby.</p><p><strong>Podpora:</strong> poskytnúť vytlačenú kostru s označenými fázami. Najprv spoločne vystopovať wWinMain a registráciu, až potom nechať žiaka čítať celý cyklus.</p></details>
+<section class="panel"><h2>Poznámky a povinné vedomosti, ktoré si zapamätáš z hodiny</h2><ul><li>Vstupným bodom GUI programu je <code>wWinMain</code>.</li><li>Okno vytvorím až po registrácii jeho triedy.</li><li>Správy spracúva správová slučka a procedúra <code>WindowProc</code>.</li><li><code>WM_DESTROY</code> → <code>PostQuitMessage</code> → koniec slučky.</li><li>Win32 ukážku zostavujem cez MSVC a Windows SDK na Windows.</li></ul><p><strong>Nadväznosť:</strong> hodina 26 rozoberie zdrojové súbory projektu a nastavenie kompilátora podrobnejšie.</p></section>
+<nav class="nav" aria-label="Navigácia medzi lekciami"><a class="nav-link" href="24-hlavn-menu.html">← Predchádzajúca: Zostavenie konzolového programu</a><a class="nav-link next" href="26-vytvorenie-projektu.html">Nasledujúca: Súbory a nastavenie kompilátora →</a></nav>
+<footer>Win32 API · Aplikovaná informatika · 4. ročník SPŠ · <a href="https://learn.microsoft.com/en-us/windows/win32/learnwin32/creating-a-window">Microsoft Learn: Create a window</a> · <a href="https://learn.microsoft.com/en-us/windows/win32/learnwin32/writing-the-window-procedure">Writing the Window Procedure</a> · <a href="https://learn.microsoft.com/en-us/windows/win32/learnwin32/closing-the-window">Closing the Window</a> · <a href="https://learn.microsoft.com/en-us/cpp/build/reference/subsystem">MSVC /SUBSYSTEM</a></footer>
+</main><script>
+document.getElementById('quiz').addEventListener('submit',function(event){event.preventDefault();const selected=this.querySelector('input[name="answer"]:checked');const feedback=document.getElementById('feedback');if(!selected){feedback.textContent='Najprv vyber jednu odpoveď.';feedback.className='error';return}if(selected.value==='a'){feedback.textContent='Správne. Triedu najprv zaregistrujeme, aby ju Windows mohol použiť pri vytvorení okna.';feedback.className='success'}else{feedback.textContent='Skús znova. Registrácia pripraví triedu; konkrétnu inštanciu vytvára iná funkcia.';feedback.className='error'}});
+</script></body></html>

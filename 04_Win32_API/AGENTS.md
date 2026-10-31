@@ -44,3 +44,21 @@ Interakcie musia fungovať klávesnicou aj myšou a poskytovať spätnú väzbu.
 - Smart Student Manager používaj ako spoločnú ukážkovú líniu: dátový model → okno a slučka správ → ovládacie prvky a udalosti → zobrazenie/GDI → súbory a SQLite → CRUD, validácia a vyhľadávanie → záverečný projekt.
 - Pôvodný názov modulu 02 a poradie tém zachovaj. Vysvetli, že jeho C++ témy pripravujú žiaka na Win32; osnovu svojvoľne neprečísluj ani nevynechávaj.
 - Kontroluj odkazy, číslovanie a súlad s osnovou pred dokončením stránky. Nevykonávaj deployment ani externé publikovanie, pokiaľ o to používateľ výslovne nepožiada.
+
+## Rozsah a výstupy modulov
+
+- Modul 01 (hodiny 1–2) uvádza predmet, bezpečnosť a nástroje; modul 02 (3–22) rozvíja OOP aj potrebné základy C++: typy, funkcie, štruktúry, šablóny a vstup/výstup. Modul 03 (23–28) pripravuje VS Code, zostavenie a prvý reprodukovateľný Win32 projekt. Modul 04 (29–66) pokrýva okná, formuláre z natívnych ovládacích prvkov, GDI, SQLite, dátum/čas a záverečný projekt.
+- Modul 04 postupuje v tomto poradí: návrh komponentov (29–30), okno/formulár (31–32), textové polia (33–37), tlačidlá a zoznamy (38–41), súradnice a GDI (42–44), SQLite/CRUD/vyhľadávanie (45–49), dátum a čas (50–51), test (52), návrh projektu (53–56), implementácia a dokumentácia (57–62), prezentácie (63–64), hodnotenie a reflexia (65–66). Pri odkazovaní na hodiny zachovaj toto rozvrhnutie podľa `struktura.html`.
+- Očakávaný výsledok kurzu: žiak dokáže navrhnúť natívnu aplikáciu, vysvetliť vstupný bod, registráciu a vytvorenie okna, slučku správ a procedúru okna, vytvoriť ovládacie prvky, spracovať udalosti, kresliť cez GDI, ukladať/čítať dáta vrátane SQLite a odprezentovať projekt.
+
+## Praktické pravidlá pre ukážky a postup
+
+- Primárne prostredie kurzu je MSVC v143 (Visual Studio 2022 C++ Build Tools). Win32 projekt zostavuj v Developer Command Prompt/Developer PowerShell alebo cez VS Code task so zdedeným MSVC prostredím; obyčajný PowerShell nemusí mať nastavené cesty ku kompilátoru a SDK. GUI vstupný bod je spravidla `wWinMain`, konzolové prípravné príklady používajú `main`. Uveď skutočné systémové knižnice podľa použitých API (napr. `user32.lib`, `gdi32.lib`, `comctl32.lib`), nie odhadovaný univerzálny zoznam.
+- Smart Student Manager je spoločná niť, nie dôvod meniť každý týždeň jeden narastajúci projekt. Model `Student` a kolekcie patria do prípravy v module 02; konkrétne prepojenie s oknom prichádza v module 03 a hodinách 29–32. V GDI oddeľ vykresľovanie od dátovej logiky. Pri ukladaní začni modelom a základnými operáciami a potom zaveď SQLite; projektové míľniky 53–62 majú oddeliť návrh, implementáciu, testovanie a dokumentáciu.
+- Pojem „formulár“ vysvetli ako okno s natívnymi child controls vytvorenými cez Win32 API, nie ako návrhár Windows Forms.
+- Časová dotácia je 2 970 minút = 49 h 30 min astronomického času. Pri uvádzaní celkovej dĺžky neprepočítaj 66 vyučovacích hodín na 66 hodín.
+
+## Vzhľad a odborné zdroje
+
+- Lekcie sú samostatné HTML stránky v `lekcie/`, s navigáciou späť na osnovu a medzi susednými hodinami. Zachovaj jednotnú tmavú paletu kurzu, výraznú typografiu, dobrý kontrast, čitateľnosť na projektore, responzívne zobrazenie a štýly pre tlač. Každá stránka jasne uvádza predmet, 4. ročník SPŠ, modul, číslo hodiny a 45 minút.
+- Uprednostňuj primárne zdroje: Microsoft Learn pre Win32, Windows SDK a MSVC, oficiálnu dokumentáciu SQLite pre SQLite. Referenciu ku konkrétnemu API alebo knižnici pridaj pri jej prvom použití; odkazy musia smerovať na konkrétny relevantný zdroj.
