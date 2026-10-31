@@ -78,4 +78,5 @@ int main() {
 <footer>Win32 API · Aplikovaná informatika · 4. ročník SPŠ · <a href="https://learn.microsoft.com/en-us/cpp/standard-library/fstream">Microsoft Learn: fstream</a></footer>
 </main><script>
 document.getElementById('quiz').addEventListener('submit',function(event){event.preventDefault();const selected=this.querySelector('input[name="answer"]:checked');const feedback=document.getElementById('feedback');if(!selected){feedback.textContent='Najprv vyber jednu odpoveď.';feedback.className='error';return}if(selected.value==='a'){feedback.textContent='Správne. Predvolené otvorenie ofstream na zápis existujúci obsah prepíše.';feedback.className='success'}else{feedback.textContent='Skús znova. Na pripisovanie na koniec treba zvoliť režim ios::app.';feedback.className='error'}});
-</script></body></html>
+</script><script src="lesson-top.js" defer></script></body></html>
+

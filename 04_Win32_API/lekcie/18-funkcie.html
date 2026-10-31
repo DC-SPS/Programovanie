@@ -54,4 +54,5 @@ void vypisVysledok(double hodnota) {
 <footer>Win32 API · Aplikovaná informatika · 4. ročník SPŠ · <a href="https://learn.microsoft.com/en-us/cpp/cpp/functions-cpp">Microsoft Learn: Functions (C++)</a></footer>
 </main><script>
 document.getElementById('quiz').addEventListener('submit',function(event){event.preventDefault();const selected=this.querySelector('input[name="answer"]:checked');const feedback=document.getElementById('feedback');if(!selected){feedback.textContent='Najprv vyber jednu odpoveď.';feedback.className='error';return}if(selected.value==='a'){feedback.textContent='Správne. Názov a bool výsledok presne vyjadrujú kontrolu platnosti.';feedback.className='success'}else{feedback.textContent='Skús znova. Hľadaj funkciu s konkrétnym názvom, parametrami aj výsledkom.';feedback.className='error'}});
-</script></body></html>
+</script><script src="lesson-top.js" defer></script></body></html>
+

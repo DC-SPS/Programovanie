@@ -133,5 +133,6 @@ int WINAPI wWinMain(HINSTANCE instance, HINSTANCE, PWSTR, int show)
 <footer>Win32 API · Aplikovaná informatika · 4. ročník SPŠ · <a href="https://learn.microsoft.com/en-us/windows/win32/menurc/wm-command">WM_COMMAND</a> · <a href="https://learn.microsoft.com/en-us/windows/win32/controls/bn-clicked">BN_CLICKED</a> · <a href="https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-getdlgitem">GetDlgItem</a> · <a href="https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-getwindowtextlengthw">GetWindowTextLengthW</a></footer>
 </main><script>
 document.getElementById('quiz').addEventListener('submit',function(event){event.preventDefault();const selected=this.querySelector('input[name="answer"]:checked');const feedback=document.getElementById('feedback');if(!selected){feedback.textContent='Najprv vyber jednu odpoveď.';feedback.className='error';return}if(selected.value==='a'){feedback.textContent='Správne. ID vyberie ovládací prvok a BN_CLICKED jeho oznamovací typ.';feedback.className='success'}else{feedback.textContent='Skús znova. Kód udalosti a identifikátor spolu určia zdroj oznámenia.';feedback.className='error'}});
-</script></body></html>
+</script><script src="lesson-top.js" defer></script></body></html>
+
 

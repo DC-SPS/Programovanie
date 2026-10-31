@@ -29,4 +29,5 @@
 <footer>Win32 API · Aplikovaná informatika · 4. ročník SPŠ</footer>
 </main><script>
 document.getElementById('quiz').addEventListener('submit',function(event){event.preventDefault();const selected=this.querySelector('input[name="answer"]:checked');const feedback=document.getElementById('feedback');if(!selected){feedback.textContent='Najprv vyber jednu odpoveď.';feedback.className='error';return}if(selected.value==='b'){feedback.textContent='Správne. Win32 program používa Windows API a zostavuje sa pre Windows.';feedback.className='success'}else{feedback.textContent='Skús znova. Hľadaj odpoveď, ktorá spomína natívny C++ program, Windows API a Windows.';feedback.className='error'}});
-</script></body></html>
+</script><script src="lesson-top.js" defer></script></body></html>
+

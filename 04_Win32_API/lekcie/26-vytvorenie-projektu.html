@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="sk">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#081522">
@@ -77,4 +77,5 @@ int WINAPI wWinMain(HINSTANCE instance, HINSTANCE, PWSTR, int show)
 <footer>Win32 API · Aplikovaná informatika · 4. ročník SPŠ · <a href="https://learn.microsoft.com/en-us/cpp/build/reference/compiler-options-listed-by-category">MSVC compiler options</a> · <a href="https://learn.microsoft.com/en-us/cpp/build/reference/fo-object-file-name">/Fo object file</a> · <a href="https://learn.microsoft.com/en-us/cpp/build/reference/subsystem-specify-subsystem">/SUBSYSTEM</a> · <a href="https://learn.microsoft.com/en-us/cpp/build/reference/linking">MSVC linker</a></footer>
 </main><script>
 document.getElementById('quiz').addEventListener('submit',function(event){event.preventDefault();const selected=this.querySelector('input[name="answer"]:checked');const feedback=document.getElementById('feedback');if(!selected){feedback.textContent='Najprv vyber jednu odpoveď.';feedback.className='error';return}if(selected.value==='b'){feedback.textContent='Správne. Linker spojí objektový súbor a systémovú knižnicu do spustiteľnej GUI aplikácie.';feedback.className='success'}else{feedback.textContent='Skús znova. Objektový súbor ešte treba správne linkovať.';feedback.className='error'}});
-</script></body></html>
+</script><script src="lesson-top.js" defer></script></body></html>
+

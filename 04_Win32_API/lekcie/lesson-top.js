@@ -1,0 +1,181 @@
+(() => {
+  "use strict";
+
+  const main = document.querySelector("main") || document.body;
+  if (!main || document.querySelector(".lesson-clock")) return;
+
+  const heading = document.querySelector("h1");
+  const subtitle = document.querySelector(".subtitle") || heading?.nextElementSibling;
+  const count = document.querySelector(".count")?.textContent || document.title;
+  const lessonMatch = count.match(/(?:hodina|lekcia)\s*(\d+)/i);
+  const lessonLabel = lessonMatch ? `HODINA ${lessonMatch[1]} / 66` : "HODINA · 45 MINÚT";
+
+  const style = document.createElement("style");
+  style.textContent = `
+    .lesson-clock{position:sticky;top:0;z-index:1000;margin:0 0 1.25rem;border:1px solid #2b5674;border-radius:0 0 .9rem .9rem;overflow:hidden;background:rgba(7,20,32,.97);box-shadow:0 10px 30px rgba(0,0,0,.3);backdrop-filter:blur(12px);color:#edf6ff;font:14px/1.4 system-ui,"Segoe UI",sans-serif}
+    .lesson-clock__chrome{display:flex;align-items:center;gap:.55rem;min-height:2.1rem;padding:.35rem .8rem;background:linear-gradient(90deg,#123b57,#0c263b);border-bottom:1px solid #25415a}
+    .lesson-clock__lights{display:flex;gap:.28rem;margin-right:.3rem}.lesson-clock__light{width:.55rem;height:.55rem;border-radius:50%;background:#38bdf8}.lesson-clock__light:nth-child(2){background:#60a5fa}.lesson-clock__light:nth-child(3){background:#86efac}
+    .lesson-clock__tag{font-size:.72rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#bae6fd}
+    .lesson-clock__chrome-spacer{flex:1}
+    .lesson-clock__time-label{font-size:.68rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#a8bdcf}
+    .lesson-clock__time{min-width:4.6rem;text-align:center;font:800 1.05rem/1.2 Consolas,"Cascadia Code",monospace;color:#fff}
+    .lesson-clock__body{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:1rem;padding:.7rem .9rem .65rem}
+    .lesson-clock__info{min-width:0}.lesson-clock__number{display:block;margin-bottom:.14rem;font-size:.68rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#7dd3fc}
+    .lesson-clock__title{display:block;overflow:hidden;text-overflow:ellipsis;font-size:1.02rem;line-height:1.25;font-weight:800;color:#f1f8ff}
+    .lesson-clock__description{margin:.2rem 0 0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#b8cbd9;font-size:.84rem}
+    .lesson-clock__controls{display:flex;align-items:center;gap:.4rem;flex:none}.lesson-clock__button{min-height:2.2rem;padding:.42rem .72rem;border:1px solid #32617e;border-radius:.55rem;background:#12334b;color:#e6f6ff;font:700 .82rem system-ui,"Segoe UI",sans-serif;cursor:pointer}.lesson-clock__button:hover:not(:disabled){background:#164766;border-color:#38bdf8}.lesson-clock__button:disabled{opacity:.5;cursor:not-allowed}.lesson-clock__button:focus-visible{outline:3px solid #fde047;outline-offset:2px}
+    .lesson-clock__progress{height:4px;background:#142b3d}.lesson-clock__progress-value{height:100%;width:0;background:linear-gradient(90deg,#0ea5e9,#86efac);transition:width .2s linear}
+    .lesson-clock__status{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+    @media(max-width:650px){.lesson-clock__body{grid-template-columns:1fr;gap:.55rem}.lesson-clock__controls{justify-content:flex-start}.lesson-clock__description{white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}.lesson-clock__chrome{gap:.4rem}.lesson-clock__time-label{display:none}}
+    @media print{.lesson-clock{position:static;margin:0 0 .6rem;border-color:#888;background:#fff;color:#111;box-shadow:none;backdrop-filter:none}.lesson-clock__chrome{background:#eee;color:#111}.lesson-clock__tag,.lesson-clock__time-label,.lesson-clock__title{color:#111}.lesson-clock__number,.lesson-clock__description{color:#333}.lesson-clock__controls,.lesson-clock__progress{display:none}}
+    @media(prefers-reduced-motion:reduce){.lesson-clock__progress-value{transition:none}}
+  `;
+  document.head.append(style);
+
+  const bar = document.createElement("section");
+  bar.className = "lesson-clock";
+  bar.setAttribute("aria-label", "Časovač vyučovacej hodiny a názov prednášky");
+
+  const chrome = document.createElement("div");
+  chrome.className = "lesson-clock__chrome";
+  const lights = document.createElement("span");
+  lights.className = "lesson-clock__lights";
+  lights.setAttribute("aria-hidden", "true");
+  for (let i = 0; i < 3; i += 1) {
+    const light = document.createElement("span");
+    light.className = "lesson-clock__light";
+    lights.append(light);
+  }
+  const tag = document.createElement("span");
+  tag.className = "lesson-clock__tag";
+  tag.textContent = "Prednáška · čas hodiny";
+  const spacer = document.createElement("span");
+  spacer.className = "lesson-clock__chrome-spacer";
+  const timeLabel = document.createElement("span");
+  timeLabel.className = "lesson-clock__time-label";
+  timeLabel.textContent = "Zostávajúci čas";
+  const time = document.createElement("strong");
+  time.className = "lesson-clock__time";
+  time.setAttribute("aria-label", "Zostávajúci čas vyučovacej hodiny");
+  chrome.append(lights, tag, spacer, timeLabel, time);
+
+  const body = document.createElement("div");
+  body.className = "lesson-clock__body";
+  const info = document.createElement("div");
+  info.className = "lesson-clock__info";
+  const number = document.createElement("span");
+  number.className = "lesson-clock__number";
+  number.textContent = lessonLabel;
+  const title = document.createElement("strong");
+  title.className = "lesson-clock__title";
+  title.textContent = heading?.textContent.trim() || "Win32 API";
+  const description = document.createElement("p");
+  description.className = "lesson-clock__description";
+  description.textContent = subtitle?.textContent.trim() || "Aplikovaná informatika · 4. ročník SPŠ";
+  info.append(number, title, description);
+
+  const controls = document.createElement("div");
+  controls.className = "lesson-clock__controls";
+  const start = document.createElement("button");
+  start.className = "lesson-clock__button";
+  start.type = "button";
+  start.textContent = "Spustiť";
+  start.setAttribute("aria-label", "Spustiť alebo pokračovať v odpočte 45 minút");
+  const pause = document.createElement("button");
+  pause.className = "lesson-clock__button";
+  pause.type = "button";
+  pause.textContent = "Pozastaviť";
+  pause.disabled = true;
+  pause.setAttribute("aria-label", "Pozastaviť odpočet hodiny");
+  const reset = document.createElement("button");
+  reset.className = "lesson-clock__button";
+  reset.type = "button";
+  reset.textContent = "Vynulovať";
+  reset.setAttribute("aria-label", "Vynulovať odpočet na 45 minút");
+  controls.append(start, pause, reset);
+  body.append(info, controls);
+
+  const progress = document.createElement("div");
+  progress.className = "lesson-clock__progress";
+  progress.setAttribute("role", "progressbar");
+  progress.setAttribute("aria-label", "Priebeh vyučovacej hodiny");
+  progress.setAttribute("aria-valuemin", "0");
+  progress.setAttribute("aria-valuemax", "100");
+  const progressValue = document.createElement("div");
+  progressValue.className = "lesson-clock__progress-value";
+  progress.append(progressValue);
+  const status = document.createElement("span");
+  status.className = "lesson-clock__status";
+  status.setAttribute("role", "status");
+  status.setAttribute("aria-live", "polite");
+  status.textContent = "Časovač pripravený. Odpočet sa spustí po stlačení tlačidla.";
+  bar.append(chrome, body, progress, status);
+  main.insertBefore(bar, main.firstChild);
+
+  const total = 45 * 60 * 1000;
+  let remaining = total;
+  let endAt = 0;
+  let interval = 0;
+
+  function render() {
+    const seconds = Math.ceil(remaining / 1000);
+    const minutesText = String(Math.floor(seconds / 60)).padStart(2, "0");
+    const secondsText = String(seconds % 60).padStart(2, "0");
+    time.textContent = `${minutesText}:${secondsText}`;
+    const percent = Math.min(100, Math.max(0, ((total - remaining) / total) * 100));
+    progressValue.style.width = `${percent}%`;
+    progress.setAttribute("aria-valuenow", String(Math.floor(percent)));
+  }
+
+  function stop() {
+    window.clearInterval(interval);
+    interval = 0;
+  }
+
+  function tick() {
+    remaining = Math.max(0, endAt - Date.now());
+    render();
+    if (remaining === 0) {
+      stop();
+      start.disabled = false;
+      start.textContent = "Spustiť znova";
+      pause.disabled = true;
+      status.textContent = "Čas 45-minútovej hodiny uplynul.";
+    }
+  }
+
+  start.addEventListener("click", () => {
+    if (interval) return;
+    if (remaining === 0) remaining = total;
+    endAt = Date.now() + remaining;
+    start.disabled = true;
+    pause.disabled = false;
+    start.textContent = "Prebieha";
+    status.textContent = "Odpočet hodiny prebieha.";
+    tick();
+    interval = window.setInterval(tick, 250);
+  });
+
+  pause.addEventListener("click", () => {
+    if (!interval) return;
+    tick();
+    if (remaining === 0) return;
+    stop();
+    start.disabled = false;
+    start.textContent = "Pokračovať";
+    pause.disabled = true;
+    if (remaining > 0) status.textContent = "Odpočet hodiny je pozastavený.";
+  });
+
+  reset.addEventListener("click", () => {
+    stop();
+    remaining = total;
+    start.disabled = false;
+    start.textContent = "Spustiť";
+    pause.disabled = true;
+    status.textContent = "Časovač vynulovaný na 45 minút.";
+    render();
+  });
+
+  render();
+})();

@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="sk">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#081522">
@@ -98,4 +98,5 @@ int WINAPI wWinMain(HINSTANCE instance, HINSTANCE, PWSTR, int)
 <footer>Win32 API · Aplikovaná informatika · 4. ročník SPŠ · <a href="https://learn.microsoft.com/en-us/windows/win32/dataxchg/clipboard-operations">Clipboard Operations</a> · <a href="https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-setclipboarddata">SetClipboardData</a> · <a href="https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-emptyclipboard">EmptyClipboard</a> · <a href="https://learn.microsoft.com/en-us/windows/desktop/api/WinBase/nf-winbase-globalalloc">GlobalAlloc</a></footer>
 </main><script>
 document.getElementById('quiz').addEventListener('submit',function(event){event.preventDefault();const selected=this.querySelector('input[name="answer"]:checked');const feedback=document.getElementById('feedback');if(!selected){feedback.textContent='Najprv vyber jednu odpoveď.';feedback.className='error';return}if(selected.value==='b'){feedback.textContent='Správne. Windows prevezme handle; už ho neuvoľňujeme ani nemeníme.';feedback.className='success'}else{feedback.textContent='Skús znova. Po úspešnom odovzdaní pamäť spravuje systém a musí zostať odomknutá.';feedback.className='error'}});
-</script></body></html>
+</script><script src="lesson-top.js" defer></script></body></html>
+

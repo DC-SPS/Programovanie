@@ -55,5 +55,6 @@ int main() {
 <footer>Win32 API · Aplikovaná informatika · 4. ročník SPŠ · <a href="https://learn.microsoft.com/en-us/windows/win32/learnwin32/window-messages">Microsoft Learn: Window messages</a></footer>
 </main><script>
 document.getElementById('quiz').addEventListener('submit',function(event){event.preventDefault();const selected=this.querySelector('input[name="answer"]:checked');const feedback=document.getElementById('feedback');if(!selected){feedback.textContent='Najprv vyber jednu odpoveď.';feedback.className='error';return}if(selected.value==='b'){feedback.textContent='Správne. Program prijme udalosť a vykoná priradenú obsluhu.';feedback.className='success'}else{feedback.textContent='Skús znova. Kliknutie je udalosť, na ktorú program musí mať napísanú reakciu.';feedback.className='error'}});
-</script></body></html>
+</script><script src="lesson-top.js" defer></script></body></html>
+
 
