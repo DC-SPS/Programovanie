@@ -44,5 +44,6 @@ int main() {
 <footer>Win32 API · Aplikovaná informatika · 4. ročník SPŠ · <a href="https://learn.microsoft.com/en-us/cpp/cpp/type-conversions-and-type-safety-modern-cpp">Microsoft Learn: Type conversions and type safety</a></footer>
 </main><script>
 document.getElementById('quiz').addEventListener('submit',function(event){event.preventDefault();const selected=this.querySelector('input[name="answer"]:checked');const feedback=document.getElementById('feedback');if(!selected){feedback.textContent='Najprv vyber jednu odpoveď.';feedback.className='error';return}if(selected.value==='b'){feedback.textContent='Správne. Pri prevode 3.9 na int sa zlomková časť zahodí.';feedback.className='success'}else{feedback.textContent='Skús znova. static_cast na int zlomkovú časť neuchováva a nezaokrúhľuje.';feedback.className='error'}});
-</script><script src="lesson-top.js" defer></script></body></html>
+</script><script src="../../lesson-top.js" defer></script></body></html>
+
 

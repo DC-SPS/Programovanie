@@ -31,5 +31,6 @@
 <footer>Win32 API · Aplikovaná informatika · 4. ročník SPŠ</footer>
 </main><script>
 document.getElementById('quiz').addEventListener('submit',function(event){event.preventDefault();const selected=this.querySelector('input[name="answer"]:checked');const feedback=document.getElementById('feedback');if(!selected){feedback.textContent='Najprv vyber jednu odpoveď.';feedback.className='error';return}if(selected.value==='b'){feedback.textContent='Správne. Zariadenie nepoužívaj a oznám to vyučujúcemu.';feedback.className='success'}else{feedback.textContent='Skús znova. Poškodené zariadenie neopravujeme ani nepoužívame.';feedback.className='error'}});
-</script><script src="lesson-top.js" defer></script></body></html>
+</script><script src="../../lesson-top.js" defer></script></body></html>
+
 

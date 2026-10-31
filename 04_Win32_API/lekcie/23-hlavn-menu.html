@@ -27,5 +27,6 @@
 <footer>Win32 API · Aplikovaná informatika · 4. ročník SPŠ · <a href="https://code.visualstudio.com/docs/editing/getting-started/userinterface">VS Code: User interface</a> · <a href="https://learn.microsoft.com/en-us/cpp/build/walkthrough-compile-a-c-program-on-the-command-line">Microsoft Learn: MSVC command-line environment</a></footer>
 </main><script>
 document.getElementById('quiz').addEventListener('submit',function(event){event.preventDefault();const selected=this.querySelector('input[name="answer"]:checked');const feedback=document.getElementById('feedback');if(!selected){feedback.textContent='Najprv vyber jednu odpoveď.';feedback.className='error';return}if(selected.value==='b'){feedback.textContent='Správne. MSVC potrebuje pripravené prostredie; chyba cl nemusí znamenať chybu zdrojového kódu.';feedback.className='success'}else{feedback.textContent='Skús znova. Rozlišuj stav zdrojového kódu od nastavenia terminálu.';feedback.className='error'}});
-</script><script src="lesson-top.js" defer></script></body></html>
+</script><script src="../../lesson-top.js" defer></script></body></html>
+
 

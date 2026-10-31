@@ -5,10 +5,19 @@
   if (!main || document.querySelector(".lesson-clock")) return;
 
   const heading = document.querySelector("h1");
-  const subtitle = document.querySelector(".subtitle") || heading?.nextElementSibling;
+  const headingText = heading?.textContent.trim() || document.title;
+  const subtitle = document.querySelector(".subtitle");
+  const descriptionMeta = document.querySelector('meta[name="description"]')?.content;
+  const descriptionNode = heading?.nextElementSibling;
+  const descriptionText = subtitle?.textContent.trim() || descriptionMeta || descriptionNode?.textContent.trim();
   const count = document.querySelector(".count")?.textContent || document.title;
   const lessonMatch = count.match(/(?:hodina|lekcia)\s*(\d+)/i);
-  const lessonLabel = lessonMatch ? `HODINA ${lessonMatch[1]} / 66` : "HODINA · 45 MINÚT";
+  const topicMatch = headingText.match(/^(\d+(?:\.\d+)+)\b/);
+  const lessonLabel = lessonMatch
+    ? `HODINA ${lessonMatch[1]} / 66`
+    : topicMatch
+      ? `TÉMA ${topicMatch[1]} · 45 MIN`
+      : "PYTHON · 45 MINÚT";
 
   const style = document.createElement("style");
   style.textContent = `
@@ -68,10 +77,10 @@
   number.textContent = lessonLabel;
   const title = document.createElement("strong");
   title.className = "lesson-clock__title";
-  title.textContent = heading?.textContent.trim() || "Win32 API";
+  title.textContent = headingText;
   const description = document.createElement("p");
   description.className = "lesson-clock__description";
-  description.textContent = subtitle?.textContent.trim() || "Aplikovaná informatika · 4. ročník SPŠ";
+  description.textContent = descriptionText || "Vyučovacia hodina · 45 minút";
   info.append(number, title, description);
 
   const controls = document.createElement("div");

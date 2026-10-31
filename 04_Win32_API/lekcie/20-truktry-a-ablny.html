@@ -45,5 +45,6 @@ int main() {
 <footer>Win32 API · Aplikovaná informatika · 4. ročník SPŠ · <a href="https://learn.microsoft.com/en-us/cpp/cpp/templates-cpp">Microsoft Learn: Templates (C++)</a></footer>
 </main><script>
 document.getElementById('quiz').addEventListener('submit',function(event){event.preventDefault();const selected=this.querySelector('input[name="answer"]:checked');const feedback=document.getElementById('feedback');if(!selected){feedback.textContent='Najprv vyber jednu odpoveď.';feedback.className='error';return}if(selected.value==='b'){feedback.textContent='Správne. Šablóna môže používať iba operácie, ktoré použitý typ podporuje.';feedback.className='success'}else{feedback.textContent='Skús znova. Pozri sa, akú operáciu algoritmus vykonáva s hodnotou T.';feedback.className='error'}});
-</script><script src="lesson-top.js" defer></script></body></html>
+</script><script src="../../lesson-top.js" defer></script></body></html>
+
 

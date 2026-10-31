@@ -72,7 +72,8 @@ int WINAPI wWinMain(HINSTANCE, HINSTANCE, PWSTR, int)
 <footer>Win32 API · Aplikovaná informatika · 4. ročník SPŠ · <a href="https://learn.microsoft.com/en-us/windows/win32/dataxchg/using-the-clipboard">Using the Clipboard</a> · <a href="https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-openclipboard">OpenClipboard</a> · <a href="https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-getclipboarddata">GetClipboardData</a></footer>
 </main><script>
 document.getElementById('quiz').addEventListener('submit',function(event){event.preventDefault();const selected=this.querySelector('input[name="answer"]:checked');const feedback=document.getElementById('feedback');if(!selected){feedback.textContent='Najprv vyber jednu odpoveď.';feedback.className='error';return}if(selected.value==='a'){feedback.textContent='Správne. Schránku musíme zatvoriť po každom úspešnom otvorení, aj keď požadovaný formát chýba.';feedback.className='success'}else{feedback.textContent='Skús znova. Formát najprv overíme a nepoužívame cudzie dáta, akoby mali inú štruktúru.';feedback.className='error'}});
-</script><script src="lesson-top.js" defer></script></body></html>
+</script><script src="../../lesson-top.js" defer></script></body></html>
+
 
 
 
