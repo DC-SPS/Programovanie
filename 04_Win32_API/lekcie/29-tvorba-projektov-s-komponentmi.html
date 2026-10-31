@@ -1,12 +1,116 @@
 <!doctype html>
 <html lang="sk">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#0a1928">
-<title>Lekcia 29: Tvorba projektov s komponentmi | Win32 API</title>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#0a1928"><meta name="description" content="Tvorba Windows projektu pomocou komponentov Win32 API: formulár, popis, textové pole a tlačidlo."><title>Lekcia 29: Tvorba projektov s komponentmi | Win32 API</title>
 <style>
-:root{color-scheme:dark;--bg:#081522;--surface:#102234;--line:#25415a;--text:#edf6ff;--muted:#a8bdcf;--accent:#38bdf8}*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 50% -20%,#16466b 0,var(--bg) 62%);color:var(--text);font:16px/1.65 system-ui,"Segoe UI",sans-serif}.page{width:min(100% - 2rem,900px);margin:auto;padding:1.5rem 0 4rem}.back{color:#7dd3fc;text-decoration:none;font-weight:700}.top{display:flex;justify-content:space-between;gap:1rem;align-items:center;margin-top:3rem}.tag{color:#7dd3fc;text-transform:uppercase;letter-spacing:.12em;font-size:.76rem;font-weight:800}.count{border:1px solid var(--line);border-radius:999px;padding:.45rem .8rem;color:var(--muted);white-space:nowrap}h1{font-size:clamp(2.2rem,6vw,4rem);line-height:1.08;letter-spacing:-.04em;margin:.6rem 0}.subtitle{font-size:1.2rem;color:var(--muted);margin:.4rem 0 1.5rem}.preview{width:100%;height:auto;display:block;border:1px solid var(--line);border-radius:1.2rem}.panel{margin-top:1.4rem;background:var(--surface);border:1px solid var(--line);border-radius:1rem;padding:1.4rem}.panel h2{margin:.1rem 0 .5rem;font-size:1.2rem}.panel p{margin:0;color:var(--muted)}.pill{display:inline-block;margin-top:1rem;padding:.45rem .7rem;border-radius:999px;background:#172d40;color:#bae6fd;font-weight:700;font-size:.84rem}.nav{display:flex;justify-content:space-between;gap:1rem;margin-top:1.5rem}.nav-link{color:#bae6fd;text-decoration:none;padding:.7rem 1rem;border:1px solid var(--line);border-radius:.7rem}.nav-link:hover{border-color:var(--accent)}.next{background:#075985;border-color:#0ea5e9;color:white}@media(max-width:560px){.top{align-items:flex-start;flex-direction:column}.nav{flex-direction:column}.nav-link{text-align:center}}
+:root{color-scheme:dark;--bg:#081522;--surface:#102234;--line:#25415a;--text:#edf6ff;--muted:#a8bdcf;--accent:#38bdf8;--code:#06101a}*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 50% -20%,#16466b 0,var(--bg) 62%);color:var(--text);font:16px/1.7 system-ui,"Segoe UI",sans-serif}.page{width:min(100% - 2rem,960px);margin:auto;padding:1.5rem 0 4rem}.back{color:#7dd3fc;text-decoration:none;font-weight:700}.top{display:flex;justify-content:space-between;gap:1rem;align-items:center;margin-top:2rem}.tag{color:#7dd3fc;text-transform:uppercase;letter-spacing:.12em;font-size:.76rem;font-weight:800}.count,.pill{border:1px solid var(--line);border-radius:999px;padding:.4rem .75rem;color:var(--muted);white-space:nowrap}h1{font-size:clamp(2.2rem,6vw,4rem);line-height:1.08;letter-spacing:-.04em;margin:.6rem 0}.subtitle{font-size:1.2rem;color:var(--muted);margin:.4rem 0 1.5rem}.preview{width:100%;height:auto;display:block;border:1px solid var(--line);border-radius:1.2rem}.panel,.callout{margin:1.2rem 0;background:var(--surface);border:1px solid var(--line);border-radius:1rem;padding:1.2rem 1.4rem}.callout{border-left:4px solid var(--accent)}h2{margin-top:2.1rem;font-size:1.55rem;line-height:1.25}h3{margin-top:1.5rem}a{color:#7dd3fc}.muted{color:var(--muted)}.scroll{overflow-x:auto}table{width:100%;border-collapse:collapse;margin:1rem 0}th,td{padding:.7rem;border:1px solid var(--line);text-align:left;vertical-align:top}th{background:#14314a}pre{overflow:auto;padding:1rem;border:1px solid var(--line);border-radius:.8rem;background:var(--code);color:#d9f3ff;font:.86rem/1.55 ui-monospace,Consolas,monospace}code{font-family:ui-monospace,Consolas,monospace}.demo{margin:1.2rem 0;padding:1.1rem;background:#0d1e2c;border:1px solid var(--line);border-radius:1rem}.demo-controls{display:flex;flex-wrap:wrap;gap:.55rem;margin-bottom:1rem}.demo button,.demo select,.demo input{font:inherit}.demo-controls button,.demo-reset{padding:.55rem .8rem;border:1px solid #32617e;border-radius:.55rem;background:#12334b;color:#e6f6ff;cursor:pointer}.demo-controls button:hover,.demo-reset:hover{background:#164766;border-color:var(--accent)}.demo button:focus-visible,.demo input:focus-visible,.demo select:focus-visible{outline:3px solid var(--accent);outline-offset:2px}.designer{display:grid;grid-template-columns:minmax(0,1fr) minmax(210px,.65fr);gap:1rem}.preview-window{min-height:255px;padding:1rem;background:#e8edf3;color:#17212d;border:1px solid #aab8c6;border-radius:.7rem}.preview-title{margin:-1rem -1rem 1rem;padding:.5rem .75rem;background:#d3e2ef;border-bottom:1px solid #aab8c6;border-radius:.7rem .7rem 0 0;font-weight:700}.preview-controls{display:grid;gap:.7rem}.preview-controls label{font-size:.92rem;font-weight:700}.preview-controls input,.preview-controls select{width:100%;padding:.45rem;border:1px solid #94a3b8;border-radius:.35rem;background:white;color:#17212d}.preview-controls button{justify-self:start;padding:.45rem .85rem;border:1px solid #2873a2;border-radius:.35rem;background:#1473aa;color:white;cursor:pointer}.preview-controls p{margin:.15rem 0}.component-list{margin:0;padding:1rem;background:#091723;border:1px solid var(--line);border-radius:.7rem}.component-list h3{margin:0 0 .5rem;font-size:1rem}.component-list ol{margin:.4rem 0;padding-left:1.4rem}.component-list li{color:var(--muted)}.component-list output{display:block;min-height:1.5em;margin-top:.75rem;color:#a5f3fc;font-size:.9rem}.demo-caption{margin:.8rem 0 0;color:var(--muted);font-size:.9rem}.flow{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:.55rem;margin:1rem 0}.flow span{padding:.65rem .85rem;background:#12334b;border:1px solid #286184;border-radius:.7rem}.flow b{color:#7dd3fc}.task{border:1px solid var(--line);border-radius:.8rem;padding:1rem;margin:.8rem 0;background:#0d1e2c}.task h3{margin:.1rem 0 .4rem}.note{margin:1rem 0;padding:1rem;background:#172b37;border:1px solid #42647a;border-radius:.8rem}.note summary{cursor:pointer;color:#bae6fd;font-weight:800}.nav{display:flex;justify-content:space-between;gap:1rem;margin-top:2rem}.nav-link{color:#bae6fd;text-decoration:none;padding:.7rem 1rem;border:1px solid var(--line);border-radius:.7rem}.nav-link:hover{border-color:var(--accent)}.next{background:#075985;border-color:#0ea5e9;color:white}footer{border-top:1px solid var(--line);margin-top:2rem;padding-top:1rem;color:var(--muted)}@media(max-width:650px){.designer{grid-template-columns:1fr}.top{align-items:flex-start;flex-direction:column}.nav{flex-direction:column}.nav-link{text-align:center}}
 </style>
 </head>
-<body><main class="page"><a class="back" href="../struktura.html">← Osnova kurzu</a><div class="top"><span class="tag">Modul 04 · Tvorba projektov</span><span class="count">Lekcia 29 / 66 · 45 min</span></div><h1>Tvorba projektov s komponentmi</h1><p class="subtitle">Návrh aplikácie z komponentov</p><img class="preview" src="../img/win32-preview-projekty.svg" alt="Ilustračný náhľad témy: Tvorba projektov s komponentmi"><section class="panel"><h2>Pripravujeme</h2><p>Táto lekcia je zaradená do osnovy kurzu. Výklad, ukážkový program a cvičenie doplníme neskôr.</p><span class="pill">Win32 API · C++ · Windows</span></section><nav class="nav" aria-label="Navigácia medzi lekciami"><a class="nav-link" href="28-clipboard.html">← Predchádzajúca</a><a class="nav-link next" href="30-tvorba-projektov-s-komponentmi.html">Nasledujúca →</a></nav></main><script src="code-tools.js" defer></script></body></html>
+<body><main class="page"><a class="back" href="../struktura.html">← Osnova kurzu</a><div class="top"><span class="tag">Modul 04 · Tvorba projektov</span><span class="count">Lekcia 29 / 66 · 45 min</span></div><h1>Tvorba projektov s komponentmi</h1><p class="subtitle">Zostavíme jednoduchý formulár z ovládacích prvkov a prepojíme ho s kódom aplikácie.</p><img class="preview" src="../img/win32-preview-projekty.svg" alt="Náhľad formulára aplikácie pre Windows">
+<div class="callout"><strong>Začíname kontrolou pracoviska:</strong> Po príchode do učebne si skontroluj svoje miesto, lavicu, stoličku a pridelený počítač s príslušenstvom. Každé poškodenie, chýbajúcu časť alebo inú závadu ihneď oznám vyučujúcemu. Stručný súhrn zistených nedostatkov pošli vyučujúcemu správou cez EduPage. Poškodené alebo nebezpečné zariadenie nepoužívaj.</div>
+<section class="panel"><h2>Ciele hodiny</h2><p>Po hodine vysvetlíš, čo je komponent aplikácie, rozlíšiš okno od jeho ovládacích prvkov, navrhneš jednoduchý formulár a opíšeš, ako Win32 API vytvorí prvok pomocou <code>CreateWindowExW</code> a spracuje jeho udalosť.</p></section>
+<h2>Plán 45 minút</h2><div class="scroll"><table><thead><tr><th>Čas</th><th>Činnosť</th></tr></thead><tbody><tr><td>0–5 min</td><td>Motivácia: z akých častí sa skladá prihlasovací formulár?</td></tr><tr><td>5–13 min</td><td>Komponent, vlastnosti, identifikátor a rodičovské okno</td></tr><tr><td>13–25 min</td><td>Živý návrh formulára a krátka analýza prvkov</td></tr><tr><td>25–37 min</td><td>Vytvorenie ovládacích prvkov vo Win32 API</td></tr><tr><td>37–43 min</td><td>Prepojenie tlačidla s textovým poľom cez správu</td></tr><tr><td>43–45 min</td><td>Zhrnutie a kontrolná otázka</td></tr></tbody></table></div>
+<h2>1. Čo je komponent?</h2><p><strong>Komponent</strong> je viditeľná alebo funkčná časť používateľského rozhrania, s ktorou používateľ pracuje. Vo formulári môžeme mať popis, textové pole, tlačidlo či rozbaľovací zoznam. Komponent má vlastnosti (napr. text, veľkosť a polohu), identifikátor a správanie pri udalosti.</p><div class="flow"><span>Hlavné okno</span><b>obsahuje →</b><span>Popis</span><span>Textové pole</span><span>Tlačidlo</span></div><div class="scroll"><table><thead><tr><th>Prvok Win32</th><th>Účel</th><th>Príklad v aplikácii</th></tr></thead><tbody><tr><td><code>STATIC</code></td><td>Zobrazuje text alebo obrázok.</td><td>„Zadaj meno:“</td></tr><tr><td><code>EDIT</code></td><td>Prijíma alebo zobrazuje text.</td><td>Textové pole pre meno</td></tr><tr><td><code>BUTTON</code></td><td>Spustí akciu po kliknutí.</td><td>„Pozdraviť“</td></tr><tr><td><code>COMBOBOX</code></td><td>Ponúkne výber z viacerých možností.</td><td>Výber triedy</td></tr></tbody></table></div><p>Vo Win32 API je ovládací prvok samostatné podradené okno. Hlavné okno je jeho rodič. Funkcia <code>CreateWindowExW</code> vytvorí hlavné okno aj jednotlivé prvky; parameter <code>hWndParent</code> určuje rodiča.</p>
+<h2>2. Interaktívna ukážka: poskladaj formulár</h2><p>Stlač tlačidlá a sleduj, ako sa mení náhľad formulára a zoznam komponentov. Potom do textového poľa napíš meno a vyskúšaj tlačidlo vo formulári.</p>
+<section class="demo" aria-labelledby="demo-title"><h3 id="demo-title">Návrhár formulára</h3><div class="demo-controls" role="group" aria-label="Pridať komponent do náhľadu"><button type="button" data-add-component="label">+ Popis</button><button type="button" data-add-component="edit">+ Textové pole</button><button type="button" data-add-component="button">+ Tlačidlo</button><button type="button" data-add-component="combo">+ Rozbaľovací zoznam</button><button class="demo-reset" type="button" id="reset-demo">Obnoviť ukážku</button></div><div class="designer"><div class="preview-window" aria-label="Náhľad okna aplikácie"><div class="preview-title">Moja aplikácia</div><div class="preview-controls" id="component-preview"><label for="demo-name">Meno:</label><input id="demo-name" type="text" placeholder="Napr. Jana"><button type="button" id="demo-greet">Pozdraviť</button><p id="demo-message" aria-live="polite">Tu sa zobrazí výsledok.</p></div></div><div class="component-list"><h3>Komponenty v okne</h3><ol id="component-list"><li><code>STATIC</code> – popis „Meno:“</li><li><code>EDIT</code> – vstup pre meno</li><li><code>BUTTON</code> – akcia Pozdraviť</li></ol><output id="demo-status" aria-live="polite">Pripravené na úpravu.</output></div></div><p class="demo-caption">Toto je webová simulácia návrhára. V skutočnej aplikácii Win32 API vytvorí natívne ovládacie prvky Windows.</p></section>
+<h2>3. Ako vznikne komponent v kóde?</h2><p>Pri vytváraní prvku nastavujeme jeho triedu, text, štýly a rodičovské okno. Každému prvku, ktorého udalosť chceme spracovať, dáme vlastný identifikátor.</p><pre><code>constexpr int ID_EDIT_MENO = 1001;
+constexpr int ID_BUTTON_POZDRAV = 1002;
+
+// V obsluhe správy WM_CREATE; hwnd je hlavné okno.
+HINSTANCE hInstance = reinterpret_cast<LPCREATESTRUCTW>(lParam)->hInstance;
+CreateWindowExW(
+    0, L"STATIC", L"Meno:",
+    WS_CHILD | WS_VISIBLE,
+    20, 20, 80, 24,
+    hwnd, nullptr, hInstance, nullptr);
+
+CreateWindowExW(
+    WS_EX_CLIENTEDGE, L"EDIT", L"",
+    WS_CHILD | WS_VISIBLE | WS_TABSTOP | ES_AUTOHSCROLL,
+    105, 18, 190, 28,
+    hwnd, reinterpret_cast&lt;HMENU&gt;(static_cast&lt;INT_PTR&gt;(ID_EDIT_MENO)),
+    hInstance, nullptr);
+
+CreateWindowExW(
+    0, L"BUTTON", L"Pozdraviť",
+    WS_CHILD | WS_VISIBLE | WS_TABSTOP | BS_PUSHBUTTON,
+    105, 58, 110, 32,
+    hwnd, reinterpret_cast&lt;HMENU&gt;(static_cast&lt;INT_PTR&gt;(ID_BUTTON_POZDRAV)),
+    hInstance, nullptr);</code></pre><div class="grid"><div class="panel"><h3><code>L"EDIT"</code> a <code>L"BUTTON"</code></h3><p>Názov triedy určuje druh štandardného ovládacieho prvku.</p></div><div class="panel"><h3><code>WS_CHILD | WS_VISIBLE</code></h3><p>Prvok je podradený oknu a po vytvorení ho Windows zobrazí.</p></div><div class="panel"><h3>Identifikátor</h3><p>Pomocou ID neskôr zistíme, ktorý prvok vyvolal udalosť.</p></div></div>
+<h2>4. Kliknutie je správa</h2><p>Keď používateľ klikne na tlačidlo, rodičovské okno dostane správu <code>WM_COMMAND</code>. Z <code>wParam</code> prečítame identifikátor a typ udalosti. Následne získame text z poľa a zobrazíme odpoveď.</p><pre><code>case WM_COMMAND:
+    if (LOWORD(wParam) == ID_BUTTON_POZDRAV &amp;&amp;
+        HIWORD(wParam) == BN_CLICKED) {
+        wchar_t meno[128]{};
+        GetWindowTextW(GetDlgItem(hwnd, ID_EDIT_MENO), meno, 128);
+        MessageBoxW(hwnd, meno, L"Ahoj!", MB_OK | MB_ICONINFORMATION);
+        return 0;
+    }
+    break;</code></pre><div class="flow"><span>Používateľ klikne</span><b>→</b><span><code>WM_COMMAND</code></span><b>→</b><span>Kontrola ID</span><b>→</b><span>Prečítanie vstupu</span><b>→</b><span>Výsledok</span></div>
+<h2>5. Založenie projektu</h2><ol><li>Vo VS Code vytvor priečinok projektu a súbor <code>main.cpp</code>.</li><li>Vlož úplnú ukážku Win32 aplikácie z predchádzajúcej lekcie a doplň vytvorenie ovládacích prvkov do <code>WM_CREATE</code>.</li><li>Pridaj identifikátory pre textové pole a tlačidlo.</li><li>V <code>WM_COMMAND</code> spracuj kliknutie a vypíš obsah textového poľa.</li><li>Projekt zostavuj Windows kompilátorom s Windows SDK, napríklad MinGW-w64 alebo MSVC.</li></ol><p class="callout"><strong>Platforma:</strong> tento Win32 kód potrebuje Windows SDK a spúšťa sa vo Windows. Tlačidlá pri ukážkach umožnia skopírovať kód; bežný online C++ kompilátor nevie vytvoriť natívne Windows okno.</p>
+<h2>Praktické úlohy</h2><div class="task"><h3>A · Kontaktný formulár · základná</h3><p>Navrhni okno s popisom, textovým poľom a tlačidlom. Pomenuj triedy ovládacích prvkov Win32 a urč rodičovské okno.</p><p class="muted"><strong>Výsledok:</strong> náčrt formulára a označenie <code>STATIC</code>, <code>EDIT</code>, <code>BUTTON</code>.</p></div><div class="task"><h3>B · Pozdrav · stredná</h3><p>Doplň ukážku o ID prvkov a obsluhu kliknutia. Po kliknutí prečítaj vstup a zobraz ho v správe.</p><p class="muted"><strong>Výsledok:</strong> tlačidlo reaguje iba na svoj identifikátor a pracuje s textom z poľa.</p></div><div class="task"><h3>C · Výber triedy · rozšírená</h3><p>Pridaj <code>COMBOBOX</code> s možnosťami 1.A, 2.A a 3.A. Po kliknutí na tlačidlo vypíš meno aj vybranú triedu.</p><p class="muted"><strong>Výsledok:</strong> aplikácia spracuje viac druhov vstupu.</p></div>
+<h2>Kontrolné otázky</h2><ol><li>Čo je komponent a uveď tri príklady z formulára.</li><li>Aký je rozdiel medzi rodičovským oknom a podradeným ovládacím prvkom?</li><li>Na čo slúži ID pri vytvorení tlačidla?</li><li>Ktorá správa sa odošle rodičovi pri kliknutí na tlačidlo?</li><li>Prečo túto ukážku nemožno spustiť v bežnom online C++ kompilátore?</li></ol><details class="note"><summary>Pre učiteľa: orientačné odpovede a bodovanie</summary><ol><li>Komponent je časť používateľského rozhrania; napríklad popis, textové pole, tlačidlo alebo výberový zoznam.</li><li>Rodičovské okno obsahuje ovládacie prvky; podradený prvok je samostatné okno vložené do rodiča.</li><li>ID jednoznačne identifikuje ovládací prvok, aby aplikácia vedela, odkiaľ prišla správa.</li><li><code>WM_COMMAND</code>; pri tlačidle kontrolujeme <code>BN_CLICKED</code>.</li><li>Win32 kód potrebuje Windows hlavičky, knižnice a systém; štandardný online kompilátor beží v inom prostredí.</li></ol><p>Odporúčanie: 1 bod za každú odpoveď. Pri praktickej úlohe možno hodnotiť návrh, správne triedy ovládacích prvkov, identifikátory a reakciu na kliknutie (4 body).</p></details>
+<section class="panel"><h2>Zhrnutie</h2><p>Formulár skladá hlavné okno a podradené komponenty. Vo Win32 API ich vytvárame funkciou <code>CreateWindowExW</code>, určujeme im triedu, štýly a ID. Kliknutia prichádzajú ako správy, ktoré obsluha okna spracuje.</p></section>
+<nav class="nav" aria-label="Navigácia medzi lekciami"><a class="nav-link" href="28-clipboard.html">← Predchádzajúca</a><a class="nav-link next" href="30-tvorba-projektov-s-komponentmi.html">Nasledujúca: prepojenie komponentov →</a></nav><footer>Win32 API · C++17 · Windows SDK · Visual Studio Code s MSVC alebo MinGW-w64</footer></main>
+<script>
+(() => {
+  const preview = document.getElementById("component-preview");
+  const list = document.getElementById("component-list");
+  const status = document.getElementById("demo-status");
+  const message = document.getElementById("demo-message");
+  let ids = 3;
+
+  function addComponent(type) {
+    ids += 1;
+    const id = `demo-component-${ids}`;
+    const li = document.createElement("li");
+    let item;
+    if (type === "label") {
+      item = document.createElement("p");
+      item.textContent = "Nový popis";
+      li.innerHTML = "<code>STATIC</code> – nový popis";
+    } else if (type === "edit") {
+      const label = document.createElement("label");
+      label.htmlFor = id;
+      label.textContent = "Nové textové pole:";
+      item = document.createElement("input");
+      item.type = "text";
+      item.id = id;
+      item.placeholder = "Zadaj text";
+      preview.append(label);
+      li.innerHTML = "<code>EDIT</code> – nové textové pole";
+    } else if (type === "button") {
+      item = document.createElement("button");
+      item.type = "button";
+      item.textContent = "Nové tlačidlo";
+      item.addEventListener("click", () => {
+        message.textContent = "Kliknutie na pridané tlačidlo bolo zachytené.";
+        status.textContent = "Udalosť BUTTON bola spracovaná.";
+      });
+      li.innerHTML = "<code>BUTTON</code> – nové tlačidlo";
+    } else {
+      item = document.createElement("select");
+      item.id = id;
+      item.setAttribute("aria-label", "Nový rozbaľovací zoznam");
+      ["Vyber možnosť", "1.A", "2.A", "3.A"].forEach((text) => {
+        const option = document.createElement("option");
+        option.textContent = text;
+        item.append(option);
+      });
+      li.innerHTML = "<code>COMBOBOX</code> – rozbaľovací zoznam";
+    }
+    preview.append(item);
+    list.append(li);
+    status.textContent = `Pridaný komponent ${ids - 3}.`;
+  }
+
+  document.querySelectorAll("[data-add-component]").forEach((button) => {
+    button.addEventListener("click", () => addComponent(button.dataset.addComponent));
+  });
+  document.getElementById("demo-greet").addEventListener("click", () => {
+    const name = document.getElementById("demo-name").value.trim();
+    message.textContent = name ? `Ahoj, ${name}!` : "Najprv napíš meno do textového poľa.";
+    status.textContent = "Tlačidlo prečítalo hodnotu z komponentu EDIT.";
+  });
+  document.getElementById("reset-demo").addEventListener("click", () => window.location.reload());
+})();
+</script><script src="code-tools.js" defer></script></body></html>
