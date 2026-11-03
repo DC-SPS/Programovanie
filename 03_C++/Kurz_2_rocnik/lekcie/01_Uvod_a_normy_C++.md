@@ -1,97 +1,195 @@
-# Téma 4: Úvod do programovania v štruktúrovanom programovacom jazyku
+# Téma 4 · Hodina 1: Historický úvod a normy jazyka C++
 
-## Hodina 1: Historický úvod a normy jazyka C++
-
-**Veľká téma:** Úvod do programovania v štruktúrovanom programovacom jazyku  
+**Veľká téma:** Úvod do programovania v štruktúrovanom programovacom jazyku
+**Miesto v kurze:** 1. z 22 vyučovacích hodín; prvá zo štyroch hodín úvodnej témy
 **Trvanie:** 45 minút
+
+## Nadväznosť na Python
+
+Študenti už poznajú algoritmy a základy programovania v Pythone. V tejto hodine na tieto vedomosti nadviažu tým, že spoznajú spôsob, akým sa pravidlá jazyka C++ spoločne opisujú a ako kompilátor podľa zvoleného štandardu prekladá program. Syntax C a C++ zatiaľ nezamieňame; podrobné porovnanie príde pri konkrétnych programovacích konštrukciách.
 
 ## Ciele hodiny
 
 Na konci hodiny študent:
 
-- vysvetlí, prečo vznikajú jazykové normy;
-- rozpozná, že C++ má viacero verzií štandardu;
-- vysvetlí, prečo sa v tomto kurze budeme držať C++17;
-- odlíši štandard jazyka od konkrétneho kompilátora.
+- vlastnými slovami vysvetlí rozdiel medzi jazykom C++, štandardom C++17 a kompilátorom;
+- uvedie, prečo je užitočné dohodnúť sa v kurze na jednej verzii štandardu;
+- rozpozná prepínač `-std=c++17` v príkaze na preklad a opíše jeho účel;
+- uvedie aspoň jeden míľnik vývoja štandardov C++ bez tvrdenia, že C++17 je najnovšia verzia.
 
-## Nadväznosť na Python
+## Predchádzajúce vedomosti a príprava
 
-Študenti už poznajú algoritmy a písali programy v Pythone. V tejto hodine sa zoznámia s tým, že programovací jazyk sa vyvíja a jeho normy určujú spoločné pravidlá, ktorým sa kompilátory snažia vyhovovať. Rozdiely medzi Python a C++ zatiaľ len pomenujeme; prvý program príde v nasledujúcej hodine.
+**Študenti by mali vedieť:** že zdrojový program zapisuje programátor v programovacom jazyku a že na vykonanie programu počítač potrebuje príslušné nástroje. Predchádzajúca znalosť syntaxe C nie je potrebná.
 
-## Časový plán
+**Príprava prostredia:**
 
-| Čas | Činnosť | Čo robí učiteľ a študenti |
-|---:|---|---|
-| 0–5 min | Motivácia a video | Premietnite [Kurz C C++ – Lekcia 1: Úvod](https://www.youtube.com/watch?v=bz-IgboqUP0) od Informatiky s Mišom (vyberte krátku úvodnú časť). Spýtajte sa, čo musí byť spoločné, aby programátori vedeli písať a spúšťať programy v rovnakom jazyku. |
-| 5–13 min | Historický úvod | Stručne predstavte vznik C++ a vývoj jeho štandardov. Študenti si zaznačia míľniky. |
-| 13–23 min | Čo je štandard | Vysvetlite vzťah medzi jazykom, normou a kompilátorom. Trieda rozoberie jednoduchú analógiu spoločných pravidiel. |
-| 23–31 min | Prečo C++17 | Predstavte C++17 ako dohodnutý cieľ kurzu. Študenti porovnajú označenia verzií na časovej osi. |
-| 31–39 min | Aktivita v dvojiciach | Dvojice vysvetlia vzťah medzi pojmami „jazyk“, „štandard“, „kompilátor“ a „program“. |
-| 39–45 min | Kontrola a záver | Krátke otázky a záverečný lístok: študent jednou vetou vysvetlí, prečo trieda používa rovnaký štandard. |
+- Na hodinu stačí tabuľa alebo projektor a pripravená časová os pojmov.
+- Kompilátor netreba inštalovať ani používať. Ak je v učebni dostupný GCC, učiteľ môže voliteľne ukázať príkaz na preklad; dostupnosť konkrétneho prostredia sa v tejto lekcii nepredpokladá.
+- Pripravte kartičky alebo snímku s pojmami **programátor**, **zdrojový kód**, **C++**, **štandard C++17**, **kompilátor** a **spustiteľný program**.
 
-## Výklad pre učiteľa
+## Časový plán na 45 minút
 
-### Krátka história
+| Čas | Trvanie | Časť hodiny | Činnosť |
+|---|---:|---|---|
+| 0–5 min | 5 min | Úvod a motivácia | Krátka časť úvodného videa alebo otázka, prečo rôzni programátori potrebujú spoločné pravidlá. |
+| 5–11 min | 6 min | Historický úvod | Umiestnenie C++ a hlavných štandardov na časovú os. |
+| 11–19 min | 8 min | Výklad pojmov | Rozlíšenie jazyka, štandardu, kompilátora a programu. |
+| 19–25 min | 6 min | Prečo C++17 | Vysvetlenie dohodnutého cieľa kurzu a významu prepínača štandardu. |
+| 25–32 min | 7 min | Ukážka učiteľa | Prečítanie krátkeho programu C++17 a príkazu na jeho preklad. |
+| 32–39 min | 7 min | Aktivita študentov | Práca vo dvojiciach: usporiadanie pojmov a vysvetlenie ich vzťahov. |
+| 39–43 min | 4 min | Kontrola porozumenia | Krátke otázky a oprava nepresných tvrdení. |
+| 43–45 min | 2 min | Záver | Lístok pri odchode. |
+| **Spolu** | **45 min** |  |  |
 
-C++ vytvoril Bjarne Stroustrup na začiatku 80. rokov ako rozšírenie a vývoj jazyka C. Jazyk sa postupne menil a pribúdali doň nové možnosti. Na zjednotenie pravidiel pre kompilátory a programátorov vznikali normy C++.
+## Výklad učiteľa
 
-Na tabuľu napíšte zjednodušenú časovú os:
+### 1. Stručná história
+
+C++ sa začalo vyvíjať na prelome 70. a 80. rokov 20. storočia. Jazyk vytvoril Bjarne Stroustrup; jeho práca nadviazala na jazyk C a rozšírila ho o ďalšie možnosti. Medzinárodný štandard pomáha presnejšie určiť, čo znamená platný program a aké správanie sa očakáva od jeho implementácie.
+
+Na tabuľu alebo snímku pripravte zjednodušenú časovú os:
 
 **C++ vzniká → C++98 → C++11 → C++14 → C++17 → C++20 → C++23**
 
-Označenia číslom spravidla odkazujú na rok vydania príslušnej normy alebo návrhu. Aktuálnym publikovaným štandardom je C++23, oficiálne vydaný ako ISO/IEC 14882:2024. V kurze používame C++17 ako spoločný cieľ výučby; nejde o tvrdenie, že je to najnovší štandard. ([ISO](https://committee.iso.org/standard/83626.html), [Standard C++](https://isocpp.org/std/the-standard))
+Označenia verzií často odkazujú na rok dokončenia technickej práce alebo schválenia. Aktuálny publikovaný štandard je C++23, formálne označený **ISO/IEC 14882:2024**. Preto C++17 v tomto kurze neoznačujeme za najnovšiu verziu: je to dohodnutý cieľ výučby.
 
-### Čo znamená štandard
-
-Štandard je spoločná špecifikácia pravidiel jazyka a jeho štandardnej knižnice. Určuje napríklad, aké konštrukcie jazyk obsahuje a aké správanie sa od nich očakáva.
-
-Analógia: keď sa pri hre dohodneme na rovnakých pravidlách, všetci môžu hrať bez toho, aby si každý vytvoril vlastnú verziu hry.
+### 2. Jazyk, štandard, kompilátor a program
 
 - **C++** je programovací jazyk.
-- **C++17** je jedna z verzií jeho štandardu.
-- **GCC, Clang alebo MSVC** sú kompilátory, ktoré prekladajú kód a podporujú vybrané verzie štandardu v rôznej miere.
+- **Štandard C++17** je verzia špecifikácie, ktorá opisuje pravidlá jazyka C++ a jeho štandardnej knižnice.
+- **Kompilátor** je nástroj, ktorý prekladá zdrojový kód. Príkladmi sú GCC, Clang a MSVC. Ich podpora štandardov a dostupných rozšírení sa môže líšiť.
+- **Zdrojový kód** je text programu, ktorý napísal programátor.
+- **Spustiteľný program** je výsledok prekladu, ktorý možno spustiť v príslušnom prostredí.
 
-Štandard nie je program, ktorý si študent nainštaluje. Kompilátor sa pokúša pravidlá štandardu implementovať. V kurze budeme pri preklade uvádzať `-std=c++17`, aby sa výsledky v triede čo najviac zjednotili. GCC umožňuje zvoliť jazykový štandard pomocou prepínača `-std=` ([dokumentácia GCC](https://gcc.gnu.org/onlinedocs/gcc/Standards.html)).
+Štandard nie je kompilátor ani samostatný program, ktorý sa inštaluje. Prepínač kompilátora môže požiadať o režim konkrétnej verzie štandardu, ale sám nedoplní funkcie, ktoré kompilátor alebo jeho štandardná knižnica nepodporujú.
 
-### Prečo sa držať jednej verzie
+### 3. Prečo v kurze používame C++17
 
-Ak každý používa inú verziu alebo rozšírenia konkrétneho kompilátora, môže sa stať, že rovnaký program sa na dvoch počítačoch nebude správať rovnako alebo sa na jednom z nich ani neskompiluje. Jedna dohodnutá verzia zjednodušuje vysvetľovanie, zadávanie úloh aj spoločnú kontrolu výsledkov.
+Kurz používa C++17, aby boli príklady, zadania a nastavenia prekladu v rámci hodín čo najviac zjednotené. Rovnaký štandard znižuje riziko, že si študenti vysvetlia rozdielne výsledky spôsobené odlišnými jazykovými režimami ako chybu v algoritme. C++17 je výučbová voľba kurzu, nie tvrdenie, že novšie verzie neexistujú alebo že každý kompilátor podporuje všetky časti štandardu rovnako.
+
+## Ukážka C++17 a postupný rozbor
+
+Tento krátky program používa `std::string_view`, ktorý patrí do štandardnej knižnice C++17. Jeho účelom v tejto hodine nie je učiť podrobnosti o reťazcoch, ale ukázať vzťah medzi zdrojovým kódom, štandardom a kompilátorom. Podrobnejšie vysvetlenie prvého programu patrí do hodiny 2.
+
+```cpp
+#include <iostream>
+#include <string_view>
+
+int main() {
+    constexpr std::string_view standard = "C++17";
+    std::cout << "Dohodnutý štandard: " << standard << '\n';
+    return 0;
+}
+```
+
+Ak je dostupný kompilátor GCC s podporou C++17, učiteľ môže ukázať preklad:
+
+```sh
+g++ -std=c++17 -Wall -Wextra -pedantic main.cpp -o program
+```
+
+Na Windows sa výsledný program spúšťa ako `program.exe`; na systémoch Unix-like sa zvyčajne spúšťa príkazom `./program`. Samotný príkaz kompilátora a spustenie závisia od nainštalovaného nástroja a terminálu. V tejto hodine netreba študentom nastavovať vývojové prostredie.
+
+Očakávaný výstup:
+
+```text
+Dohodnutý štandard: C++17
+```
+
+**Rozbor pre učiteľa:**
+
+1. `#include <iostream>` a `#include <string_view>` sprístupňujú deklarácie zo štandardnej knižnice.
+2. `int main()` je vstupný bod programu; podrobný rozbor patrí do nasledujúcej hodiny.
+3. `std::string_view` je typ zo štandardnej knižnice, dostupný od C++17.
+4. `std::cout` vypíše text a `'\n'` pridá nový riadok.
+5. Prepínač `-std=c++17` žiada GCC, aby prekladal v jazykovom režime C++17. Ostatné prepínače zapínajú varovania a prísnejšie diagnostické upozornenia.
+
+Zdôraznite, že príkaz je príklad pre GCC, nie univerzálny príkaz pre všetky kompilátory. Možnosť prekladu v režime C++17 závisí aj od podpory konkrétnej verzie kompilátora a knižnice.
 
 ## Aktivita študentov
 
-V dvojiciach doplňte a vysvetlite vety:
+Vo dvojiciach priraďte kartičky k vysvetleniam a potom ústne opíšte cestu od programu po jeho spustenie:
 
-- Programátor píše…
-- Jazyk C++ určuje…
-- Štandard C++17 spresňuje…
-- Kompilátor vykonáva…
+| Pojem | Vysvetlenie |
+|---|---|
+| Programátor | Vytvára zdrojový kód. |
+| C++ | Jazyk, v ktorom je zdrojový kód napísaný. |
+| C++17 | Verzia štandardu jazyka C++. |
+| GCC | Príklad kompilátora, ktorý môže prekladať C++ kód. |
+| `-std=c++17` | Príklad požiadavky na jazykový režim kompilátora GCC. |
+| Spustiteľný program | Výsledok prekladu, ktorý možno spustiť v príslušnom prostredí. |
 
-**Očakávané vysvetlenie:** Programátor píše zdrojový kód v C++. Štandard stanovuje pravidlá jazyka a knižnice pre danú verziu. Kompilátor preloží zdrojový kód podľa podporovaných pravidiel a nastavení.
+**Očakávaný výsledok:** študenti správne odlíšia špecifikáciu jazyka od nástroja a zoradia pojmy približne takto: programátor → zdrojový kód v C++ → kompilátor nastavený na C++17 → spustiteľný program.
 
-## Otázky na kontrolu porozumenia
+### Úlohy
 
-1. Je C++17 názov kompilátora alebo verzia štandardu?
-2. Aký je rozdiel medzi jazykom a kompilátorom?
-3. Prečo je užitočné, keď celá trieda používa rovnaký štandard?
-4. Znamená použitie C++17, že novšie verzie C++ neexistujú?
+**Základná úroveň**
 
-**Očakávané odpovede:** C++17 je verzia štandardu; kompilátor prekladá program; jednotné nastavenie uľahčuje spoločnú prácu; novšie verzie existujú, v kurze však zámerne zostávame pri C++17.
+Prečítajte si príkaz:
 
-## Záverečný lístok
+```sh
+g++ -std=c++17 main.cpp -o program
+```
 
-Každý študent doplní vetu: **„V tomto kurze používame C++17, pretože…“**
+Pomenujte kompilátor, súbor so zdrojovým kódom, zvolený štandard a názov výsledného programu.
 
-Odpoveď má spomenúť spoločné pravidlá alebo zjednotenie prostredia triedy.
+**Kritérium úspechu:** správne označíte `g++`, `main.cpp`, `-std=c++17` a `program`.
 
-## Časté nedorozumenia
+**Rozširujúca úroveň**
 
-- **„C++17 je ďalší jazyk po C++.“** Ide o verziu štandardu jazyka C++.
-- **„Kompilátor je štandard.“** Kompilátor je nástroj; štandard je špecifikácia pravidiel.
-- **„Najnovšia verzia je vždy najlepšia pre každú hodinu.“** Kurz používa jednu stanovenú verziu, aby boli príklady a prostredie konzistentné.
+Posúďte tvrdenie: „Ak dvaja študenti používajú rôzne verzie kompilátora, určite používajú rôzne programovacie jazyky.“ Opravte ho tak, aby rozlišovalo verziu nástroja od štandardu jazyka, a uveďte, čo ešte treba skontrolovať pri porovnávaní prostredí.
 
-## Pomôcky a poznámky pre učiteľa
+**Očakávaný výsledok:** rôzne verzie kompilátora môžu implementovať rovnaký jazykový štandard; treba overiť podporu štandardu a nastavený jazykový režim.
 
-- Premietnite úvodné video od Informatiky s Mišom a časovú os štandardov.
-- Pripravte tabuľu alebo snímku na vysvetlenie štyroch pojmov.
-- V tejto hodine netreba písať ani spúšťať kód; prvý program patrí do hodiny 2.
-- Voliteľná domáca úloha: zistiť názov kompilátora dostupného v školskom prostredí. Ak prostredie ešte nie je známe, úlohu vynechajte.
+## Otázky na priebežné overenie
+
+1. Je C++17 názov kompilátora, programovacieho jazyka alebo verzie štandardu?
+2. Čo robí kompilátor so zdrojovým kódom?
+3. Čo v príkaze GCC vyjadruje `-std=c++17`?
+4. Znamená dohoda na C++17, že ide o najnovšiu verziu C++?
+
+**Očakávané odpovede:** C++17 je verzia štandardu jazyka C++; kompilátor prekladá zdrojový kód; `-std=c++17` žiada GCC o jazykový režim C++17; nie, existuje aj C++23.
+
+## Lístok pri odchode
+
+Pred odchodom dokončite dve vety:
+
+1. „C++17 je …“
+2. „V kurze sa držíme C++17, aby …“
+
+**Kontrola:** odpoveď má správne pomenovať štandard a uviesť spoločné nastavenie alebo konzistentné príklady ako dôvod.
+
+## Časté chyby a nedorozumenia
+
+- **„C++17 je iný jazyk než C++.“** C++17 je verzia štandardu jazyka C++.
+- **„Kompilátor je štandard.“** Kompilátor je nástroj; štandard je špecifikácia.
+- **„Každý kompilátor podporuje všetky štandardy rovnako.“** Podpora závisí od kompilátora, jeho verzie a štandardnej knižnice.
+- **„`-std=c++17` nainštaluje podporu C++17.“** Prepínač iba vyberá jazykový režim, ktorý musí kompilátor podporovať.
+- **„C++17 je najnovší štandard.“** Kurz si ho zvolil ako spoločný výučbový cieľ; publikovaný štandard C++23 je novší.
+- **„C a C++ sú totožné.“** Sú to príbuzné, ale odlišné jazyky. V kurze píšeme C++17 a syntax C používame iba pri výslovnom porovnaní.
+
+## Pomôcky, video a domáca úloha
+
+**Pomôcky:** tabuľa alebo projektor, časová os štandardov, kartičky s pojmami. Kompilátor je voliteľný pre učiteľskú ukážku; dostupnosť vybavenia sa nepredpokladá.
+
+**Video:** [Kurz C C++ | Lekcia 1 | Úvod – Informatika s Mišom](https://www.youtube.com/watch?v=bz-IgboqUP0). Overený priamy odkaz na úvodné video. Použite iba krátku motivačnú časť; keďže video patrí ku kurzu C/C++, vysvetlite, že praktická časť tohto kurzu používa C++17 a že syntax C a C++ sa nemá zamieňať.
+
+**Domáca úloha (dobrovoľná):** Vysvetlite vlastnými slovami rozdiel medzi štandardom a kompilátorom. Ak poznáte nástroj, ktorý používate, zistite jeho názov; nič neinštalujte ani nemeňte v nastaveniach.
+
+## Poznámky pre učiteľa
+
+- Cieľovou skupinou sú študenti 2. ročníka; predpokladajte skúsenosť s programovaním v Pythone podľa README kurzu, nie znalosť syntaxe C.
+- Hlavným výstupom je presné rozlíšenie pojmov a dôvod používania C++17. Historický prehľad udržte stručný.
+- Ukážku s `std::string_view` použite ako názorný príklad štandardnej knižnice C++17; nevysvetľujte do hĺbky jej životnosť ani vnútornú implementáciu.
+- Ak v prostredí nie je vhodný kompilátor, rozoberte príkaz iba na tabuli. Neinštalujte ani nekonfigurujte nástroje bez overenia miestnych pravidiel.
+- **Obsah podľa osnovy:** historický úvod, účel C++, normy jazyka a prehľad kompilácie.
+- **Dobrovoľné rozšírenie:** konkrétny preklad krátkeho programu a porovnanie jazykových režimov kompilátora.
+
+## Zdroje
+
+- [ISO: ISO/IEC 14882:2024 – Programming languages — C++](https://www.iso.org/standard/83626.html) — publikovaný štandard C++23.
+- [Standard C++: The Standard](https://isocpp.org/std/the-standard) — vysvetlenie označenia C++23 a súvislosti s ISO/IEC 14882:2024.
+- [GCC: Language Standards Supported by GCC](https://gcc.gnu.org/onlinedocs/gcc/Standards.html) — spôsob výberu jazykového štandardu a podpora štandardov v GCC.
+- [Bjarne Stroustrup: FAQ](https://www.stroustrup.com/bs_faq.html) — doplnkový zdroj informácií o autorovi a histórii C++.
+- [Video: Kurz C C++ | Lekcia 1 | Úvod](https://www.youtube.com/watch?v=bz-IgboqUP0) — motivačný úvod.
+- [cppreference: `std::basic_string_view`](https://en.cppreference.com/w/cpp/string/basic_string_view) — doplnková referencia k typu `std::string_view`.
