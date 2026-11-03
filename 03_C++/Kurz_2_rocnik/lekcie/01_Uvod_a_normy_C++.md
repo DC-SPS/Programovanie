@@ -1,7 +1,7 @@
-# Téma 4 · Hodina 1: Historický úvod a normy jazyka C++
+# Téma 4 · Hodina 19: Historický úvod a normy jazyka C++
 
 **Veľká téma:** Úvod do programovania v štruktúrovanom programovacom jazyku
-**Miesto v kurze:** 1. z 22 vyučovacích hodín; prvá zo štyroch hodín úvodnej témy
+**Miesto v kurze:** 19. z 66 vyučovacích hodín; prvá zo štyroch hodín úvodnej témy
 **Trvanie:** 45 minút
 
 ## Nadväznosť na Python
@@ -69,7 +69,7 @@ Kurz používa C++17, aby boli príklady, zadania a nastavenia prekladu v rámci
 
 ## Ukážka C++17 a postupný rozbor
 
-Tento krátky program používa `std::string_view`, ktorý patrí do štandardnej knižnice C++17. Jeho účelom v tejto hodine nie je učiť podrobnosti o reťazcoch, ale ukázať vzťah medzi zdrojovým kódom, štandardom a kompilátorom. Podrobnejšie vysvetlenie prvého programu patrí do hodiny 2.
+Tento krátky program používa `std::string_view`, ktorý patrí do štandardnej knižnice C++17. Jeho účelom v tejto hodine nie je učiť podrobnosti o reťazcoch, ale ukázať vzťah medzi zdrojovým kódom, štandardom a kompilátorom. Podrobnejšie vysvetlenie prvého samostatného programu patrí do hodiny 20.
 
 ```cpp
 #include <iostream>

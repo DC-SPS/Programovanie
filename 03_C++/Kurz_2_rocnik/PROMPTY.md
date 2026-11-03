@@ -1,11 +1,11 @@
 # Prompt na postupnú tvorbu kurzu
 
-Tento prompt použite opakovane. Pri prvom použití pripravte **hodinu 1**. Pri ďalšom zadaní „pokračuj“ pripravte nasledujúcu hodinu podľa učebnej cesty v `README.md`. Vždy vytvorte iba jednu 45-minútovú hodinu.
+Tento prompt použite opakovane. Číslo každej lekcie určujte podľa 66-hodinovej učebnej cesty v `README.md`, nie podľa poradového čísla súboru v priečinku `lekcie/`. Aktuálny súbor `01_Uvod_a_normy_C++.md` je prvá rozpísaná lekcia, ale podľa dodaného rozvrhu patrí k **hodine 19**. Pri ďalšom zadaní „pokračuj“ pripravte nasledujúcu ešte nespracovanú vyučovaciu hodinu; po hodine 19 teda nasleduje hodina 20. Vždy vytvorte iba jednu 45-minútovú vyučovaciu hodinu, aj keď téma v osnove zaberá dve alebo viac hodín.
 
-> Pracujeme na kurze **C/C++ – Základy programovania pre 2. ročník**, ktorý nadväzuje na kurz Pythonu. Prečítaj `03_C++/Kurz_2_rocnik/README.md` a priprav nasledujúcu ešte nespracovanú 45-minútovú hodinu podľa učebnej cesty. Pri prvom spustení začni hodinou 1; po mojom pokyne „pokračuj“ prejdi na ďalšiu hodinu. Predošlé hodiny použi na nadväznosti a neopakuj ich bez dôvodu.
+> Pracujeme na kurze **C/C++ – Základy programovania pre 2. ročník**, ktorý nadväzuje na kurz Pythonu a obsahuje 66 vyučovacích hodín po 45 minút. Prečítaj `03_C++/Kurz_2_rocnik/README.md` a priprav nasledujúcu požadovanú 45-minútovú hodinu podľa číslovania v učebnej ceste. Aktuálne rozpísaný súbor je hodina 19; po mojom pokyne „pokračuj“ prejdi na nasledujúcu ešte nespracovanú hodinu v osnove. Viac-hodinové témy spracúvaj ako samostatné 45-minútové hodiny, nie ako spojený blok. Predošlé materiály použi na nadväznosti a neopakuj ich bez dôvodu.
 >
 > Pre hodinu priprav:
-> 1. číslo a názov hodiny, veľkú tému a jej miesto v kurze;
+> 1. číslo hodiny podľa 66-hodinovej osnovy, názov, veľkú tému a jej miesto v kurze (číslo súboru môže byť odlišné);
 > 2. stručné zdôvodnenie nadväznosti na Python alebo na predchádzajúcu hodinu;
 > 3. 2–4 merateľné ciele formulované „Na konci hodiny študent…“;
 > 4. potrebné predchádzajúce vedomosti a prípravu prostredia;
@@ -27,4 +27,4 @@ Po kontrole aktuálnej hodiny napíšem:
 
 > **Pokračuj ďalšou 45-minútovou hodinou podľa PROMPTY.md.**
 
-Potom priprav nasledujúcu hodinu a na začiatku uveď jej číslo a názov, aby bolo jasné, kde v kurze sme.
+Potom priprav nasledujúcu ešte nespracovanú 45-minútovú hodinu podľa 66-hodinovej osnovy a na začiatku uveď jej oficiálne číslo a názov. Číslovanie tém ani ich násobné 45-minútové bloky nezlučuj.
