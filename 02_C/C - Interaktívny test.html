@@ -12,11 +12,11 @@
 :root[data-theme="dark"]{color-scheme:dark;--bg:#12161d;--fg:#e6eaf1;--card:#1b212b;--mut:#9aa6b8;--acc:#5aa2ff;--line:#2d3644;--ok:#63d58a;--bad:#ff8178;--okbg:#153522;--badbg:#3a201f}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.65 system-ui,-apple-system,"Segoe UI",sans-serif}a{color:var(--acc)}.wrap{width:min(100% - 2rem,900px);margin:auto;padding:16px}header{display:flex;flex-wrap:wrap;justify-content:space-between;gap:10px}.muted{color:var(--mut)}h1{font-size:clamp(1.7rem,5vw,2.5rem);line-height:1.2}.lead{color:var(--mut)}.quiz{margin:2rem 0;padding:1.25rem;border:1px solid var(--line);border-radius:12px;background:var(--card)}.question{margin:1rem 0;padding:1rem;border:1px solid var(--line);border-radius:10px}.question legend{padding:0 .35rem;font-weight:700}.answers{display:grid;gap:.45rem}.answers label{display:flex;align-items:flex-start;gap:.55rem;cursor:pointer}.answers input{margin-top:.4rem;accent-color:var(--acc)}.feedback{min-height:1.5em;margin:.7rem 0 0;font-size:.95rem}.feedback.correct{color:var(--ok)}.feedback.incorrect{color:var(--bad)}.quiz-result{min-height:1.7em;font-weight:700}.quiz-result[data-state="ok"]{color:var(--ok)}.quiz-result[data-state="error"]{color:var(--bad)}button{padding:.65rem 1rem;border:0;border-radius:8px;background:var(--acc);color:#fff;font:inherit;font-weight:700;cursor:pointer}button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid var(--acc);outline-offset:3px}.quiz-help{color:var(--mut)}footer{margin-top:2rem;padding-top:1rem;border-top:1px solid var(--line);color:var(--mut);font-size:14px}
 </style>
-<script src="theme.js" defer></script>
+<script src="../theme.js" defer></script>
 </head>
-<body><nav class="global-course-nav" aria-label="Navigácia kurzov"><a href="c-language.html">Kurz C</a><a href="c-cpp.html">Kurz C/C++</a><a href="index.html">Všetky kurzy</a></nav>
+<body><nav class="global-course-nav" aria-label="Navigácia kurzov"><a href="c-language.html">Kurz C</a><a href="index.html">Kurz C/C++</a><a href="../index.html">Všetky kurzy</a></nav>
 <main class="wrap">
-<header><span class="muted"><a href="c-language.html">Základy jazyka C</a> › Precvičovanie</span><a href="nastavenia.html">Nastavenia vzhľadu</a></header>
+<header><span class="muted"><a href="c-language.html">Základy jazyka C</a> › Precvičovanie</span><a href="../nastavenia.html">Nastavenia vzhľadu</a></header>
 <h1>Interaktívny test z jazyka C</h1>
 <p class="lead">Vyber odpoveď pri každej otázke a vyhodnoť test. Zobrazí sa skóre aj vysvetlenie správnych odpovedí.</p>
 
@@ -41,8 +41,8 @@
   <button type="reset">Vynulovať test</button>
 </form>
 
-<footer><a href="c-language.html">Späť na materiály C</a> · <a href="c-cpp.html">C/C++</a></footer>
+<footer><a href="c-language.html">Späť na materiály C</a> · <a href="index.html">C/C++</a></footer>
 </main>
-<script src="quiz.js"></script>
+<script src="../quiz.js"></script>
 </body>
 </html>
