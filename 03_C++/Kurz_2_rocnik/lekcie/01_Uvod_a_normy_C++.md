@@ -1,5 +1,7 @@
 # Téma 4 · Hodina 19: Historický úvod a normy jazyka C++
 
+> **Interaktívna verzia v štýle prednášok Pythonu:** [Otvoriť vizuálnu prednášku s prepínačom žiak/učiteľ, kopírovaním kódu a samoopravným kvízom](https://programovanie-sps.vercel.app/03_C%2B%2B/Kurz_2_rocnik/lekcie/01_Uvod_a_normy_C%2B%2B.html).
+
 **Veľká téma:** Úvod do programovania v štruktúrovanom programovacom jazyku
 **Miesto v kurze:** 19. z 66 vyučovacích hodín; prvá zo štyroch hodín úvodnej témy
 **Trvanie:** 45 minút
@@ -172,7 +174,7 @@ Pred odchodom dokončite dve vety:
 
 **Pomôcky:** tabuľa alebo projektor, časová os štandardov, kartičky s pojmami. Kompilátor je voliteľný pre učiteľskú ukážku; dostupnosť vybavenia sa nepredpokladá.
 
-**Video:** [Kurz C C++ | Lekcia 1 | Úvod – Informatika s Mišom](https://www.youtube.com/watch?v=bz-IgboqUP0). Overený priamy odkaz na úvodné video. Použite iba krátku motivačnú časť; keďže video patrí ku kurzu C/C++, vysvetlite, že praktická časť tohto kurzu používa C++17 a že syntax C a C++ sa nemá zamieňať.
+**Video:** [Kurz C C++ | Lekcia 1 | Úvod – Informatika s Mišom](https://www.youtube.com/watch?v=bz-IgboqUP0&list=PLNAMH_0HgWT_lzUDYYKHYczKvjT4xqLCn&index=1). Použite iba krátku motivačnú časť; keďže video patrí ku kurzu C/C++, vysvetlite, že praktická časť tohto kurzu používa C++17 a že syntax C a C++ sa nemá zamieňať.
 
 **Domáca úloha (dobrovoľná):** Vysvetlite vlastnými slovami rozdiel medzi štandardom a kompilátorom. Ak poznáte nástroj, ktorý používate, zistite jeho názov; nič neinštalujte ani nemeňte v nastaveniach.
 
@@ -191,5 +193,5 @@ Pred odchodom dokončite dve vety:
 - [Standard C++: The Standard](https://isocpp.org/std/the-standard) — vysvetlenie označenia C++23 a súvislosti s ISO/IEC 14882:2024.
 - [GCC: Language Standards Supported by GCC](https://gcc.gnu.org/onlinedocs/gcc/Standards.html) — spôsob výberu jazykového štandardu a podpora štandardov v GCC.
 - [Bjarne Stroustrup: FAQ](https://www.stroustrup.com/bs_faq.html) — doplnkový zdroj informácií o autorovi a histórii C++.
-- [Video: Kurz C C++ | Lekcia 1 | Úvod](https://www.youtube.com/watch?v=bz-IgboqUP0) — motivačný úvod.
+- [Video: Kurz C C++ | Lekcia 1 | Úvod](https://www.youtube.com/watch?v=bz-IgboqUP0&list=PLNAMH_0HgWT_lzUDYYKHYczKvjT4xqLCn&index=1) — motivačný úvod.
 - [cppreference: `std::basic_string_view`](https://en.cppreference.com/w/cpp/string/basic_string_view) — doplnková referencia k typu `std::string_view`.

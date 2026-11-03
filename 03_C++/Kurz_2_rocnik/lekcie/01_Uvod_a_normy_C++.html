@@ -1,0 +1,354 @@
+<!doctype html>
+<html lang="sk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Interaktívna 45-minútová prednáška o histórii C++, štandardoch jazyka a kompilátore.">
+  <title>4.1 Historický úvod a normy jazyka C++</title>
+  <style>
+    :root{color-scheme:light;--bg:#f7f8fa;--fg:#1c2330;--card:#fff;--mut:#5b6678;--acc:#1f6feb;--line:#d9dee7;--code:#0f172a;--codefg:#e2e8f0;--note:#fff4d6;--note-line:#e8c25a;--good:#16794b;--bad:#b42318}
+    @media(prefers-color-scheme:dark){:root:not([data-theme="light"]){color-scheme:dark;--bg:#12161d;--fg:#e6eaf1;--card:#1b212b;--mut:#9aa6b8;--acc:#5aa2ff;--line:#2d3644;--code:#0a0e14;--codefg:#e2e8f0;--note:#3a3017;--note-line:#7a6322;--good:#6ee7a8;--bad:#ff8a80}}
+    :root[data-theme="light"]{color-scheme:light;--bg:#f7f8fa;--fg:#1c2330;--card:#fff;--mut:#5b6678;--acc:#1f6feb;--line:#d9dee7;--code:#0f172a;--codefg:#e2e8f0;--note:#fff4d6;--note-line:#e8c25a;--good:#16794b;--bad:#b42318}
+    :root[data-theme="dark"]{color-scheme:dark;--bg:#12161d;--fg:#e6eaf1;--card:#1b212b;--mut:#9aa6b8;--acc:#5aa2ff;--line:#2d3644;--code:#0a0e14;--codefg:#e2e8f0;--note:#3a3017;--note-line:#7a6322;--good:#6ee7a8;--bad:#ff8a80}
+    *{box-sizing:border-box}
+    html{scroll-padding-top:1rem}
+    body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.65 system-ui,-apple-system,"Segoe UI",sans-serif}
+    a{color:var(--acc)}
+    .global-course-nav{display:flex;flex-wrap:wrap;gap:.55rem;align-items:center;width:min(100% - 2rem,1000px);margin:.75rem auto 0;font-weight:600}
+    .global-course-nav a,.button-link{display:inline-block;padding:.4rem .7rem;border:1px solid var(--line);border-radius:.55rem;text-decoration:none;color:var(--fg);background:var(--card)}
+    .global-course-nav a:hover,.button-link:hover{text-decoration:underline}
+    .global-course-nav a:focus-visible,.button-link:focus-visible,button:focus-visible,a:focus-visible,select:focus-visible,summary:focus-visible{outline:3px solid var(--acc);outline-offset:3px}
+    .wrap{width:min(100% - 2rem,900px);margin:auto;padding:16px}
+    header{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:12px}
+    h1{font-size:clamp(1.75rem,5vw,2.45rem);line-height:1.2;margin:.6rem 0}
+    h2{margin-top:2rem;padding-bottom:.35rem;border-bottom:2px solid var(--line);line-height:1.3}
+    h3{margin-top:1.4rem;line-height:1.35}
+    p{margin:.75rem 0}
+    .crumb,.muted,.copy-status,.quiz-result{color:var(--mut)}
+    .crumb{font-size:.9rem}
+    .lead{font-size:1.08rem}
+    .tag{display:inline-block;padding:2px 9px;border-radius:6px;background:var(--line);font-size:.82rem;margin-right:.25rem}
+    .card,.teacher-note,.video-card,.sources,.quiz{margin:14px 0;padding:14px 17px;border:1px solid var(--line);border-radius:12px;background:var(--card)}
+    .teacher-note{display:none;background:var(--note);border-color:var(--note-line)}
+    body.teacher .teacher-note{display:block}
+    .teacher-note b{display:block;margin-bottom:.3rem;font-size:.82rem;letter-spacing:.04em;text-transform:uppercase}
+    .mode{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+    .mode button,.theme-button,.quiz button,.copy-btn{border:0;background:var(--card);color:var(--fg);padding:7px 12px;font:inherit;cursor:pointer}
+    .mode button.on,.theme-button,.quiz button,.copy-btn{background:var(--acc);color:#fff}
+    .theme-button{margin-left:.35rem;border-radius:8px}
+    .scroll{overflow-x:auto}
+    table{width:100%;border-collapse:collapse}
+    th,td{padding:8px 10px;border:1px solid var(--line);text-align:left;vertical-align:top}
+    th{background:color-mix(in srgb,var(--acc) 10%,var(--card))}
+    td:first-child{white-space:nowrap;font-weight:650}
+    .timeline{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:.55rem;margin:1.1rem 0;padding:1rem;border:1px solid var(--line);border-radius:12px;background:var(--card);font-weight:700}
+    .timeline span{padding:.35rem .65rem;border-radius:7px;background:var(--line)}
+    .timeline .chosen{background:var(--acc);color:#fff}
+    .timeline b{color:var(--mut)}
+    .split{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));gap:12px}
+    .term{padding:12px 14px;border:1px solid var(--line);border-radius:10px;background:var(--card)}
+    .term h3{margin:.1rem 0 .4rem}
+    .code-sample{margin:1rem 0}
+    .copy-actions{display:flex;flex-wrap:wrap;align-items:center;gap:9px;margin-bottom:6px}
+    .copy-btn{border-radius:6px;padding:5px 10px;font-size:.9rem}
+    .copy-status{min-height:1.5em;margin:2px 0;font-size:.85rem}
+    pre{margin:0;background:var(--code);color:var(--codefg);padding:14px;border-radius:9px;overflow-x:auto;font-size:.9rem;line-height:1.55}
+    code{font-family:ui-monospace,SFMono-Regular,Consolas,"Liberation Mono",monospace}
+    .video-frame{display:block;width:100%;aspect-ratio:16/9;border:0;border-radius:8px;background:#000}
+    .video-card h3{margin:.2rem 0 .7rem}
+    .video-card p{margin:.5rem 0}
+    .quiz label{display:block;margin:.9rem 0 .25rem;font-weight:650}
+    .quiz select{width:100%;padding:.55rem;border:1px solid var(--line);border-radius:7px;background:var(--bg);color:var(--fg);font:inherit}
+    .quiz select.wrong{border-color:var(--bad);box-shadow:0 0 0 2px color-mix(in srgb,var(--bad) 22%,transparent)}
+    .quiz button{margin-top:1rem;border-radius:7px}
+    .quiz-result{min-height:1.6em;font-weight:650}
+    .good{color:var(--good)}.bad{color:var(--bad)}
+    details{margin:.8rem 0;padding:.65rem .85rem;border:1px solid var(--line);border-radius:9px;background:var(--card)}
+    summary{cursor:pointer;font-weight:650}
+    .sources li{margin:.4rem 0}
+    footer{margin-top:2rem;padding:1rem 0;border-top:1px solid var(--line);color:var(--mut);font-size:.9rem}
+    @media(max-width:600px){.wrap{width:min(100% - 1rem,900px);padding:12px}.global-course-nav{width:calc(100% - 1rem)}td:first-child{white-space:normal}}
+    @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important}}
+    @media print{.global-course-nav,.mode,.theme-button,.copy-actions,.quiz button{display:none!important}.teacher-note{display:block}.wrap{max-width:none}}
+  </style>
+</head>
+<body>
+  <nav class="global-course-nav" aria-label="Navigácia kurzov">
+    <a href="../../../02_C/index.html">Prehľad C/C++</a>
+    <a href="../../../index.html">Všetky kurzy</a>
+  </nav>
+  <main class="wrap">
+    <header>
+      <span class="crumb"><a href="https://github.com/DC-SPS/Programovanie/tree/main/03_C%2B%2B/Kurz_2_rocnik">Kurz C++ pre 2. ročník</a> › Úvod do štruktúrovaného programovania › hodina 19</span>
+      <div>
+        <div class="mode" role="group" aria-label="Zobrazenie stránky">
+          <button id="student-mode" class="on" type="button" aria-pressed="true">Žiak</button>
+          <button id="teacher-mode" type="button" aria-pressed="false">Učiteľ</button>
+        </div>
+        <button id="theme-toggle" class="theme-button" type="button" aria-label="Prepnúť farebný režim">Vzhľad</button>
+      </div>
+    </header>
+
+    <h1>4.1 Historický úvod a normy jazyka C++</h1>
+    <p class="lead"><span class="tag">Hodina 19 z 66</span><span class="tag">1 × 45 min</span><span class="tag">C++17</span></p>
+    <p>V tejto hodine spoznáte, ako sa jazyk C++ vyvíjal a prečo sa programátori dohodli na spoločných štandardoch. Naučíte sa odlíšiť jazyk, štandard, kompilátor a spustiteľný program.</p>
+
+    <section class="teacher-note">
+      <b>Ciele a príprava pre učiteľa</b>
+      Študent vysvetlí rozdiel medzi C++, štandardom C++17 a kompilátorom, uvedie dôvod spoločného štandardu a rozpozná prepínač <code>-std=c++17</code>. Predpokladá sa znalosť algoritmov a základnej predstavy o programe, nie syntax C ani C++. Pripravte tabuľu alebo projektor a kartičky s pojmami; kompilátor je voliteľný.
+    </section>
+    <section class="teacher-note">
+      <b>Metodická poznámka</b>
+      Historický prehľad udržte stručný. Ukážka so <code>std::string_view</code> iba ilustruje vzťah štandardu a kompilátora; podrobnosti o reťazcoch patria do neskorších hodín.
+    </section>
+
+    <h2 id="plan">Časový plán na 45 minút</h2>
+    <div class="scroll">
+      <table>
+        <thead><tr><th>Čas</th><th>Trvanie</th><th>Časť hodiny</th><th>Činnosť</th></tr></thead>
+        <tbody>
+          <tr><td>0–5 min</td><td>5 min</td><td>Úvod a motivácia</td><td>Prečo potrebujú programátori spoločné pravidlá?</td></tr>
+          <tr><td>5–11 min</td><td>6 min</td><td>Historický úvod</td><td>Umiestnenie C++ a hlavných štandardov na časovú os.</td></tr>
+          <tr><td>11–19 min</td><td>8 min</td><td>Výklad pojmov</td><td>Rozlíšenie jazyka, štandardu, kompilátora a programu.</td></tr>
+          <tr><td>19–25 min</td><td>6 min</td><td>Prečo C++17</td><td>Dohodnutý cieľ kurzu a význam prepínača štandardu.</td></tr>
+          <tr><td>25–32 min</td><td>7 min</td><td>Ukážka učiteľa</td><td>Prečítanie krátkeho programu C++17 a príkazu na preklad.</td></tr>
+          <tr><td>32–39 min</td><td>7 min</td><td>Aktivita študentov</td><td>Usporiadanie pojmov a vysvetlenie ich vzťahov vo dvojiciach.</td></tr>
+          <tr><td>39–43 min</td><td>4 min</td><td>Kontrola porozumenia</td><td>Krátky interaktívny kvíz a oprava nepresných tvrdení.</td></tr>
+          <tr><td>43–45 min</td><td>2 min</td><td>Záver</td><td>Lístok pri odchode.</td></tr>
+          <tr><td colspan="2"><strong>Spolu: 45 min</strong></td><td colspan="2">Každá hodina kurzu trvá samostatných 45 minút.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>Ciele hodiny</h2>
+    <p>Na konci hodiny budete vedieť:</p>
+    <ul>
+      <li>vysvetliť rozdiel medzi jazykom C++, štandardom C++17 a kompilátorom;</li>
+      <li>uviesť, prečo je užitočné dohodnúť sa v kurze na jednej verzii štandardu;</li>
+      <li>rozpoznať prepínač <code>-std=c++17</code> v príkaze na preklad a opísať jeho účel;</li>
+      <li>uviesť míľniky vývoja štandardov bez tvrdenia, že C++17 je najnovšia verzia.</li>
+    </ul>
+
+    <h2>1. Nadväznosť na Python</h2>
+    <p>Poznanie algoritmov a základov programovania v Pythone nám pomôže pochopiť nové pojmy. Zatiaľ sa sústredíme na to, ako pravidlá jazyka C++ opisuje štandard a ako kompilátor podľa zvoleného režimu prekladá program. Syntax C a C++ nezamieňame; rozdiely budeme porovnávať pri konkrétnych konštrukciách.</p>
+
+    <h2>2. Stručná história a časová os</h2>
+    <p>C++ sa začalo vyvíjať na prelome 70. a 80. rokov 20. storočia. Jazyk vytvoril Bjarne Stroustrup; jeho práca nadviazala na jazyk C a rozšírila ho o ďalšie možnosti. Medzinárodný štandard pomáha presnejšie určiť, čo znamená platný program a aké správanie sa očakáva od jeho implementácie.</p>
+    <div class="timeline" aria-label="Časová os vývoja štandardov C++">
+      <span>C++ vzniká</span><b aria-hidden="true">→</b><span>C++98</span><b aria-hidden="true">→</b><span>C++11</span><b aria-hidden="true">→</b><span>C++14</span><b aria-hidden="true">→</b><span class="chosen">C++17</span><b aria-hidden="true">→</b><span>C++20</span><b aria-hidden="true">→</b><span>C++23</span>
+    </div>
+    <p>Označenia verzií často odkazujú na rok dokončenia technickej práce alebo schválenia. Aktuálny publikovaný štandard je C++23, formálne označený <strong>ISO/IEC 14882:2024</strong>. C++17 preto nie je najnovšia verzia; je to dohodnutý cieľ výučby.</p>
+
+    <h2>3. Jazyk, štandard, kompilátor a program</h2>
+    <div class="split">
+      <article class="term"><h3>C++</h3><p>Programovací jazyk, v ktorom zapisujeme zdrojový kód.</p></article>
+      <article class="term"><h3>Štandard C++17</h3><p>Verzia špecifikácie, ktorá opisuje pravidlá jazyka C++ a jeho štandardnej knižnice.</p></article>
+      <article class="term"><h3>Kompilátor</h3><p>Nástroj, ktorý prekladá zdrojový kód. Príklady: GCC, Clang a MSVC.</p></article>
+      <article class="term"><h3>Zdrojový kód</h3><p>Text programu napísaný programátorom.</p></article>
+      <article class="term"><h3>Spustiteľný program</h3><p>Výsledok prekladu, ktorý možno spustiť v príslušnom prostredí.</p></article>
+    </div>
+    <div class="card"><strong>Dôležité:</strong> Štandard nie je kompilátor ani samostatný program, ktorý sa inštaluje. Prepínač kompilátora môže požiadať o režim konkrétnej verzie štandardu, ale sám nedoplní funkcie, ktoré kompilátor alebo jeho štandardná knižnica nepodporujú.</div>
+
+    <h2>4. Prečo v kurze používame C++17?</h2>
+    <p>Kurz používa C++17, aby boli príklady, zadania a nastavenia prekladu v rámci hodín čo najviac zjednotené. Rovnaký štandard znižuje riziko, že si študenti vysvetlia rozdielne výsledky spôsobené odlišnými jazykovými režimami ako chybu v algoritme.</p>
+    <p>C++17 je výučbová voľba kurzu, nie tvrdenie, že novšie verzie neexistujú alebo že každý kompilátor podporuje všetky časti štandardu rovnako.</p>
+
+    <h2>5. Ukážka C++17 a postupný rozbor</h2>
+    <p>Krátky program používa <code>std::string_view</code>, typ zo štandardnej knižnice dostupný od C++17. Cieľom nie je učiť podrobnosti o reťazcoch, ale ukázať vzťah medzi zdrojovým kódom, štandardom a kompilátorom. Podrobnejší rozbor prvého samostatného programu patrí do hodiny 20.</p>
+    <div class="code-sample">
+      <pre><code>#include &lt;iostream&gt;
+#include &lt;string_view&gt;
+
+int main() {
+    constexpr std::string_view standard = "C++17";
+    std::cout &lt;&lt; "Dohodnutý štandard: " &lt;&lt; standard &lt;&lt; '\n';
+    return 0;
+}</code></pre>
+    </div>
+    <p>Ak je dostupný kompilátor GCC s podporou C++17, učiteľ môže ukázať preklad:</p>
+    <div class="code-sample">
+      <pre><code>g++ -std=c++17 -Wall -Wextra -pedantic main.cpp -o program</code></pre>
+    </div>
+    <p>Na Windows sa výsledný program spúšťa ako <code>program.exe</code>; na systémoch Unix-like sa zvyčajne spúšťa príkazom <code>./program</code>. Konkrétne príkazy závisia od nástroja a terminálu. V tejto hodine netreba študentom nastavovať vývojové prostredie.</p>
+    <p><strong>Očakávaný výstup:</strong></p>
+    <div class="code-sample">
+      <pre><code>Dohodnutý štandard: C++17</code></pre>
+    </div>
+    <details>
+      <summary>Rozbor programu pre učiteľa</summary>
+      <ol>
+        <li><code>#include &lt;iostream&gt;</code> a <code>#include &lt;string_view&gt;</code> sprístupňujú deklarácie zo štandardnej knižnice.</li>
+        <li><code>int main()</code> je vstupný bod programu; podrobný rozbor patrí do nasledujúcej hodiny.</li>
+        <li><code>std::string_view</code> je typ zo štandardnej knižnice C++17.</li>
+        <li><code>std::cout</code> vypíše text a <code>'\n'</code> pridá nový riadok.</li>
+        <li><code>-std=c++17</code> žiada GCC o jazykový režim C++17. Ostatné prepínače zapínajú varovania a prísnejšie diagnostické upozornenia.</li>
+      </ol>
+      <p>Príkaz je príklad pre GCC, nie univerzálny príkaz pre všetky kompilátory. Možnosť prekladu v režime C++17 závisí od podpory konkrétnej verzie kompilátora a knižnice.</p>
+    </details>
+
+    <h2>6. Aktivita vo dvojiciach</h2>
+    <p>Priraďte kartičky k vysvetleniam a potom ústne opíšte cestu od programu po jeho spustenie.</p>
+    <div class="scroll">
+      <table>
+        <thead><tr><th>Pojem</th><th>Vysvetlenie</th></tr></thead>
+        <tbody>
+          <tr><td>Programátor</td><td>Vytvára zdrojový kód.</td></tr>
+          <tr><td>C++</td><td>Jazyk, v ktorom je zdrojový kód napísaný.</td></tr>
+          <tr><td>C++17</td><td>Verzia štandardu jazyka C++.</td></tr>
+          <tr><td>GCC</td><td>Príklad kompilátora, ktorý môže prekladať C++ kód.</td></tr>
+          <tr><td><code>-std=c++17</code></td><td>Požiadavka na jazykový režim kompilátora GCC.</td></tr>
+          <tr><td>Spustiteľný program</td><td>Výsledok prekladu, ktorý možno spustiť v príslušnom prostredí.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card"><strong>Očakávaný výsledok:</strong> programátor → zdrojový kód v C++ → kompilátor nastavený na C++17 → spustiteľný program.</div>
+
+    <h2>7. Úlohy</h2>
+    <div class="split">
+      <section class="card">
+        <h3>Základná úroveň</h3>
+        <p>Prečítajte si príkaz a pomenujte kompilátor, zdrojový súbor, zvolený štandard a názov výsledného programu.</p>
+        <div class="code-sample"><pre><code>g++ -std=c++17 main.cpp -o program</code></pre></div>
+        <details><summary>Kontrola riešenia</summary><p>Kompilátor: <code>g++</code>; zdrojový súbor: <code>main.cpp</code>; štandard: <code>-std=c++17</code>; názov výsledného programu: <code>program</code>.</p></details>
+      </section>
+      <section class="card">
+        <h3>Rozširujúca úroveň</h3>
+        <p>Posúďte tvrdenie: „Ak dvaja študenti používajú rôzne verzie kompilátora, určite používajú rôzne programovacie jazyky.“ Opravte ho a uveďte, čo treba skontrolovať pri porovnávaní prostredí.</p>
+        <details><summary>Kontrola riešenia</summary><p>Rôzne verzie kompilátora môžu implementovať rovnaký jazykový štandard. Treba overiť podporu štandardu a nastavený jazykový režim.</p></details>
+      </section>
+    </div>
+
+    <h2>8. Interaktívne overenie</h2>
+    <p>Vyberte odpoveď pri každej otázke a stlačte <strong>Skontrolovať odpovede</strong>.</p>
+    <form class="quiz" id="knowledge-quiz">
+      <label for="q1">1. Čo je C++17?</label>
+      <select id="q1" name="q1" data-answer="standard" required>
+        <option value="">Vyberte odpoveď</option><option value="compiler">Kompilátor</option><option value="standard">Verzia štandardu jazyka C++</option><option value="language">Samostatný programovací jazyk</option>
+      </select>
+      <label for="q2">2. Čo robí kompilátor?</label>
+      <select id="q2" name="q2" data-answer="translate" required>
+        <option value="">Vyberte odpoveď</option><option value="install">Inštaluje štandard do počítača</option><option value="translate">Prekladá zdrojový kód</option><option value="design">Navrhuje algoritmus za programátora</option>
+      </select>
+      <label for="q3">3. Čo v príkaze GCC vyjadruje <code>-std=c++17</code>?</label>
+      <select id="q3" name="q3" data-answer="mode" required>
+        <option value="">Vyberte odpoveď</option><option value="mode">Požiadavku na jazykový režim C++17</option><option value="output">Názov výstupného súboru</option><option value="install">Inštaláciu nového kompilátora</option>
+      </select>
+      <label for="q4">4. Je C++17 najnovší publikovaný štandard?</label>
+      <select id="q4" name="q4" data-answer="no" required>
+        <option value="">Vyberte odpoveď</option><option value="yes">Áno</option><option value="no">Nie, novší je C++23</option>
+      </select>
+      <button type="submit">Skontrolovať odpovede</button>
+      <p class="quiz-result" id="quiz-result" aria-live="polite"></p>
+    </form>
+
+    <h2>9. Lístok pri odchode</h2>
+    <p>Pred odchodom dokončite dve vety:</p>
+    <ol><li>„C++17 je …“</li><li>„V kurze sa držíme C++17, aby …“</li></ol>
+    <details><summary>Čo má obsahovať dobrá odpoveď?</summary><p>Správne pomenovanie C++17 ako verzie štandardu a dôvod spoločného nastavenia, napríklad jednotné príklady a menej rozdielov medzi prostrediami.</p></details>
+
+    <h2>10. Časté chyby a nedorozumenia</h2>
+    <ul>
+      <li><strong>„C++17 je iný jazyk než C++.“</strong> C++17 je verzia štandardu jazyka C++.</li>
+      <li><strong>„Kompilátor je štandard.“</strong> Kompilátor je nástroj; štandard je špecifikácia.</li>
+      <li><strong>„Každý kompilátor podporuje všetky štandardy rovnako.“</strong> Podpora závisí od kompilátora, jeho verzie a štandardnej knižnice.</li>
+      <li><strong>„<code>-std=c++17</code> nainštaluje podporu C++17.“</strong> Prepínač iba vyberá jazykový režim, ktorý musí kompilátor podporovať.</li>
+      <li><strong>„C++17 je najnovší štandard.“</strong> Kurz si ho zvolil ako spoločný výučbový cieľ; publikovaný štandard C++23 je novší.</li>
+      <li><strong>„C a C++ sú totožné.“</strong> Sú to príbuzné, ale odlišné jazyky. V kurze píšeme C++17 a syntax C používame iba pri výslovnom porovnaní.</li>
+    </ul>
+
+    <h2>11. Video a domáca úloha</h2>
+    <article class="video-card">
+      <h3>Kurz C C++ | Lekcia 1 | Úvod – Informatika s Mišom</h3>
+      <p>Použite iba krátku motivačnú časť. Video patrí ku kurzu C/C++; praktická časť tohto kurzu používa C++17, preto syntax C a C++ nezamieňajte.</p>
+      <iframe class="video-frame" src="https://www.youtube-nocookie.com/embed/bz-IgboqUP0?list=PLNAMH_0HgWT_lzUDYYKHYczKvjT4xqLCn&amp;index=1" title="Kurz C C++ – Lekcia 1 – Úvod – Informatika s Mišom" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+      <p><a href="https://www.youtube.com/watch?v=bz-IgboqUP0&amp;list=PLNAMH_0HgWT_lzUDYYKHYczKvjT4xqLCn&amp;index=1" target="_blank" rel="noopener noreferrer">Otvoriť video na YouTube</a></p>
+    </article>
+    <div class="card"><strong>Dobrovoľná domáca úloha:</strong> Vysvetlite vlastnými slovami rozdiel medzi štandardom a kompilátorom. Ak poznáte nástroj, ktorý používate, zistite jeho názov; nič neinštalujte ani nemeňte v nastaveniach.</div>
+
+    <section class="teacher-note">
+      <b>Poznámky pre učiteľa</b>
+      Cieľovou skupinou sú študenti 2. ročníka; predpokladajte skúsenosť s programovaním v Pythone podľa README kurzu, nie znalosť syntaxe C. Hlavným výstupom je presné rozlíšenie pojmov a dôvod používania C++17. Ak v prostredí nie je vhodný kompilátor, rozoberte príkaz iba na tabuli; nástroje neinštalujte ani nekonfigurujte bez overenia miestnych pravidiel.
+    </section>
+
+    <section class="sources">
+      <h2>Odporúčané zdroje</h2>
+      <ul>
+        <li><a href="https://www.iso.org/standard/83626.html" target="_blank" rel="noopener noreferrer">ISO: ISO/IEC 14882:2024 – Programming languages — C++</a> — publikovaný štandard C++23.</li>
+        <li><a href="https://isocpp.org/std/the-standard" target="_blank" rel="noopener noreferrer">Standard C++: The Standard</a> — vysvetlenie označenia C++23 a súvislosti s ISO/IEC 14882:2024.</li>
+        <li><a href="https://gcc.gnu.org/onlinedocs/gcc/Standards.html" target="_blank" rel="noopener noreferrer">GCC: Language Standards Supported by GCC</a> — výber jazykového štandardu a podpora v GCC.</li>
+        <li><a href="https://www.stroustrup.com/bs_faq.html" target="_blank" rel="noopener noreferrer">Bjarne Stroustrup: FAQ</a> — doplnkové informácie o autorovi a histórii C++.</li>
+        <li><a href="https://www.youtube.com/watch?v=bz-IgboqUP0&amp;list=PLNAMH_0HgWT_lzUDYYKHYczKvjT4xqLCn&amp;index=1" target="_blank" rel="noopener noreferrer">Video: Kurz C C++ | Lekcia 1 | Úvod</a> — motivačný úvod.</li>
+        <li><a href="https://en.cppreference.com/w/cpp/string/basic_string_view" target="_blank" rel="noopener noreferrer">cppreference: <code>std::basic_string_view</code></a> — doplnková referencia k použitému typu.</li>
+      </ul>
+    </section>
+    <footer><a href="https://github.com/DC-SPS/Programovanie/tree/main/03_C%2B%2B/Kurz_2_rocnik">Späť na osnovu a materiály kurzu</a> · <a href="../../../02_C/index.html">Prehľad C/C++</a></footer>
+  </main>
+  <script>
+    const studentButton = document.getElementById("student-mode");
+    const teacherButton = document.getElementById("teacher-mode");
+    const setTeacherMode = (enabled) => {
+      document.body.classList.toggle("teacher", enabled);
+      studentButton.classList.toggle("on", !enabled);
+      teacherButton.classList.toggle("on", enabled);
+      studentButton.setAttribute("aria-pressed", String(!enabled));
+      teacherButton.setAttribute("aria-pressed", String(enabled));
+    };
+    studentButton.addEventListener("click", () => setTeacherMode(false));
+    teacherButton.addEventListener("click", () => setTeacherMode(true));
+
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+      const current = document.documentElement.dataset.theme || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+      document.documentElement.dataset.theme = current === "dark" ? "light" : "dark";
+    });
+
+    document.querySelectorAll(".code-sample").forEach((sample) => {
+      const code = sample.querySelector("code");
+      if (!code) return;
+      const actions = document.createElement("div");
+      actions.className = "copy-actions";
+      const button = document.createElement("button");
+      button.className = "copy-btn";
+      button.type = "button";
+      button.textContent = "Kopírovať kód";
+      const status = document.createElement("span");
+      status.className = "copy-status";
+      status.setAttribute("aria-live", "polite");
+      button.addEventListener("click", async () => {
+        try {
+          await navigator.clipboard.writeText(code.innerText);
+          status.textContent = "Kód bol skopírovaný.";
+        } catch {
+          status.textContent = "Kopírovanie sa nepodarilo. Označte kód a skopírujte ho ručne.";
+        }
+      });
+      actions.append(button, status);
+      sample.prepend(actions);
+    });
+
+    document.getElementById("knowledge-quiz").addEventListener("submit", (event) => {
+      event.preventDefault();
+      const questions = [...event.currentTarget.querySelectorAll("select")];
+      const unanswered = questions.some((question) => !question.value);
+      const result = document.getElementById("quiz-result");
+      if (unanswered) {
+        questions.forEach((question) => {
+          const invalid = !question.value;
+          question.classList.toggle("wrong", invalid);
+          question.setAttribute("aria-invalid", String(invalid));
+        });
+        result.className = "quiz-result bad";
+        result.textContent = "Najprv vyberte odpoveď pri každej otázke.";
+        return;
+      }
+      const correct = questions.filter((question) => question.value === question.dataset.answer).length;
+      questions.forEach((question) => {
+        const invalid = question.value !== question.dataset.answer;
+        question.classList.toggle("wrong", invalid);
+        question.setAttribute("aria-invalid", String(invalid));
+      });
+      result.className = `quiz-result ${correct === questions.length ? "good" : "bad"}`;
+      result.textContent = `Správne odpovede: ${correct} zo ${questions.length}.${correct === questions.length ? " Výborne!" : " Červeným orámovaním sú označené odpovede na zopakovanie."}`;
+    });
+  </script>
+</body>
+</html>

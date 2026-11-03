@@ -1,0 +1,322 @@
+<!doctype html>
+<html lang="sk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Prednáška 4.3: preklad, spustenie a základné ladenie programu v jazyku C17.">
+  <title>4.3 Ladenie a spustenie programu v C</title>
+  <style>
+    :root{color-scheme:light;--bg:#f7f8fa;--fg:#1c2330;--card:#fff;--mut:#5b6678;--acc:#1f6feb;--line:#d9dee7;--note:#fff4d6;--good:#18743a;--bad:#b42318}
+    @media(prefers-color-scheme:dark){:root:not([data-theme="light"]){color-scheme:dark;--bg:#12161d;--fg:#e6eaf1;--card:#1b212b;--mut:#9aa6b8;--acc:#5aa2ff;--line:#2d3644;--note:#3a3017;--good:#63d58a;--bad:#ff8a80}}
+    :root[data-theme="light"]{color-scheme:light;--bg:#f7f8fa;--fg:#1c2330;--card:#fff;--mut:#5b6678;--acc:#1f6feb;--line:#d9dee7;--note:#fff4d6;--good:#18743a;--bad:#b42318}
+    :root[data-theme="dark"]{color-scheme:dark;--bg:#12161d;--fg:#e6eaf1;--card:#1b212b;--mut:#9aa6b8;--acc:#5aa2ff;--line:#2d3644;--note:#3a3017;--good:#63d58a;--bad:#ff8a80}
+    *{box-sizing:border-box}
+    html{scroll-padding-top:1rem}
+    body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.65 system-ui,-apple-system,"Segoe UI",sans-serif}
+    a{color:var(--acc)}
+    .global-course-nav{display:flex;flex-wrap:wrap;gap:.55rem;align-items:center;width:min(100% - 2rem,1000px);margin:.75rem auto 0;font:600 .9rem/1.4 system-ui,-apple-system,"Segoe UI",sans-serif}
+    .global-course-nav a{display:inline-block;padding:.4rem .7rem;border:1px solid var(--line);border-radius:.55rem;text-decoration:none;color:inherit;background:var(--card)}
+    .global-course-nav a:hover{text-decoration:underline}
+    .global-course-nav a:focus-visible,a:focus-visible,button:focus-visible,summary:focus-visible,select:focus-visible{outline:3px solid var(--acc);outline-offset:3px}
+    main{width:min(100% - 2rem,880px);margin:auto;padding:1rem 0 3rem}
+    header{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:.65rem}
+    .crumb,.muted,.caption,.status{color:var(--mut)}
+    h1{font-size:clamp(1.8rem,5vw,2.6rem);line-height:1.2;margin:.8rem 0}
+    h2{margin-top:2rem;font-size:1.4rem}
+    h3{margin-top:1.25rem;font-size:1.1rem}
+    .lead{font-size:1.08rem}
+    .tags{display:flex;flex-wrap:wrap;gap:.45rem;margin:1rem 0}
+    .tag{padding:2px 9px;border:1px solid var(--line);border-radius:999px;background:var(--card);font-size:13px}
+    .card,.teacher-note,.quiz{margin:1rem 0;padding:1rem 1.1rem;border:1px solid var(--line);border-radius:12px;background:var(--card)}
+    .teacher-note{display:none;background:var(--note)}
+    body.teacher .teacher-note{display:block}
+    .teacher-note strong{display:block;margin-bottom:.3rem}
+    .mode{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+    .mode button,.quiz button,.copy-btn{padding:6px 11px;border:0;background:var(--card);color:var(--fg);font:inherit;cursor:pointer}
+    .mode button.on,.quiz button,.copy-btn{background:var(--acc);color:#fff}
+    .scroll{overflow-x:auto}
+    table{width:100%;border-collapse:collapse}
+    th,td{padding:.65rem .7rem;border:1px solid var(--line);text-align:left;vertical-align:top}
+    th{background:var(--card)}
+    td:first-child{white-space:nowrap;font-weight:700}
+    .flow{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,150px),1fr));gap:.65rem;margin:1rem 0}
+    .flow-step{display:grid;place-items:center;min-height:82px;padding:.7rem;border:1px solid var(--line);border-radius:10px;background:var(--card);text-align:center}
+    .flow-step strong{display:block;color:var(--acc)}
+    .code-sample{margin:1rem 0}
+    .copy-actions{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-bottom:6px}
+    .copy-btn{border-radius:6px;padding:5px 10px;font-size:14px}
+    .copy-status{min-height:1.5em;margin:2px 0;color:var(--mut);font-size:13px}
+    pre{margin:.65rem 0 1rem;padding:1rem;border-radius:9px;overflow-x:auto;background:#0f172a;color:#e2e8f0;font:14px/1.55 ui-monospace,SFMono-Regular,Consolas,monospace}
+    code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace}
+    :not(pre)>code{padding:.08rem .28rem;border-radius:4px;background:color-mix(in srgb,var(--line) 55%,transparent)}
+    .quiz label{display:block;margin:.85rem 0 .25rem;font-weight:650}
+    .quiz select{width:100%;padding:.55rem;border:1px solid var(--line);border-radius:7px;background:var(--bg);color:var(--fg);font:inherit}
+    .quiz select.wrong{border-color:var(--bad);box-shadow:0 0 0 2px color-mix(in srgb,var(--bad) 22%,transparent)}
+    .quiz button{margin-top:1rem;border-radius:7px}
+    .result{min-height:1.5em;font-weight:650}
+    .good{color:var(--good)}.bad{color:var(--bad)}
+    details{margin:.8rem 0;padding:.65rem .85rem;border:1px solid var(--line);border-radius:9px;background:var(--card)}
+    summary{cursor:pointer;font-weight:650}
+    .sources{margin-top:2rem;padding:1rem 1.1rem;border:1px solid var(--line);border-radius:12px;background:var(--card)}
+    .sources h2{margin-top:0}
+    .sources li{margin:.4rem 0}
+    footer{margin-top:2rem;padding-top:1rem;border-top:1px solid var(--line);color:var(--mut);font-size:14px}
+    @media(max-width:620px){main{width:min(100% - 1.2rem,880px)}td:first-child{white-space:normal}}
+    @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important}}
+    @media print{.global-course-nav,.mode,.copy-actions,.quiz button{display:none!important}.teacher-note{display:block}main{max-width:none}}
+  </style>
+  <script src="../../theme.js" defer></script>
+</head>
+<body>
+  <nav class="global-course-nav" aria-label="Navigácia kurzov">
+    <a href="../c-language.html">Prehľad kurzu C</a>
+    <a href="../../index.html">Všetky kurzy</a>
+  </nav>
+  <main>
+    <header>
+      <span class="crumb"><a href="../c-language.html">Základy jazyka C</a> › Úvod do programovania › 4.3</span>
+      <div>
+        <div class="mode" role="group" aria-label="Zobrazenie stránky">
+          <button id="student-mode" class="on" type="button" aria-pressed="true">Žiak</button>
+          <button id="teacher-mode" type="button" aria-pressed="false">Učiteľ</button>
+        </div>
+      </div>
+    </header>
+
+    <h1>4.3 Ladenie a spustenie programu v jazyku C</h1>
+    <p class="lead">
+      <span class="tag">1 × 45 min</span>
+      <span class="tag">Tematický celok 4</span>
+      <span class="tag">C17</span>
+      <span class="tag">VS Code + GCC</span>
+    </p>
+    <section class="card">
+      <strong>Nadväznosť:</strong> V prednáške 4.2 ste vytvorili program s funkciou <code>main</code> a výpisom cez <code>printf</code>. Teraz si precvičíte celý postup uloženia, prekladu a spustenia a naučíte sa postupovať, keď kompilátor alebo výsledok upozorní na problém.
+    </section>
+    <section class="teacher-note">
+      <strong>Ciele, predpoklady a pomôcky</strong>
+      Žiak rozlíši zdrojový súbor a spustiteľný program, preloží jednoduchý súbor C17 pomocou GCC, nájde miesto jednoduchej syntaktickej chyby podľa diagnostického hlásenia a opíše základné kroky ladenia. Predpoklady: lekcia 4.2, funkcia <code>main</code>, <code>printf</code> a príkaz prekladu. Pomôcky: VS Code, GCC a terminál; debugger je voliteľný a môže byť zobrazený učiteľom.
+    </section>
+
+    <h2>Plán hodiny (45 minút)</h2>
+    <div class="scroll">
+      <table>
+        <thead><tr><th>Čas</th><th>Trvanie</th><th>Časť hodiny</th><th>Činnosť a zámer</th></tr></thead>
+        <tbody>
+          <tr><td>0–5 min</td><td>5 min</td><td>Motivácia a opakovanie</td><td>Čo všetko sa musí stať medzi napísaním kódu a jeho výstupom?</td></tr>
+          <tr><td>5–13 min</td><td>8 min</td><td>Preklad a spustenie</td><td>Rozlíšiť zdrojový súbor, prekladač, program a výstup.</td></tr>
+          <tr><td>13–23 min</td><td>10 min</td><td>Chybové hlásenia</td><td>Prečítať diagnostiku GCC a opraviť syntaktickú chybu.</td></tr>
+          <tr><td>23–33 min</td><td>10 min</td><td>Základy ladenia</td><td>Postupne overovať očakávaný a skutočný výsledok; ukázať breakpoint podľa možností.</td></tr>
+          <tr><td>33–41 min</td><td>8 min</td><td>Samostatná práca</td><td>Preložiť, spustiť a opraviť pripravený program.</td></tr>
+          <tr><td>41–45 min</td><td>4 min</td><td>Overenie a záver</td><td>Krátky kvíz a záverečné pravidlo ladenia.</td></tr>
+          <tr><td colspan="2"><strong>Spolu: 45 min</strong></td><td colspan="2">Čas na inštaláciu alebo konfiguráciu prostredia sa do hodiny nezapočítava.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>Cieľ hodiny</h2>
+    <p>Na konci hodiny dokážete preložiť a spustiť jednoduchý program v C17, nájsť a opraviť jednoduchú chybu v kóde a vysvetliť, prečo je dôležité overiť výstup programom aj človekom.</p>
+
+    <h2>1. Od zdrojového kódu k spustenému programu</h2>
+    <div class="flow" role="img" aria-label="Postup: uložiť zdrojový kód, preložiť ho, opraviť chyby, spustiť program a overiť výstup">
+      <div class="flow-step"><span><strong>1 · Uložte</strong>napríklad <code>main.c</code></span></div>
+      <div class="flow-step"><span><strong>2 · Preložte</strong>pomocou GCC</span></div>
+      <div class="flow-step"><span><strong>3 · Opravte</strong>chyby z diagnostiky</span></div>
+      <div class="flow-step"><span><strong>4 · Spustite</strong>v termináli</span></div>
+      <div class="flow-step"><span><strong>5 · Overte</strong>skutočný výstup</span></div>
+    </div>
+    <p>Uloženie súboru samo osebe program nespustí. Najprv GCC preloží zdrojový kód; až potom spúšťame vytvorený program. Ak preklad zlyhá, treba najprv prečítať hlásenie a opraviť zdrojový kód.</p>
+    <pre class="code-sample"><code>gcc -std=c17 -Wall -Wextra -Wpedantic main.c -o program</code></pre>
+    <ul>
+      <li><code>-std=c17</code> nastaví jazykový režim C17;</li>
+      <li><code>-Wall -Wextra -Wpedantic</code> zapne skupiny užitočných upozornení;</li>
+      <li><code>main.c</code> je vstupný zdrojový súbor;</li>
+      <li><code>-o program</code> určuje názov vytvoreného programu.</li>
+    </ul>
+    <p>V PowerShelli spustíme program príkazom <code>.\program.exe</code>; v Linuxe príkazom <code>./program</code>. Pri opätovnom preklade skontrolujte, či príkaz skončil bez chýb, a až potom spúšťajte novovytvorený program.</p>
+
+    <h2>2. Ako čítať chybové hlásenie</h2>
+    <p>Diagnostické hlásenie kompilátora zvyčajne obsahuje názov súboru, číslo riadka, druh problému a krátky opis. Číslo riadka je pomôcka: chyba môže byť aj tesne pred označeným miestom.</p>
+    <div class="code-sample">
+      <pre><code>#include &lt;stdio.h&gt;
+
+int main(void) {
+    printf("Program sa spusta\n")
+    return 0;
+}</code></pre>
+    </div>
+    <p>Všimnite si chýbajúcu bodkočiarku na konci volania <code>printf</code>. GCC môže vypísať názov súboru a riadok, kde na problém narazilo, a očakávaný symbol. Hlásenie prečítajte, pozrite sa na označený riadok aj predchádzajúci riadok, opravte jednu vec a preložte znova.</p>
+    <div class="code-sample">
+      <pre><code>#include &lt;stdio.h&gt;
+
+int main(void) {
+    printf("Program sa spusta\n");
+    return 0;
+}</code></pre>
+    </div>
+    <p><strong>Užitočné pravidlo:</strong> riešte prvú zmysluplnú chybu v poradí. Jedna chyba môže spôsobiť viac následných hlásení, preto neopravujte všetky upozornenia naslepo naraz.</p>
+
+    <h2>3. Chyba pri preklade alebo chyba v riešení?</h2>
+    <div class="card">
+      <h3>Chyba syntaxe</h3>
+      <p>Program porušuje pravidlá zápisu jazyka, napríklad chýba bodkočiarka. Kompilátor zvyčajne nedokončí vytvorenie programu.</p>
+    </div>
+    <div class="card">
+      <h3>Chyba v logike</h3>
+      <p>Program sa preloží a spustí, ale urobí alebo vypíše niečo iné, než sme zamýšľali. Kompilátor nemusí vedieť, čo sme chceli dosiahnuť.</p>
+      <p>Príklad: požadovaný výpis je „Test sa zacina“, ale text v príkaze <code>printf</code> omylom hovorí „Test sa konci“. Zápis môže byť platný, no význam je nesprávny.</p>
+    </div>
+    <p>Pri hľadaní chyby si najprv zapíšte očakávané správanie. Potom porovnajte jednotlivé kroky programu so skutočným výstupom a zúžte miesto problému.</p>
+
+    <h2>4. Základný postup ladenia</h2>
+    <ol>
+      <li><strong>Opíšte problém:</strong> čo ste očakávali a čo sa naozaj stalo?</li>
+      <li><strong>Skontrolujte najbližší zdroj:</strong> súbor, riadok, terminálový príkaz a chybové hlásenie.</li>
+      <li><strong>Zúžte miesto chyby:</strong> sledujte vykonávanie od začiatku a overujte výstup po jednotlivých krokoch.</li>
+      <li><strong>Urobte jednu malú opravu:</strong> nemeňte viac vecí naraz.</li>
+      <li><strong>Zopakujte preklad a test:</strong> potvrďte, že problém zmizol a ostatný očakávaný výstup zostal správny.</li>
+    </ol>
+    <p>V debuggeri možno nastaviť <strong>bod prerušenia</strong> (breakpoint), ktorý dočasne zastaví program na vybranom riadku. Potom možno vykonávať príkazy postupne a sledovať dostupné údaje. V tejto úvodnej hodine používame debugger len na ukážku; jeho nastavenie závisí od nainštalovaných nástrojov.</p>
+    <section class="teacher-note">
+      <strong>Voliteľná ukážka pre učiteľa</strong>
+      Ak je pripravené rozšírenie C/C++ pre VS Code a debugger, nastavte breakpoint na volanie <code>printf</code>, spustite ladenie a ukážte krokové vykonávanie (Step Over). Neinštalujte ani nekonfigurujte nástroje počas vyučovacej hodiny. Bez pripraveného debuggeru ukážte kontrolu zdrojového kódu, terminálu a očakávaného výstupu.
+    </section>
+
+    <h2>5. Praktická úloha</h2>
+    <div class="card">
+      <h3>Úloha A – preložte a spustite</h3>
+      <p>Uložte správny krátky program do súboru <code>main.c</code>. Preložte ho v režime C17 a spustite ho vo svojom prostredí.</p>
+      <div class="code-sample"><pre><code>#include &lt;stdio.h&gt;
+
+int main(void) {
+    printf("Test sa zacina.\n");
+    printf("Program bol spusteny.\n");
+    return 0;
+}</code></pre></div>
+      <p><strong>Kritérium úspechu:</strong> preklad skončí bez chyby a po spustení sa zobrazia dve očakávané správy v správnom poradí.</p>
+    </div>
+    <div class="card">
+      <h3>Úloha B – nájdite syntaktickú chybu</h3>
+      <p>V nasledujúcom programe nájdite problém, prečítajte si diagnostiku GCC, opravte kód a znova ho preložte.</p>
+      <div class="code-sample"><pre><code>#include &lt;stdio.h&gt;
+
+int main(void) {
+    printf("Kontrola prekladu\n")
+    return 0;
+}</code></pre></div>
+      <details><summary>Kontrola riešenia</summary><p>Za volanie <code>printf</code> treba doplniť bodkočiarku: <code>printf("Kontrola prekladu\n");</code>.</p></details>
+    </div>
+    <div class="card">
+      <h3>Úloha C – nájdite chybu v zadaní</h3>
+      <p>Upravte text v správne sa prekladajúcom programe tak, aby sa zobrazilo presne: <code>Test uspesne dokončeny.</code> Skontrolujte, či skutočný výstup zodpovedá zadaniu.</p>
+      <p><strong>Kritérium úspechu:</strong> program sa preloží a vypíše zadanú vetu bez nežiaduceho ďalšieho textu.</p>
+    </div>
+
+    <h2>6. Interaktívne overenie</h2>
+    <p>Vyberte odpoveď pri každej otázke a stlačte tlačidlo na kontrolu.</p>
+    <form class="quiz" id="knowledge-quiz">
+      <label for="q1">1. Čo urobíme po uložení zmeneného súboru C pred spustením programu?</label>
+      <select id="q1" data-answer="compile" required>
+        <option value="">Vyberte odpoveď</option><option value="compile">Znova ho preložíme a skontrolujeme výsledok</option><option value="run-old">Vždy spustíme starší vytvorený program</option><option value="rename">Premenujeme súbor na .exe</option>
+      </select>
+      <label for="q2">2. Čo typicky znamená chýbajúca bodkočiarka?</label>
+      <select id="q2" data-answer="syntax" required>
+        <option value="">Vyberte odpoveď</option><option value="logic">Chybu v logike, ktorú kompilátor vždy opraví</option><option value="syntax">Syntaktickú chybu v zdrojovom kóde</option><option value="display">Chybu nastavenia monitora</option>
+      </select>
+      <label for="q3">3. Ktorá situácia je príkladom chyby v logike?</label>
+      <select id="q3" data-answer="wrong-message" required>
+        <option value="">Vyberte odpoveď</option><option value="missing-semicolon">Chýba bodkočiarka a preklad zlyhá</option><option value="wrong-message">Program sa spustí, ale vypíše nesprávnu správu</option><option value="missing-file">Kompilátor nenájde zdrojový súbor</option>
+      </select>
+      <label for="q4">4. Čo je bod prerušenia (breakpoint)?</label>
+      <select id="q4" data-answer="pause" required>
+        <option value="">Vyberte odpoveď</option><option value="pause">Miesto, kde debugger môže dočasne zastaviť program</option><option value="error">Príkaz, ktorý vždy ukončí program s chybou</option><option value="compiler">Názov prekladača GCC</option>
+      </select>
+      <button type="submit">Skontrolovať odpovede</button>
+      <p class="result" id="quiz-result" aria-live="polite"></p>
+    </form>
+
+    <h2>Otázky na zopakovanie</h2>
+    <ol>
+      <li>Aký je rozdiel medzi zdrojovým súborom a spustiteľným programom?</li>
+      <li>Prečo treba po úprave zdrojového kódu znovu prekladať?</li>
+      <li>Čo robiť, keď kompilátor vypíše viac chybových hlásení?</li>
+      <li>Aký je rozdiel medzi syntaktickou chybou a chybou v logike?</li>
+    </ol>
+    <div class="card"><strong>Záverečné pravidlo:</strong> najprv si ujasnite očakávaný výsledok, potom prečítajte diagnostiku, urobte jednu opravu a program znova preložte a otestujte.</div>
+
+    <section class="sources">
+      <h2>Odporúčané zdroje</h2>
+      <ul>
+        <li><a href="https://gcc.gnu.org/onlinedocs/gcc/Invoking-GCC.html" target="_blank" rel="noopener noreferrer">GCC: vyvolanie kompilátora</a> — argumenty a použitie GCC.</li>
+        <li><a href="https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html" target="_blank" rel="noopener noreferrer">GCC: voľby upozornení</a> — význam diagnostických upozornení.</li>
+        <li><a href="https://code.visualstudio.com/docs/cpp/cpp-debug" target="_blank" rel="noopener noreferrer">Visual Studio Code: ladenie C/C++</a> — nastavenie a používanie debuggera.</li>
+        <li><a href="https://www.w3schools.com/c/c_compiler.php" target="_blank" rel="noopener noreferrer">W3Schools: C Compiler</a> — doplnkový prehľad prekladu a kompilátora.</li>
+      </ul>
+      <p class="muted">V tejto hodine sa sústreďte na diagnostiku a systematický postup. Inštalácia alebo konfigurácia kompilátora a debuggera je samostatná činnosť.</p>
+    </section>
+    <footer><a href="4.2_Prvy_program_v_jazyku_C.html">← Prednáška 4.2</a> · <a href="../c-language.html">Prehľad kurzu C</a> · <a href="../../index.html">Všetky kurzy</a></footer>
+  </main>
+  <script>
+    const studentButton = document.getElementById("student-mode");
+    const teacherButton = document.getElementById("teacher-mode");
+    const setTeacherMode = (enabled) => {
+      document.body.classList.toggle("teacher", enabled);
+      studentButton.classList.toggle("on", !enabled);
+      teacherButton.classList.toggle("on", enabled);
+      studentButton.setAttribute("aria-pressed", String(!enabled));
+      teacherButton.setAttribute("aria-pressed", String(enabled));
+    };
+    studentButton.addEventListener("click", () => setTeacherMode(false));
+    teacherButton.addEventListener("click", () => setTeacherMode(true));
+
+    document.querySelectorAll("pre").forEach((codeBlock) => {
+      const code = codeBlock.querySelector("code");
+      if (!code) return;
+      const actions = document.createElement("div");
+      const button = document.createElement("button");
+      const status = document.createElement("span");
+      actions.className = "copy-actions";
+      button.className = "copy-btn";
+      button.type = "button";
+      button.textContent = "Kopírovať kód";
+      status.className = "copy-status";
+      status.setAttribute("role", "status");
+      status.setAttribute("aria-live", "polite");
+      codeBlock.before(actions);
+      actions.append(button, status);
+      button.addEventListener("click", async () => {
+        try {
+          await navigator.clipboard.writeText(code.innerText);
+          status.textContent = "Kód skopírovaný. Vložte ho do súboru v počítači.";
+        } catch {
+          status.textContent = "Kopírovanie nie je dostupné. Označte kód a skopírujte ho pomocou Ctrl+C.";
+        }
+      });
+    });
+
+    document.getElementById("knowledge-quiz").addEventListener("submit", (event) => {
+      event.preventDefault();
+      const questions = [...event.currentTarget.querySelectorAll("select")];
+      const result = document.getElementById("quiz-result");
+      if (questions.some((question) => !question.value)) {
+        questions.forEach((question) => {
+          const invalid = !question.value;
+          question.classList.toggle("wrong", invalid);
+          question.setAttribute("aria-invalid", String(invalid));
+        });
+        result.className = "result bad";
+        result.textContent = "Najprv vyberte odpoveď pri každej otázke.";
+        return;
+      }
+      const correct = questions.filter((question) => question.value === question.dataset.answer).length;
+      questions.forEach((question) => {
+        const invalid = question.value !== question.dataset.answer;
+        question.classList.toggle("wrong", invalid);
+        question.setAttribute("aria-invalid", String(invalid));
+      });
+      result.className = `result ${correct === questions.length ? "good" : "bad"}`;
+      result.textContent = `Správne odpovede: ${correct} zo ${questions.length}.${correct === questions.length ? " Výborne!" : " Červeným orámovaním sú označené odpovede na zopakovanie."}`;
+    });
+  </script>
+</body>
+</html>
