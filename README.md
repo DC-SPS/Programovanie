@@ -74,7 +74,7 @@ Pre prácu na cvičeniach budete potrebovať nasledujúce overené vývojové n�
 
 1. **Klonovanie repozitára**:
    ```bash
-   git clone https://github.com/cabalad/Programovanie.git
+   git clone https://github.com/DC-SPS/Programovanie.git
    cd Programovanie
    ```
 2. **Priebeh výučby**:
