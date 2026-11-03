@@ -1,0 +1,324 @@
+<!doctype html>
+<html lang="sk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Prednáška 4.2: prvý program v jazyku C, funkcia main, printf, komentáre, preklad a spustenie.">
+  <title>4.2 Prvý program v jazyku C</title>
+  <style>
+    :root{color-scheme:light;--bg:#f7f8fa;--fg:#1c2330;--card:#fff;--mut:#5b6678;--acc:#1f6feb;--line:#d9dee7;--note:#fff4d6;--green:#18743a}
+    @media(prefers-color-scheme:dark){:root:not([data-theme="light"]){color-scheme:dark;--bg:#12161d;--fg:#e6eaf1;--card:#1b212b;--mut:#9aa6b8;--acc:#5aa2ff;--line:#2d3644;--note:#3a3017;--green:#63d58a}}
+    :root[data-theme="light"]{color-scheme:light;--bg:#f7f8fa;--fg:#1c2330;--card:#fff;--mut:#5b6678;--acc:#1f6feb;--line:#d9dee7;--note:#fff4d6;--green:#18743a}
+    :root[data-theme="dark"]{color-scheme:dark;--bg:#12161d;--fg:#e6eaf1;--card:#1b212b;--mut:#9aa6b8;--acc:#5aa2ff;--line:#2d3644;--note:#3a3017;--green:#63d58a}
+    *{box-sizing:border-box}
+    body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.65 system-ui,-apple-system,"Segoe UI",sans-serif}
+    a{color:var(--acc)}
+    .global-course-nav{display:flex;flex-wrap:wrap;gap:.55rem;align-items:center;width:min(100% - 2rem,1000px);margin:.75rem auto 0;font:600 .9rem/1.4 system-ui,-apple-system,"Segoe UI",sans-serif}
+    .global-course-nav a{display:inline-block;padding:.4rem .7rem;border:1px solid var(--line);border-radius:.55rem;text-decoration:none;color:inherit;background:var(--card)}
+    .global-course-nav a:hover{text-decoration:underline}
+    .global-course-nav a:focus-visible,a:focus-visible{outline:3px solid var(--acc);outline-offset:3px}
+    main{width:min(100% - 2rem,860px);margin:auto;padding:1rem 0 3rem}
+    header{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:.6rem}
+    .crumb,.muted,.caption{color:var(--mut)}
+    h1{font-size:clamp(1.8rem,5vw,2.6rem);line-height:1.2;margin:.8rem 0}
+    h2{margin-top:2rem;font-size:1.4rem}
+    h3{margin-top:1.4rem;font-size:1.1rem}
+    .tags{display:flex;flex-wrap:wrap;gap:.45rem;margin:1rem 0}
+    .tag{padding:2px 9px;border:1px solid var(--line);border-radius:999px;background:var(--card);font-size:13px}
+    .card,.note{margin:1rem 0;padding:1rem 1.1rem;border:1px solid var(--line);border-radius:12px;background:var(--card)}
+    .note{background:var(--note)}
+    figure{margin:1.2rem 0}
+    .flow{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:.55rem;align-items:stretch}
+    .flow-step{display:grid;place-items:center;min-height:88px;padding:.7rem;border:1px solid var(--line);border-radius:10px;background:var(--card);text-align:center}
+    .flow-step strong{display:block;color:var(--acc)}
+    .flow-arrow{display:none}
+    .caption{margin-top:.4rem;font-size:.9rem}
+    .scroll{overflow-x:auto}
+    table{width:100%;border-collapse:collapse}
+    th,td{padding:.65rem .7rem;border:1px solid var(--line);text-align:left;vertical-align:top}
+    th{background:var(--card)}
+    .copy-actions{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-bottom:6px}
+    .copy-btn{padding:5px 10px;border:0;border-radius:6px;background:var(--acc);color:#fff;font:inherit;font-size:14px;cursor:pointer}
+    .copy-status{min-height:1.5em;margin:2px 0;color:var(--mut);font-size:13px}
+    button:focus-visible,a:focus-visible{outline:3px solid var(--acc);outline-offset:3px}
+    pre{margin:.65rem 0 1rem;padding:1rem;border-radius:9px;overflow-x:auto;background:#0f172a;color:#e2e8f0;font:14px/1.55 ui-monospace,SFMono-Regular,Consolas,monospace}
+    code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace}
+    :not(pre)>code{padding:.08rem .28rem;border-radius:4px;background:color-mix(in srgb,var(--line) 55%,transparent)}
+    .output{border-left:4px solid var(--green)}
+    .timeline td:first-child{white-space:nowrap;font-weight:700}
+    .video-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));gap:12px}
+    .video-card{min-width:0;margin:1rem 0;padding:1rem 1.1rem;border:1px solid var(--line);border-radius:12px;background:var(--card)}
+    .video-frame{display:block;width:100%;aspect-ratio:16/9;border:0;border-radius:8px;background:#0f172a}
+    .sources,footer{margin-top:2rem;padding-top:1rem;border-top:1px solid var(--line)}
+    footer{color:var(--mut);font-size:14px}
+    @media(max-width:620px){main{width:min(100% - 1.2rem,860px)}.flow{grid-template-columns:1fr}.flow-step{min-height:56px}.timeline td:first-child{white-space:normal}}
+    @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important}}
+  </style>
+  <script src="../../theme.js" defer></script>
+</head>
+<body>
+  <nav class="global-course-nav" aria-label="Navigácia kurzov">
+    <a href="../c-language.html">Prehľad kurzu C</a>
+    <a href="../../index.html">Všetky kurzy</a>
+  </nav>
+  <main>
+    <header>
+      <span class="crumb"><a href="../c-language.html">Základy jazyka C</a> › Úvod do programovania › 4.2</span>
+      <a href="../../nastavenia.html">Nastavenia vzhľadu</a>
+    </header>
+    <h1>4.2 Prvý program v jazyku C</h1>
+    <div class="tags">
+      <span class="tag">1 × 45 min</span>
+      <span class="tag">Tematický celok 4</span>
+      <span class="tag">C17</span>
+      <span class="tag">VS Code + GCC</span>
+    </div>
+
+    <section class="card" aria-labelledby="connection-heading">
+      <h2 id="connection-heading">Nadväznosť na predchádzajúcu prednášku</h2>
+      <p>V prednáške 4.1 ste spoznali jazyk C, jeho vývoj a význam štandardu. Teraz vytvoríte prvý jednoduchý program: textový súbor zapísaný v C preložíte pomocou GCC a spustíte. Zatiaľ sa sústredíme na štruktúru programu a výstup; ladenie a vstup z klávesnice budú témou ďalších prednášok.</p>
+    </section>
+
+    <figure aria-labelledby="process-caption">
+      <div class="flow" role="img" aria-label="Zdrojový kód v jazyku C sa pomocou GCC preloží na spustiteľný program, ktorý zobrazí výstup">
+        <div class="flow-step"><span><strong>1 · Zapíšte</strong>zdrojový kód <code>main.c</code></span></div>
+        <div class="flow-step"><span><strong>2 · Preložte</strong>kompilátorom GCC</span></div>
+        <div class="flow-step"><span><strong>3 · Spustite</strong>program v termináli</span></div>
+        <div class="flow-step"><span><strong>4 · Pozorujte</strong>textový výstup</span></div>
+      </div>
+      <figcaption class="caption" id="process-caption">Program nevznikne samotným otvorením súboru v editore: zdrojový kód treba najprv preložiť.</figcaption>
+    </figure>
+
+    <h2>Plán hodiny (45 minút)</h2>
+    <div class="scroll">
+      <table class="timeline">
+        <thead><tr><th>Čas</th><th>Časť hodiny</th><th>Činnosť a zámer</th></tr></thead>
+        <tbody>
+          <tr><td>0–5 min</td><td>Motivácia</td><td>Vyriešiť problém: ako nechať počítač vypísať krátke hlásenie obsluhujúcemu pracovníkovi?</td></tr>
+          <tr><td>5–20 min</td><td>Teória</td><td>Vysvetliť zdrojový súbor, kompilátor, hlavičku, funkciu <code>main</code>, <code>printf</code> a komentáre.</td></tr>
+          <tr><td>20–30 min</td><td>Ukážky</td><td>Rozobrať program „Ahoj, svet!“, praktické hlásenie a jednoduchú chybu v zápise.</td></tr>
+          <tr><td>30–40 min</td><td>Samostatná práca</td><td>Vytvoriť a podľa možností preložiť vlastný krátky program podľa úloh A–C.</td></tr>
+          <tr><td>40–45 min</td><td>Overenie a záver</td><td>Zodpovedať kontrolné otázky a vyplniť lístok pri odchode.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>Ciele vyučovacej hodiny</h2>
+    <p>Po absolvovaní hodiny žiak dokáže:</p>
+    <ul>
+      <li>vytvoriť základný program v C so súborom hlavičky a funkciou <code>int main(void)</code>;</li>
+      <li>vysvetliť účel <code>#include &lt;stdio.h&gt;</code>, <code>printf</code>, bodkočiarky a <code>return 0;</code>;</li>
+      <li>zapísať a predpovedať výstup aspoň dvoch volaní <code>printf</code> s novým riadkom;</li>
+      <li>preložiť súbor <code>.c</code> pomocou GCC v režime C17 a spustiť vytvorený program, ak je prostredie dostupné.</li>
+    </ul>
+
+    <h2>1. Motivácia: počítač vypíše hlásenie</h2>
+    <p>Predstavte si jednoduchý testovací program, ktorý po spustení zobrazí obsluhe správu, že meranie sa začína. Počítač však nevie, čo chceme, kým presný pokyn nezapíšeme v jazyku, ktorému rozumie jeho nástroj na spracovanie programu.</p>
+    <div class="note"><strong>Otázky na úvod:</strong> Čo musí programátor pripraviť, aby sa hlásenie zobrazilo? Je súbor s textom programu už hotovým programom, ktorý počítač vie spustiť?</div>
+    <p>V tejto hodine pripravíme zdrojový súbor, v ktorom bude pokyn na výpis textu. Kompilátor z neho vytvorí spustiteľný program.</p>
+
+    <h2>2. Teoretický výklad</h2>
+    <h3>Zdrojový kód a kompilátor</h3>
+    <p><strong>Zdrojový kód</strong> je text programu zapísaný programátorom. V tejto lekcii ho uložíme do súboru s príponou <code>.c</code>, napríklad <code>main.c</code>. <strong>Kompilátor</strong> spracuje tento text podľa pravidiel jazyka a vytvorí spustiteľný súbor. VS Code je editor, v ktorom píšeme kód; GCC je samostatný kompilátor.</p>
+    <p>Postup môžeme zhrnúť takto:</p>
+    <p><strong>main.c (zdrojový kód) → GCC (preklad v režime C17) → spustiteľný program → výstup v termináli</strong></p>
+
+    <h3>Základná štruktúra programu</h3>
+    <p>V bežnom prostredí má jednoduchý program v C jednu funkciu <code>main</code>. Vykonávanie sa začína v tejto funkcii. Zápis <code>int main(void)</code> znamená, že funkcia vracia celočíselný výsledok a neprijíma argumenty. Na začiatku používame <code>return 0;</code> na vyjadrenie úspešného skončenia.</p>
+    <p>Hlavičkový súbor <code>&lt;stdio.h&gt;</code> sprístupní deklaráciu funkcie <code>printf</code>, ktorú použijeme na výpis textu na štandardný výstup, obyčajne do terminálu. Riadok <code>#include</code> je pokyn pre preprocesor, preto sa zaň nepíše bodkočiarka.</p>
+
+    <h3>Príkaz, bodkočiarka a nový riadok</h3>
+    <p>Volanie <code>printf("Ahoj, svet!\n");</code> vypíše text v úvodzovkách. Zápis <code>\n</code> je riadiaca sekvencia označujúca nový riadok. Bodkočiarka ukončuje príkaz. Zložené zátvorky <code>{ }</code> ohraničujú telo funkcie <code>main</code>.</p>
+
+    <h3>Komentáre</h3>
+    <p>Komentár vysvetľuje zdrojový kód človeku; kompilátor ho nepovažuje za vykonávaný príkaz. V C17 môžeme použiť jednoriadkový komentár <code>// text</code> alebo viacriadkový komentár <code>/* text */</code>. Komentár má objasňovať zámer, nie zbytočne opakovať, čo už jasne hovorí kód.</p>
+
+    <h3>Preklad a spustenie</h3>
+    <p>Uložte súbor ako <code>main.c</code>. V termináli otvorte priečinok, v ktorom sa tento súbor nachádza, a zadajte:</p>
+    <pre><code>gcc -std=c17 -Wall -Wextra -Wpedantic main.c -o prvy_program</code></pre>
+    <ul>
+      <li><code>gcc</code> spustí kompilátor GCC;</li>
+      <li><code>-std=c17</code> zvolí režim štandardu C17;</li>
+      <li><code>-Wall -Wextra -Wpedantic</code> zapne užitočné upozornenia;</li>
+      <li><code>main.c</code> je vstupný zdrojový súbor a <code>-o prvy_program</code> určuje názov výsledného programu.</li>
+    </ul>
+    <p>Vo Windows PowerShelli spustite vytvorený súbor príkazom <code>.\prvy_program.exe</code>. V Linuxe použite <code>./prvy_program</code>. Ak GCC nie je nainštalované alebo dostupné cez terminál, preklad v tejto hodine vykoná učiteľ na pripravenom zariadení; problém s nastavením prostredia budeme riešiť osobitne.</p>
+
+    <h2>3. Názorné programové príklady</h2>
+    <h3>Príklad 1 – prvý pozdrav</h3>
+    <p><strong>Problém:</strong> po spustení programu zobrazte používateľovi krátky pozdrav.</p>
+    <pre class="code-sample"><code>#include &lt;stdio.h&gt;
+
+int main(void) {
+    // Vypiseme uvodny pozdrav.
+    printf("Ahoj, svet!\n");
+    return 0;
+}</code></pre>
+    <p><strong>Očakávaný výstup:</strong></p>
+    <pre class="output"><code>Ahoj, svet!</code></pre>
+    <p><strong>Rozbor:</strong> Príkaz <code>#include</code> sprístupní <code>printf</code>. Program začne vykonávať telo funkcie <code>main</code>, vypíše text a sekvenciou <code>\n</code> prejde na ďalší riadok. Potom vráti hodnotu <code>0</code> a skončí.</p>
+
+    <h3>Príklad 2 – hlásenie testovacej stanice</h3>
+    <p><strong>Problém:</strong> zobrazte dve krátke správy, každú na samostatnom riadku.</p>
+    <pre class="code-sample"><code>#include &lt;stdio.h&gt;
+
+int main(void) {
+    printf("Meranie sa zacina.\n");
+    printf("Stav: pripraveny.\n");
+    return 0;
+}</code></pre>
+    <p><strong>Očakávaný výstup:</strong></p>
+    <pre class="output"><code>Meranie sa zacina.
+Stav: pripraveny.</code></pre>
+    <p>Každé volanie <code>printf</code> vypíše svoju správu. Každý text končí sekvenciou <code>\n</code>, preto sa druhé hlásenie zobrazí na novom riadku.</p>
+
+    <h3>Krátka analýza chyby</h3>
+    <pre class="code-sample"><code>#include &lt;stdio.h&gt;
+
+int main(void) {
+    printf("Program spusteny\n")
+    return 0;
+}</code></pre>
+    <p>Všimnite si chýbajúcu bodkočiarku po volaní <code>printf</code>. V C sa príkaz musí ukončiť bodkočiarkou. Predpovedzte, akú informáciu môže kompilátor oznámiť, a opravte riadok.</p>
+
+    <h2>4. Samostatná práca (10 minút)</h2>
+    <div class="card">
+      <h3>Úloha A – povinná: pozdrav</h3>
+      <p>Vytvorte súbor <code>main.c</code> a program, ktorý vypíše jeden krátky pozdrav na samostatný riadok.</p>
+      <p><strong>Očakávané správanie:</strong> po spustení sa v termináli zobrazí pozdrav a kurzor prejde na nový riadok.</p>
+      <p><strong>Kritérium úspechu:</strong> súbor obsahuje <code>#include &lt;stdio.h&gt;</code>, funkciu <code>int main(void)</code>, jedno volanie <code>printf</code> ukončené bodkočiarkou a <code>return 0;</code>.</p>
+    </div>
+    <div class="card">
+      <h3>Úloha B – dve stavové správy</h3>
+      <p>Upravte svoj program tak, aby vypísal dve vlastné stavové správy, každú na samostatnom riadku. Aspoň jedna správa nech sa týka merania, zariadenia alebo pracoviska.</p>
+      <p><strong>Očakávané správanie:</strong> zobrazia sa presne dve správy v zadanom poradí.</p>
+      <p><strong>Kritérium úspechu:</strong> použijete dve volania <code>printf</code> a na konci každej správy bude <code>\n</code>.</p>
+    </div>
+    <div class="card">
+      <h3>Úloha C – rozšírenie pre rýchlejších</h3>
+      <p>Pridajte komentár, ktorý vysvetľuje účel programu, a zmeňte poradie dvoch stavových správ. Pred spustením zapíšte, v akom poradí sa zobrazia.</p>
+      <p><strong>Očakávané správanie:</strong> výstup zodpovedá novému poradiu volaní <code>printf</code>; komentár sa vo výstupe nezobrazí.</p>
+      <p><strong>Kritérium úspechu:</strong> viete odôvodniť poradie výpisu podľa postupnosti príkazov a odlíšiť komentár od vykonávaného príkazu.</p>
+    </div>
+    <p><strong>Postup pri práci:</strong> Najprv predpovedzte výstup, potom program spustite. Ak GCC nie je na počítači dostupné, dokončite zápis a kontrolu kódu; preklad zabezpečí učiteľ. Riešenia úloh nie sú súčasťou zadania.</p>
+
+    <h2>5. Opakovanie a overenie vedomostí</h2>
+    <ol>
+      <li>Ktorý súbor spracuje kompilátor: <code>main.c</code> alebo spustiteľný súbor?</li>
+      <li>Prečo pripájame <code>&lt;stdio.h&gt;</code>?</li>
+      <li>Kde sa začína vykonávanie bežného programu v C?</li>
+      <li>Čo vypíše program, ak sa v reťazci <code>printf</code> nachádza <code>\n</code>?</li>
+      <li>Čo treba opraviť v ukážke s chybou: názov funkcie, hlavičku alebo ukončenie príkazu?</li>
+    </ol>
+    <p><strong>Otázka na princíp:</strong> Prečo nestačí napísať zdrojový kód do VS Code, ak chceme program spustiť?</p>
+    <p><strong>Očakávané odpovede:</strong> Kompilátor spracuje <code>main.c</code>; <code>stdio.h</code> deklaruje <code>printf</code>; vykonávanie sa začína vo funkcii <code>main</code>; <code>\n</code> presunie výstup na nový riadok; v chybovej ukážke chýba bodkočiarka. VS Code je editor a na vytvorenie spustiteľného programu potrebujeme kompilátor.</p>
+
+    <h3>Lístok pri odchode</h3>
+    <p>Na konci hodiny odpovedzte stručne:</p>
+    <ol>
+      <li>Ktorý príkaz v dnešnom programe vypisoval text?</li>
+      <li>Čo vytvorí GCC po úspešnom preklade?</li>
+      <li>Uveďte jednu chybu, na ktorú si pri zápise programu v C treba dávať pozor.</li>
+    </ol>
+
+    <h2>Typické chyby začiatočníkov</h2>
+    <div class="scroll">
+      <table>
+        <thead><tr><th>Chyba</th><th>Prečo je problém</th><th>Oprava</th></tr></thead>
+        <tbody>
+          <tr><td>Chýba bodkočiarka po <code>printf(...)</code>.</td><td>Kompilátor nevie správne oddeliť príkazy.</td><td>Ukončite volanie bodkočiarkou: <code>printf("Text\n");</code>.</td></tr>
+          <tr><td>Chýba <code>#include &lt;stdio.h&gt;</code>.</td><td>Deklarácia štandardnej funkcie <code>printf</code> nie je sprístupnená.</td><td>Pridajte hlavičku pred definíciu <code>main</code>.</td></tr>
+          <tr><td>Použije sa <code>void main()</code>.</td><td>To nie je štandardná signatúra pre bežný hostovaný program C17.</td><td>Použite <code>int main(void)</code> a ukončite telo pomocou <code>return 0;</code>.</td></tr>
+          <tr><td>Zabudne sa <code>\n</code>.</td><td>Program sa môže preložiť, ale ďalší text sa zobrazí na tom istom riadku.</td><td>Vložte <code>\n</code> na miesto, kde má výstup pokračovať na novom riadku.</td></tr>
+          <tr><td>Názov v príkaze GCC sa nezhoduje so skutočným názvom súboru.</td><td>Kompilátor nenájde vstupný súbor.</td><td>Skontrolujte priečinok, názov a príponu <code>.c</code>.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <section aria-labelledby="video-heading">
+      <h2 id="video-heading">Videopodpora – pozri, pochop a vyskúšaj</h2>
+      <div class="video-grid">
+        <article class="video-card">
+          <h3>Kurz C C++ – Informatika s Mišom</h3>
+          <p>Playlist obsahuje videá o jazykoch C aj C++. Konkrétnu položku zodpovedajúcu prednáške 4.2 sa nepodarilo nezávisle overiť, preto je vložený celý playlist; pred sledovaním vyberte video o prvom programe v jazyku C.</p>
+          <iframe
+            class="video-frame"
+            src="https://www.youtube-nocookie.com/embed/videoseries?list=PLNAMH_0HgWT_lzUDYYKHYczT4xqLCn"
+            title="Playlist Kurz C C++ – Informatika s Mišom"
+            loading="lazy"
+            referrerpolicy="strict-origin-when-cross-origin"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen></iframe>
+          <p><a href="https://www.youtube.com/playlist?list=PLNAMH_0HgWT_lzUDYYKHYczT4xqLCn" target="_blank" rel="noopener noreferrer">Otvoriť playlist na YouTube</a></p>
+          <p><strong>Pri sledovaní sa zamerajte na:</strong> hlavičkový súbor, funkciu <code>main</code>, výpis textu a rozdiely oproti prípadným ukážkam v C++.</p>
+          <p><strong>Overenie:</strong> Ktorý príkaz vypisuje text? Čo treba urobiť so zdrojovým súborom pred spustením programu?</p>
+          <p><strong>Vyskúšajte:</strong> Prepíšte pozdrav z ukážky vlastným textom a pred spustením predpovedzte, čo sa zobrazí.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="sources" aria-labelledby="sources-heading">
+      <h2 id="sources-heading">Odporúčané zdroje a videá</h2>
+      <ul>
+        <li><a href="https://en.cppreference.com/w/c/language/main_function" target="_blank" rel="noopener noreferrer">cppreference: hlavná funkcia <code>main</code> v jazyku C</a>.</li>
+        <li><a href="https://en.cppreference.com/w/c/io/fprintf" target="_blank" rel="noopener noreferrer">cppreference: <code>printf</code> a výstupné funkcie jazyka C</a>.</li>
+        <li><a href="https://gcc.gnu.org/onlinedocs/gcc/Invoking-GCC.html" target="_blank" rel="noopener noreferrer">GCC dokumentácia: spúšťanie kompilátora</a>.</li>
+        <li><a href="https://www.w3schools.com/c/" target="_blank" rel="noopener noreferrer">W3Schools: C Tutorial</a> – doplnkový výklad základov jazyka C.</li>
+      </ul>
+      <p><strong>Poznámka k samoštúdiu:</strong> Zopakujte si postup zdrojový súbor → kompilátor → spustiteľný program a skúste zmeniť text vypísaný programom. Video a W3Schools sú doplnkové zdroje; nenahrádzajú vlastnú ukážku a precvičenie.</p>
+    </section>
+
+    <footer><a href="../c-language.html">Späť na prehľad materiálov C</a> · <a href="../../index.html">Všetky kurzy</a></footer>
+
+    <h2>Poznámky a povinné vedomosti, ktoré si zapamätať z hodiny</h2>
+    <ul>
+      <li>Zdrojový kód programu v C uložte napríklad do súboru <code>main.c</code>; GCC ho preloží na spustiteľný program.</li>
+      <li>V bežnom hostovanom programe sa vykonávanie začína vo funkcii <code>int main(void)</code>.</li>
+      <li><code>#include &lt;stdio.h&gt;</code> sprístupní deklaráciu funkcie <code>printf</code>.</li>
+      <li><code>printf("Text\n");</code> vypíše text a <code>\n</code> presunie výstup na nový riadok.</li>
+      <li>Príkazy ukončujte bodkočiarkou; telo funkcie ohraničujú zložené zátvorky.</li>
+      <li>Komentáre <code>// ...</code> a <code>/* ... */</code> slúžia na vysvetlenie kódu a nevypisujú sa.</li>
+      <li>Príklad prekladu: <code>gcc -std=c17 -Wall -Wextra -Wpedantic main.c -o prvy_program</code>.</li>
+      <li>Na typické chyby patrí chýbajúca bodkočiarka, hlavička alebo nesprávny názov súboru v príkaze prekladu.</li>
+    </ul>
+  </main>
+  <script>
+    const onlineCompilerUrl = "https://www.programiz.com/c-programming/online-compiler/";
+
+    document.querySelectorAll("pre.code-sample").forEach((codeBlock) => {
+      const code = codeBlock.querySelector("code");
+      if (!code) return;
+
+      const actions = document.createElement("div");
+      const copyButton = document.createElement("button");
+      const onlineEditor = document.createElement("a");
+      const status = document.createElement("p");
+
+      actions.className = "copy-actions";
+      copyButton.className = "copy-btn";
+      copyButton.type = "button";
+      copyButton.textContent = "Kopírovať kód";
+      onlineEditor.href = onlineCompilerUrl;
+      onlineEditor.target = "_blank";
+      onlineEditor.rel = "noopener noreferrer";
+      onlineEditor.textContent = "Vyskúšať v online editore C";
+      status.className = "copy-status";
+      status.setAttribute("role", "status");
+      status.setAttribute("aria-live", "polite");
+
+      codeBlock.before(actions);
+      actions.append(copyButton, onlineEditor);
+      codeBlock.after(status);
+
+      copyButton.addEventListener("click", async () => {
+        try {
+          await navigator.clipboard.writeText(code.innerText);
+          status.textContent = "Kód skopírovaný. Vložte ho do online editora alebo do súboru v počítači.";
+        } catch {
+          status.textContent = "Kopírovanie nie je dostupné. Označte kód a skopírujte ho pomocou Ctrl+C.";
+        }
+      });
+    });
+  </script>
+</body>
+</html>
