@@ -1,0 +1,279 @@
+<!doctype html>
+<html lang="sk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Prednáška 4.1: stručná história jazyka C a význam noriem C17.">
+  <title>4.1 Historický úvod a normy jazyka C</title>
+  <style>
+    :root{color-scheme:light;--bg:#f7f8fa;--fg:#1c2330;--card:#fff;--mut:#5b6678;--acc:#1f6feb;--line:#d9dee7;--note:#fff4d6;--good:#18743a;--bad:#b42318}
+    @media(prefers-color-scheme:dark){:root:not([data-theme="light"]){color-scheme:dark;--bg:#12161d;--fg:#e6eaf1;--card:#1b212b;--mut:#9aa6b8;--acc:#5aa2ff;--line:#2d3644;--note:#3a3017;--good:#63d58a;--bad:#ff8a80}}
+    :root[data-theme="light"]{color-scheme:light;--bg:#f7f8fa;--fg:#1c2330;--card:#fff;--mut:#5b6678;--acc:#1f6feb;--line:#d9dee7;--note:#fff4d6;--good:#18743a;--bad:#b42318}
+    :root[data-theme="dark"]{color-scheme:dark;--bg:#12161d;--fg:#e6eaf1;--card:#1b212b;--mut:#9aa6b8;--acc:#5aa2ff;--line:#2d3644;--note:#3a3017;--good:#63d58a;--bad:#ff8a80}
+    *{box-sizing:border-box}
+    html{scroll-padding-top:1rem}
+    body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.65 system-ui,-apple-system,"Segoe UI",sans-serif}
+    a{color:var(--acc)}
+    .global-course-nav{display:flex;flex-wrap:wrap;gap:.55rem;align-items:center;width:min(100% - 2rem,1000px);margin:.75rem auto 0;font:600 .9rem/1.4 system-ui,-apple-system,"Segoe UI",sans-serif}
+    .global-course-nav a{display:inline-block;padding:.4rem .7rem;border:1px solid var(--line);border-radius:.55rem;text-decoration:none;color:inherit;background:var(--card)}
+    .global-course-nav a:hover{text-decoration:underline}
+    .global-course-nav a:focus-visible,a:focus-visible,button:focus-visible,summary:focus-visible,select:focus-visible{outline:3px solid var(--acc);outline-offset:3px}
+    main{width:min(100% - 2rem,880px);margin:auto;padding:1rem 0 3rem}
+    header{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:.65rem}
+    .crumb,.muted,.status{color:var(--mut)}
+    h1{font-size:clamp(1.8rem,5vw,2.6rem);line-height:1.2;margin:.8rem 0}
+    h2{margin-top:2rem;font-size:1.4rem}
+    h3{margin-top:1.25rem;font-size:1.1rem}
+    .lead{font-size:1.08rem}
+    .tags{display:flex;flex-wrap:wrap;gap:.45rem;margin:1rem 0}
+    .tag{padding:2px 9px;border:1px solid var(--line);border-radius:999px;background:var(--card);font-size:13px}
+    .card,.teacher-note,.video-card,.quiz{margin:1rem 0;padding:1rem 1.1rem;border:1px solid var(--line);border-radius:12px;background:var(--card)}
+    .teacher-note{display:none;background:var(--note)}
+    body.teacher .teacher-note{display:block}
+    .teacher-note strong{display:block;margin-bottom:.3rem}
+    .mode{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+    .mode button,.quiz button{padding:6px 11px;border:0;background:var(--card);color:var(--fg);font:inherit;cursor:pointer}
+    .mode button.on,.quiz button{background:var(--acc);color:#fff}
+    .scroll{overflow-x:auto}
+    table{width:100%;border-collapse:collapse}
+    th,td{padding:.65rem .7rem;border:1px solid var(--line);text-align:left;vertical-align:top}
+    th{background:var(--card)}
+    td:first-child{white-space:nowrap;font-weight:700}
+    .timeline{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:.5rem;margin:1rem 0;padding:1rem;border:1px solid var(--line);border-radius:12px;background:var(--card);font-weight:700}
+    .timeline span{padding:.35rem .6rem;border-radius:7px;background:var(--line)}
+    .timeline .chosen{background:var(--acc);color:#fff}
+    .timeline b{color:var(--mut)}
+    .split{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,210px),1fr));gap:.75rem}
+    .term{padding:.9rem 1rem;border:1px solid var(--line);border-radius:10px;background:var(--card)}
+    .term h3{margin:.1rem 0 .35rem}
+    pre{max-width:100%;margin:.65rem 0 1rem;padding:1rem;border-radius:9px;overflow-x:auto;background:#0f172a;color:#e2e8f0;font:14px/1.55 ui-monospace,SFMono-Regular,Consolas,monospace}
+    code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace}
+    :not(pre)>code{padding:.08rem .28rem;border-radius:4px;background:color-mix(in srgb,var(--line) 55%,transparent)}
+    .video-frame{display:block;width:100%;aspect-ratio:16/9;border:0;border-radius:8px;background:#000}
+    .video-card p{margin:.5rem 0}
+    .quiz label{display:block;margin:.85rem 0 .25rem;font-weight:650}
+    .quiz select{width:100%;padding:.55rem;border:1px solid var(--line);border-radius:7px;background:var(--bg);color:var(--fg);font:inherit}
+    .quiz select.wrong{border-color:var(--bad);box-shadow:0 0 0 2px color-mix(in srgb,var(--bad) 22%,transparent)}
+    .quiz button{margin-top:1rem;border-radius:7px}
+    .result{min-height:1.5em;font-weight:650}
+    .good{color:var(--good)}.bad{color:var(--bad)}
+    details{margin:.8rem 0;padding:.65rem .85rem;border:1px solid var(--line);border-radius:9px;background:var(--card)}
+    summary{cursor:pointer;font-weight:650}
+    .sources{margin-top:2rem;padding:1rem 1.1rem;border:1px solid var(--line);border-radius:12px;background:var(--card)}
+    .sources h2{margin-top:0}
+    .sources li{margin:.4rem 0}
+    footer{margin-top:2rem;padding-top:1rem;border-top:1px solid var(--line);color:var(--mut);font-size:14px}
+    @media(max-width:620px){main{width:min(100% - 1.2rem,880px)}td:first-child{white-space:normal}}
+    @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important}}
+    @media print{.global-course-nav,.mode,.quiz button{display:none!important}.teacher-note{display:block}main{max-width:none}}
+  </style>
+  <script src="../../theme.js" defer></script>
+</head>
+<body>
+  <nav class="global-course-nav" aria-label="Navigácia kurzov">
+    <a href="../c-language.html">Prehľad kurzu C</a>
+    <a href="../../index.html">Všetky kurzy</a>
+  </nav>
+  <main>
+    <header>
+      <span class="crumb"><a href="../c-language.html">Základy jazyka C</a> › Úvod do programovania › 4.1</span>
+      <div class="mode" role="group" aria-label="Zobrazenie stránky">
+        <button id="student-mode" class="on" type="button" aria-pressed="true">Žiak</button>
+        <button id="teacher-mode" type="button" aria-pressed="false">Učiteľ</button>
+      </div>
+    </header>
+
+    <h1>4.1 Historický úvod a normy jazyka C</h1>
+    <p class="lead">
+      <span class="tag">1 × 45 min</span>
+      <span class="tag">Tematický celok 4</span>
+      <span class="tag">Jazyk C</span>
+      <span class="tag">ISO C17</span>
+    </p>
+    <p>V tejto úvodnej hodine sa zoznámite s pôvodom jazyka C, jeho vývojom a významom jazykových noriem. Zistíte, prečo v kurze používame C17 a ako spolu súvisia jazyk, štandard a kompilátor.</p>
+    <section class="card">
+      <strong>Nadväznosť na predchádzajúce učivo:</strong> Viete, že programátor zapisuje postup riešenia ako program a že počítač potrebuje presné pokyny. Teraz sa pozrieme na to, ako vznikol jazyk C a ako štandard určuje spoločné pravidlá pre jeho programy.
+    </section>
+    <section class="teacher-note">
+      <strong>Ciele, predpoklady a pomôcky</strong>
+      Žiak stručne opíše vznik a použitie jazyka C, rozlíši jazyk C, štandard C17 a kompilátor, vysvetlí význam dodržiavania normy a rozpozná voľbu <code>-std=c17</code> v príkaze GCC. Predpoklady: základné algoritmické myslenie a predstava o zdrojovom programe. Pomôcky: tabuľa alebo projektor, časová os a kartičky s pojmami; kompilátor je voliteľný.
+    </section>
+
+    <h2>Plán hodiny (45 minút)</h2>
+    <div class="scroll">
+      <table>
+        <thead><tr><th>Čas</th><th>Trvanie</th><th>Časť hodiny</th><th>Činnosť a zámer</th></tr></thead>
+        <tbody>
+          <tr><td>0–5 min</td><td>5 min</td><td>Motivácia</td><td>Prečo potrebujeme spoločné pravidlá pre zápis programov?</td></tr>
+          <tr><td>5–13 min</td><td>8 min</td><td>Vznik jazyka C</td><td>Stručne predstaviť vznik C a prostredie, pre ktoré sa jazyk rozvíjal.</td></tr>
+          <tr><td>13–21 min</td><td>8 min</td><td>Vývoj a použitie</td><td>Umiestniť dôležité míľniky na časovú os a uviesť oblasti použitia.</td></tr>
+          <tr><td>21–31 min</td><td>10 min</td><td>Jazyk, norma a kompilátor</td><td>Rozlíšiť pojmy a vysvetliť potrebu štandardizácie.</td></tr>
+          <tr><td>31–38 min</td><td>7 min</td><td>C17 v príkaze GCC</td><td>Prečítať príkaz prekladu a vysvetliť voľbu štandardu.</td></tr>
+          <tr><td>38–43 min</td><td>5 min</td><td>Aktivita a kontrola</td><td>Priradiť pojmy a overiť ich porozumenie.</td></tr>
+          <tr><td>43–45 min</td><td>2 min</td><td>Záver</td><td>Lístok pri odchode: vysvetliť, čo znamená C17.</td></tr>
+          <tr><td colspan="2"><strong>Spolu: 45 min</strong></td><td colspan="2">Jedna vyučovacia hodina trvá 45 minút.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>Ciele vyučovacej hodiny</h2>
+    <p>Po hodine dokážete:</p>
+    <ul>
+      <li>uviesť, kto a približne kedy vytvoril jazyk C;</li>
+      <li>pomenovať aspoň dve oblasti, v ktorých sa jazyk C používa;</li>
+      <li>vlastnými slovami vysvetliť rozdiel medzi jazykom C, normou a kompilátorom;</li>
+      <li>vysvetliť, prečo budeme pri príkladoch používať štandard C17.</li>
+    </ul>
+
+    <h2>1. Prečo vznikajú jazykové normy?</h2>
+    <p>Predstavte si, že dvaja programátori napíšu rovnaký zdrojový kód, no každý používa iný prekladač. Bez spoločných pravidiel by mohli očakávať odlišné správanie toho istého programu. Norma pomáha určiť, ktoré zápisy patria do jazyka a aké správanie sa od vyhovujúcej implementácie očakáva.</p>
+    <div class="card"><strong>Otázka na úvod:</strong> Ak by si každý výrobca prekladača mohol určovať vlastnú syntax aj význam príkazov, čo by sa stalo pri prenose programu z jedného počítača na druhý?</div>
+
+    <h2>2. Stručná história jazyka C</h2>
+    <p>Jazyk C vytvoril <strong>Dennis Ritchie</strong> v Bellových laboratóriách na začiatku 70. rokov 20. storočia. Vyvíjal sa v súvislosti s operačným systémom Unix a umožnil písať systémový softvér efektívnejšie než v čisto strojovom alebo assemblerovom jazyku. Kniha <em>The C Programming Language</em>, ktorú napísali Brian W. Kernighan a Dennis M. Ritchie, významne prispela k rozšíreniu jazyka; jej vydanie z roku 1978 sa často označuje ako K&amp;R C.</p>
+    <p>C sa používa aj dnes, napríklad pri systémovom softvéri, operačných systémoch, ovládačoch zariadení, embedded systémoch a mikrokontroléroch. Použitie C však samo osebe neznamená, že každý program v C je automaticky rýchly alebo bezpečný: záleží aj na návrhu programu, implementácii a dôslednom overovaní.</p>
+    <div class="timeline" aria-label="Zjednodušená časová os štandardov C">
+      <span>Začiatok 70. rokov · vznik C</span><b aria-hidden="true">→</b>
+      <span>1978 · K&amp;R C</span><b aria-hidden="true">→</b>
+      <span>1989 · C89 / ANSI C</span><b aria-hidden="true">→</b>
+      <span>1990 · C90 / ISO</span><b aria-hidden="true">→</b>
+      <span>1999 · C99</span><b aria-hidden="true">→</b>
+      <span>2011 · C11</span><b aria-hidden="true">→</b>
+      <span class="chosen">2018 · C17</span><b aria-hidden="true">→</b>
+      <span>2024 · C23</span>
+    </div>
+    <p>Časová os je zjednodušená. C17 (tiež označované ako C18 podľa roku vydania ISO dokumentu) je revízia normy C11 s opravami a objasneniami; neprináša veľkú sadu nových jazykových vlastností. Novšia norma C23 existuje, ale v tomto kurze si kvôli jednotným príkladom a nástrojom zvolíme C17.</p>
+
+    <h2>3. Jazyk, norma a kompilátor</h2>
+    <div class="split">
+      <article class="term"><h3>Jazyk C</h3><p>Pravidlá a prostriedky, ktorými programátor vyjadruje postup riešenia.</p></article>
+      <article class="term"><h3>Norma C17</h3><p>Dokument so spoločnými pravidlami jazyka C, schválený ako ISO/IEC 9899:2018.</p></article>
+      <article class="term"><h3>Kompilátor</h3><p>Program, ktorý spracuje zdrojový kód podľa podporovaných pravidiel a vytvorí ďalší výstup, napríklad spustiteľný program.</p></article>
+      <article class="term"><h3>GCC</h3><p>Jeden z kompilátorov. Jeho prepínač môže vybrať jazykový režim, napríklad C17.</p></article>
+    </div>
+    <p>Norma nie je samotný kompilátor a jej zvolením sa nový nástroj neinštaluje. Kompilátory sa môžu líšiť verziou, podporou vlastností a rozšíreniami. Preto pri výučbe nastavíme spoločný jazykový režim a zároveň budeme kompilovať s upozorneniami.</p>
+
+    <h2>4. Prečo používame C17?</h2>
+    <ul>
+      <li>Príklady v kurze budú mať spoločné a predvídateľné pravidlá.</li>
+      <li>Kompilátor nás môže upozorniť na podozrivé alebo neštandardné zápisy.</li>
+      <li>Príkaz prekladu bude jasne uvádzať, podľa ktorej verzie jazyka program skúšame preložiť.</li>
+      <li>C17 je vhodný spoločný základ pre používané učebné nástroje; zmienime aj to, že existujú novšie normy.</li>
+    </ul>
+    <div class="card"><strong>Rozdiel, ktorý si zapamätajte:</strong> C je jazyk, C17 je verzia jeho normy a GCC je jeden z nástrojov, ktorý môže program v zvolenom režime preložiť.</div>
+
+    <h2>5. Ako sa norma objaví v príkaze?</h2>
+    <p>Neskôr budeme zdrojový súbor v jazyku C prekladať príkazom podobným tomuto:</p>
+    <pre><code>gcc -std=c17 -Wall -Wextra -Wpedantic main.c -o program</code></pre>
+    <ul>
+      <li><code>gcc</code> spustí kompilátor GCC;</li>
+      <li><code>-std=c17</code> požiada GCC o režim jazyka C17;</li>
+      <li><code>-Wall -Wextra -Wpedantic</code> zapne skupiny upozornení a kontrolu prenositeľnosti;</li>
+      <li><code>main.c</code> je zdrojový súbor a <code>-o program</code> určuje názov výsledného programu.</li>
+    </ul>
+    <p>Upozornenia sú pomôcka pri hľadaní problémov; nenahrádzajú porozumenie kódu ani testovanie. Podrobnejšie si preklad a spustenie vyskúšame v nasledujúcich hodinách.</p>
+
+    <h2>6. Krátka aktivita</h2>
+    <p>Vo dvojici priraďte pojmy k ich vysvetleniam a potom vysvetlite vzťah medzi nimi:</p>
+    <div class="scroll">
+      <table>
+        <thead><tr><th>Pojem</th><th>Význam</th></tr></thead>
+        <tbody>
+          <tr><td>C</td><td>Programovací jazyk.</td></tr>
+          <tr><td>C17</td><td>Verzia normy jazyka C.</td></tr>
+          <tr><td>GCC</td><td>Kompilátor, ktorý môže prekladať programy v C.</td></tr>
+          <tr><td><code>-std=c17</code></td><td>Požiadavka na jazykový režim C17 pri preklade GCC.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <details><summary>Kontrola odpovede</summary><p>C je jazyk; C17 je verzia jeho normy; GCC je kompilátor; <code>-std=c17</code> vyberá režim normy pri preklade týmto kompilátorom.</p></details>
+
+    <h2>7. Interaktívne overenie</h2>
+    <form class="quiz" id="knowledge-quiz">
+      <label for="q1">1. Kto vytvoril jazyk C?</label>
+      <select id="q1" data-answer="ritchie" required>
+        <option value="">Vyberte odpoveď</option><option value="ritchie">Dennis Ritchie</option><option value="stroustrup">Bjarne Stroustrup</option><option value="kernighan">Linus Torvalds</option>
+      </select>
+      <label for="q2">2. Čo je C17?</label>
+      <select id="q2" data-answer="standard" required>
+        <option value="">Vyberte odpoveď</option><option value="compiler">Kompilátor C</option><option value="standard">Verzia normy jazyka C</option><option value="editor">Textový editor</option>
+      </select>
+      <label for="q3">3. Čo vyjadruje voľba <code>-std=c17</code> v príkaze GCC?</label>
+      <select id="q3" data-answer="mode" required>
+        <option value="">Vyberte odpoveď</option><option value="mode">Požiadavku na jazykový režim C17</option><option value="install">Inštaláciu kompilátora</option><option value="filename">Názov zdrojového súboru</option>
+      </select>
+      <label for="q4">4. Je C17 najnovšia norma jazyka C?</label>
+      <select id="q4" data-answer="no" required>
+        <option value="">Vyberte odpoveď</option><option value="yes">Áno</option><option value="no">Nie, existuje aj C23</option>
+      </select>
+      <button type="submit">Skontrolovať odpovede</button>
+      <p class="result" id="quiz-result" aria-live="polite"></p>
+    </form>
+
+    <h2>8. Lístok pri odchode</h2>
+    <p>Dokončite vetu: <strong>„C17 je … a pri preklade ho zvolím pomocou …“</strong></p>
+    <details><summary>Očakávaná odpoveď</summary><p>C17 je verzia normy jazyka C a v príkaze GCC ju zvolím pomocou <code>-std=c17</code>.</p></details>
+
+    <h2>Videopodpora – pozri, pochop a vyskúšaj</h2>
+    <article class="video-card">
+      <h3>Kurz C C++ – Informatika s Mišom</h3>
+      <p>Playlist obsahuje videá o C aj C++. Konkrétnu položku venovanú histórii a normám C sa nepodarilo overiť, preto neuvádzame neoverený názov videa ani časový úsek. Ak v playliste nenájdete vhodnú ukážku k histórii alebo norme C, túto časť preskočte.</p>
+      <iframe class="video-frame" src="https://www.youtube-nocookie.com/embed/videoseries?list=PLNAMH_0HgWT_lzUDYYKHYczKvjT4xqLCn" title="Playlist Kurz C C++ – Informatika s Mišom" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+      <p><a href="https://www.youtube.com/playlist?list=PLNAMH_0HgWT_lzUDYYKHYczKvjT4xqLCn" target="_blank" rel="noopener noreferrer">Otvoriť celý playlist na YouTube</a></p>
+      <p><strong>Pri sledovaní:</strong> všímajte si, či video používa C alebo C++; tieto jazyky nie sú totožné.</p>
+      <p><strong>Otázky:</strong> Ktorý jazyk sa vo videu používa? Spomína video štandard alebo iba konkrétny kompilátor?</p>
+      <p><strong>Vyskúšajte:</strong> Vysvetlite vlastnými slovami rozdiel medzi jazykom, normou a kompilátorom.</p>
+    </article>
+
+    <section class="sources">
+      <h2>Odporúčané zdroje</h2>
+      <ul>
+        <li><a href="https://www.iso.org/standard/74528.html" target="_blank" rel="noopener noreferrer">ISO/IEC 9899:2018 – Programming languages — C</a> — norma známa ako C17/C18.</li>
+        <li><a href="https://www.open-std.org/jtc1/sc22/wg14/www/docs/n1570.pdf" target="_blank" rel="noopener noreferrer">N1570 – návrh komisie pre C11</a> — verejne dostupný technický podklad k vývoju štandardu C.</li>
+        <li><a href="https://gcc.gnu.org/onlinedocs/gcc/C-Dialect-Options.html" target="_blank" rel="noopener noreferrer">GCC: voľby dialektu C</a> — prepínače na výber štandardu pri preklade.</li>
+        <li><a href="https://www.bell-labs.com/usr/dmr/www/chist.html" target="_blank" rel="noopener noreferrer">Dennis Ritchie: The Development of the C Language</a> — historický pohľad autora na vznik jazyka C.</li>
+        <li><a href="https://www.w3schools.com/c/" target="_blank" rel="noopener noreferrer">W3Schools: C Tutorial</a> — doplnkový úvod do syntaxe jazyka C.</li>
+      </ul>
+      <p class="muted">Na ďalšej hodine nadviažeme vytvorením prvého programu v C17. Pri porovnávaní zdrojov nezamieňajte syntax C so syntaxou C++.</p>
+    </section>
+    <footer><a href="../c-language.html">Späť na prehľad kurzu C</a> · <a href="4.2_Prvy_program_v_jazyku_C.html">Pokračovať prednáškou 4.2 →</a> · <a href="../../index.html">Všetky kurzy</a></footer>
+  </main>
+  <script>
+    const studentButton = document.getElementById("student-mode");
+    const teacherButton = document.getElementById("teacher-mode");
+    const setTeacherMode = (enabled) => {
+      document.body.classList.toggle("teacher", enabled);
+      studentButton.classList.toggle("on", !enabled);
+      teacherButton.classList.toggle("on", enabled);
+      studentButton.setAttribute("aria-pressed", String(!enabled));
+      teacherButton.setAttribute("aria-pressed", String(enabled));
+    };
+    studentButton.addEventListener("click", () => setTeacherMode(false));
+    teacherButton.addEventListener("click", () => setTeacherMode(true));
+
+    document.getElementById("knowledge-quiz").addEventListener("submit", (event) => {
+      event.preventDefault();
+      const questions = [...event.currentTarget.querySelectorAll("select")];
+      const result = document.getElementById("quiz-result");
+      if (questions.some((question) => !question.value)) {
+        questions.forEach((question) => {
+          const invalid = !question.value;
+          question.classList.toggle("wrong", invalid);
+          question.setAttribute("aria-invalid", String(invalid));
+        });
+        result.className = "result bad";
+        result.textContent = "Najprv vyberte odpoveď pri každej otázke.";
+        return;
+      }
+      const correct = questions.filter((question) => question.value === question.dataset.answer).length;
+      questions.forEach((question) => {
+        const invalid = question.value !== question.dataset.answer;
+        question.classList.toggle("wrong", invalid);
+        question.setAttribute("aria-invalid", String(invalid));
+      });
+      result.className = `result ${correct === questions.length ? "good" : "bad"}`;
+      result.textContent = `Správne odpovede: ${correct} zo ${questions.length}.${correct === questions.length ? " Výborne!" : " Červeným orámovaním sú označené odpovede na zopakovanie."}`;
+    });
+  </script>
+</body>
+</html>
