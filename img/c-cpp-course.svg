@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 700" role="img" aria-labelledby="title description">
+  <title id="title">Programovanie v jazykoch C a C++</title>
+  <desc id="description">Ukážky kódu C a C++ v editore, doplnené diagramom pamäte a objektov</desc>
+  <defs>
+    <linearGradient id="background" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#101b33"/>
+      <stop offset="1" stop-color="#173d61"/>
+    </linearGradient>
+    <linearGradient id="panel" x1="0" y1="0" x2="0" y2="1">
+      <stop stop-color="#18263c"/>
+      <stop offset="1" stop-color="#0e1728"/>
+    </linearGradient>
+    <linearGradient id="cyan" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#52ddff"/>
+      <stop offset="1" stop-color="#2aa8ff"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="700" fill="url(#background)"/>
+  <circle cx="1020" cy="106" r="180" fill="#2276a8" opacity=".14"/>
+  <circle cx="100" cy="648" r="210" fill="#22d3ee" opacity=".08"/>
+
+  <rect x="54" y="58" width="695" height="525" rx="22" fill="url(#panel)" stroke="#3b5875" stroke-width="2"/>
+  <path d="M56 126h691" stroke="#30455e" stroke-width="2"/>
+  <circle cx="88" cy="92" r="8" fill="#fb7185"/>
+  <circle cx="116" cy="92" r="8" fill="#fbbf24"/>
+  <circle cx="144" cy="92" r="8" fill="#4ade80"/>
+  <text x="179" y="101" fill="#91a9c2" font-family="system-ui, sans-serif" font-size="21">main.cpp</text>
+  <text x="91" y="178" fill="#6e829c" font-family="Consolas, monospace" font-size="22">01</text>
+  <text x="137" y="178" fill="#c4b5fd" font-family="Consolas, monospace" font-size="24">#include &lt;iostream&gt;</text>
+  <text x="91" y="226" fill="#6e829c" font-family="Consolas, monospace" font-size="22">02</text>
+  <text x="137" y="226" fill="#67e8f9" font-family="Consolas, monospace" font-size="24">class</text>
+  <text x="211" y="226" fill="#e2e8f0" font-family="Consolas, monospace" font-size="24">Student {</text>
+  <text x="91" y="274" fill="#6e829c" font-family="Consolas, monospace" font-size="22">03</text>
+  <text x="174" y="274" fill="#c4b5fd" font-family="Consolas, monospace" font-size="24">public:</text>
+  <text x="91" y="322" fill="#6e829c" font-family="Consolas, monospace" font-size="22">04</text>
+  <text x="209" y="322" fill="#67e8f9" font-family="Consolas, monospace" font-size="24">std::string</text>
+  <text x="371" y="322" fill="#e2e8f0" font-family="Consolas, monospace" font-size="24">name;</text>
+  <text x="91" y="370" fill="#6e829c" font-family="Consolas, monospace" font-size="22">05</text>
+  <text x="137" y="370" fill="#e2e8f0" font-family="Consolas, monospace" font-size="24">};</text>
+  <text x="91" y="430" fill="#6e829c" font-family="Consolas, monospace" font-size="22">06</text>
+  <text x="137" y="430" fill="#c4b5fd" font-family="Consolas, monospace" font-size="24">int</text>
+  <text x="185" y="430" fill="#fbbf24" font-family="Consolas, monospace" font-size="24">main</text>
+  <text x="250" y="430" fill="#e2e8f0" font-family="Consolas, monospace" font-size="24">() {</text>
+  <text x="91" y="478" fill="#6e829c" font-family="Consolas, monospace" font-size="22">07</text>
+  <text x="174" y="478" fill="#67e8f9" font-family="Consolas, monospace" font-size="24">std::vector</text>
+  <text x="318" y="478" fill="#e2e8f0" font-family="Consolas, monospace" font-size="24">&lt;Student&gt; trieda;</text>
+  <text x="91" y="526" fill="#6e829c" font-family="Consolas, monospace" font-size="22">08</text>
+  <text x="174" y="526" fill="#67e8f9" font-family="Consolas, monospace" font-size="24">return</text>
+  <text x="253" y="526" fill="#fbbf24" font-family="Consolas, monospace" font-size="24">0;</text>
+  <text x="303" y="526" fill="#e2e8f0" font-family="Consolas, monospace" font-size="24">}</text>
+
+  <rect x="789" y="80" width="357" height="191" rx="22" fill="#14243a" stroke="#314d69" stroke-width="2"/>
+  <text x="827" y="132" fill="#a8bfd8" font-family="system-ui, sans-serif" font-size="18" font-weight="700" letter-spacing="3">DVA JAZYKY</text>
+  <circle cx="876" cy="198" r="40" fill="#1e40af"/>
+  <path d="M889 180a22 22 0 1 0 0 36" fill="none" stroke="#fff" stroke-linecap="round" stroke-width="9"/>
+  <text x="927" y="211" fill="#e5edf8" font-family="system-ui, sans-serif" font-size="33" font-weight="750">C</text>
+  <path d="M978 198h31" stroke="#59738e" stroke-width="3"/>
+  <circle cx="1044" cy="198" r="40" fill="url(#cyan)"/>
+  <text x="1015" y="210" fill="#082033" font-family="system-ui, sans-serif" font-size="29" font-weight="850">C++</text>
+
+  <rect x="789" y="294" width="357" height="289" rx="22" fill="#14243a" stroke="#314d69" stroke-width="2"/>
+  <text x="827" y="345" fill="#a8bfd8" font-family="system-ui, sans-serif" font-size="18" font-weight="700" letter-spacing="3">OD PAMÄTE K OBJEKTOM</text>
+  <rect x="826" y="377" width="124" height="52" rx="12" fill="#123d59" stroke="#2aa8ff" stroke-width="2"/>
+  <text x="850" y="411" fill="#c9f3ff" font-family="Consolas, monospace" font-size="20">meno</text>
+  <rect x="983" y="377" width="124" height="52" rx="12" fill="#263250" stroke="#a78bfa" stroke-width="2"/>
+  <text x="1008" y="411" fill="#ede9fe" font-family="Consolas, monospace" font-size="20">objekt</text>
+  <path d="M951 403h29" stroke="#8ba3bb" stroke-width="3" stroke-linecap="round"/>
+  <path d="m972 395 9 8-9 8" fill="none" stroke="#8ba3bb" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"/>
+  <rect x="826" y="462" width="281" height="1" fill="#314d69"/>
+  <text x="827" y="506" fill="#dbeafe" font-family="system-ui, sans-serif" font-size="21" font-weight="700">Premenné · funkcie · OOP</text>
+  <text x="827" y="545" fill="#9db4ca" font-family="system-ui, sans-serif" font-size="18">Základy programovania</text>
+</svg>

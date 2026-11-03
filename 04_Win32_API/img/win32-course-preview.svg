@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 700" role="img" aria-labelledby="title description">
+  <title id="title">Tvorba natívnych aplikácií pomocou Win32 API</title>
+  <desc id="description">Návrh okna Windows s textovým poľom a tlačidlami vedľa ukážky kódu C++ pre správu udalostí</desc>
+  <defs>
+    <linearGradient id="background" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#081827"/>
+      <stop offset=".55" stop-color="#103a51"/>
+      <stop offset="1" stop-color="#13534c"/>
+    </linearGradient>
+    <linearGradient id="window" x1="0" y1="0" x2="0" y2="1">
+      <stop stop-color="#f8fbff"/>
+      <stop offset="1" stop-color="#dce8f4"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#46d7ee"/>
+      <stop offset="1" stop-color="#36b8a3"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="700" fill="url(#background)"/>
+  <circle cx="1070" cy="80" r="250" fill="#50d9df" opacity=".07"/>
+  <circle cx="70" cy="645" r="240" fill="#38bdf8" opacity=".08"/>
+
+  <rect x="53" y="62" width="640" height="487" rx="24" fill="#07111e" opacity=".4"/>
+  <rect x="66" y="47" width="640" height="487" rx="20" fill="url(#window)" stroke="#a8c0d0" stroke-width="2"/>
+  <path d="M68 105h636" stroke="#c4d5e4" stroke-width="2"/>
+  <rect x="88" y="69" width="14" height="14" rx="3" fill="#22b8d2"/>
+  <text x="114" y="84" fill="#24374a" font-family="system-ui, sans-serif" font-size="18" font-weight="650">Správa študentov</text>
+  <path d="M625 76h20m22 0h12" stroke="#61798c" stroke-linecap="round" stroke-width="3"/>
+  <path d="M674 69v14" stroke="#61798c" stroke-linecap="round" stroke-width="3"/>
+
+  <text x="104" y="148" fill="#23384b" font-family="system-ui, sans-serif" font-size="20" font-weight="750">Nový záznam</text>
+  <text x="104" y="187" fill="#52697c" font-family="system-ui, sans-serif" font-size="16">Meno študenta</text>
+  <rect x="104" y="200" width="350" height="47" rx="8" fill="#fff" stroke="#9eb3c5" stroke-width="2"/>
+  <text x="122" y="230" fill="#30495d" font-family="system-ui, sans-serif" font-size="18">Jana Nováková</text>
+  <rect x="474" y="200" width="180" height="47" rx="8" fill="url(#accent)"/>
+  <text x="496" y="230" fill="#062c36" font-family="system-ui, sans-serif" font-size="17" font-weight="750">Pridať záznam</text>
+
+  <text x="104" y="291" fill="#23384b" font-family="system-ui, sans-serif" font-size="19" font-weight="750">Zoznam študentov</text>
+  <rect x="104" y="310" width="550" height="42" rx="6" fill="#d8e6f0"/>
+  <text x="122" y="337" fill="#3c566b" font-family="system-ui, sans-serif" font-size="15" font-weight="700">MENO</text>
+  <text x="381" y="337" fill="#3c566b" font-family="system-ui, sans-serif" font-size="15" font-weight="700">STAV</text>
+  <text x="530" y="337" fill="#3c566b" font-family="system-ui, sans-serif" font-size="15" font-weight="700">AKCIA</text>
+  <path d="M104 363h550M104 410h550M104 457h550" stroke="#c4d5e4" stroke-width="2"/>
+  <text x="122" y="392" fill="#30495d" font-family="system-ui, sans-serif" font-size="17">Jana Nováková</text>
+  <circle cx="390" cy="385" r="6" fill="#16a37a"/>
+  <text x="405" y="392" fill="#24705d" font-family="system-ui, sans-serif" font-size="16">Uložené</text>
+  <text x="550" y="392" fill="#087ea4" font-family="system-ui, sans-serif" font-size="16" font-weight="650">Upraviť</text>
+  <text x="122" y="439" fill="#30495d" font-family="system-ui, sans-serif" font-size="17">Peter Horváth</text>
+  <circle cx="390" cy="432" r="6" fill="#16a37a"/>
+  <text x="405" y="439" fill="#24705d" font-family="system-ui, sans-serif" font-size="16">Uložené</text>
+  <text x="550" y="439" fill="#087ea4" font-family="system-ui, sans-serif" font-size="16" font-weight="650">Upraviť</text>
+  <text x="104" y="503" fill="#688195" font-family="system-ui, sans-serif" font-size="14">Ilustračný návrh rozhrania natívnej aplikácie</text>
+
+  <rect x="741" y="76" width="402" height="453" rx="20" fill="#0b1725" stroke="#3c6475" stroke-width="2"/>
+  <path d="M743 128h398" stroke="#284254" stroke-width="2"/>
+  <circle cx="773" cy="102" r="7" fill="#fb7185"/>
+  <circle cx="797" cy="102" r="7" fill="#fbbf24"/>
+  <circle cx="821" cy="102" r="7" fill="#4ade80"/>
+  <text x="849" y="109" fill="#9fb4c5" font-family="system-ui, sans-serif" font-size="17">window.cpp</text>
+  <text x="773" y="170" fill="#65d6e8" font-family="Consolas, monospace" font-size="19">LRESULT CALLBACK</text>
+  <text x="773" y="204" fill="#ddd6fe" font-family="Consolas, monospace" font-size="19">WindowProc(</text>
+  <text x="795" y="238" fill="#e2e8f0" font-family="Consolas, monospace" font-size="19">HWND hwnd,</text>
+  <text x="795" y="272" fill="#e2e8f0" font-family="Consolas, monospace" font-size="19">UINT message,</text>
+  <text x="795" y="306" fill="#e2e8f0" font-family="Consolas, monospace" font-size="19">WPARAM wParam,</text>
+  <text x="795" y="340" fill="#e2e8f0" font-family="Consolas, monospace" font-size="19">LPARAM lParam)</text>
+  <text x="773" y="394" fill="#c4b5fd" font-family="Consolas, monospace" font-size="19">switch (message)</text>
+  <text x="795" y="428" fill="#fbbf24" font-family="Consolas, monospace" font-size="19">case WM_COMMAND:</text>
+  <text x="817" y="462" fill="#93c5fd" font-family="Consolas, monospace" font-size="19">/* spracovanie udalosti */</text>
+  <text x="773" y="496" fill="#65d6e8" font-family="Consolas, monospace" font-size="19">return 0;</text>
+
+  <rect x="741" y="554" width="402" height="75" rx="18" fill="#102a39" stroke="#367078" stroke-width="2"/>
+  <text x="773" y="587" fill="#d7f5f2" font-family="system-ui, sans-serif" font-size="20" font-weight="750">Win32 API · C++ · Windows</text>
+  <text x="773" y="613" fill="#9ec9cb" font-family="system-ui, sans-serif" font-size="15">Okná · správy · ovládacie prvky</text>
+</svg>

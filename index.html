@@ -67,8 +67,7 @@
     a.course { transition: transform .18s ease, border-color .18s ease; }
     a.course:hover { transform: translateY(-4px); border-color: var(--accent); }
     a.course:focus-visible { outline: 3px solid var(--accent); outline-offset: 4px; }
-    .course img, .placeholder-art { display: grid; width: 100%; height: 220px; place-items: center; background: #fff; object-fit: cover; }
-    .placeholder-art { background: linear-gradient(135deg, #1d3557, #101827); color: #fff; font-size: clamp(2rem, 8vw, 4rem); font-weight: 800; letter-spacing: -.06em; }
+    .course img { display: block; width: 100%; height: 220px; background: #fff; object-fit: cover; }
     .course-content { display: flex; flex: 1; flex-direction: column; padding: 1.4rem; }
     .tag { color: var(--accent); font-size: .78rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
     .course h2 { margin: .45rem 0; font-size: 1.6rem; }
@@ -88,22 +87,12 @@
     <header>
       <div class="eyebrow">Výučbové materiály</div>
       <h1>Programovanie</h1>
-      <p>Vyber si kurz a objavuj programovanie krok za krokom.</p>
+      <p>Vyberte si kurz a objavujte programovanie krok za krokom.</p>
       <p><a class="account-link" href="login.html">Prihlásenie a informácie o účte</a></p>
     </header>
 
     <main>
       <section class="courses" aria-label="Programovacie kurzy">
-        <a class="course" href="01_Python/index.html">
-          <img src="img/Vitajte%20v%20programovan%C3%AD%20v%20Pythone.png" alt="Vitajte v programovaní v Pythone" width="1536" height="1024">
-          <div class="course-content">
-            <span class="tag">Kurz je dostupný</span>
-            <h2>Python</h2>
-            <p>Výučbové materiály, prednášky, videá a testy z Pythonu a algoritmizácie.</p>
-            <span class="open">Otvoriť kurz <span aria-hidden="true">→</span></span>
-          </div>
-        </a>
-
         <a class="course" href="00_Git_a_Verzovanie/index.html">
           <img src="img/git-course.svg" alt="Vetvy a commity v repozitári Git" width="1200" height="700">
           <div class="course-content">
@@ -114,8 +103,18 @@
           </div>
         </a>
 
+        <a class="course" href="01_Python/index.html">
+          <img src="img/Vitajte%20v%20programovan%C3%AD%20v%20Pythone.png" alt="Vitajte v programovaní v Pythone" width="1536" height="1024">
+          <div class="course-content">
+            <span class="tag">Kurz je dostupný</span>
+            <h2>Python</h2>
+            <p>Výučbové materiály, prednášky, videá a testy z Pythonu a algoritmizácie.</p>
+            <span class="open">Otvoriť kurz <span aria-hidden="true">→</span></span>
+          </div>
+        </a>
+
         <a class="course" href="c-cpp.html">
-          <div class="placeholder-art" aria-hidden="true">C/C++</div>
+          <img src="img/c-cpp-course.svg" alt="Ukážka kódu C a C++ vedľa ilustrácie pamäte a objektov" width="1200" height="700">
           <div class="course-content">
             <span class="tag">Materiály a test</span>
             <h2>C/C++</h2>
@@ -125,7 +124,7 @@
         </a>
 
         <a class="course" href="04_Win32_API/struktura.html" aria-label="Otvoriť štruktúru kurzu Win32 API">
-          <img src="04_Win32_API/img/win32-preview-projekty.svg" alt="Náhľad formulára aplikácie pre Windows" width="720" height="420">
+          <img src="04_Win32_API/img/win32-course-preview.svg" alt="Ilustrované natívne okno Windows s ovládacími prvkami a ukážkou Win32 kódu" width="1200" height="700">
           <div class="course-content">
             <span class="tag">Pripravujeme · osnova hotová</span>
             <h2>Win32 API</h2>
