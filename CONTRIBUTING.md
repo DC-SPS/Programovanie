@@ -38,7 +38,7 @@ Každá nová lekcia alebo študijný materiál v Markdown formáte by mal podľ
 
 - **Odsadzovanie**: 4 medzery (Python, C, C++).
 - **Komentáre**: Píšte v slovenskom jazyku. Komentáre majú vysvetľovať *prečo* sa niečo robí, nie iba opakovať syntax.
-- **Formálne oslovenie**: Voči študentom používame vykanie ("Vytvorte...", "Nainštalujte...").
+- **Oslovenie študentov**: V učebných textoch, zadaniach, navigácii a v ukážkovom používateľskom rozhraní používajte jednotne formálne vykanie ("Vytvorte...", "Nainštalujte..."). Pokyny určené výlučne vyučujúcemu od tejto konvencie oddeľte. Nemeňte identifikátory, syntax kódu ani citované názvy zdrojov len kvôli zjednoteniu oslovenia.
 - **Kompilácia bez varovaní**: C/C++ kód musí byť skompilovateľný s príznakmi `-Wall -Wextra`.
 
 ---

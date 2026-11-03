@@ -53,18 +53,18 @@ textarea{width:100%;min-height:110px;background:var(--card);color:var(--fg);bord
 </header>
 <h1>2.11.1 Rekurzia a rekurzívne triedenie</h1>
 <p><span class="tag">2 × 45 min (návrh)</span> <span class="tag">funkcie · rozklad problému · Python</span></p>
-<div class="card"><strong>Začíname kontrolou pracoviska:</strong> Po príchode do učebne si skontroluj svoje miesto, lavicu, stoličku a pridelený počítač s príslušenstvom. Každé poškodenie, chýbajúcu časť alebo inú závadu ihneď oznám vyučujúcemu. Stručný súhrn zistených nedostatkov pošli vyučujúcemu správou cez EduPage. Poškodené alebo nebezpečné zariadenie nepoužívaj.</div>
+<div class="card"><strong>Začíname kontrolou pracoviska:</strong> Po príchode do učebne si skontrolujte svoje miesto, lavicu, stoličku a pridelený počítač s príslušenstvom. Každé poškodenie, chýbajúcu časť alebo inú závadu ihneď oznámte vyučujúcemu. Stručný súhrn zistených nedostatkov pošlite vyučujúcemu správou cez EduPage. Poškodené alebo nebezpečné zariadenie nepoužívajte.</div>
 
 <h2>Úvod: čo znamená rekurzia?</h2>
-<p>V tejto téme sa naučíš, ako môže funkcia vyriešiť úlohu tak, že zavolá samu seba s menším problémom. Rekurziu si najprv ukážeme na jednoduchom odpočítavaní, potom na faktoriáli a napokon na algoritmoch, ktoré triedia zoznamy rozdelením na menšie časti.</p>
+<p>V tejto téme sa naučíte, ako môže funkcia vyriešiť úlohu tak, že zavolá samu seba s menším problémom. Rekurziu si najprv ukážeme na jednoduchom odpočítavaní, potom na faktoriáli a napokon na algoritmoch, ktoré triedia zoznamy rozdelením na menšie časti.</p>
 <p>Pri každom príklade hľadaj dve dôležité veci: <strong>kde sa volanie zastaví</strong> a <strong>ako sa vstup pri ďalšom volaní zmenší</strong>. Bez podmienky zastavenia by funkcia pokračovala, až kým by Python nenahlásil chybu.</p>
 <div class="video-card">
 <h3>Úvodné video: Recursion (anglicky, 8 min)</h3>
 <iframe class="video-frame" src="https://www.youtube-nocookie.com/embed/u8Xam9EsqXQ" title="Learn Recursion in 8 minutes – Bro Code" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
-<p>Počas pozerania si zapíš jeden príklad rekurzívneho volania a označ miesto, kde sa zastaví.</p>
+<p>Počas pozerania si zapíšte jeden príklad rekurzívneho volania a označte miesto, kde sa zastaví.</p>
 <a href="https://youtu.be/u8Xam9EsqXQ">Otvoriť video na YouTube</a>
 </div>
-<div class="card"><strong>Pred pozeraním:</strong> Skús si predstaviť, ako by si niekomu vysvetlil, čo znamená „urob to isté, ale pre menší problém“. Po videu porovnaj svoj nápad s pojmami <em>rekurzívny krok</em> a <em>základný prípad</em>.</div>
+<div class="card"><strong>Pred pozeraním:</strong> Skúste si predstaviť, ako by ste niekomu vysvetlili, čo znamená „urobte to isté, ale pre menší problém“. Po videu porovnajte svoj nápad s pojmami <em>rekurzívny krok</em> a <em>základný prípad</em>.</div>
 
 <div class="teacher-note"><b>Ciele, pomôcky a predpoklady</b>
 Žiak vysvetlí rekurziu, rozpozná rekurzívny prípad a základný prípad, trasuje zásobník volaní a použije rekurziu pri faktoriáli a triedení. Predpoklady: funkcie, podmienky, zoznamy a cykly. Pomôcky: Python/Thonny, projektor a kartičky s číslami.</div>
@@ -103,7 +103,7 @@ odpocitaj(3)</pre>
 print(faktorial(4))  # 24</pre>
 <p>Pri <code>faktorial(4)</code> sa najprv volá <code>faktorial(3)</code>, potom <code>faktorial(2)</code>, <code>faktorial(1)</code> a napokon <code>faktorial(0)</code>. Výsledky sa dopočítajú pri návrate: <code>1 → 1 → 2 → 6 → 24</code>.</p>
 <div class="teacher-note"><b>Časté chyby</b>
-Chýbajúci základný prípad alebo vstup, ktorý sa k nemu nepribližuje, spôsobí priveľa volaní a nakoniec <code>RecursionError</code>. Vysvetli, že volania čakajú na zásobníku na výsledok hlbšieho volania. Python má limit hĺbky rekurzie; nezvyšuj ho ako náhradu za správny základný prípad.</div>
+Chýbajúci základný prípad alebo vstup, ktorý sa k nemu nepribližuje, spôsobí priveľa volaní a nakoniec <code>RecursionError</code>. Vysvetlite, že volania čakajú na zásobníku na výsledok hlbšieho volania. Python má limit hĺbky rekurzie; nezvyšujte ho ako náhradu za správny základný prípad.</div>
 
 <h2>Rekurzívne triedenie</h2>
 <p>Niektoré algoritmy rozdelia zoznam na menšie časti, tie vyriešia rekurzívne a následne spoja výsledky. Takýto prístup sa nazýva <strong>rozdeľ a panuj</strong>.</p>
@@ -135,7 +135,7 @@ print(merge_sort([5, 3, 8, 1, 9, 2]))  # [1, 2, 3, 5, 8, 9]</pre>
 <div class="video-card">
 <h3>Video: Merge Sort (anglicky, 13 min)</h3>
 <iframe class="video-frame" src="https://www.youtube-nocookie.com/embed/3j0SWDX4AtU" title="Learn Merge Sort in 13 minutes – Bro Code" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
-<p>Sleduj rozdelenie zoznamu na polovice a následné zlučovanie zoradených častí.</p>
+<p>Sledujte rozdelenie zoznamu na polovice a následné zlučovanie zoradených častí.</p>
 <a href="https://youtu.be/3j0SWDX4AtU">Otvoriť video na YouTube</a>
 </div>
 
@@ -155,7 +155,7 @@ print(quick_sort([5, 3, 8, 1, 9, 2]))  # [1, 2, 3, 5, 8, 9]</pre>
 <div class="video-card">
 <h3>Video: Quick Sort (anglicky, 13 min)</h3>
 <iframe class="video-frame" src="https://www.youtube-nocookie.com/embed/Vtckgz38QHs" title="Learn Quick Sort in 13 minutes – Bro Code" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
-<p>Všímaj si výber pivota, rozdelenie prvkov a rekurzívne triedenie menších častí.</p>
+<p>Všímajte si výber pivota, rozdelenie prvkov a rekurzívne triedenie menších častí.</p>
 <a href="https://youtu.be/Vtckgz38QHs">Otvoriť video na YouTube</a>
 </div>
 
@@ -164,11 +164,11 @@ Všetky videá sú v angličtine. Pri úvodnom videu nech žiaci najprv hľadaj�
 
 <h2>Úlohy</h2>
 <div class="card"><ol>
-<li>Napíš funkciu <code>sucet_do(n)</code> pre nezáporné celé <code>n</code>, ktorá rekurzívne vráti súčet čísel od 1 po <code>n</code>. Urči základný prípad.</li>
-<li>Vypíš poradie volaní aj návratových hodnôt pre <code>faktorial(3)</code>.</li>
-<li>Vysvetli, prečo sa <code>merge_sort([])</code> a <code>merge_sort([7])</code> zastavia.</li>
-<li>Uprav <code>quick_sort</code> a otestuj ho na zozname s opakovanými číslami.</li>
-<li><strong>★</strong> Porovnaj počet delení pri <code>merge_sort</code> a <code>quick_sort</code>. Prečo môže voľba pivota ovplyvniť quick sort?</li>
+<li>Napíšte funkciu <code>sucet_do(n)</code> pre nezáporné celé <code>n</code>, ktorá rekurzívne vráti súčet čísel od 1 po <code>n</code>. Určte základný prípad.</li>
+<li>Vypíšte poradie volaní aj návratových hodnôt pre <code>faktorial(3)</code>.</li>
+<li>Vysvetlite, prečo sa <code>merge_sort([])</code> a <code>merge_sort([7])</code> zastavia.</li>
+<li>Upravte <code>quick_sort</code> a otestujte ho na zozname s opakovanými číslami.</li>
+<li><strong>★</strong> Porovnajte počet delení pri <code>merge_sort</code> a <code>quick_sort</code>. Prečo môže voľba pivota ovplyvniť quick sort?</li>
 </ol></div>
 <div class="teacher-note"><b>Náčrt riešení</b>
 1) Základný prípad <code>n == 0</code> vráti 0; inak vráť <code>n + sucet_do(n - 1)</code>.<br>
@@ -206,13 +206,13 @@ code.parentNode.insertBefore(wrapper,code);
 wrapper.appendChild(actions);actions.appendChild(button);actions.appendChild(editor);wrapper.appendChild(code);wrapper.appendChild(status);
  button.onclick=function(){
   if(!navigator.clipboard||!navigator.clipboard.writeText){
-   status.textContent='Kopírovanie nie je dostupné. Označ kód a skopíruj ho pomocou Ctrl+C.';
+   status.textContent='Kopírovanie nie je dostupné. Označte kód a skopírujte ho pomocou Ctrl+C.';
    return;
   }
   navigator.clipboard.writeText(code.innerText).then(function(){
    status.textContent='Kód skopírovaný.';
   }).catch(function(){
-   status.textContent='Kód sa nepodarilo skopírovať. Označ ho a skopíruj pomocou Ctrl+C.';
+   status.textContent='Kód sa nepodarilo skopírovať. Označte ho a skopírujte pomocou Ctrl+C.';
   });
  };
 });
@@ -236,4 +236,3 @@ notes.oninput=function(){
 <script src="../theme.js"></script>
 <script src="../lesson-top.js" defer></script></body>
 </html>
-

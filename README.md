@@ -1,6 +1,3 @@
-<<<<<<< HEAD
-# Programovanie
-=======
 # Programovanie – Výučbový repozitár pre Stredné Odborné Školy
 
 Vítajte v oficiálnom vzdelávacom repozitári pre predmet **Programovanie**. Repozitár je koncipovaný ako ucelená výučbová platforma určená pre študentov stredných odborných škôl so zameraním na **informatiku, mechatroniku a elektrotechniku**.
@@ -29,7 +26,7 @@ Pre dosiahnutie najlepších výsledkov odporúčame dodržiavať nasledujúcu p
 
 ```text
        00_Git_a_Verzovanie
-   (Správa verzií a práca v týme)
+   (Správa verzií a práca v tíme)
                ↓
            01_Python
    (Algoritmy a základy skriptovania)
@@ -94,4 +91,3 @@ Pravidlá pre prácu s kódovým štýlom, štruktúrou lekcií a pridávanie no
 ---
 
 *Prajeme vám veľa úspechov pri štúdiu programovania!*
->>>>>>> origin/jules-8058124085474283757-627e99c0

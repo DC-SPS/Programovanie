@@ -61,7 +61,7 @@ textarea{width:100%;min-height:110px;background:var(--card);color:var(--fg);bord
 </header>
 <h1>2.11 Algoritmus triedenia</h1>
 <p class="lead"><span class="tag">2 × 45 min</span> <span class="tag">algoritmy + Python</span></p>
-<div class="card"><strong>Začíname kontrolou pracoviska:</strong> Po príchode do učebne si skontroluj svoje miesto, lavicu, stoličku a pridelený počítač s príslušenstvom. Každé poškodenie, chýbajúcu časť alebo inú závadu ihneď oznám vyučujúcemu. Stručný súhrn zistených nedostatkov pošli vyučujúcemu správou cez EduPage. Poškodené alebo nebezpečné zariadenie nepoužívaj.</div>
+<div class="card"><strong>Začíname kontrolou pracoviska:</strong> Po príchode do učebne si skontrolujte svoje miesto, lavicu, stoličku a pridelený počítač s príslušenstvom. Každé poškodenie, chýbajúcu časť alebo inú závadu ihneď oznámte vyučujúcemu. Stručný súhrn zistených nedostatkov pošlite vyučujúcemu správou cez EduPage. Poškodené alebo nebezpečné zariadenie nepoužívajte.</div>
 
 <div class="t"><b class="l">Pokyny pre učiteľa – cieľ a pomôcky</b>
 Cieľ: žiak vlastnými slovami vysvetlí triedenie, trasuje bubble sort, napíše bubble sort, selection sort a insertion sort v Pythone a vysvetlí, kedy použiť <code>sorted()</code> alebo <code>.sort()</code>.<br>
@@ -117,7 +117,7 @@ print(bubble_sort(cisla))  # [1, 2, 3, 5, 8, 9]</pre></div>
 <div class="video-card">
 <h4>Video: Bubble Sort (anglicky, 7 min)</h4>
 <iframe class="video-frame" src="https://www.youtube-nocookie.com/embed/Dv4qLJcxus8" title="Learn Bubble Sort in 7 minutes – Bro Code" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
-<p>Pri sledovaní si všímaj porovnávanie susedov a to, ako najväčší prvok postupuje na koniec.</p>
+<p>Pri sledovaní si všímajte porovnávanie susedov a to, ako najväčší prvok postupuje na koniec.</p>
 <a href="https://youtu.be/Dv4qLJcxus8">Otvoriť video na YouTube</a>
 </div>
 
@@ -165,7 +165,7 @@ Rýchlejším žiakom zadaj trasovanie stavu po každom prechode. Zdôrazni, že
 <div class="video-card">
 <h4>Video: Selection Sort (anglicky, 8 min)</h4>
 <iframe class="video-frame" src="https://www.youtube-nocookie.com/embed/EwjnF7rFLns" title="Learn Selection Sort in 8 minutes – Bro Code" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
-<p>Všímaj si, ako sa v každom kroku vyhľadá minimum v neusporiadanej časti.</p>
+<p>Všímajte si, ako sa v každom kroku vyhľadá minimum v neusporiadanej časti.</p>
 <a href="https://youtu.be/EwjnF7rFLns">Otvoriť video na YouTube</a>
 </div>
 
@@ -185,7 +185,7 @@ print(insertion_sort([5, 3, 8, 1, 9, 2]))  # [1, 2, 3, 5, 8, 9]</pre>
 <div class="video-card">
 <h4>Video: Insertion Sort (anglicky, 7 min)</h4>
 <iframe class="video-frame" src="https://www.youtube-nocookie.com/embed/8mJ-OhcfpYg" title="Learn Insertion Sort in 7 minutes – Bro Code" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
-<p>Sleduj, ako sa prvok zasúva do už zoradenej časti. Porovnaj tento postup s bubble sortom.</p>
+<p>Sledujte, ako sa prvok zasúva do už zoradenej časti. Porovnajte tento postup s bubble sortom.</p>
 <a href="https://youtu.be/8mJ-OhcfpYg">Otvoriť video na YouTube</a>
 </div>
 
@@ -206,16 +206,16 @@ print(sorted(slova, key=len))        # podľa dĺžky</pre>
 
 <h3>Úlohy</h3>
 <div class="card"><ol>
-<li>Ručne zapíš stav zoznamu <code>[4, 2, 7, 1]</code> po každom prechode bubble sortu.</li>
-<li>Uprav <code>bubble_sort</code> tak, aby triedil zostupne.</li>
-<li>Pridaj do funkcie počítadlo porovnaní a otestuj ho na 10 náhodných číslach (<code>random.randint</code>).</li>
-<li>Zorad zoznam nameraných teplôt a bezpečne vypíš najnižšiu, najvyššiu a medián (uvažuj párny aj nepárny počet meraní).</li>
-<li><strong>★</strong> Zoraď zoznam dvojíc <code>(meno, vek)</code> podľa veku. Čo sa stane pri rovnakom veku?</li>
+<li>Ručne zapíšte stav zoznamu <code>[4, 2, 7, 1]</code> po každom prechode bubble sortu.</li>
+<li>Upravte <code>bubble_sort</code> tak, aby triedil zostupne.</li>
+<li>Pridajte do funkcie počítadlo porovnaní a otestujte ho na 10 náhodných číslach (<code>random.randint</code>).</li>
+<li>Zoraďte zoznam nameraných teplôt a bezpečne vypíšte najnižšiu, najvyššiu a medián (uvažujte párny aj nepárny počet meraní).</li>
+<li><strong>★</strong> Zoraďte zoznam dvojíc <code>(meno, vek)</code> podľa veku. Čo sa stane pri rovnakom veku?</li>
 </ol></div>
 <div class="t"><b class="l">Riešenia</b>
 1) <code>[2,4,1,7] → [2,1,4,7] → [1,2,4,7]</code><br>
-2) Zmeň porovnanie na <code>a[j] &lt; a[j + 1]</code>.<br>
-3) Pred cyklami nastav <code>pocet = 0</code>; vo vnútornom cykle pred podmienkou zvýš <code>pocet += 1</code>. Každé vykonanie podmienky je jedno porovnanie.<br>
+2) Zmeňte porovnanie na <code>a[j] &lt; a[j + 1]</code>.<br>
+3) Pred cyklami nastavte <code>pocet = 0</code>; vo vnútornom cykle pred podmienkou zvýšte <code>pocet += 1</code>. Každé vykonanie podmienky je jedno porovnanie.<br>
 4) <code>t = sorted(teploty)</code>; ak je <code>t</code> prázdne, medián ani krajné hodnoty nemajú výsledok. Inak nastav <code>n = len(t)</code>; medián je <code>t[n // 2]</code> pri nepárnom počte a <code>(t[n // 2 - 1] + t[n // 2]) / 2</code> pri párnom počte.<br>
 5) <code>sorted(data, key=lambda x: x[1])</code>. Pythonovo triedenie je stabilné, takže dvojice s rovnakým vekom zachovajú pôvodné poradie.</div>
 <div class="t"><b class="l">Diferenciácia a hodnotenie</b>
@@ -252,13 +252,13 @@ document.querySelectorAll('pre.python-code').forEach(function(code){
  wrapper.appendChild(actions);actions.appendChild(button);actions.appendChild(editor);wrapper.appendChild(code);wrapper.appendChild(status);
  button.onclick=function(){
   if(!navigator.clipboard||!navigator.clipboard.writeText){
-   status.textContent='Kopírovanie nie je dostupné. Označ kód a skopíruj ho pomocou Ctrl+C.';
+   status.textContent='Kopírovanie nie je dostupné. Označte kód a skopírujte ho pomocou Ctrl+C.';
    return;
   }
   navigator.clipboard.writeText(code.innerText).then(function(){
    status.textContent='Kód skopírovaný.';
   }).catch(function(){
-   status.textContent='Kód sa nepodarilo skopírovať. Označ ho a skopíruj pomocou Ctrl+C.';
+   status.textContent='Kód sa nepodarilo skopírovať. Označte ho a skopírujte pomocou Ctrl+C.';
   });
  };
 });
@@ -290,7 +290,7 @@ function draw(compared,sorted){
 function reset(){
  a=[];for(var k=0;k<8;k++)a.push(1+Math.floor(Math.random()*10));
  i=0;j=0;done=false;passSwapped=false;
- info.textContent='Nový zoznam. Stlač „Ďalší krok“ a sleduj porovnávanú dvojicu.';
+ info.textContent='Nový zoznam. Stlačte „Ďalší krok“ a sledujte porovnávanú dvojicu.';
  draw();
 }
 function step(){
@@ -320,4 +320,3 @@ reset();
 <script src="../theme.js"></script>
 <script src="../lesson-top.js" defer></script></body>
 </html>
-

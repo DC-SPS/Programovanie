@@ -55,7 +55,7 @@ footer{margin-top:30px;padding:14px 0;border-top:1px solid var(--line);color:var
 
 <h1>2.9 Algoritmizácia podprogramov</h1>
 <p class="lead"><span class="tag">2 × 45 min</span><span class="tag">teória algoritmov</span><span class="tag">rozklad úloh</span></p>
-<div class="card"><strong>Začíname kontrolou pracoviska:</strong> Po príchode do učebne si skontroluj svoje miesto, lavicu, stoličku a pridelený počítač s príslušenstvom. Každé poškodenie, chýbajúcu časť alebo inú závadu ihneď oznám vyučujúcemu. Stručný súhrn zistených nedostatkov pošli vyučujúcemu správou cez EduPage. Poškodené alebo nebezpečné zariadenie nepoužívaj.</div>
+<div class="card"><strong>Začíname kontrolou pracoviska:</strong> Po príchode do učebne si skontrolujte svoje miesto, lavicu, stoličku a pridelený počítač s príslušenstvom. Každé poškodenie, chýbajúcu časť alebo inú závadu ihneď oznámte vyučujúcemu. Stručný súhrn zistených nedostatkov pošlite vyučujúcemu správou cez EduPage. Poškodené alebo nebezpečné zariadenie nepoužívajte.</div>
 <p>Skôr než začneme písať funkcie v Pythone, naučíme sa navrhovať väčší algoritmus z menších, zrozumiteľných častí. Budeme riešiť najmä <strong>ako úlohu rozdeliť, ako popísať zodpovednosť jej častí a ako overiť, že spolu tvoria správny celok</strong>.</p>
 <figure class="diagram">
 <img src="../img/2.9%20Podprogramy.svg" alt="Hlavný algoritmus rozkladá úlohu na menšie podprogramy s jasnými vstupmi a výstupmi" width="1000" height="520" loading="lazy">
@@ -102,13 +102,13 @@ Táto hodina sa sústreďuje na návrh algoritmu a rozdelenie zodpovedností. Ko
 
 <h3>Postup zhora nadol</h3>
 <ol class="steps">
-<li><strong>Pomenuj cieľ.</strong> Jednou vetou vyjadri, aký výsledok má algoritmus zabezpečiť.</li>
-<li><strong>Nájdi hlavné zodpovednosti.</strong> Rozdeľ cieľ na niekoľko zmysluplných činností; každá má prispieť k výsledku.</li>
-<li><strong>Spresni časti podľa potreby.</strong> Pokračuj iba tam, kde podúloha ešte nie je dosť jasná na návrh alebo kontrolu.</li>
-<li><strong>Urči závislosti a poradie.</strong> Zisti, ktoré výsledky potrebuje iná časť a čo sa dá pripraviť nezávisle alebo súbežne.</li>
-<li><strong>Skontroluj úplnosť.</strong> Každý potrebný krok patrí do niektorej časti a všetky časti spolu dosiahnu pôvodný cieľ.</li>
+<li><strong>Pomenujte cieľ.</strong> Jednou vetou vyjadrite, aký výsledok má algoritmus zabezpečiť.</li>
+<li><strong>Nájdite hlavné zodpovednosti.</strong> Rozdeľte cieľ na niekoľko zmysluplných činností; každá má prispieť k výsledku.</li>
+<li><strong>Spresnite časti podľa potreby.</strong> Pokračujte iba tam, kde podúloha ešte nie je dosť jasná na návrh alebo kontrolu.</li>
+<li><strong>Určte závislosti a poradie.</strong> Zistite, ktoré výsledky potrebuje iná časť a čo sa dá pripraviť nezávisle alebo súbežne.</li>
+<li><strong>Skontrolujte úplnosť.</strong> Každý potrebný krok patrí do niektorej časti a všetky časti spolu dosiahnu pôvodný cieľ.</li>
 </ol>
-<div class="card"><strong>Pomôcka pri delení:</strong> podúloha má zrozumiteľnú činnosť, jasný výsledok a dá sa vysvetliť bez opakovania celého hlavného zadania. Ak je pomenovanie „urob všetko potrebné“, hranica časti je pravdepodobne príliš neurčitá.</div>
+<div class="card"><strong>Pomôcka pri delení:</strong> podúloha má zrozumiteľnú činnosť, jasný výsledok a dá sa vysvetliť bez opakovania celého hlavného zadania. Ak je pomenovanie „urobte všetko potrebné“, hranica časti je pravdepodobne príliš neurčitá.</div>
 
 <h3>Abstrakcia a pohľad na „čiernu skrinku“</h3>
 <p><strong>Abstrakcia</strong> znamená, že sa sústredíme na dôležité vlastnosti a nepodstatné detaily na chvíľu odložíme. Keď navrhujeme plán dopravy, zatiaľ nepotrebujeme vedieť, ako sa zostavuje zoznam účastníkov; potrebujeme vedieť, aký počet cestujúcich a aký cieľ cesty dostane plánovanie.</p>
@@ -149,7 +149,7 @@ Hlavný cieľ: uskutočniť výlet pre prihlásenú skupinu. Časti: zozbierať 
 <h3>Súdržnosť a previazanosť</h3>
 <p><strong>Súdržnosť</strong> hovorí, či činnosti v jednej časti patria k spoločnému účelu. Vysoká súdržnosť je žiaduca: napríklad „overiť prihlášky“ má jasnú jednotnú zodpovednosť. Ak jedna časť zároveň overuje prihlášky, hľadá autobus, vypočítava cenu a posiela správy, jej súdržnosť je nízka.</p>
 <p><strong>Previazanosť</strong> vyjadruje, nakoľko sú časti závislé od vnútorných detailov ostatných. Nízka previazanosť je zvyčajne lepšia: stačí poznať dohodnutý výstup časti, nie jej vnútorný postup. Potom môžeme jednu časť zmeniť bez toho, aby sme museli prerábať všetko okolo.</p>
-<div class="card"><strong>Rýchla kontrola návrhu:</strong> Vieš každú časť pomenovať jednou činnosťou? Potrebuje iba informácie súvisiace s touto činnosťou? Môžeš zmeniť jej vnútorný postup bez zmeny všetkých ostatných častí? Ak nie, zváž nové rozdelenie alebo jasnejšiu dohodu.</div>
+<div class="card"><strong>Rýchla kontrola návrhu:</strong> Viete každú časť pomenovať jednou činnosťou? Potrebuje iba informácie súvisiace s touto činnosťou? Môžete zmeniť jej vnútorný postup bez zmeny všetkých ostatných častí? Ak nie, zvážte nové rozdelenie alebo jasnejšiu dohodu.</div>
 
 <h3>Časté chyby pri rozklade</h3>
 <ul>
@@ -163,10 +163,10 @@ Hlavný cieľ: uskutočniť výlet pre prihlásenú skupinu. Časti: zozbierať 
 <h3>Testovanie od časti po celok</h3>
 <p>Rozklad nám umožňuje overovať algoritmus po vrstvách:</p>
 <ol class="steps">
-<li><strong>Kontrola jednej časti:</strong> vyber vstup, očakávaný výsledok a prípad, ktorý by mohol odhaliť chybu. Napríklad pri overení prihlášok skontroluj aj prázdny zoznam alebo duplicitnú prihlášku.</li>
-<li><strong>Kontrola rozhrania:</strong> over, či výsledok časti má dohodnutý význam, správny tvar a spĺňa podmienky, ktoré potrebuje ďalšia časť.</li>
-<li><strong>Integračná kontrola:</strong> spoj dve alebo viac častí a sleduj, či si správne odovzdajú výsledky a či sa vykonajú v správnom poradí.</li>
-<li><strong>Kontrola celého algoritmu:</strong> prejdi od pôvodnej požiadavky až po výsledok a vyskúšaj bežný aj neobvyklý priebeh.</li>
+<li><strong>Kontrola jednej časti:</strong> vyberte vstup, očakávaný výsledok a prípad, ktorý by mohol odhaliť chybu. Napríklad pri overení prihlášok skontrolujte aj prázdny zoznam alebo duplicitnú prihlášku.</li>
+<li><strong>Kontrola rozhrania:</strong> overte, či výsledok časti má dohodnutý význam, správny tvar a spĺňa podmienky, ktoré potrebuje ďalšia časť.</li>
+<li><strong>Integračná kontrola:</strong> spojte dve alebo viac častí a sledujte, či si správne odovzdajú výsledky a či sa vykonajú v správnom poradí.</li>
+<li><strong>Kontrola celého algoritmu:</strong> prejdite od pôvodnej požiadavky až po výsledok a vyskúšajte bežný aj neobvyklý priebeh.</li>
 </ol>
 <div class="card"><strong>Zapamätaj si:</strong> ak chyba vznikne v jednej jasne oddelenej zodpovednosti, vieme ju hľadať na menšom mieste. Ak nevieme určiť, ktorá časť mala výsledok vytvoriť, problém je často už v návrhu.</div>
 
@@ -229,4 +229,3 @@ teacherButton.addEventListener("click",()=>setMode(true));
 <script src="../theme.js"></script>
 <script src="../lesson-top.js" defer></script></body>
 </html>
-

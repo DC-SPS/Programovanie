@@ -18,6 +18,7 @@ Tieto pokyny platia pre celý priečinok `04_Win32_API/` a majú prednosť pred 
 - Natívne Win32 aplikácie vyžadujú Windows a príslušné SDK. Bežný online C++ kompilátor v Linuxe ich nespustí. Webová interaktivita smie simulovať koncept, nie predstierať spustenie Win32 binárky.
 - Over názvy API, typy, parametre a správanie v primárnej dokumentácii Microsoft Learn. Pri SQLite použi oficiálnu SQLite dokumentáciu. Uveď priamy zdroj pri dôležitom odbornom tvrdení.
 - Zachovaj číslovanie a poradie hodín v `struktura.html`. Súčet modulov je 2 + 20 + 6 + 38 = 66 hodín.
+- V učebnom texte a zadaniach určených študentom používaj jednotne formálne vykanie. Pokyny určené výlučne vyučujúcemu oddeľ; nemeň identifikátory, syntax kódu ani citované názvy zdrojov kvôli zmene oslovenia.
 
 ## Povinná štruktúra každej lekcie
 
