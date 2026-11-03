@@ -44,6 +44,8 @@ Po absolvovaní kurzu študent:
 | 21 | Vstup a výstup | Práca so súbormi cez `std::ifstream` a `std::ofstream`; kontrola otvorenia a základné čítanie/zápis. |
 | 22 | Vstup a výstup a záverečné hodnotenie | Priamy prístup k súboru ako ukážka; dokončenie a prezentácia samostatného zadania, záverečné hodnotenie. |
 
+Rozpísané lekcie nájdete v priečinku [`lekcie/`](./lekcie/). Aktuálne: [Téma 4 · Hodina 1 – Historický úvod a normy jazyka C++](./lekcie/01_Uvod_a_normy_C++.md).
+
 ### Samostatné zadanie a prezentácia
 
 Zadanie sa priebežne pripravuje po prebratí funkcií, podmienok a cyklov. Výsledné zadanie má primerane prepájať vstup, výstup, rozhodovanie alebo opakovanie; podľa rozsahu aj pole, reťazec či súbor. Hodina 22 je vyhradená na prezentácie a záverečné hodnotenie. Konkrétne kritériá a rozdelenie času sa doplnia pri príprave tejto hodiny.
