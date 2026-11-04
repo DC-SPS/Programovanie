@@ -8,7 +8,7 @@ document.querySelectorAll(".quiz").forEach(function (quiz) {
     var result = quiz.querySelector(".quiz-result");
 
     if (unanswered.length) {
-      result.textContent = "Odpovedz ešte na " + unanswered.length + (unanswered.length === 1 ? " otázku." : " otázok.");
+      result.textContent = "Odpovedzte ešte na " + unanswered.length + (unanswered.length === 1 ? " otázku." : " otázok.");
       result.dataset.state = "error";
       unanswered[0].querySelector("input").focus();
       return;

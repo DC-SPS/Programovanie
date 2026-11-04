@@ -4,10 +4,13 @@ Modul 01: Python - Ukážkový štartovací skript
 Tento skript demonštruje základné funkcie, prácu so zoznamami a podmienkami v Pythone.
 """
 
-def vypocitaj_statistiky(cisla: list[float]) -> dict:
-    """Vypočíta súčet, priemer, minimum a maximum zo zoznamu čísel."""
+from typing import Optional
+
+
+def vypocitaj_statistiky(cisla: list[float]) -> Optional[dict[str, float]]:
+    """Vráti štatistiky alebo None, ak je zoznam prázdny."""
     if not cisla:
-        return {}
+        return None
 
     sucet = sum(cisla)
     priemer = sucet / len(cisla)
@@ -28,8 +31,11 @@ def main():
     vysledky = vypocitaj_statistiky(namerane_hodnoty)
 
     print("\nVýsledky spracovania:")
-    for kluc, hodnota in vysledky.items():
-        print(f"  - {kluc.capitalize()}: {hodnota:.2f}")
+    if vysledky is None:
+        print("Nie sú k dispozícii žiadne hodnoty na spracovanie.")
+    else:
+        for kluc, hodnota in vysledky.items():
+            print(f"  - {kluc.capitalize()}: {hodnota:.2f}")
 
 if __name__ == "__main__":
     main()

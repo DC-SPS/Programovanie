@@ -32,6 +32,24 @@ Algoritmické témy študujte v uvedenom poradí a priebežne si skúšajte prí
 
 V priečinku [`projekty`](./projekty/) je ukážkový projekt na spracovanie meraní zo senzorov. Použite ho na prepojenie práce s údajmi, funkciami a základmi objektového návrhu.
 
+Projekt aj ukážka výpočtu používajú zápis typových anotácií `list[...]`, ktorý je podporovaný od Pythonu 3.9. Na ich spustenie použite Python 3.9 alebo novší ([dokumentácia Pythonu](https://docs.python.org/3/library/stdtypes.html#generic-alias-type)).
+
+Projekt spustíte z koreňového priečinka repozitára príkazom:
+
+```powershell
+python 01_Python/projekty/spravca_senzorov.py
+```
+
+Predvolene vytvorí súbor `merania_out.json` v aktuálnom pracovnom priečinku. Cestu možno zmeniť prepínačom `--vystup`, napríklad `python 01_Python/projekty/spravca_senzorov.py --vystup moje_merania.json`. Existujúci súbor možno načítať prepínačom `--vstup`, napríklad `python 01_Python/projekty/spravca_senzorov.py --vstup moje_merania.json --vystup kopia.json`. Nové časové značky sa ukladajú v UTC. Pri načítaní sa overí každý záznam vrátane jeho časového pásma; odmietajú sa aj duplicitné JSON polia a neštandardné hodnoty `NaN` či `Infinity`. ID senzora nesmie byť prázdne, teplota musí byť konečné číslo a vlhkosť musí byť v rozsahu 0 až 100 %. Ak sa merania nedajú načítať alebo uložiť, program vypíše chybu a skončí s nenulovým návratovým kódom.
+
+Výstup programu obsahuje aj počet meraní a priemernú teplotu a vlhkosť pre každý senzor zvlášť. Vytvorené meranie je nemenné a zoznam v správcovi možno čítať, nie priamo upravovať; nové merania sa pridávajú cez jeho metódu.
+
+Testy projektu spustíte z koreňového priečinka repozitára:
+
+```powershell
+python -m unittest discover -s 01_Python/projekty -p "test_*.py" -v
+```
+
 ## Odporúčané študijné zdroje
 
 - [Python – dokumentácia a tutoriál](https://docs.python.org/3/tutorial/)
@@ -47,12 +65,14 @@ Vytvorte si samostatný súbor, napríklad `priemer.py`, a vyskúšajte funkciu 
 def vypocitaj_priemer(hodnoty: list[float]) -> float:
     """Vráti aritmetický priemer zoznamu čísel."""
     if not hodnoty:
-        return 0.0
+        raise ValueError("Priemer prázdneho zoznamu nie je definovaný.")
     return sum(hodnoty) / len(hodnoty)
 
 
 teploty = [21.5, 22.0, 19.8, 23.1, 20.4]
 print(f"Priemerná teplota je {vypocitaj_priemer(teploty):.2f} °C")
 ```
+
+Pri prázdnom zozname funkcia vyvolá `ValueError`, pretože priemer bez hodnôt nie je definovaný.
 
 Po dokončení modulu pokračujte v [C](../02_C/README.md) a následne v [C++](../03_C++/README.md).
