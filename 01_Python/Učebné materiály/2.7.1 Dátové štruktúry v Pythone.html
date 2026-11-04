@@ -26,6 +26,7 @@ print(body[0])       # 10
 body.append(40)      # pridá prvok na koniec
 body[1] = 25         # zmení prvok na indexe 1
 print(body)          # [10, 25, 30, 20, 40]</code></pre>
+<p>Indexovanie funguje iba pre existujúce prvky. Ak je zoznam prázdny alebo použijete index mimo jeho rozsahu, Python vyvolá <code>IndexError</code>. Pri zozname neznámej dĺžky preto pred prístupom k prvému prvku overte, či obsahuje aspoň jeden prvok, napríklad podmienkou <code>if body:</code>.</p>
 <p>Bežné operácie:</p><pre><code>cisla = [8, 3, 5]
 cisla.append(7)          # pridá na koniec
 cisla.insert(1, 9)       # vloží na index 1

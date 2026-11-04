@@ -61,12 +61,11 @@ textarea{width:100%;min-height:110px;background:var(--card);color:var(--fg);bord
 </header>
 <h1>2.11 Algoritmus triedenia</h1>
 <p class="lead"><span class="tag">2 × 45 min</span> <span class="tag">algoritmy + Python</span></p>
-<div class="card"><strong>Začíname kontrolou pracoviska:</strong> Po príchode do učebne si skontrolujte svoje miesto, lavicu, stoličku a pridelený počítač s príslušenstvom. Každé poškodenie, chýbajúcu časť alebo inú závadu ihneď oznámte vyučujúcemu. Stručný súhrn zistených nedostatkov pošlite vyučujúcemu správou cez EduPage. Poškodené alebo nebezpečné zariadenie nepoužívajte.</div>
 
 <div class="t"><b class="l">Pokyny pre učiteľa – cieľ a pomôcky</b>
 Cieľ: žiak vlastnými slovami vysvetlí triedenie, trasuje bubble sort, napíše bubble sort, selection sort a insertion sort v Pythone a vysvetlí, kedy použiť <code>sorted()</code> alebo <code>.sort()</code>.<br>
 Pomôcky: projektor, tento web, Python (Thonny/IDLE), 6–8 kartičiek s číslami na skupinu.<br>
-Predpoklady a nadväznosť: zoznamy, podmienky, cyklus <code>for</code>, vnorený cyklus (2.7–2.10).<br>
+Predpoklady a nadväznosť: zoznamy, podmienky, cyklus <code>for</code> a vnorené cykly (2.5–2.8).<br>
 Kontrola porozumenia: žiak vie po každom prechode ukázať stav zoznamu a vysvetliť, prečo sa porovnáva práve daná dvojica.</div>
 <div class="t"><b class="l">Upozornenie pri zverejnení</b>
 Prepínač iba skrýva učiteľské poznámky v prehliadači; nie je to ochrana heslom. Ak majú riešenia zostať žiakom neprístupné, zverejni ich v samostatnom, prístupovo obmedzenom súbore.</div>
@@ -161,6 +160,7 @@ Rýchlejším žiakom zadaj trasovanie stavu po každom prechode. Zdôrazni, že
     return a</pre>
 </div>
 </div>
+<p>Funkcie <code>bubble_sort</code> aj <code>selection_sort</code> pracujú priamo so zoznamom, ktorý dostanú, a po zoradení ho vrátia. Pri zmene porovnávacej podmienky môžete upraviť smer triedenia.</p>
 
 <div class="video-card">
 <h4>Video: Selection Sort (anglicky, 8 min)</h4>
@@ -182,6 +182,7 @@ Rýchlejším žiakom zadaj trasovanie stavu po každom prechode. Zdôrazni, že
     return a
 
 print(insertion_sort([5, 3, 8, 1, 9, 2]))  # [1, 2, 3, 5, 8, 9]</pre>
+<p>Aj táto funkcia mení pôvodný zoznam a po zoradení ho vráti.</p>
 <div class="video-card">
 <h4>Video: Insertion Sort (anglicky, 7 min)</h4>
 <iframe class="video-frame" src="https://www.youtube-nocookie.com/embed/8mJ-OhcfpYg" title="Learn Insertion Sort in 7 minutes – Bro Code" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
@@ -193,16 +194,18 @@ print(insertion_sort([5, 3, 8, 1, 9, 2]))  # [1, 2, 3, 5, 8, 9]</pre>
 <div class="tw"><table>
 <tr><th scope="col">Algoritmus</th><th scope="col">Princíp</th><th scope="col">Počet porovnaní (n prvkov)</th><th scope="col">Výmeny</th></tr>
 <tr><td>Bubble sort</td><td>výmena susedov</td><td>najviac n·(n−1)/2</td><td>môže byť veľa</td></tr>
-<tr><td>Selection sort</td><td>hľadanie minima</td><td>≈ n·(n−1)/2</td><td>najviac n−1</td></tr>
+<tr><td>Selection sort</td><td>hľadanie minima</td><td>presne n·(n−1)/2</td><td>najviac n−1</td></tr>
 <tr><td>Insertion sort</td><td>vloženie prvku do zoradenej časti</td><td>najviac n·(n−1)/2</td><td>posuny prvkov</td></tr>
 <tr><td>sorted() / .sort()</td><td>optimalizované vstavané triedenie</td><td>všeobecne efektívnejšie</td><td>–</td></tr>
 </table></div>
+<p>Pri už zoradenom zozname s aspoň jedným prvkom vykoná každá z uvedených verzií bubble sortu a insertion sortu <code>n − 1</code> porovnaní. Selection sort prehľadá každú neusporiadanú časť, preto vykoná <code>n · (n − 1) / 2</code> porovnaní bez ohľadu na počiatočné poradie.</p>
 <pre class="python-code">cisla = [5, 3, 8, 1, 9, 2]
 print(sorted(cisla))                 # nový zoradený zoznam
 print(sorted(cisla, reverse=True))   # zostupne
 cisla.sort()                         # zoradí pôvodný zoznam
 slova = ["pec", "ventil", "motor"]
 print(sorted(slova, key=len))        # podľa dĺžky</pre>
+<p><code>sorted(cisla)</code> vráti nový zoznam a ponechá pôvodný nezmenený. Metóda <code>cisla.sort()</code> zoradí pôvodný zoznam priamo a vráti <code>None</code>. Predvolené poradie je vzostupné; parameter <code>reverse=True</code> ho obráti.</p>
 
 <h3>Úlohy</h3>
 <div class="card"><ol>
@@ -227,7 +230,7 @@ Opora: použi zoznam štyroch čísel a kartičky; žiak označí porovnávané 
 
 <h2>Moje poznámky</h2>
 <label for="notes">Poznámky sa ukladajú iba v tomto prehliadači na tomto zariadení.</label>
-<textarea id="notes" placeholder="Sem si píš poznámky z hodiny…"></textarea>
+<textarea id="notes" placeholder="Sem si píšte poznámky z hodiny…"></textarea>
 <p id="notes-status" class="crumb" role="status" aria-live="polite"></p>
 <p><a href="index.html">Prehľad prednášok</a> · <a href="../nastavenia.html">Nastavenia vzhľadu</a></p>
 <section class="card" aria-labelledby="sources-heading">
@@ -271,10 +274,10 @@ function setMode(t){
 bs.onclick=function(){setMode(false)};bt.onclick=function(){setMode(true)};
 var notes=document.getElementById('notes'),notesStatus=document.getElementById('notes-status'),key='tema-2-11-triedenie-poznamky';
 try{notes.value=localStorage.getItem(key)||'';notesStatus.textContent='Poznámky sa ukladajú v tomto prehliadači.'}
-catch(error){notesStatus.textContent='Ukladací priestor nie je dostupný. Poznámky si skopíruj, aby sa nestratili.'}
+catch(error){notesStatus.textContent='Ukladací priestor nie je dostupný. Skopírujte si poznámky, aby sa nestratili.'}
 notes.oninput=function(){
  try{localStorage.setItem(key,notes.value);notesStatus.textContent='Poznámky uložené.'}
- catch(error){notesStatus.textContent='Poznámky sa nepodarilo uložiť. Skopíruj si ich, aby sa nestratili.'}
+ catch(error){notesStatus.textContent='Poznámky sa nepodarilo uložiť. Skopírujte si ich, aby sa nestratili.'}
 };
 var a,i,j,done,passSwapped,bars=document.getElementById('bars'),info=document.getElementById('info');
 function draw(compared,sorted){

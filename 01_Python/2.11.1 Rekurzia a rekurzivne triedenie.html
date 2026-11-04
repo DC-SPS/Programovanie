@@ -53,11 +53,10 @@ textarea{width:100%;min-height:110px;background:var(--card);color:var(--fg);bord
 </header>
 <h1>2.11.1 Rekurzia a rekurzívne triedenie</h1>
 <p><span class="tag">2 × 45 min (návrh)</span> <span class="tag">funkcie · rozklad problému · Python</span></p>
-<div class="card"><strong>Začíname kontrolou pracoviska:</strong> Po príchode do učebne si skontrolujte svoje miesto, lavicu, stoličku a pridelený počítač s príslušenstvom. Každé poškodenie, chýbajúcu časť alebo inú závadu ihneď oznámte vyučujúcemu. Stručný súhrn zistených nedostatkov pošlite vyučujúcemu správou cez EduPage. Poškodené alebo nebezpečné zariadenie nepoužívajte.</div>
 
 <h2>Úvod: čo znamená rekurzia?</h2>
 <p>V tejto téme sa naučíte, ako môže funkcia vyriešiť úlohu tak, že zavolá samu seba s menším problémom. Rekurziu si najprv ukážeme na jednoduchom odpočítavaní, potom na faktoriáli a napokon na algoritmoch, ktoré triedia zoznamy rozdelením na menšie časti.</p>
-<p>Pri každom príklade hľadaj dve dôležité veci: <strong>kde sa volanie zastaví</strong> a <strong>ako sa vstup pri ďalšom volaní zmenší</strong>. Bez podmienky zastavenia by funkcia pokračovala, až kým by Python nenahlásil chybu.</p>
+<p>Pri každom príklade hľadajte dve dôležité veci: <strong>kde sa volanie zastaví</strong> a <strong>ako sa vstup pri ďalšom volaní zmenší</strong>. Bez podmienky zastavenia by funkcia pokračovala, až kým by Python nenahlásil chybu.</p>
 <div class="video-card">
 <h3>Úvodné video: Recursion (anglicky, 8 min)</h3>
 <iframe class="video-frame" src="https://www.youtube-nocookie.com/embed/u8Xam9EsqXQ" title="Learn Recursion in 8 minutes – Bro Code" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
@@ -76,12 +75,13 @@ Prepínač skrýva poznámky iba vizuálne. Riešenia sú preto v zdrojovom HTML
 
 <h2>Čo je rekurzia?</h2>
 <p>Rekurzia je spôsob riešenia úlohy, pri ktorom funkcia volá samu seba s menším alebo jednoduchším vstupom. Volania pokračujú, kým nenarazia na <strong>základný prípad</strong>, ktorý už ďalšie volanie nepotrebuje. Každé rekurzívne volanie musí smerovať k tomuto prípadu.</p>
-<div class="card"><strong>Zapamätaj si dva diely:</strong>
+<div class="card"><strong>Zapamätajte si dva diely:</strong>
 <ul><li><strong>Základný prípad</strong> – kedy sa funkcia zastaví.</li><li><strong>Rekurzívny krok</strong> – ako sa problém zmenší a funkcia zavolá samu seba.</li></ul></div>
-<!--<figure class="media"><img class="lesson-image" src="../img/2.11.1 rekurzia-zasobnik-volani.png" alt="Schéma rekurzívnych volaní, ktoré sa rozvinú k základnému prípadu a potom sa vracajú späť"><figcaption>Ak pridáš obrázok, ulož ho ako <code>img/2.11.1 rekurzia-zasobnik-volani.png</code>.</figcaption></figure>
--->
+
 <h3>Prvý príklad: odpočítavanie</h3>
 <pre class="python-code">def odpocitaj(n):
+    if not isinstance(n, int) or n &lt; 0:
+        raise ValueError("n musí byť nezáporné celé číslo")
     if n == 0:                 # základný prípad
         print("Štart!")
         return
@@ -89,13 +89,13 @@ Prepínač skrýva poznámky iba vizuálne. Riešenia sú preto v zdrojovom HTML
     odpocitaj(n - 1)            # menší problém
 
 odpocitaj(3)</pre>
-<p>Výpis je 3, 2, 1, Štart!. Pri volaní <code>odpocitaj(0)</code> sa funkcia zastaví. Keby sme zmenšovanie vstupu vynechali, funkcia by sa nezastavila správne.</p>
+<p>Ukážka očakáva nezáporné celé číslo. Pri <code>odpocitaj(3)</code> vypíše 3, 2, 1 a Štart!; záporný alebo necelý vstup vyvolá <code>ValueError</code> namiesto zbytočných rekurzívnych volaní. Pri volaní <code>odpocitaj(0)</code> sa vykoná základný prípad. Každý ďalší krok zmenšuje vstup smerom k nule.</p>
 
 <h3>Faktoriál a návrat zo zásobníka</h3>
 <p>Faktoriál čísla <code>n</code> je súčin čísel od 1 po <code>n</code>. Platí <code>0! = 1</code> a pre kladné <code>n</code> platí <code>n! = n · (n−1)!</code>.</p>
 <pre class="python-code">def faktorial(n):
-    if n &lt; 0:
-        raise ValueError("Faktoriál je definovaný len pre n >= 0")
+    if not isinstance(n, int) or n &lt; 0:
+        raise ValueError("Faktoriál je definovaný len pre nezáporné celé čísla")
     if n == 0:                  # základný prípad
         return 1
     return n * faktorial(n - 1)
@@ -183,7 +183,7 @@ Všetky videá sú v angličtine. Pri úvodnom videu nech žiaci najprv hľadaj�
 
 <h2>Moje poznámky</h2>
 <label for="notes">Poznámky sa ukladajú iba v tomto prehliadači na tomto zariadení.</label>
-<textarea id="notes" placeholder="Sem si píš poznámky…"></textarea>
+<textarea id="notes" placeholder="Sem si píšte poznámky…"></textarea>
 <p id="notes-status" class="crumb" role="status" aria-live="polite"></p>
 <section class="card" aria-labelledby="sources-heading">
 <h2 id="sources-heading">Použité zdroje</h2>
@@ -226,10 +226,10 @@ student.onclick=function(){setMode(false)};
 teacher.onclick=function(){setMode(true)};
 var notes=document.getElementById('notes'),status=document.getElementById('notes-status'),key='tema-rekurzia-poznamky';
 try{notes.value=localStorage.getItem(key)||'';status.textContent='Poznámky sa ukladajú v tomto prehliadači.'}
-catch(error){status.textContent='Ukladací priestor nie je dostupný. Poznámky si skopíruj, aby sa nestratili.'}
+catch(error){status.textContent='Ukladací priestor nie je dostupný. Skopírujte si poznámky, aby sa nestratili.'}
 notes.oninput=function(){
  try{localStorage.setItem(key,notes.value);status.textContent='Poznámky uložené.'}
- catch(error){status.textContent='Poznámky sa nepodarilo uložiť. Skopíruj si ich, aby sa nestratili.'}
+ catch(error){status.textContent='Poznámky sa nepodarilo uložiť. Skopírujte si ich, aby sa nestratili.'}
 };
 })();
 </script>

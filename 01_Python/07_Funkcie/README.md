@@ -58,3 +58,11 @@ else:
 - **Úroveň B (Precvičenie)**: Napíšte funkciu `kruh_obsah(polomer)`, ktorá vráti obsah kruhu ($S = \pi \cdot r^2$).
 - **Úroveň C (Aplikácia)**: Napíšte funkciu `filtruj_kladne(zoznam)`, ktorá zo zadaného zoznamu čísel vráti nový zoznam obsahujúci iba kladné čísla.
 - **Úroveň D (Výzva)**: Napíšte funkciu `je_prvocislo(n)`, ktorá overí, či je číslo `n` prvočíslom.
+
+---
+
+## Súvisiace materiály
+
+- [2.9 Algoritmizácia podprogramov](../2.9%20Algoritmiz%C3%A1cia%20podprogramov.html) vysvetľuje návrh a rozdelenie algoritmu pred zápisom funkcií.
+- [2.10 Algoritmizácia funkcií](../2.10%20Algoritmiz%C3%A1cia%20funkci%C3%AD.html) nadväzuje zápisom funkcií v Pythone.
+- [Prehľad kurzu](../index.html) a jeho sekcia [algoritmizácie](../index.html#algoritmizacia).

@@ -38,6 +38,27 @@
   <button type="reset">Vynulovať test</button>
 </form>
 
+<form class="quiz" data-quiz="python-tracing">
+  <h2>Test 2: Trasovanie kódu v Pythone</h2>
+  <p class="quiz-help">Tieto otázky preverujú, či viete sledovať vykonávanie algoritmu zapísaného v Pythone.</p>
+  <fieldset class="question" data-answer="c" data-explanation="range(1, 4) vytvorí hodnoty 1, 2 a 3; ich súčet je 6."><legend>1. Čo vypíše tento program?</legend><pre><code>sucet = 0
+for cislo in range(1, 4):
+    sucet += cislo
+print(sucet)</code></pre><div class="answers"><label><input type="radio" name="py-trace-1" value="a"> 3</label><label><input type="radio" name="py-trace-1" value="b"> 4</label><label><input type="radio" name="py-trace-1" value="c"> 6</label></div><p class="feedback" aria-live="polite"></p></fieldset>
+  <fieldset class="question" data-answer="b" data-explanation="Nula spĺňa podmienku n >= 0, preto sa vykoná prvá vetva."><legend>2. Čo vypíše program pri <code>n = 0</code>?</legend><pre><code>n = 0
+if n &gt;= 0:
+    print("nezáporné")
+else:
+    print("záporné")</code></pre><div class="answers"><label><input type="radio" name="py-trace-2" value="a"> záporné</label><label><input type="radio" name="py-trace-2" value="b"> nezáporné</label><label><input type="radio" name="py-trace-2" value="c"> program nič nevypíše</label></div><p class="feedback" aria-live="polite"></p></fieldset>
+  <fieldset class="question" data-answer="a" data-explanation="Funkcia vráti 4 * 2, teda 8; print() túto návratovú hodnotu zobrazí."><legend>3. Čo vypíše tento program?</legend><pre><code>def zdvojnasob(x):
+    return x * 2
+
+print(zdvojnasob(4))</code></pre><div class="answers"><label><input type="radio" name="py-trace-3" value="a"> 8</label><label><input type="radio" name="py-trace-3" value="b"> 4</label><label><input type="radio" name="py-trace-3" value="c"> None</label></div><p class="feedback" aria-live="polite"></p></fieldset>
+  <p class="quiz-result" role="status" aria-live="polite"></p>
+  <button type="submit">Vyhodnotiť test z Pythonu</button>
+  <button type="reset">Vynulovať test</button>
+</form>
+
 <footer><a href="index.html">Späť na Python</a> · <a href="Opakovanie%20-%20Z%C3%A1klady%20algoritmov.html">Otvoriť podklady k algoritmom</a></footer>
 </main>
 <script src="../quiz.js"></script>
