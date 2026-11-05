@@ -7,7 +7,7 @@ const originalSiteLink = document.getElementById("auth-original-site");
 
 const isGoogleTranslateHost = /translate\.google\./i.test(window.location.hostname);
 if (isGoogleTranslateHost) {
-  const originalLoginUrl = new URL("https://programovanie-sps.web.app/login.html");
+  const originalLoginUrl = new URL("https://programovanie-gules.vercel.app/login.html");
   const requestedNext = new URLSearchParams(window.location.search).get("next");
   if (isLocalPath(requestedNext)) originalLoginUrl.searchParams.set("next", requestedNext);
   originalSiteLink.href = originalLoginUrl.toString();

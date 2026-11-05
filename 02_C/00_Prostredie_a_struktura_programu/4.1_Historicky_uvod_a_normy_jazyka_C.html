@@ -46,6 +46,8 @@
     .page-language-control{grid-column:1/-1;display:grid;gap:.25rem;margin:0;color:var(--fg);font-size:.82rem;font-weight:700}
     .page-language-control select{width:100%;min-height:40px;padding:.3rem .5rem;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--fg);font:inherit}
     .page-language-status{grid-column:1/-1;margin:0;color:var(--mut);font-size:.75rem;line-height:1.4}
+    .page-language-open{grid-column:1/-1;display:block;padding:.55rem .7rem;border-radius:8px;background:var(--acc);color:#fff;text-align:center;text-decoration:none;font-weight:700}
+    .page-language-open[hidden]{display:none}
     .narration-status{grid-column:1/-1;margin:0;color:var(--mut)}
     .narration-option{display:none;align-items:center;gap:.55rem;width:max-content;max-width:100%;margin:-.35rem 0 1rem;padding:.25rem .65rem;border:1px solid var(--line);border-radius:999px;background:var(--card);font-size:.9rem;cursor:pointer}
     body.teacher .narration-option{display:flex}
@@ -221,6 +223,7 @@
         </select>
       </label>
       <p id="page-language-status" class="page-language-status" role="status" aria-live="polite">Preklad sa otvorí v novej karte; táto stránka zostane v slovenčine.</p>
+      <a id="page-language-open" class="page-language-open" href="#" target="_blank" rel="noopener noreferrer" hidden>Otvoriť preloženú tému</a>
       <label class="narration-voice" for="narration-voice">Hlas
         <select id="narration-voice" aria-label="Vyberte hlas na čítanie"><option value="">Automaticky – slovenský hlas</option></select>
       </label>
@@ -425,10 +428,27 @@
   <script>
     const pageLanguageSelect = document.getElementById("page-language");
     const pageLanguageStatus = document.getElementById("page-language-status");
+    const pageLanguageOpen = document.getElementById("page-language-open");
+    const languageAfterLogin = new URLSearchParams(window.location.search).get("translateAfterLogin");
+    const supportedPageLanguages = new Set(["hu", "uk", "cs", "pl", "de", "en"]);
+    if (supportedPageLanguages.has(languageAfterLogin)) {
+      const translatedSourceUrl = new URL(window.location.href);
+      translatedSourceUrl.searchParams.delete("translateAfterLogin");
+      window.history.replaceState(null, "", translatedSourceUrl.pathname + translatedSourceUrl.search + translatedSourceUrl.hash);
+      const translateUrl = new URL("https://translate.google.com/translate");
+      translateUrl.searchParams.set("sl", "sk");
+      translateUrl.searchParams.set("tl", languageAfterLogin);
+      translateUrl.searchParams.set("u", translatedSourceUrl.toString());
+      pageLanguageSelect.value = languageAfterLogin;
+      pageLanguageOpen.href = translateUrl.toString();
+      pageLanguageOpen.hidden = false;
+      pageLanguageStatus.textContent = "Prihlásenie prebehlo. Teraz otvorte preloženú tému; Google Translate sa otvorí v novej karte.";
+    }
     pageLanguageSelect.addEventListener("change", () => {
       const targetLanguage = pageLanguageSelect.value;
       if (targetLanguage === "sk") {
         pageLanguageStatus.textContent = "Zobrazuje sa pôvodná slovenská stránka.";
+        pageLanguageOpen.hidden = true;
         return;
       }
       if (!/^https?:$/.test(window.location.protocol)) {
@@ -436,20 +456,12 @@
         pageLanguageSelect.value = "sk";
         return;
       }
-      const translateUrl = new URL("https://translate.google.com/translate");
-      translateUrl.searchParams.set("sl", "sk");
-      translateUrl.searchParams.set("tl", targetLanguage);
-      translateUrl.searchParams.set("u", window.location.href);
-      const translationLink = document.createElement("a");
-      translationLink.href = translateUrl.toString();
-      translationLink.target = "_blank";
-      translationLink.rel = "noopener noreferrer";
-      translationLink.hidden = true;
-      document.body.append(translationLink);
-      translationLink.click();
-      translationLink.remove();
-      pageLanguageStatus.textContent = "Preložená kópia sa otvára v novej karte. Ak ju prehliadač zablokoval, povoľte vyskakovacie okná pre túto stránku. Pôvodná stránka zostáva otvorená.";
-      pageLanguageSelect.value = "sk";
+      const returnUrl = new URL(window.location.href);
+      returnUrl.searchParams.set("translateAfterLogin", targetLanguage);
+      const loginUrl = new URL("/login.html", window.location.origin);
+      loginUrl.searchParams.set("next", returnUrl.pathname + returnUrl.search + returnUrl.hash);
+      pageLanguageStatus.textContent = "Najprv sa prihláste na stránke kurzu. Po návrate stlačte tlačidlo na otvorenie prekladu.";
+      window.location.assign(loginUrl.toString());
     });
 
     const studentButton = document.getElementById("student-mode");
