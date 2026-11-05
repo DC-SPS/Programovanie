@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="sk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="{{STRUČNÝ OPIS TÉMY}}">
+  <title>{{ČÍSLO}} {{NÁZOV TÉMY}}</title>
+  <style>
+    :root{color-scheme:light;--bg:#f7f8fa;--fg:#1c2330;--card:#fff;--mut:#5b6678;--acc:#1f6feb;--line:#d9dee7;--note:#fff4d6;--good:#18743a;--bad:#b42318}
+    @media(prefers-color-scheme:dark){:root:not([data-theme="light"]){color-scheme:dark;--bg:#12161d;--fg:#e6eaf1;--card:#1b212b;--mut:#9aa6b8;--acc:#5aa2ff;--line:#2d3644;--note:#3a3017;--good:#63d58a;--bad:#ff8a80}}
+    :root[data-theme="light"]{color-scheme:light;--bg:#f7f8fa;--fg:#1c2330;--card:#fff;--mut:#5b6678;--acc:#1f6feb;--line:#d9dee7;--note:#fff4d6;--good:#18743a;--bad:#b42318}
+    :root[data-theme="dark"]{color-scheme:dark;--bg:#12161d;--fg:#e6eaf1;--card:#1b212b;--mut:#9aa6b8;--acc:#5aa2ff;--line:#2d3644;--note:#3a3017;--good:#63d58a;--bad:#ff8a80}
+    *{box-sizing:border-box}html{scroll-padding-top:1rem}
+    body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.65 system-ui,-apple-system,"Segoe UI",sans-serif}
+    a{color:var(--acc)}
+    .global-course-nav{display:flex;flex-wrap:wrap;gap:.55rem;align-items:center;width:min(100% - 2rem,1000px);margin:.75rem auto 0;font:600 .9rem/1.4 system-ui,-apple-system,"Segoe UI",sans-serif}
+    .global-course-nav a{display:inline-block;padding:.4rem .7rem;border:1px solid var(--line);border-radius:.55rem;text-decoration:none;color:inherit;background:var(--card)}
+    .global-course-nav a:focus-visible,a:focus-visible,button:focus-visible,summary:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid var(--acc);outline-offset:3px}
+    main{width:min(100% - 2rem,860px);margin:auto;padding:16px 0 3rem}
+    main :is(p,li,td,dd,blockquote){text-align:justify;text-justify:inter-word}
+    header{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:.65rem}
+    .crumb,.muted{color:var(--mut)}h1{font-size:clamp(1.8rem,5vw,2.6rem);line-height:1.2;margin:.8rem 0}h2{margin-top:2rem;font-size:1.4rem}h3{margin-top:1.25rem;font-size:1.1rem}
+    .tags{display:flex;flex-wrap:wrap;gap:.45rem;margin:1rem 0}.tag{padding:2px 9px;border:1px solid var(--line);border-radius:6px;background:var(--line);font-size:13px}
+    .card,.teacher-note,.quiz,.sources{margin:14px 0;padding:14px 17px;border:1px solid var(--line);border-radius:12px;background:var(--card)}
+    .teacher-note{display:none;background:var(--note)}body.teacher .teacher-note{display:block}.mode{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}.mode button{padding:6px 11px;border:0;background:var(--card);color:var(--fg);font:inherit;cursor:pointer}.mode button.on{background:var(--acc);color:#fff}
+    .pdf-export{padding:.4rem .7rem;border:1px solid var(--line);border-radius:.55rem;background:var(--card);color:var(--fg);font:600 .9rem/1.4 system-ui,-apple-system,"Segoe UI",sans-serif;cursor:pointer}
+    .scroll{overflow-x:auto}table{width:100%;border-collapse:collapse}th,td{padding:.65rem .7rem;border:1px solid var(--line);text-align:left;vertical-align:top}th{background:var(--card)}
+    pre{max-width:100%;overflow-x:auto;padding:1rem;border-radius:9px;background:#0f172a;color:#e2e8f0;font:14px/1.55 ui-monospace,SFMono-Regular,Consolas,monospace}code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace}
+    .safety-notice{margin:1rem 0;padding:14px 17px;border:1px solid var(--line);border-left:5px solid var(--acc);border-radius:12px;background:var(--note)}
+    .quiz label{display:block;margin:.85rem 0 .25rem;font-weight:650}.quiz select{width:100%;padding:.55rem;border:1px solid var(--line);border-radius:7px;background:var(--bg);color:var(--fg);font:inherit}.quiz select.wrong{border-color:var(--bad);box-shadow:0 0 0 2px color-mix(in srgb,var(--bad) 22%,transparent)}.quiz button{margin-top:1rem;padding:.55rem .8rem;border:0;border-radius:7px;background:var(--acc);color:#fff;font:inherit;cursor:pointer}.result{min-height:1.5em;font-weight:650}.good{color:var(--good)}.bad{color:var(--bad)}
+    .sources{margin-top:2rem}.glossary-list{display:grid;grid-template-columns:minmax(8rem,.35fr) 1fr;gap:.3rem .8rem}.glossary-list dt{font-weight:750}.glossary-list dd{margin:0}footer{margin-top:2rem;padding-top:1rem;border-top:1px solid var(--line);color:var(--mut);font-size:14px}
+    body:not(.teacher) .narration-option{display:none}body.teacher .narration-option{display:flex}.narration-target{transition:outline-color .16s ease,background-color .16s ease}.narration-target:hover{outline:2px solid var(--acc);outline-offset:3px;background-color:color-mix(in srgb,var(--acc) 8%,transparent);cursor:pointer}
+    @media(max-width:620px){main{width:min(100% - 1.2rem,860px)}td:first-child{white-space:normal}.glossary-list{grid-template-columns:1fr}.glossary-list dd{margin-bottom:.5rem}}
+    @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important}}
+    @media print{.global-course-nav,.mode,.pdf-export,.lesson-side-panel,.narration-option,.quiz button{display:none!important}.teacher-note{display:block}main{width:auto;max-width:none;margin:0;padding:0}.print-solution-sheet{break-before:page;page-break-before:always}}
+  </style>
+  <link rel="stylesheet" href="c-lecture-controls.css">
+  <script src="../../theme.js" defer></script>
+  <script src="../../lesson-top.js" defer></script>
+</head>
+<body>
+  <nav class="global-course-nav" aria-label="Navigácia kurzov">
+    <a href="../c-language.html">Prehľad kurzu C</a>
+    <a href="../../index.html">Všetky kurzy</a>
+  </nav>
+
+  <!-- Spoločný panel podľa 4.1. Zachovajte markup a ID ovládačov. -->
+  <aside class="lesson-side-panel" aria-label="Ovládanie hodiny a čítania">
+    <section class="narration-controls" aria-label="Čítanie prednášky">
+      <button id="play-reading" type="button" aria-label="Prehrať">▶ Prehrať</button>
+      <button id="stop-reading" type="button" aria-label="Zastaviť čítanie" disabled>■ Zastaviť</button>
+      <button id="pause-reading" type="button" aria-label="Pozastaviť čítanie" disabled>⏸ Pozastaviť</button>
+      <button id="replay-reading" type="button" aria-label="Prehrať vybrané časti znova" disabled>↻ Prehrať znova</button>
+      <label class="narration-speed" for="narration-speed">Rýchlosť čítania
+        <select id="narration-speed" aria-label="Rýchlosť hlasového čítania">
+          <option value="0.25">0,25×</option><option value="0.5">0,5×</option><option value="0.75">0,75×</option>
+          <option value="1" selected>1× – normálna</option><option value="1.25">1,25×</option><option value="1.5">1,5×</option>
+          <option value="1.75">1,75×</option><option value="2">2×</option>
+        </select>
+      </label>
+      <p class="page-language-help">Jazyk zmeníte priamo v Google Translate: kliknite na názov cieľového jazyka v hornej lište a vyberte maďarčinu, ukrajinčinu alebo iný jazyk.</p>
+      <label class="narration-voice" for="narration-voice">Hlas
+        <select id="narration-voice" aria-label="Vyberte hlas na čítanie"><option value="">Automaticky – slovenský hlas</option></select>
+      </label>
+      <label class="narration-volume" for="narration-volume">
+        <span class="narration-volume-heading"><span>Hlasitosť čítania</span><output id="narration-volume-value" for="narration-volume">100 %</output></span>
+        <input id="narration-volume" type="range" min="0" max="100" step="5" value="100" aria-label="Hlasitosť hlasového čítania">
+        <span class="narration-volume-help">Upravuje hlasitosť čítania, nie celkovú hlasitosť zariadenia.</span>
+      </label>
+      <div id="reading-status" class="narration-status" role="status" aria-live="polite"></div>
+    </section>
+  </aside>
+
+  <main>
+    <aside class="safety-notice" data-read-aloud="selected" aria-label="Kontrola pracoviska"><strong>Začíname kontrolou pracoviska:</strong> {{BEZPEČNOSTNÉ UPOZORNENIE PRE KURZ}}</aside>
+    <header>
+      <span class="crumb"><a href="../c-language.html">Základy jazyka C</a> › {{TEMATICKÝ CELOK}} › {{ČÍSLO}}</span>
+      <div class="mode" role="group" aria-label="Zobrazenie stránky">
+        <button id="student-mode" class="on" type="button" aria-pressed="true">Žiak</button>
+        <button id="teacher-mode" type="button" aria-pressed="false">Učiteľ</button>
+      </div>
+      <button class="pdf-export" type="button" onclick="window.print()">Exportovať do PDF</button>
+    </header>
+
+    <h1>{{ČÍSLO}} {{NÁZOV TÉMY}}</h1>
+    <p class="lead">{{JEDNOVETOVÝ ÚVOD DO TÉMY}}</p>
+    <div class="tags"><span class="tag">1 × 45 min</span><span class="tag">{{TEMATICKÝ CELOK}}</span><span class="tag">{{JAZYK / NÁSTROJ}}</span></div>
+
+    <section class="card" data-read-aloud="selected" aria-labelledby="connection-heading">
+      <h2 id="connection-heading">Nadväznosť na predchádzajúcu tému</h2>
+      <p>{{ČO ŽIAK UŽ VIE A AKO NA TO TÁTO TÉMA NADVÄZUJE}}</p>
+    </section>
+    <section class="teacher-note" data-read-aloud="optional"><strong>Ciele, predpoklady a pomôcky</strong><p>{{METODICKÁ POZNÁMKA PRE UČITEĽA}}</p></section>
+
+    <h2>Plán hodiny (45 minút)</h2>
+    <div class="scroll"><table><thead><tr><th>Čas</th><th>Trvanie</th><th>Časť hodiny</th><th>Činnosť a zámer</th></tr></thead>
+      <tbody>
+        <tr><td>0–5 min</td><td>5 min</td><td>Motivácia</td><td>{{ÚVODNÁ OTÁZKA ALEBO SITUÁCIA}}</td></tr>
+        <tr><td>5–15 min</td><td>10 min</td><td>Výklad</td><td>{{KĽÚČOVÝ POJEM ALEBO PRVÝ KROK}}</td></tr>
+        <tr><td>15–30 min</td><td>15 min</td><td>Príklad a precvičenie</td><td>{{RIADENÁ UKÁŽKA A AKTIVITA}}</td></tr>
+        <tr><td>30–40 min</td><td>10 min</td><td>Samostatná práca</td><td>{{ÚLOHA S OČAKÁVANÝM VÝSLEDKOM}}</td></tr>
+        <tr><td>40–45 min</td><td>5 min</td><td>Zhrnutie</td><td>{{KONTROLNÁ OTÁZKA ALEBO VÝSTUPNÁ ÚLOHA}}</td></tr>
+      </tbody>
+    </table></div>
+
+    <h2>Ciele vyučovacej hodiny</h2>
+    <p>Po hodine dokážete:</p>
+    <ul data-read-aloud="selected"><li>{{POZOROVATEĽNÝ CIEĽ 1}}</li><li>{{POZOROVATEĽNÝ CIEĽ 2}}</li><li>{{POZOROVATEĽNÝ CIEĽ 3}}</li></ul>
+
+    <!-- Skopírujte blok výkladu podľa potreby. Každý blok má jednu hlavnú myšlienku. -->
+    <h2>1. {{NÁZOV PRVEJ ČASTI}}</h2>
+    <p data-read-aloud="selected">{{VYSVETLENIE POJMU, JEHO VÝZNAMU A SÚVISLOSTÍ}}</p>
+    <div class="card" data-read-aloud="optional"><strong>Otázka na úvod:</strong> {{OTÁZKA NA ZAPOJENIE TRIEDY}}</div>
+
+    <h2>2. {{NÁZOV ĎALŠEJ ČASTI}}</h2>
+    <p data-read-aloud="selected">{{POSTUPNÝ VÝKLAD S PRÍKLADOM}}</p>
+    <pre data-read-aloud="optional"><code>{{VOLITEĽNÝ KÓDOVÝ PRÍKLAD}}</code></pre>
+    <p>{{VYSVETLENIE OČAKÁVANÉHO VÝSLEDKU A ČASTÉHO OMYLU}}</p>
+
+    <h2>3. Precvičenie</h2>
+    <section class="card"><h3>{{NÁZOV ÚLOHY}}</h3><p>{{ZADANIE, KROKY, VÝSTUP A KRITÉRIÁ ÚSPECHU}}</p></section>
+
+    <h2>4. Interaktívne overenie</h2>
+    <form class="quiz" id="knowledge-quiz">
+      <label for="q1">{{OTÁZKA 1}}</label>
+      <select id="q1" data-answer="spravne-1" required>
+        <option value="">Vyberte odpoveď</option>
+        <option value="spravne-1">{{SPRÁVNA ODPOVEĎ 1}}</option>
+        <option value="rusic-1">{{PLAUSIBILNÝ RUŠIČ 1}}</option>
+      </select>
+      <label for="q2">{{OTÁZKA 2}}</label>
+      <select id="q2" data-answer="spravne-2" required>
+        <option value="">Vyberte odpoveď</option>
+        <option value="spravne-2">{{SPRÁVNA ODPOVEĎ 2}}</option>
+        <option value="rusic-2">{{PLAUSIBILNÝ RUŠIČ 2}}</option>
+      </select>
+      <label for="q3">{{OTÁZKA 3}}</label>
+      <select id="q3" data-answer="spravne-3" required>
+        <option value="">Vyberte odpoveď</option>
+        <option value="spravne-3">{{SPRÁVNA ODPOVEĎ 3}}</option>
+        <option value="rusic-3">{{PLAUSIBILNÝ RUŠIČ 3}}</option>
+      </select>
+      <button type="submit">Skontrolovať odpovede</button>
+      <p id="quiz-result" class="result" role="status" aria-live="polite"></p>
+    </form>
+
+    <h2>5. Zhrnutie a otázky na zopakovanie</h2>
+    <ul><li>{{KĽÚČOVÝ POZNATOK 1}}</li><li>{{KĽÚČOVÝ POZNATOK 2}}</li><li>{{KĽÚČOVÝ POZNATOK 3}}</li></ul>
+    <p><strong>Výstupná otázka:</strong> {{KRÁTKA OTÁZKA NA KONTROLU POROZUMENIA}}</p>
+
+    <section class="sources"><h2>Použité a odporúčané zdroje</h2><ul><li><a href="{{URL}}">{{NÁZOV ZDROJA}}</a> – {{ČO ZDROJ PODPORUJE}}</li></ul></section>
+    <section class="card" aria-labelledby="glossary-heading"><h2 id="glossary-heading">Register pojmov a skratiek</h2><dl class="glossary-list"><dt>{{POJEM}}</dt><dd>{{KRÁTKE A PRESNÉ VYSVETLENIE}}</dd></dl></section>
+
+    <footer><a href="../c-language.html">Späť na prehľad kurzu C</a> · <a href="../../index.html">Všetky kurzy</a></footer>
+  </main>
+  <script src="c-lecture-controls.js" defer></script>
+  <script>
+    document.getElementById("knowledge-quiz").addEventListener("submit", (event) => {
+      event.preventDefault();
+      const selects = [...event.currentTarget.querySelectorAll("select")];
+      const result = document.getElementById("quiz-result");
+      if (selects.some((select) => !select.value)) {
+        selects.forEach((select) => select.setAttribute("aria-invalid", String(!select.value)));
+        result.className = "result bad";
+        result.textContent = "Najprv vyberte odpoveď pri každej otázke.";
+        return;
+      }
+      const correct = selects.filter((select) => select.value === select.dataset.answer).length;
+      selects.forEach((select) => {
+        const wrong = select.value !== select.dataset.answer;
+        select.classList.toggle("wrong", wrong);
+        select.setAttribute("aria-invalid", String(wrong));
+      });
+      result.className = `result ${correct === selects.length ? "good" : "bad"}`;
+      result.textContent = `Správne odpovede: ${correct} z ${selects.length}.${correct === selects.length ? " Výborne!" : " Skúste si zopakovať označené otázky."}`;
+    });
+  </script>
+</body>
+</html>

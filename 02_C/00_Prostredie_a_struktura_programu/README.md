@@ -3,6 +3,11 @@
 
 # 00_Prostredie_a_struktura_programu
 
+## Tvorba a úprava prednášok
+
+- [Blueprint prednášky C](./BLUEPRINT_PREDNASKY_C.md) – pravidlá pre nové aj existujúce stránky.
+- [HTML šablóna prednášky C](./TEMPLATE_PREDNASKY_C.html) – skopírujte a nahraďte označené polia obsahom novej témy.
+
 ## Prednášky
 
 - [4.1 Historický úvod a normy jazyka C](./4.1_Historicky_uvod_a_normy_jazyka_C.html) – 45-minútová lekcia o vzniku jazyka C, vývoji noriem a dôvode používania C17.
