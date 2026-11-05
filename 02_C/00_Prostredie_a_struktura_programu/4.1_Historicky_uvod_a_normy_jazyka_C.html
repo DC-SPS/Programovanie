@@ -93,6 +93,16 @@
     .lesson-side-panel .lesson-clock__settings{flex:none;margin-left:.1rem}
     .lesson-side-panel .lesson-clock__body{display:block;height:auto;min-height:0;padding:.55rem .65rem}
     .lesson-side-panel .lesson-clock__info,.lesson-side-panel .lesson-clock__controls,.lesson-side-panel .lesson-clock__number,.lesson-side-panel .lesson-clock__title,.lesson-side-panel .lesson-clock__description,.lesson-side-panel .lesson-clock__progress{display:none!important}
+    .lesson-duration{margin-bottom:.55rem;padding:.45rem .6rem;border:1px solid #2b5674;border-radius:.6rem;background:#0b1723;color:#edf6ff}
+    .lesson-duration-heading{display:flex;align-items:center;justify-content:space-between;gap:.5rem}
+    .lesson-duration-heading strong{font-size:.78rem;color:#bae6fd}
+    .lesson-duration-time{font:800 1.05rem/1.1 Consolas,"Cascadia Code",monospace;font-variant-numeric:tabular-nums;color:#fff}
+    .lesson-duration-controls{display:flex;gap:.35rem;margin-top:.4rem}
+    .lesson-duration-controls button{flex:1;min-height:2rem;padding:.35rem .45rem;border:1px solid #32617e;border-radius:.45rem;background:#12334b;color:#e6f6ff;font:700 .72rem system-ui,"Segoe UI",sans-serif;cursor:pointer}
+    .lesson-duration-controls button:disabled{opacity:.5;cursor:not-allowed}
+    .lesson-duration-controls button:focus-visible{outline:3px solid #fde047;outline-offset:2px}
+    .pomodoro-context{display:block;min-width:0;margin:.1rem 0 .4rem;padding-bottom:.35rem;border-bottom:1px solid #25415a}
+    .pomodoro-context-title{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:.78rem;font-weight:750;color:#f1f8ff}
     .pomodoro-panel{padding:.65rem .7rem;border:1px solid #2b5674;border-radius:.7rem;background:#0b1723;color:#edf6ff}
     .pomodoro-heading{display:flex;align-items:center;justify-content:space-between;gap:.5rem;margin-bottom:.5rem}
     .pomodoro-heading strong{font-size:.88rem;letter-spacing:.04em;color:#bae6fd}
@@ -486,7 +496,6 @@
       lessonClock.querySelector(".lesson-clock__progress")?.remove();
       if (!clockBody) return;
       const lessonTitle = clockBody.querySelector(".lesson-clock__title")?.textContent.trim() || "4.1";
-      const lessonDetails = clockBody.querySelector(".lesson-clock__description")?.textContent.trim() || "";
       clockBody.replaceChildren();
 
       const make = (tag, className, text) => {
@@ -495,6 +504,24 @@
         if (text) element.textContent = text;
         return element;
       };
+      const lessonTimer = make("section", "lesson-duration");
+      lessonTimer.setAttribute("aria-label", "45-min\u00fatov\u00fd \u010dasova\u010d vyu\u010dovacej hodiny");
+      const lessonHeading = make("div", "lesson-duration-heading");
+      lessonHeading.append(make("strong", "", "\u010cas celej hodiny"));
+      const lessonTime = make("time", "lesson-duration-time", "45:00");
+      lessonTime.setAttribute("aria-label", "Zost\u00e1vaj\u00faci \u010das celej vyu\u010dovacej hodiny");
+      lessonHeading.append(lessonTime);
+      const lessonControls = make("div", "lesson-duration-controls");
+      const startButton = make("button", "", "Spusti\u0165 hodinu");
+      startButton.type = "button";
+      const pauseButton = make("button", "", "Pozastavi\u0165");
+      pauseButton.type = "button";
+      pauseButton.disabled = true;
+      const resetButton = make("button", "", "Vynulova\u0165");
+      resetButton.type = "button";
+      lessonControls.append(startButton, pauseButton, resetButton);
+      lessonTimer.append(lessonHeading, lessonControls);
+
       const pomodoro = make("section", "pomodoro-panel");
       pomodoro.setAttribute("aria-label", "Pomodoro \u010dasova\u010d pr\u00e1ce a oddychu");
       const heading = make("div", "pomodoro-heading");
@@ -502,27 +529,15 @@
       const readout = make("div", "pomodoro-readout");
       const phaseLabel = make("span", "pomodoro-phase", "PR\u00c1CA");
       phaseLabel.dataset.phase = "work";
-      const timeLabel = make("time", "pomodoro-time", "25:00");
-      timeLabel.setAttribute("aria-label", "Zost\u00e1vaj\u00faci \u010das f\u00e1zy Pomodoro");
-      readout.append(phaseLabel, timeLabel);
+      const pomodoroTime = make("time", "pomodoro-time", "25:00");
+      pomodoroTime.setAttribute("aria-label", "Zost\u00e1vaj\u00faci \u010das f\u00e1zy Pomodoro");
+      readout.append(phaseLabel, pomodoroTime);
       heading.append(readout);
-
       const context = make("div", "pomodoro-context");
       context.append(make("strong", "pomodoro-context-title", lessonTitle));
-      context.append(make("span", "pomodoro-context-details", lessonDetails));
-
-      const controls = make("div", "pomodoro-controls");
-      const startButton = make("button", "", "Spusti\u0165");
-      startButton.type = "button";
-      const pauseButton = make("button", "", "Pozastavi\u0165");
-      pauseButton.type = "button";
-      pauseButton.disabled = true;
-      const resetButton = make("button", "", "Vynulova\u0165");
-      resetButton.type = "button";
-      controls.append(startButton, pauseButton, resetButton);
 
       const sliders = make("div", "pomodoro-sliders");
-      const addSlider = (kind, label, min, max, step, initial) => {
+      const addSlider = (label, min, max, step, initial) => {
         const field = make("label", "pomodoro-slider");
         const caption = make("span", "", label);
         const output = make("output", "", initial + " min");
@@ -537,10 +552,10 @@
         sliders.append(field);
         return { range, output };
       };
-      const workSlider = addSlider("work", "Pr\u00e1ca", 5, 60, 5, 25);
-      const relaxSlider = addSlider("relax", "Relax", 1, 15, 1, 5);
-      pomodoro.append(heading, context, controls, sliders);
-      clockBody.append(pomodoro);
+      const workSlider = addSlider("Pr\u00e1ca", 5, 60, 5, 25);
+      const relaxSlider = addSlider("Relax", 1, 15, 1, 5);
+      pomodoro.append(heading, context, sliders);
+      clockBody.append(lessonTimer, pomodoro);
 
       const toast = make("div", "pomodoro-toast");
       toast.setAttribute("role", "status");
@@ -549,9 +564,11 @@
       document.body.append(toast);
 
       let phase = "work";
-      let remaining = 25 * 60 * 1000;
-      let endAt = 0;
-      let interval = 0;
+      let lessonRemaining = 45 * 60 * 1000;
+      let pomodoroRemaining = 25 * 60 * 1000;
+      let lessonEndAt = 0;
+      let pomodoroEndAt = 0;
+      let intervalId = 0;
       let toastTimeout = 0;
       const durationFor = (currentPhase) => Number((currentPhase === "work" ? workSlider : relaxSlider).range.value) * 60 * 1000;
       const format = (milliseconds) => {
@@ -560,60 +577,74 @@
       };
       const phaseName = () => phase === "work" ? "PR\u00c1CA" : "RELAX";
       const render = () => {
+        lessonTime.textContent = format(lessonRemaining);
+        pomodoroTime.textContent = format(pomodoroRemaining);
         phaseLabel.textContent = phaseName();
         phaseLabel.dataset.phase = phase;
-        timeLabel.textContent = format(remaining);
       };
-      const notify = () => {
-        toast.textContent = "Pomodoro \u00b7 " + phaseName() + " \u00b7 " + format(remaining);
-        toast.dataset.phase = phase;
+      const notify = (message, currentPhase = phase) => {
+        toast.textContent = message;
+        toast.dataset.phase = currentPhase;
         toast.hidden = false;
         window.clearTimeout(toastTimeout);
-        toastTimeout = window.setTimeout(() => { toast.hidden = true; }, 4500);
+        toastTimeout = window.setTimeout(() => { toast.hidden = true; }, 5000);
+      };
+      const stopAtLessonEnd = () => {
+        window.clearInterval(intervalId);
+        intervalId = 0;
+        lessonRemaining = 0;
+        render();
+        startButton.disabled = false;
+        startButton.textContent = "Spusti\u0165 znova";
+        pauseButton.disabled = true;
+        notify("Koniec 45-min\u00fatovej vyu\u010dovacej hodiny.", "relax");
       };
       const tick = () => {
-        remaining = Math.max(0, endAt - Date.now());
-        if (remaining === 0) {
+        const now = Date.now();
+        lessonRemaining = Math.max(0, lessonEndAt - now);
+        pomodoroRemaining = Math.max(0, pomodoroEndAt - now);
+        if (lessonRemaining === 0) {
+          stopAtLessonEnd();
+          return;
+        }
+        if (pomodoroRemaining === 0) {
           phase = phase === "work" ? "relax" : "work";
-          remaining = durationFor(phase);
-          endAt = Date.now() + remaining;
-          notify();
+          pomodoroRemaining = durationFor(phase);
+          pomodoroEndAt = now + pomodoroRemaining;
+          notify("Pomodoro \u00b7 " + phaseName() + " \u00b7 " + format(pomodoroRemaining));
         }
         render();
       };
       startButton.addEventListener("click", () => {
-        if (interval) return;
-        if (remaining <= 0) remaining = durationFor(phase);
-        endAt = Date.now() + remaining;
-        interval = window.setInterval(tick, 200);
+        if (intervalId) return;
+        const now = Date.now();
+        lessonEndAt = now + lessonRemaining;
+        pomodoroEndAt = now + pomodoroRemaining;
+        intervalId = window.setInterval(tick, 200);
         startButton.disabled = true;
-        startButton.textContent = "Prebieha";
+        startButton.textContent = "Hodina be\u017e\u00ed";
         pauseButton.disabled = false;
-        notify();
+        notify("Spusten\u00e1 hodina \u00b7 Pomodoro PR\u00c1CA");
       });
       pauseButton.addEventListener("click", () => {
-        if (!interval) return;
-        remaining = Math.max(0, endAt - Date.now());
-        window.clearInterval(interval);
-        interval = 0;
-        if (remaining === 0) {
-          phase = phase === "work" ? "relax" : "work";
-          remaining = durationFor(phase);
-          notify();
-        }
-        render();
+        if (!intervalId) return;
+        tick();
+        if (!intervalId) return;
+        window.clearInterval(intervalId);
+        intervalId = 0;
         startButton.disabled = false;
         startButton.textContent = "Pokra\u010dova\u0165";
         pauseButton.disabled = true;
       });
       resetButton.addEventListener("click", () => {
-        window.clearInterval(interval);
-        interval = 0;
+        window.clearInterval(intervalId);
+        intervalId = 0;
         phase = "work";
-        remaining = durationFor(phase);
+        lessonRemaining = 45 * 60 * 1000;
+        pomodoroRemaining = durationFor("work");
         render();
         startButton.disabled = false;
-        startButton.textContent = "Spusti\u0165";
+        startButton.textContent = "Spusti\u0165 hodinu";
         pauseButton.disabled = true;
         toast.hidden = true;
       });
@@ -621,8 +652,8 @@
         slider.range.addEventListener("input", () => {
           slider.output.textContent = slider.range.value + " min";
           if (phase === sliderPhase) {
-            remaining = durationFor(phase);
-            if (interval) endAt = Date.now() + remaining;
+            pomodoroRemaining = durationFor(phase);
+            if (intervalId) pomodoroEndAt = Date.now() + pomodoroRemaining;
             render();
           }
         });
