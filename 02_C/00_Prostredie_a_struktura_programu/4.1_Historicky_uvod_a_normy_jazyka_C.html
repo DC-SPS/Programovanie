@@ -159,7 +159,8 @@
     .pomodoro-slider input{grid-column:1/-1;width:100%;margin:.12rem 0;accent-color:#38bdf8;cursor:pointer}
     .pomodoro-slider input:focus-visible,.pomodoro-controls button:focus-visible{outline:3px solid #fde047;outline-offset:2px}
     .narration-status:empty{display:none}
-    .lesson-side-panel .narration-status:not(:empty){padding:.2rem 0 0;border-top:1px solid var(--line);font-size:.78rem;font-weight:650;color:var(--fg)}
+    .lesson-side-panel .narration-status:not(:empty){display:grid;grid-template-columns:1fr;gap:.2rem;padding:.3rem 0 0;border-top:1px solid var(--line);font-size:.78rem;font-weight:650;color:var(--fg)}
+    .reading-progress,.reading-times{display:block;white-space:nowrap;text-align:center}.reading-times{font-size:.76rem}
     .pomodoro-toast{position:fixed;top:16px;right:374px;z-index:1400;max-width:min(22rem,calc(100vw - 2rem));padding:.85rem 1rem;border:1px solid #38bdf8;border-radius:.75rem;background:#0b1723;color:#edf6ff;box-shadow:0 12px 36px rgba(0,0,0,.32);font-weight:750}
     .pomodoro-toast[data-phase="relax"]{border-color:#86efac}
     .pomodoro-toast[hidden]{display:none}
@@ -459,7 +460,7 @@
 
     const estimateSpeechMs = (text) => {
       const words = text.trim().split(/\s+/).filter(Boolean).length;
-      return Math.max(1000, Math.ceil(words / (150 * Number(speedSelect.value)) * 60_000));
+      return Math.max(1000, Math.ceil(words / (150 * Number(speedSelect.value)) * 60_000 * 1.3));
     };
     const formatEstimate = (milliseconds) => {
       const totalSeconds = Math.ceil(Math.max(0, milliseconds) / 1000);
@@ -471,7 +472,13 @@
       const currentRemaining = Math.max(0, currentEstimateMs - elapsed);
       const totalRemaining = currentRemaining + readingQueue.reduce((total, item) => total + estimateSpeechMs(item.text), 0);
       const currentIndex = previousSelection.length - readingQueue.length;
-      readingStatus.textContent = `Čítam časť ${currentIndex} z ${previousSelection.length} · odsek ~${formatEstimate(currentRemaining)} · celé čítanie ~${formatEstimate(totalRemaining)}.`;
+      const progress = document.createElement("span");
+      progress.className = "reading-progress";
+      progress.textContent = `Čítam časť ${currentIndex} z ${previousSelection.length}.`;
+      const times = document.createElement("span");
+      times.className = "reading-times";
+      times.textContent = `Odsek ~${formatEstimate(currentRemaining)} · celé čítanie ~${formatEstimate(totalRemaining)}.`;
+      readingStatus.replaceChildren(progress, times);
     };
 
     const setActiveBlock = (block) => {
