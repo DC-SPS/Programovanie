@@ -34,6 +34,7 @@
     .mode{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
     .mode button,.quiz button{padding:6px 11px;border:0;background:var(--card);color:var(--fg);font:inherit;cursor:pointer}
     .mode button.on,.quiz button{background:var(--acc);color:#fff}
+    .pdf-export{margin-left:.5rem;padding:.4rem .7rem;border:1px solid var(--line);border-radius:.55rem;background:var(--card);color:var(--fg);font:600 .9rem/1.4 system-ui,-apple-system,"Segoe UI",sans-serif;cursor:pointer}
     .narration-controls{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));align-items:center;gap:.45rem;margin:1rem 0;padding:.7rem;border:1px solid var(--line);border-radius:12px;background:var(--card)}
     .narration-controls button,.narration-option input{min-height:44px}
     .narration-controls button{width:100%;min-width:0;padding:.45rem .5rem;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--fg);font:inherit;font-weight:650;cursor:pointer}
@@ -97,7 +98,7 @@
     footer{margin-top:2rem;padding-top:1rem;border-top:1px solid var(--line);color:var(--mut);font-size:14px}
     @media(max-width:620px){main{width:min(100% - 1.2rem,860px)}td:first-child{white-space:normal}}
     @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important}}
-    @media print{.global-course-nav,.mode,.quiz button,.narration-controls,.narration-option{display:none!important}.teacher-note{display:block}main{max-width:none}}
+    @media print{.global-course-nav,.mode,.pdf-export,.quiz button,.narration-controls,.narration-option,.lesson-side-panel{display:none!important}.teacher-note{display:block}main{max-width:none}}
 
     .safety-notice,.safety-reminder{margin:1rem 0;padding:14px 17px;border:1px solid var(--line);border-left:5px solid var(--acc);border-radius:12px;background:var(--note)}
     .safety-notice strong,.safety-reminder strong{display:block;margin-bottom:.25rem}
@@ -194,6 +195,7 @@
         <button id="student-mode" class="on" type="button" aria-pressed="true">Žiak</button>
         <button id="teacher-mode" type="button" aria-pressed="false">Učiteľ</button>
       </div>
+      <button class="pdf-export" type="button" onclick="window.print()">Exportovať do PDF</button>
     </header>
 
     <h1>4.1 Historický úvod a normy jazyka C</h1>
@@ -373,7 +375,7 @@
     const pauseButton = document.getElementById("pause-reading");
     const replayButton = document.getElementById("replay-reading");
     const speedSelect = document.getElementById("narration-speed");
-    const narrationSpeedKey = "lesson-narration.playback-rate";
+    const narrationSpeedKey = "lesson-narration.playback-rate.v2";
     const speechSupported = "speechSynthesis" in window && "SpeechSynthesisUtterance" in window;
     const availableRates = new Set([0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2]);
     try {
@@ -389,7 +391,7 @@
       block.id = blockId;
       row.className = "narration-option";
       checkbox.type = "checkbox";
-      checkbox.checked = block.dataset.readAloud === "selected";
+      checkbox.checked = true;
       checkbox.setAttribute("aria-describedby", blockId);
       row.append(checkbox, document.createTextNode("Zahrnúť do čítania"));
       if (block.matches(".term")) {
