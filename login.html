@@ -15,8 +15,6 @@
     button:disabled { cursor: wait; opacity: .6; }
     #google-sign-out { margin-left: .5rem; background: #596579; }
     #auth-status { min-height: 3em; }
-    #auth-original-site { display: inline-block; margin-top: .5rem; padding: .65rem .9rem; border-radius: 8px; background: #1f6feb; color: #fff; text-decoration: none; }
-    #auth-original-site[hidden] { display: none; }
     @media (prefers-color-scheme: dark) {
       body { background: #12161d; color: #e6eaf1; }
       main { background: #1b212b; border-color: #2d3644; }
@@ -30,7 +28,6 @@
     <h1>Prihlásenie</h1>
     <p>Výučbové stránky sú dostupné iba po prihlásení povoleným Google účtom.</p>
     <p id="auth-status" role="status" aria-live="polite">Pokračujte cez Google.</p>
-    <a id="auth-original-site" href="https://programovanie-gules.vercel.app/login.html" hidden>Prihlásiť sa na pôvodnej stránke</a>
     <button id="google-sign-in" type="button">Pokračovať cez Google</button>
     <button id="google-sign-out" type="button">Odhlásiť sa</button>
   </main>
