@@ -78,6 +78,14 @@
     .account-link:hover, .account-link:focus-visible { border-color: var(--accent); }
     .coming-soon { opacity: .88; }
     .coming-soon .tag { color: var(--muted); }
+    .remote-card { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 1.5rem; margin: 0 0 3rem; padding: clamp(1.25rem, 4vw, 2rem); border: 1px solid var(--border); border-radius: 1rem; background: var(--surface); }
+    .remote-card h2 { margin-bottom: .5rem; }
+    .remote-card p { max-width: 48rem; margin: .4rem 0; color: var(--muted); }
+    .remote-card a { color: var(--accent); }
+    .home-remote-qr { width: 190px; height: 190px; padding: 9px; border-radius: .75rem; background: #fff; display: grid; place-items: center; }
+    .home-remote-qr canvas, .home-remote-qr img { display: block; max-width: 100%; height: auto; }
+    .remote-fallback { display: inline-block; margin-top: .7rem; padding: .55rem .8rem; border: 1px solid var(--border); border-radius: .55rem; text-decoration: none; font-weight: 700; }
+    @media (max-width: 600px) { .remote-card { grid-template-columns: 1fr; } .home-remote-qr { margin-inline: auto; } }
     footer { padding: 1rem 0 2rem; border-top: 1px solid var(--border); color: var(--muted); text-align: center; font-size: .9rem; }
     footer a { color: inherit; }
     @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; } }
@@ -139,10 +147,21 @@
           </div>
         </a>
       </section>
+      <section class="remote-card" aria-labelledby="remote-heading">
+        <div>
+          <div class="eyebrow">Mobilný ovládač</div>
+          <h2 id="remote-heading">Diaľkové ovládanie prednášky</h2>
+          <p>Naskenujte QR kód telefónom a otvorte ovládač. Prihláste sa učiteľským účtom Firebase, ktorý používate v tomto projekte.</p>
+          <p>Konkrétnu prednášku spárujete jednorazovým QR kódom z jej otvorenej stránky. Ten platí krátko a je viazaný iba na danú stránku.</p>
+          <a class="remote-fallback" href="remote/">Otvoriť mobilný ovládač</a>
+        </div>
+        <div class="home-remote-qr" id="home-remote-qr" role="img" aria-label="QR kód na otvorenie mobilného ovládača"></div>
+      </section>
     </main>
 
     <footer>Výučbové materiály z programovania · <a href="nastavenia.html">Nastavenia vzhľadu</a></footer>
   </div>
   <script src="theme.js"></script>
+  <script type="module" src="remote-home.js"></script>
 </body>
 </html>

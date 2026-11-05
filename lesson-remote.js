@@ -1,4 +1,5 @@
 import { firebaseConfig } from "./firebase-config.js";
+import { renderQrCode } from "./remote-qr.js";
 
 (() => {
   const control = window.lessonSpeechRemote;
@@ -33,9 +34,12 @@ import { firebaseConfig } from "./firebase-config.js";
   style.textContent = `
     .lesson-remote-launch{position:fixed;right:1rem;bottom:1rem;z-index:9998;border:1px solid #39718f;border-radius:999px;background:#102234;color:#eaf6ff;padding:.65rem 1rem;font:700 14px/1.2 system-ui,sans-serif;box-shadow:0 5px 22px #0006;cursor:pointer}
     .lesson-remote-dialog{position:fixed;inset:0;z-index:9999;display:grid;place-items:center;padding:1rem;background:#020817bb;font:16px/1.5 system-ui,sans-serif;color:#edf6ff}
+    .lesson-remote-dialog[hidden]{display:none}
     .lesson-remote-card{width:min(100%,28rem);border:1px solid #39718f;border-radius:1rem;background:#102234;padding:1.25rem;box-shadow:0 18px 55px #0008}
     .lesson-remote-card h2{margin:.1rem 0 .4rem;font-size:1.25rem}.lesson-remote-card p{margin:.55rem 0;color:#bfd3e3}
     .lesson-remote-code{margin:1rem 0;text-align:center;font:800 2.7rem/1.2 ui-monospace,Consolas,monospace;letter-spacing:.22em;color:#38bdf8}
+    .lesson-remote-qr{width:240px;height:240px;margin:1rem auto;padding:10px;border-radius:.65rem;background:#fff;display:grid;place-items:center}
+    .lesson-remote-qr canvas,.lesson-remote-qr img{display:block;max-width:100%;height:auto}
     .lesson-remote-link{display:block;padding:.7rem;border-radius:.5rem;background:#091a29;color:#bae6fd;overflow-wrap:anywhere;text-align:center}
     .lesson-remote-actions{display:flex;gap:.65rem;margin-top:1rem}.lesson-remote-actions button{flex:1;min-height:44px;border:1px solid #41627a;border-radius:.6rem;background:#17364d;color:#fff;font:700 15px system-ui,sans-serif;cursor:pointer}
     .lesson-remote-actions button:focus-visible,.lesson-remote-launch:focus-visible{outline:3px solid #fde047;outline-offset:3px}
@@ -57,13 +61,14 @@ import { firebaseConfig } from "./firebase-config.js";
   modal.setAttribute("role", "dialog");
   modal.setAttribute("aria-modal", "true");
   modal.setAttribute("aria-labelledby", "lesson-remote-title");
-  modal.innerHTML = `<section class="lesson-remote-card"><h2 id="lesson-remote-title">Diaľkový ovládač</h2><p class="lesson-remote-state" role="status" aria-live="polite">Kontrolujem učiteľské prihlásenie…</p><div class="lesson-remote-pairing" hidden><p>V telefóne otvorte aplikáciu a zadajte tento jednorazový kód. Platí dve minúty a spojí telefón iba s touto otvorenou stránkou.</p><div class="lesson-remote-code"></div><a class="lesson-remote-link" target="_blank" rel="noopener">Otvoriť ovládač v telefóne</a></div><div class="lesson-remote-actions"><button type="button" data-action="pair">Vytvoriť párovací kód</button><button type="button" data-action="close">Zavrieť</button></div></section>`;
+  modal.innerHTML = `<section class="lesson-remote-card"><h2 id="lesson-remote-title">Diaľkový ovládač</h2><p class="lesson-remote-state" role="status" aria-live="polite">Kontrolujem učiteľské prihlásenie…</p><div class="lesson-remote-pairing" hidden><p>Naskenujte QR kód telefónom. Otvorí sa ovládač s predvyplneným jednorazovým kódom; prihláste sa učiteľským účtom a potvrďte spárovanie. Kód platí dve minúty a spojí telefón iba s touto otvorenou stránkou.</p><div class="lesson-remote-qr" aria-label="QR kód na spárovanie tejto prednášky"></div><div class="lesson-remote-code"></div><a class="lesson-remote-link" target="_blank" rel="noopener">Otvoriť ovládač v telefóne</a></div><div class="lesson-remote-actions"><button type="button" data-action="pair">Vytvoriť párovací kód</button><button type="button" data-action="close">Zavrieť</button></div></section>`;
   document.body.append(modal);
 
   const message = modal.querySelector(".lesson-remote-state");
   const pairingBox = modal.querySelector(".lesson-remote-pairing");
   const pairingCode = modal.querySelector(".lesson-remote-code");
   const remoteLink = modal.querySelector(".lesson-remote-link");
+  const pairingQr = modal.querySelector(".lesson-remote-qr");
   const pairButton = modal.querySelector('[data-action="pair"]');
   const setMessage = (text, offline = false) => {
     message.textContent = text;
@@ -112,6 +117,12 @@ import { firebaseConfig } from "./firebase-config.js";
       pairingCode.textContent = code;
       remoteLink.href = `/remote/?code=${encodeURIComponent(code)}`;
       pairingBox.hidden = false;
+      try {
+        await renderQrCode(pairingQr, new URL(remoteLink.href, location.href).href, 220);
+      } catch {
+        pairingQr.textContent = "QR kód sa nepodarilo načítať. Použite odkaz alebo šesťmiestny kód.";
+        pairingQr.setAttribute("role", "status");
+      }
       setMessage("Čakám na telefón…");
       stopSessionListener = dbSdk.onSnapshot(ref, (snapshot) => {
         if (!snapshot.exists()) {
