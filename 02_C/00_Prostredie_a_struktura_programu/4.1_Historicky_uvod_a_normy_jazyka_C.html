@@ -440,12 +440,15 @@
       translateUrl.searchParams.set("sl", "sk");
       translateUrl.searchParams.set("tl", targetLanguage);
       translateUrl.searchParams.set("u", window.location.href);
-      const translationTab = window.open(translateUrl.toString(), "_blank", "noopener,noreferrer");
-      if (translationTab) {
-        pageLanguageStatus.textContent = "Google Translate otvoril preloženú kópiu v novej karte. Pôvodná stránka zostáva otvorená.";
-      } else {
-        pageLanguageStatus.textContent = "Prehliadač zablokoval novú kartu. Povoľte vyskakovacie okná pre túto stránku a skúste znova.";
-      }
+      const translationLink = document.createElement("a");
+      translationLink.href = translateUrl.toString();
+      translationLink.target = "_blank";
+      translationLink.rel = "noopener noreferrer";
+      translationLink.hidden = true;
+      document.body.append(translationLink);
+      translationLink.click();
+      translationLink.remove();
+      pageLanguageStatus.textContent = "Preložená kópia sa otvára v novej karte. Ak ju prehliadač zablokoval, povoľte vyskakovacie okná pre túto stránku. Pôvodná stránka zostáva otvorená.";
       pageLanguageSelect.value = "sk";
     });
 
