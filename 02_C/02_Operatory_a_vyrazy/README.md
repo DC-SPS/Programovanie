@@ -1,4 +1,4 @@
 
-> **Začíname kontrolou pracoviska:** Po príchode do učebně si skontrolujte svoje miesto, lavicu, stoličku a pridelený počítač s príslušenstvom. Každé poškodenie, chýbajúcu časť alebo inú závadu ihneď oznámte vyučujúcemu. Stručný súhrn zistených nedostatkov pošlite vyučujúcemu správou cez EduPage. Poškodené alebo nebezpečné zariadenie nepoužívajte.
+> **Začíname kontrolou pracoviska:** Po príchode do učebne si skontrolujte svoje miesto, lavicu, stoličku a pridelený počítač s príslušenstvom. Každé poškodenie, chýbajúcu časť alebo inú závadu ihneď oznámte vyučujúcemu. Stručný súhrn zistených nedostatkov pošlite vyučujúcemu správou cez EduPage. Poškodené alebo nebezpečné zariadenie nepoužívajte.
 
 # 02_Operatory_a_vyrazy
