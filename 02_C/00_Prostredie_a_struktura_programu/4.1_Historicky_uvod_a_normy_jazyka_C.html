@@ -99,6 +99,18 @@
     @media(max-width:620px){main{width:min(100% - 1.2rem,860px)}td:first-child{white-space:normal}}
     @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important}}
     @media print{.global-course-nav,.mode,.pdf-export,.quiz button,.narration-controls,.narration-option,.lesson-side-panel{display:none!important}.teacher-note{display:block}main{max-width:none}}
+    @media print{
+      a[href^="http://"],a[href^="https://"]{color:inherit!important;text-decoration:none!important}
+      a[href^="http://"]::after,a[href^="https://"]::after{content:none!important}
+      .video-frame{display:none!important}
+      .quiz select{display:none!important}
+      .quiz label{margin:.75rem 0;padding-bottom:.4rem;border-bottom:1px solid #bbb;break-inside:avoid}
+      .quiz label::after{display:block;margin-top:.35rem;color:#555;font-weight:400;content:"Odpoveď: ______________________________________________"}
+      #matching-reset{display:none!important}
+      .print-solution-sheet{margin-top:2rem;padding-top:1rem;border-top:2px solid #222;break-before:page;page-break-before:always}
+      .print-solution-sheet h2{margin-top:0}
+      .print-solution-sheet li{margin:.5rem 0}
+    }
 
     .safety-notice,.safety-reminder{margin:1rem 0;padding:14px 17px;border:1px solid var(--line);border-left:5px solid var(--acc);border-radius:12px;background:var(--note)}
     .safety-notice strong,.safety-reminder strong{display:block;margin-bottom:.25rem}
@@ -928,6 +940,59 @@
       result.className = `result ${correct === questions.length ? "good" : "bad"}`;
       result.textContent = `Správne odpovede: ${correct} zo ${questions.length}.${correct === questions.length ? " Výborne!" : " Červeným orámovaním sú označené odpovede na zopakovanie."}`;
     });
+  </script>
+  <script>
+    (() => {
+      let savedDetails = [];
+      let printSection = null;
+
+      window.addEventListener("beforeprint", () => {
+        if (printSection) return;
+        const main = document.querySelector("main");
+        const footer = main?.querySelector("footer");
+        if (!main || !footer) return;
+
+        printSection = document.createElement("section");
+        printSection.className = "print-solution-sheet";
+        printSection.setAttribute("aria-label", "Riešenia úloh");
+        printSection.innerHTML = "<h2>Riešenia úloh</h2>";
+        const list = document.createElement("ol");
+
+        const matching = document.createElement("li");
+        matching.innerHTML = "<strong>Spájanie pojmov:</strong> C — programovací jazyk; C17 — verzia normy jazyka C; GCC — kompilátor; <code>-std=c17</code> — voľba jazykového režimu C17.";
+        list.append(matching);
+
+        document.querySelectorAll("#knowledge-quiz select[data-answer]").forEach((select) => {
+          const option = [...select.options].find((item) => item.value === select.dataset.answer);
+          const label = document.querySelector(`label[for="${select.id}"]`);
+          if (!option) return;
+          const item = document.createElement("li");
+          item.textContent = `${label?.textContent.trim() || "Otázka"} ${option.textContent.trim()}`;
+          list.append(item);
+        });
+        printSection.append(list);
+
+        savedDetails = [...main.querySelectorAll("details")].map((details) => {
+          const placeholder = document.createComment("pôvodné miesto riešenia");
+          details.before(placeholder);
+          details.open = true;
+          printSection.append(details);
+          return { details, placeholder };
+        });
+        footer.before(printSection);
+      });
+
+      window.addEventListener("afterprint", () => {
+        savedDetails.forEach(({ details, placeholder }) => {
+          placeholder.before(details);
+          placeholder.remove();
+          details.open = false;
+        });
+        savedDetails = [];
+        printSection?.remove();
+        printSection = null;
+      });
+    })();
   </script>
 </body>
 </html>
