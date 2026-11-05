@@ -34,15 +34,15 @@
     .mode{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
     .mode button,.quiz button{padding:6px 11px;border:0;background:var(--card);color:var(--fg);font:inherit;cursor:pointer}
     .mode button.on,.quiz button{background:var(--acc);color:#fff}
-    .narration-controls{display:flex;flex-wrap:wrap;align-items:center;gap:.6rem;margin:1rem 0;padding:1rem;border:1px solid var(--line);border-radius:12px;background:var(--card)}
+    .narration-controls{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));align-items:center;gap:.45rem;margin:1rem 0;padding:.7rem;border:1px solid var(--line);border-radius:12px;background:var(--card)}
     .narration-controls button,.narration-option input{min-height:44px}
-    .narration-controls button{padding:.5rem .8rem;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--fg);font:inherit;font-weight:650;cursor:pointer}
+    .narration-controls button{width:100%;min-width:0;padding:.45rem .5rem;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--fg);font:inherit;font-weight:650;cursor:pointer}
     .narration-controls button:first-of-type{background:var(--acc);border-color:var(--acc);color:#fff}
     .narration-controls button:disabled{cursor:not-allowed;opacity:.55}
-    .narration-speed{display:inline-flex;align-items:center;gap:.45rem;color:var(--fg);font-size:.9rem;font-weight:650}
-    .narration-speed select{min-height:44px;padding:.4rem .55rem;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--fg);font:inherit}
+    .narration-speed{grid-column:1/-1;grid-row:1;display:flex;align-items:center;justify-content:space-between;gap:.45rem;color:var(--fg);font-size:.85rem;font-weight:650}
+    .narration-speed select{min-height:38px;padding:.3rem .5rem;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--fg);font:inherit}
     .narration-speed select:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
-    .narration-status{flex-basis:100%;margin:0;color:var(--mut)}
+    .narration-status{grid-column:1/-1;margin:0;color:var(--mut)}
     .narration-option{display:none;align-items:center;gap:.55rem;width:max-content;max-width:100%;margin:-.35rem 0 1rem;padding:.25rem .65rem;border:1px solid var(--line);border-radius:999px;background:var(--card);font-size:.9rem;cursor:pointer}
     body.teacher .narration-option{display:flex}
     .narration-option input{width:1.25rem;height:1.25rem;accent-color:var(--acc)}
@@ -390,9 +390,11 @@
     let activeBlock = null;
     let readingQueue = [];
     let previousSelection = [];
+    let activeItem = null;
     let readingRun = 0;
     let isReading = false;
     let isPaused = false;
+    let restartCurrentOnResume = false;
 
     const getBlockText = (block) => {
       const copy = block.cloneNode(true);
@@ -437,6 +439,8 @@
     const stopReading = (message = "Čítanie je zastavené.") => {
       readingRun += 1;
       readingQueue = [];
+      activeItem = null;
+      restartCurrentOnResume = false;
       isReading = false;
       isPaused = false;
       if (speechSupported) window.speechSynthesis.cancel();
@@ -449,6 +453,7 @@
       if (run !== readingRun) return;
       const item = readingQueue.shift();
       if (!item) {
+        activeItem = null;
         isReading = false;
         isPaused = false;
         setActiveBlock(null);
@@ -457,6 +462,7 @@
         return;
       }
 
+      activeItem = item;
       setActiveBlock(item.block);
       const utterance = new SpeechSynthesisUtterance(item.text);
       const slovakVoice = window.speechSynthesis.getVoices().find((voice) =>
@@ -472,12 +478,17 @@
         }
       };
       utterance.onend = () => {
-        if (run === readingRun) speakNextBlock(run);
+        if (run === readingRun) {
+          activeItem = null;
+          speakNextBlock(run);
+        }
       };
       utterance.onerror = (event) => {
         if (run !== readingRun || event.error === "canceled" || event.error === "interrupted") return;
         isReading = false;
         isPaused = false;
+        activeItem = null;
+        restartCurrentOnResume = false;
         readingQueue = [];
         setActiveBlock(null);
         updateControls();
@@ -511,8 +522,14 @@
     pauseButton.addEventListener("click", () => {
       if (!isReading || !speechSupported) return;
       if (isPaused) {
-        window.speechSynthesis.resume();
-        isPaused = false;
+        if (restartCurrentOnResume) {
+          restartCurrentOnResume = false;
+          isPaused = false;
+          speakNextBlock(readingRun);
+        } else {
+          window.speechSynthesis.resume();
+          isPaused = false;
+        }
         readingStatus.textContent = "Čítanie pokračuje.";
       } else {
         window.speechSynthesis.pause();
@@ -530,9 +547,24 @@
         // The selected rate still applies to this page if storage is unavailable.
       }
       const label = speedSelect.selectedOptions[0]?.textContent || (rate + "×");
-      readingStatus.textContent = isReading
-        ? "Rýchlosť " + label + " sa použije od nasledujúcej časti."
-        : "Rýchlosť čítania nastavená na " + label + ".";
+      if (!isReading || !activeItem) {
+        readingStatus.textContent = "";
+        return;
+      }
+      if (isPaused) {
+        window.speechSynthesis.cancel();
+        readingQueue.unshift(activeItem);
+        activeItem = null;
+        restartCurrentOnResume = true;
+        readingStatus.textContent = "Rýchlosť " + label + " je nastavená. Po pokračovaní sa aktuálna časť začne znova.";
+        return;
+      }
+      readingRun += 1;
+      window.speechSynthesis.cancel();
+      readingQueue.unshift(activeItem);
+      activeItem = null;
+      readingStatus.textContent = "Rýchlosť " + label + " je nastavená. Aktuálna časť sa prehrá znova od začiatku.";
+      speakNextBlock(readingRun);
     });
     updateControls();
 
