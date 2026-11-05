@@ -34,6 +34,15 @@
     .mode{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
     .mode button,.quiz button{padding:6px 11px;border:0;background:var(--card);color:var(--fg);font:inherit;cursor:pointer}
     .mode button.on,.quiz button{background:var(--acc);color:#fff}
+    .narration-controls{display:flex;flex-wrap:wrap;align-items:center;gap:.6rem;margin:1rem 0;padding:1rem;border:1px solid var(--line);border-radius:12px;background:var(--card)}
+    .narration-controls button,.read-aloud-button{min-height:44px;padding:.5rem .8rem;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--fg);font:inherit;font-weight:650;cursor:pointer}
+    .narration-controls button:first-child{background:var(--acc);border-color:var(--acc);color:#fff}
+    .narration-controls button:disabled{cursor:not-allowed;opacity:.55}
+    .narration-status{flex-basis:100%;margin:0;color:var(--mut)}
+    .read-aloud-row{margin:-.45rem 0 1rem}
+    .read-aloud-button{font-size:.9rem}
+    .read-aloud-button[aria-pressed="true"]{border-color:var(--acc);box-shadow:0 0 0 2px color-mix(in srgb,var(--acc) 25%,transparent)}
+    .is-speaking{background:color-mix(in srgb,var(--acc) 9%,transparent);border-radius:5px}
     .scroll{overflow-x:auto}
     table{width:100%;border-collapse:collapse}
     th,td{padding:.65rem .7rem;border:1px solid var(--line);text-align:left;vertical-align:top}
@@ -65,7 +74,7 @@
     footer{margin-top:2rem;padding-top:1rem;border-top:1px solid var(--line);color:var(--mut);font-size:14px}
     @media(max-width:620px){main{width:min(100% - 1.2rem,880px)}td:first-child{white-space:normal}}
     @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important}}
-    @media print{.global-course-nav,.mode,.quiz button{display:none!important}.teacher-note{display:block}main{max-width:none}}
+    @media print{.global-course-nav,.mode,.quiz button,.narration-controls,.read-aloud-row{display:none!important}.teacher-note{display:block}main{max-width:none}}
   </style>
   <script src="../../theme.js" defer></script>
 </head>
@@ -90,6 +99,13 @@
       <span class="tag">Jazyk C</span>
       <span class="tag">ISO C17</span>
     </p>
+    <section class="narration-controls" aria-label="Čítanie prednášky">
+      <button id="read-lecture" type="button">Prečítať celú prednášku</button>
+      <button id="stop-reading" type="button" disabled>Zastaviť čítanie</button>
+      <div id="reading-status" class="narration-status" role="status" aria-live="polite">
+        Vyberte časť alebo spustite čítanie celej prednášky. Slovenský hlas sa použije, ak je dostupný.
+      </div>
+    </section>
     <p>V tejto úvodnej hodine sa zoznámite s pôvodom jazyka C, jeho vývojom a významom jazykových noriem. Zistíte, prečo v kurze používame C17 a ako spolu súvisia jazyk, štandard a kompilátor.</p>
     <section class="card">
       <strong>Nadväznosť na predchádzajúce učivo:</strong> V predchádzajúcej časti kurzu ste navrhovali a precvičovali algoritmy v Pythone. Teraz budete rovnaké algoritmické základy postupne zapisovať v jazyku C a porovnáte jeho syntax, typy a preklad programu. Po zvládnutí C bude nasledovať C++. V tejto hodine sa pozrieme na vznik jazyka C a na to, ako štandard určuje spoločné pravidlá pre jeho programy.
@@ -250,6 +266,139 @@
     };
     studentButton.addEventListener("click", () => setTeacherMode(false));
     teacherButton.addEventListener("click", () => setTeacherMode(true));
+
+    const readingStatus = document.getElementById("reading-status");
+    const readLectureButton = document.getElementById("read-lecture");
+    const stopReadingButton = document.getElementById("stop-reading");
+    const speechSupported = "speechSynthesis" in window && "SpeechSynthesisUtterance" in window;
+    const readableParagraphs = [...document.querySelectorAll(
+      "main p:not(.result), main .card, main .teacher-note",
+    )].filter((block) => {
+      return !block.matches("p") || !block.closest(".card, .teacher-note");
+    });
+    let activeParagraph = null;
+    let paragraphQueue = [];
+    let readingSequence = false;
+    let readingRun = 0;
+
+    const paragraphText = (paragraph) => paragraph.innerText.replace(/\s+/g, " ").trim();
+    const getVisibleReadingBlocks = () => readableParagraphs.filter((block) => {
+      const teacherOnly = block.closest(".teacher-note");
+      const hiddenAnswer = block.closest("details:not([open])");
+      const teacherCanRead = !teacherOnly || document.body.classList.contains("teacher");
+      return paragraphText(block) && teacherCanRead && !hiddenAnswer;
+    });
+
+    const setActiveParagraph = (paragraph) => {
+      activeParagraph?.classList.remove("is-speaking");
+      activeParagraph = paragraph;
+      activeParagraph?.classList.add("is-speaking");
+    };
+
+    const stopReading = (message = "Čítanie je zastavené.") => {
+      readingRun += 1;
+      readingSequence = false;
+      paragraphQueue = [];
+      window.speechSynthesis.cancel();
+      setActiveParagraph(null);
+      document.querySelectorAll(".read-aloud-button").forEach((button) => {
+        button.setAttribute("aria-pressed", "false");
+      });
+      stopReadingButton.disabled = true;
+      readLectureButton.disabled = !speechSupported;
+      readingStatus.textContent = message;
+    };
+
+    const speakNextParagraph = (run) => {
+      if (run !== readingRun) return;
+      const paragraph = paragraphQueue.shift();
+      if (!paragraph) {
+        readingSequence = false;
+        setActiveParagraph(null);
+        stopReadingButton.disabled = true;
+        readLectureButton.disabled = !speechSupported;
+        readingStatus.textContent = "Prednáška bola dočítaná.";
+        return;
+      }
+
+      setActiveParagraph(paragraph);
+      const utterance = new SpeechSynthesisUtterance(paragraphText(paragraph));
+      const slovakVoice = window.speechSynthesis.getVoices().find((voice) =>
+        voice.lang.toLowerCase().startsWith("sk"),
+      );
+      utterance.lang = slovakVoice?.lang || "sk-SK";
+      utterance.rate = 0.92;
+      if (slovakVoice) utterance.voice = slovakVoice;
+      utterance.onstart = () => {
+        if (run === readingRun) {
+        readingStatus.textContent = `Čítam: ${paragraphText(paragraph).slice(0, 110)}`;
+        }
+      };
+      utterance.onend = () => {
+        if (run !== readingRun) return;
+        document.querySelectorAll(".read-aloud-button[aria-pressed=\"true\"]").forEach((button) => {
+          button.setAttribute("aria-pressed", "false");
+        });
+        if (readingSequence) {
+          speakNextParagraph(run);
+        } else {
+          setActiveParagraph(null);
+          stopReadingButton.disabled = true;
+          readingStatus.textContent = "Text bol prečítaný.";
+        }
+      };
+      utterance.onerror = (event) => {
+        if (run !== readingRun || event.error === "canceled" || event.error === "interrupted") return;
+        readingSequence = false;
+        paragraphQueue = [];
+        setActiveParagraph(null);
+        stopReadingButton.disabled = true;
+        readLectureButton.disabled = false;
+        document.querySelectorAll(".read-aloud-button[aria-pressed=\"true\"]").forEach((button) => {
+          button.setAttribute("aria-pressed", "false");
+        });
+        readingStatus.textContent = "Čítanie sa nepodarilo spustiť. Skontrolujte hlasové výstupy prehliadača.";
+      };
+      window.speechSynthesis.speak(utterance);
+    };
+
+    const startReading = (paragraphs, button = null) => {
+      if (!speechSupported) {
+        readingStatus.textContent = "Tento prehliadač nepodporuje hlasové čítanie textu.";
+        return;
+      }
+      stopReading("Spúšťam čítanie…");
+      readingRun += 1;
+      readingSequence = paragraphs.length > 1;
+      paragraphQueue = [...paragraphs];
+      stopReadingButton.disabled = false;
+      readLectureButton.disabled = true;
+      if (button) button.setAttribute("aria-pressed", "true");
+      speakNextParagraph(readingRun);
+    };
+
+    if (speechSupported) {
+      readableParagraphs.forEach((paragraph, index) => {
+        const blockId = paragraph.id || `readable-block-${index + 1}`;
+        paragraph.id = blockId;
+        const row = document.createElement("div");
+        const button = document.createElement("button");
+        row.className = "read-aloud-row";
+        button.className = "read-aloud-button";
+        button.type = "button";
+        button.textContent = "Prečítať túto časť";
+        button.setAttribute("aria-describedby", blockId);
+        button.setAttribute("aria-pressed", "false");
+        button.addEventListener("click", () => startReading([paragraph], button));
+        row.append(button);
+        paragraph.after(row);
+      });
+      readLectureButton.addEventListener("click", () => startReading(getVisibleReadingBlocks()));
+      stopReadingButton.addEventListener("click", () => stopReading());
+    } else {
+      readLectureButton.disabled = true;
+      readingStatus.textContent = "Tento prehliadač nepodporuje hlasové čítanie textu.";
+    }
 
     document.getElementById("knowledge-quiz").addEventListener("submit", (event) => {
       event.preventDefault();
