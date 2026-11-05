@@ -29,23 +29,36 @@
     .video iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
     footer{margin-top:2rem;padding-top:1rem;border-top:1px solid var(--border);color:var(--muted)}
   </style>
+  <link rel="stylesheet" href="../course-overview.css">
   <script src="../theme.js" defer></script>
 </head>
-<body><nav class="global-course-nav" aria-label="Navigácia kurzov"><a href="š">V</a><a href=".">.</a></nav>
+<body><nav class="global-course-nav" aria-label="Navigácia kurzov"><a href="../index.html">Všetky kurzy</a><a href="index.html">Kurz Gitu</a><a href="../nastavenia.html">Nastavenia vzhľadu</a></nav>
   <main>
-    <header><a href="../index.html">← Všetky kurzy</a><a href="../nastavenia.html">Nastavenia vzhľadu</a></header>
-    <h1>Kurz Gitu</h1>
-    <p class="lead">Git zaznamenáva históriu zmien v projekte. Prejdite si najprv stručný ťahák a potom lekcie z video playlistu.</p>
+    <header class="course-hero">
+      <div class="course-hero-copy"><span class="eyebrow">Pracovná osnova · Git · Verzovanie</span>
+      <h1>Kurz Gitu</h1>
+      <p>Git zaznamenáva históriu zmien v projekte. Prejdite si najprv stručný ťahák a potom lekcie z video playlistu.</p>
+      <div class="course-stats"><span>3 tematické celky</span><span>Príkazy a vetvy</span><span>Video kurz</span></div></div>
+      <img class="hero-art" src="../img/git-course.svg" alt="Vetvy a commity v repozitári Git" width="1200" height="700">
+    </header>
+    <nav class="module-jump" aria-label="Tematické celky"><a href="#git-zaklady">01 · Základy</a><a href="#git-vetvy">02 · Vetvy a spolupráca</a><a href="#git-udrzba">03 · Správa repozitára</a></nav>
+    <p class="course-note"><strong>Formát kurzu:</strong> samostatné HTML prednášky zatiaľ nie sú v tomto priečinku; témy nadväzujú na existujúci video playlist a ťahák príkazov.</p>
 
     <section class="lessons" aria-labelledby="content-heading">
-      <h2 id="content-heading">Náplň kurzu</h2>
-      <ul class="muted">
-        <li>Čo je Git a aký je rozdiel oproti vzdialenému repozitáru (GitHub).</li>
-        <li>Základný cyklus: <code>git status</code>, <code>git add</code>, <code>git commit</code>, <code>git log</code>.</li>
-        <li>Vetvy (branching) a zlučovanie zmien (merging).</li>
-        <li>Riešenie merge konfliktov.</li>
-        <li>Súbor <code>.gitignore</code> na ignorovanie dočasných súborov.</li>
-      </ul>
+      <h2 id="content-heading">Tematické celky a ich obsah</h2>
+      <div class="course-modules">
+        <section class="course-module" id="git-zaklady"><div class="course-module-head"><div><span class="eyebrow">Tematický celok 01</span><h2>Základy Gitu a cyklus zmien</h2></div><p>Repozitár · zmeny · história</p></div><div class="module-lesson-list">
+          <a class="module-lesson" href="#video-course"><span class="module-lesson-number">01</span><span class="module-lesson-copy"><strong>Čo je Git a aký je rozdiel oproti vzdialenému repozitáru (GitHub)</strong><small>Úvodná téma video kurzu</small></span></a>
+          <a class="module-lesson" href="#git-cycle"><span class="module-lesson-number">02</span><span class="module-lesson-copy"><strong>Základný cyklus: <code>git status</code>, <code>git add</code>, <code>git commit</code>, <code>git log</code></strong><small>Príkazy na kontrolu, prípravu a zaznamenanie zmien</small></span></a>
+        </div></section>
+        <section class="course-module" id="git-vetvy"><div class="course-module-head"><div><span class="eyebrow">Tematický celok 02</span><h2>Vetvy a spolupráca</h2></div><p>Rozdelenie práce a spájanie zmien</p></div><div class="module-lesson-list">
+          <a class="module-lesson" href="#git-branches"><span class="module-lesson-number">03</span><span class="module-lesson-copy"><strong>Vetvy (branching) a zlučovanie zmien (merging)</strong><small>Práca s paralelnými verziami projektu</small></span></a>
+          <a class="module-lesson" href="#video-course"><span class="module-lesson-number">04</span><span class="module-lesson-copy"><strong>Riešenie merge konfliktov</strong><small>Vyhľadajte tému v existujúcom video playliste</small></span></a>
+        </div></section>
+        <section class="course-module" id="git-udrzba"><div class="course-module-head"><div><span class="eyebrow">Tematický celok 03</span><h2>Správa repozitára</h2></div><p>Konfigurácia a pracovné súbory</p></div><div class="module-lesson-list">
+          <a class="module-lesson" href="#gitignore"><span class="module-lesson-number">05</span><span class="module-lesson-copy"><strong>Súbor <code>.gitignore</code> na ignorovanie dočasných súborov</strong><small>Pravidlá pre obsah, ktorý sa nemá ukladať do histórie</small></span></a>
+        </div></section>
+      </div>
       <p><a href="https://github.com/DC-SPS/Programovanie/tree/main/00_Git_a_Verzovanie" target="_blank" rel="noopener noreferrer">Dokumentácia a cvičenia na GitHube</a></p>
     </section>
 
@@ -53,11 +66,11 @@
       <h2 id="cheatsheet-heading">Ťahák príkazov Gitu</h2>
       <p><a href="https://github.com/misohu/git-tutorial/blob/main/git-commands/commands.md" target="_blank" rel="noopener noreferrer">Otvoriť úplný ťahák príkazov od autora kurzu</a></p>
       <div class="commands">
-        <div class="command"><p>Skontrolujte stav a históriu</p><pre><code>git status
+        <div class="command" id="git-cycle"><p>Skontrolujte stav a históriu</p><pre><code>git status
 git log --oneline</code></pre></div>
         <div class="command"><p>Pripravte zmeny a vytvorte commit</p><pre><code>git add nazov-suboru
 git commit -m "Popis zmeny"</code></pre></div>
-        <div class="command"><p>Vytvorte a prepnite sa na vetvu</p><pre><code>git switch -c nova-vetva
+        <div class="command" id="git-branches"><p>Vytvorte a prepnite sa na vetvu</p><pre><code>git switch -c nova-vetva
 git branch</code></pre></div>
         <div class="command"><p>Pracujte so vzdialeným repozitárom</p><pre><code>git remote -v
 git pull
@@ -65,13 +78,13 @@ git push</code></pre></div>
         <div class="command"><p>Nastavte meno a e-mail pre commity</p><pre><code>git config --global user.name "Vaše meno"
 git config --global user.email "ty@example.com"</code></pre></div>
       </div>
-      <p class="warning"><strong>Pozor:</strong> príkazy ako <code>git reset --hard</code> môžu natrvalo odstrániť neuložené zmeny. Používajte ich iba vtedy, keď presne viete, čo robia.</p>
+      <p class="warning" id="gitignore"><strong>Pozor:</strong> príkazy ako <code>git reset --hard</code> môžu natrvalo odstrániť neuložené zmeny. Používajte ich iba vtedy, keď presne viete, čo robia.</p>
     </section>
 
     <section class="lessons" aria-labelledby="lessons-heading">
       <h2 id="lessons-heading">Video kurz: Kurz Gitu</h2>
       <p class="muted">Playlist kanála Informatika s Mišom: úvod, čo je Git, inštalácia, Visual Studio Code, práca s commitmi a ďalšie témy.</p>
-      <div class="video">
+      <div class="video" id="video-course">
         <iframe src="https://www.youtube-nocookie.com/embed/videoseries?list=PLNAMH_0HgWT-ey31hQqrmi_Rgr4OVWgH3" title="Playlist Kurz Gitu — Informatika s Mišom" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
       </div>
       <p><a href="https://www.youtube.com/playlist?list=PLNAMH_0HgWT-ey31hQqrmi_Rgr4OVWgH3" target="_blank" rel="noopener noreferrer">Otvoriť celý kurz na YouTube</a></p>

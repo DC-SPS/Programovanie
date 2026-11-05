@@ -32,18 +32,26 @@
     footer{padding:1rem 0 2rem;border-top:1px solid var(--border);color:var(--muted)}
     @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important}}
   </style>
+  <link rel="stylesheet" href="../course-overview.css">
   <script src="../theme.js" defer></script>
 </head>
 <body><nav class="global-course-nav" aria-label="Navigácia kurzov"><a href="../index.html">Všetky kurzy</a><a href="../nastavenia.html">Nastavenia vzhľadu</a></nav>
   <div class="page">
-    <header>
+    <header class="course-hero">
+      <div class="course-hero-copy">
       <a href="../index.html">← Všetky kurzy</a>
+      <span class="eyebrow">Pracovná osnova · C a C++</span>
       <h1>C/C++</h1>
       <p class="lead">Od adresovania a ukazovateľov v C až po objektový návrh v C++.</p>
+      <div class="course-stats"><span>2 jazykové celky</span><span>C · proceduralita</span><span>C++ · OOP a moderné C++</span></div>
+      </div>
+      <img class="hero-art" src="../img/c-cpp-course.svg" alt="Ilustrácia kurzov C a C++" width="1200" height="700">
     </header>
     <main>
-      <section class="courses" aria-label="Kurzy a materiály">
-        <a class="course" href="c-language.html">
+      <nav class="module-jump" aria-label="Tematické celky jazyka C a C++"><a href="#module-c">01 · Jazyk C</a><a href="#module-cpp">02 · Jazyk C++</a></nav>
+      <h2>Tematické celky</h2>
+      <section class="courses" aria-label="Tematické celky a materiály">
+        <a class="course" id="module-c" href="c-language.html">
           <img src="../img/c-language.svg" alt="Základy programovacieho jazyka C" width="1200" height="700">
           <div class="content">
             <span class="tag">Materiály a test</span>
@@ -58,10 +66,10 @@
             <span class="open">Otvoriť materiály a test <span aria-hidden="true">→</span></span>
           </div>
         </a>
-        <a class="course" href="https://github.com/DC-SPS/Programovanie/tree/main/03_C++">
+        <a class="course" id="module-cpp" href="../03_C++/index.html">
           <img src="../img/cpp-language.svg" alt="Programovací jazyk C++" width="1200" height="700">
           <div class="content">
-            <span class="tag">Materiály na GitHube</span>
+            <span class="tag">Kurz C++</span>
             <h2>Jazyk C++</h2>
             <p>Moderné C++ (C++17), OOP, RAII a STL.</p>
             <ul>
@@ -70,7 +78,7 @@
               <li>STL kontajnery (<code>std::vector</code>, <code>std::string</code>) a algoritmy</li>
               <li>Smart pointery a RAII</li>
             </ul>
-            <span class="open">Otvoriť kurz C++ <span aria-hidden="true">→</span></span>
+            <span class="open">Otvoriť štruktúru kurzu C++ <span aria-hidden="true">→</span></span>
           </div>
         </a>
       </section>

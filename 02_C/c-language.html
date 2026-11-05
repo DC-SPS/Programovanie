@@ -36,16 +36,21 @@
     .safety-notice{margin:1rem 0;padding:14px 17px;border:1px solid var(--line);border-left:5px solid var(--acc);border-radius:12px;background:var(--note)}
     .safety-notice strong{display:block;margin-bottom:.25rem}
 </style>
+  <link rel="stylesheet" href="../course-overview.css">
   <script src="../theme.js" defer></script>
 </head>
 <body><nav class="global-course-nav" aria-label="Navigácia kurzov"><a href="index.html">Kurz C/C++</a><a href="../index.html">Všetky kurzy</a></nav>
   <main>
     <aside class="safety-notice" aria-label="Kontrola pracoviska"><strong>Začíname kontrolou pracoviska:</strong> Po príchode do učebne si skontrolujte svoje miesto, lavicu, stoličku a pridelený počítač s príslušenstvom. Každé poškodenie, chýbajúcu časť alebo inú závadu ihneď oznámte vyučujúcemu. Stručný súhrn zistených nedostatkov pošlite vyučujúcemu správou cez EduPage. Poškodené alebo nebezpečné zariadenie nepoužívajte.</aside>
-    <header><a href="index.html">← C/C++</a><a href="../nastavenia.html">Nastavenia vzhľadu</a></header>
-    <h1>Základy jazyka C</h1>
-    <p class="lead">Štruktúra programu, premenné, vstup a výstup, vetvenie, cykly a funkcie.</p>
-    <section class="card" aria-labelledby="lesson-heading">
-      <h2 id="lesson-heading">Prednášky</h2>
+    <header class="course-hero"><div class="course-hero-copy"><a href="index.html">← C/C++</a> · <a href="../nastavenia.html">Nastavenia vzhľadu</a>
+      <span class="eyebrow">Pracovná osnova · C · C17</span><h1>Základy jazyka C</h1>
+      <p class="lead">Štruktúra programu, premenné, vstup a výstup, vetvenie, cykly a funkcie.</p>
+      <div class="course-stats"><span>3 prednášky</span><span>Úvod do programovania v C</span><span>PDF a interaktívny test</span></div></div>
+      <img class="hero-art" src="00_Prostredie_a_struktura_programu/4.1-historicky-uvod-nahlad.png" alt="Náhľad úvodnej prednášky o jazyku C" loading="lazy">
+    </header>
+    <nav class="module-jump" aria-label="Časti kurzu jazyka C"><a href="#module-c-uvod">01 · Prednášky</a><a href="#material-heading">02 · Študijné podklady</a><a href="#practice-heading">03 · Precvičovanie</a></nav>
+    <section class="card course-module" id="module-c-uvod" aria-labelledby="lesson-heading">
+      <div class="course-module-head"><div><span class="eyebrow">Tematický celok · C</span><h2 id="lesson-heading">Úvod do programovania v jazyku C</h2></div><p>3 témy · 45 minút na prednášku</p></div>
       <p>Začnite historickým úvodom a normou C17, potom vytvorte prvý program v C a naučte sa rozpoznať chyby pri jeho preklade a ladení.</p>
       <div class="lesson-grid" aria-label="Náhľady prednášok">
         <a class="lesson-preview" href="00_Prostredie_a_struktura_programu/4.1_Historicky_uvod_a_normy_jazyka_C.html">
@@ -78,13 +83,13 @@
       </div>
     </section>
     <section class="card" aria-labelledby="material-heading">
-      <h2 id="material-heading">Študijné podklady</h2>
+      <div class="course-module-head"><div><span class="eyebrow">Študijné materiály</span><h2 id="material-heading">Študijné podklady</h2></div><p>PDF k základom jazyka C</p></div>
       <p class="muted">Kompletný materiál je dostupný v PDF v prehliadači aj na stiahnutie.</p>
       <p><a href="ZakladyJazykaC.pdf" target="_blank" rel="noopener noreferrer">Otvoriť PDF v samostatnej karte</a> · <a href="ZakladyJazykaC.pdf" download>Stiahnuť PDF</a></p>
       <iframe class="pdf-frame" src="ZakladyJazykaC.pdf" title="Kompletné PDF: Základy jazyka C" loading="lazy"></iframe>
     </section>
     <section class="card" aria-labelledby="practice-heading">
-      <h2 id="practice-heading">Precvičovanie</h2>
+      <div class="course-module-head"><div><span class="eyebrow">Overenie vedomostí</span><h2 id="practice-heading">Precvičovanie</h2></div><p>Interaktívny test</p></div>
       <p>Odpovedzte na otázky o štruktúre programu, dátach, riadiacich štruktúrach a funkciách v C.</p>
       <p><a href="C%20-%20Interakt%C3%ADvny%20test.html">Spustiť interaktívny test z jazyka C →</a></p>
     </section>

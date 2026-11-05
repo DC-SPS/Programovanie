@@ -29,3 +29,26 @@ Potom uprav skutočné stránky všetkých tém Pythonu a všetkých 66 lekcií 
 Zachovaj existujúci obsah prednášok, ukážky, cvičenia a funkčné prvky. Nemeň ich texty ani príklady. Pokyny doplň podľa účelu konkrétnej lekcie; nevkladaj všade rovnaký odsek bez ohľadu na tému. Zachovaj vizuálne usporiadanie vzoru 4.1 pre navigáciu, režim Žiak/Učiteľ a exportné tlačidlo. Pri exporte do PDF skry ovládacie prvky, navigáciu a tlačidlá, zachovaj čitateľné farby, okraje a rozdelenie obsahu a zabráň nevhodnému zalomeniu kariet a blokov.
 Žlté zvýraznenia na obrázkoch sú iba anotácie oblastí, ktorým treba venovať pozornosť; nepridávaj ich ako dizajnový prvok na stránky.
 Po úpravách porovnaj HTML, CSS a JavaScript každej upravenej stránky s témou 4.1. Over pokrytie všetkých stránok, funkčnosť exportného tlačidla, platnosť odkazov na spoločné súbory, syntax JavaScriptu a zachovanie pôvodného obsahu. Uveď, čo si upravil a akými kontrolami si výsledok overil.
+
+4. Prompt: All layoouts kurz - jednotlive prednasky
+
+Usporiadaj všetky kurzy na webe podľa štruktúry a vizuálneho formátu prehľadu kurzu Win32 API. Použi stránku Win32 API ako jediný vzor.
+Najprv preskúmaj priamo stránku [Win32 API](04_Win32_API/struktura.html) a zisti, ako sú na nej usporiadané moduly, témy a podtémy, ako funguje navigácia a ako sa zobrazujú informácie o kurze. Potom rovnaký princíp použi na prehľadoch všetkých kurzov.
+V každom kurze usporiadaj učivo do jasnej hierarchie:
+- kurz a jeho stručný opis;
+- tematické moduly alebo celky;
+- témy a podtémy v správnom poradí;
+- odkazy z každej položky na príslušnú existujúcu prednášku.
+Zachovaj existujúce názvy, číslovanie, poradie a obsah prednášok. Nespájaj ani nevynechávaj témy a nevytváraj odkazy na neexistujúce stránky. Ak štruktúra kurzu nie je jednoznačná, najprv ju odvoď z osnovy a existujúcich stránok kurzu.
+Prehľady kurzov uprav tak, aby preberali rozloženie vzoru Win32 API: hornú navigáciu, úvodný blok s názvom a opisom kurzu, prehľadné informácie o kurze, stručné vysvetlenie jeho štruktúry a navigáciu na moduly. Jednotlivé témy a podtémy zobrazuj v čitateľných skupinách s jasným označením ich hierarchie a s priamymi odkazmi na prednášky. Zachovaj responzívne zobrazenie, prístupnosť a vizuálnu tému každého kurzu; zjednoť spôsob usporiadania, nie obsah kurzov.
+Uprav skutočné prehľadové stránky všetkých kurzov, nie iba spoločný blueprint alebo šablónu. Prednáškové stránky a ich obsah nemeň.
+Po úpravách prejdi každý kurz a over, že:
+- každá existujúca prednáška je zaradená do správnej témy a podtémy;
+- číslovanie a poradie zodpovedajú existujúcej osnove;
+- odkazy na prednášky a navigáciu fungujú;
+- na prehľadoch nechýbajú žiadne témy a nie sú tam neplatné odkazy;
+- všetky prehľady používajú rovnaký princíp hierarchického usporiadania ako Win32 API.
+Na záver uveď, ktoré prehľadové stránky si upravil a ako si overil úplnosť štruktúry a odkazov.
+
+5. Prompt: Výroba APP pre ovladanie čitania stránky
+

@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="sk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Tematická štruktúra kurzu C++: od základov jazyka po OOP, STL, správu zdrojov a build.">
+  <title>Kurz C++ | Učebná cesta</title>
+  <style>
+    :root{color-scheme:light;--bg:#f7f8fa;--surface:#fff;--text:#1c2330;--muted:#5b6678;--accent:#1f6feb;--border:#d9dee7}
+    @media(prefers-color-scheme:dark){:root:not([data-theme]){color-scheme:dark;--bg:#101827;--surface:#182437;--text:#edf3fc;--muted:#b4c2d6;--accent:#83c5ff;--border:#2b3b52}}
+    :root[data-theme="dark"]{color-scheme:dark;--bg:#101827;--surface:#182437;--text:#edf3fc;--muted:#b4c2d6;--accent:#83c5ff;--border:#2b3b52}
+    *{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 50% -20%,#27466b 0,var(--bg) 58%);color:var(--text);font:16px/1.6 system-ui,"Segoe UI",sans-serif}a{color:var(--accent)}
+    .page{width:min(100% - 2rem,1100px);margin:auto}.global-course-nav{display:flex;flex-wrap:wrap;gap:.55rem;align-items:center;width:min(100% - 2rem,1100px);margin:.75rem auto 0;font-weight:650}.global-course-nav a{padding:.4rem .7rem;border:1px solid var(--border);border-radius:.55rem;background:var(--surface);color:var(--text);text-decoration:none}
+    footer{margin:2rem 0;padding:1rem 0 2rem;border-top:1px solid var(--border);color:var(--muted)}footer a{color:inherit}
+    @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+  </style>
+  <link rel="stylesheet" href="../course-overview.css">
+  <script src="../theme.js" defer></script>
+</head>
+<body>
+  <nav class="global-course-nav" aria-label="Navigácia kurzov"><a href="../index.html">Všetky kurzy</a><a href="../02_C/index.html">C/C++</a><a href="index.html" aria-current="page">Kurz C++</a><a href="../nastavenia.html">Nastavenia vzhľadu</a></nav>
+  <main class="page course-overview">
+    <header class="course-hero"><div class="course-hero-copy"><span class="eyebrow">Pracovná osnova · C++17 · OOP</span><h1>Kurz C++</h1>
+      <p>Učebná cesta od prostredia a základnej syntaxe cez objektový návrh až po STL, bezpečnú správu zdrojov a zostavovanie projektov.</p>
+      <div class="course-stats"><span>2. ročník</span><span>12 tematických modulov</span><span>C++17</span><span>66 × 45 min podľa osnovy</span></div>
+      <p><a href="README.md">Otvoriť úplný opis a osnovu kurzu C++ →</a></p>
+    </div><img class="hero-art" src="../img/cpp-language.svg" alt="Ilustrácia programovacieho jazyka C++" width="1200" height="700"></header>
+    <p class="course-note"><strong>Usporiadanie:</strong> Moduly a názvy tém preberajú existujúcu učebnú cestu. Odkazy na moduly otvárajú ich README; priamo hotová interaktívna prednáška je uvedená osobitne.</p>
+    <nav class="module-jump" aria-label="Tematické celky C++"><a href="#zaklady">01 · Základy</a><a href="#oop">02 · OOP</a><a href="#pokrocile">03 · STL a projekty</a><a href="#prednaska">Prednáška</a></nav>
+    <div class="course-modules">
+      <section class="course-module" id="zaklady"><div class="course-module-head"><div><span class="eyebrow">Tematický celok 01</span><h2>Prostredie, syntax a riadenie programu</h2></div><p>Moduly 00–04</p></div><div class="module-lesson-list">
+        <a class="module-lesson" href="00_Prostredie_a_zaklady/README.md"><span class="module-lesson-number">00</span><span class="module-lesson-copy"><strong>Prostredie a základy</strong><small>Kompilácia, štandard C++17 a základný vstup/výstup</small></span></a>
+        <a class="module-lesson" href="01_Typy_a_vyrazy/README.md"><span class="module-lesson-number">01</span><span class="module-lesson-copy"><strong>Typy a výrazy</strong><small>Dátové typy, hodnoty a výrazy</small></span></a>
+        <a class="module-lesson" href="02_Podmienky_a_cykly/README.md"><span class="module-lesson-number">02</span><span class="module-lesson-copy"><strong>Podmienky a cykly</strong><small>Riadenie toku a range-for</small></span></a>
+        <a class="module-lesson" href="03_Funkcie_a_referencie/README.md"><span class="module-lesson-number">03</span><span class="module-lesson-copy"><strong>Funkcie a referencie</strong><small>Referencie, preťažovanie a argumenty</small></span></a>
+        <a class="module-lesson" href="04_String_a_kontajnery/README.md"><span class="module-lesson-number">04</span><span class="module-lesson-copy"><strong>String a kontajnery</strong><small>Textové reťazce a základné kolekcie STL</small></span></a>
+      </div></section>
+      <section class="course-module" id="oop"><div class="course-module-head"><div><span class="eyebrow">Tematický celok 02</span><h2>Objektovo orientované programovanie</h2></div><p>Moduly 05–07</p></div><div class="module-lesson-list">
+        <a class="module-lesson" href="05_Triedy_a_objekty/README.md"><span class="module-lesson-number">05</span><span class="module-lesson-copy"><strong>Triedy a objekty</strong><small>Členy tried, objekty a metódy</small></span></a>
+        <a class="module-lesson" href="06_Enkapsulacia_a_konstruktory/README.md"><span class="module-lesson-number">06</span><span class="module-lesson-copy"><strong>Zapuzdrenie a konštruktory</strong><small>Inicializácia a rozhranie triedy</small></span></a>
+        <a class="module-lesson" href="07_Dedicnost_a_polymorfizmus/README.md"><span class="module-lesson-number">07</span><span class="module-lesson-copy"><strong>Dedičnosť a polymorfizmus</strong><small>Odvodené triedy a virtuálne metódy</small></span></a>
+      </div></section>
+      <section class="course-module" id="pokrocile"><div class="course-module-head"><div><span class="eyebrow">Tematický celok 03</span><h2>STL, správa zdrojov a projekty</h2></div><p>Moduly 08–11</p></div><div class="module-lesson-list">
+        <a class="module-lesson" href="08_STL_a_algoritmy/README.md"><span class="module-lesson-number">08</span><span class="module-lesson-copy"><strong>STL a algoritmy</strong><small>Kontajnery, iterátory a algoritmy</small></span></a>
+        <a class="module-lesson" href="09_Vynimky_a_subory/README.md"><span class="module-lesson-number">09</span><span class="module-lesson-copy"><strong>Výnimky a súbory</strong><small>Ošetrenie chýb a súborové prúdy</small></span></a>
+        <a class="module-lesson" href="10_Pamat_a_RAII/README.md"><span class="module-lesson-number">10</span><span class="module-lesson-copy"><strong>Pamäť a RAII</strong><small>Bezpečné vlastníctvo a smart pointery</small></span></a>
+        <a class="module-lesson" href="11_Testovanie_a_build/README.md"><span class="module-lesson-number">11</span><span class="module-lesson-copy"><strong>Testovanie a build</strong><small>Zostavenie a organizácia projektu</small></span></a>
+      </div></section>
+      <section class="course-module" id="prednaska"><div class="course-module-head"><div><span class="eyebrow">Rozpracované interaktívne materiály</span><h2>Hotová prednáška</h2></div><p>Existujúca HTML lekcia</p></div><div class="module-lesson-list">
+        <a class="module-lesson" href="Kurz_2_rocnik/lekcie/01_Uvod_a_normy_C%2B%2B.html"><span class="module-lesson-number">19</span><span class="module-lesson-copy"><strong>Úvod a normy jazyka C++</strong><small>Interaktívna prednáška podľa učebnej cesty</small></span></a>
+        <a class="module-lesson" href="Kurz_2_rocnik/lekcie/01_Uvod_a_normy_C%2B%2B.md"><span class="module-lesson-number">MD</span><span class="module-lesson-copy"><strong>Zdrojový text prednášky</strong><small>Markdownová verzia materiálu</small></span></a>
+      </div></section>
+    </div>
+    <section class="course-module" aria-labelledby="practice-heading"><div class="course-module-head"><div><span class="eyebrow">Doplnkové materiály</span><h2 id="practice-heading">Cvičenia a projekty</h2></div><p>Samostatná práca</p></div><div class="module-lesson-list"><a class="module-lesson" href="cvicenia/README.md"><span class="module-lesson-number">CV</span><span class="module-lesson-copy"><strong>Cvičenia</strong><small>Úlohy na precvičenie OOP v C++</small></span></a><a class="module-lesson" href="projekty/robot_controller.cpp"><span class="module-lesson-number">PR</span><span class="module-lesson-copy"><strong>Projekty</strong><small>Ukážkový projekt Robot Controller</small></span></a></div></section>
+    <footer><a href="../02_C/index.html">Späť na C/C++</a> · <a href="../04_Win32_API/struktura.html">Pokračovať na Win32 API</a> · <a href="../index.html">Všetky kurzy</a></footer>
+  </main>
+</body>
+</html>
