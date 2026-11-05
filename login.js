@@ -3,8 +3,20 @@ import { firebaseConfig } from "./firebase-config.js";
 const signInButton = document.getElementById("google-sign-in");
 const signOutButton = document.getElementById("google-sign-out");
 const status = document.getElementById("auth-status");
+const originalSiteLink = document.getElementById("auth-original-site");
 
-signInButton.disabled = false;
+const isGoogleTranslateHost = /translate\.google\./i.test(window.location.hostname);
+if (isGoogleTranslateHost) {
+  const originalLoginUrl = new URL("https://programovanie-sps.web.app/login.html");
+  const requestedNext = new URLSearchParams(window.location.search).get("next");
+  if (isLocalPath(requestedNext)) originalLoginUrl.searchParams.set("next", requestedNext);
+  originalSiteLink.href = originalLoginUrl.toString();
+  originalSiteLink.hidden = false;
+  signInButton.disabled = true;
+  status.textContent = "Google Translate otvoril prihlasovaciu stránku cez svoju doménu. Firebase tu prihlásenie nepovoľuje; pokračujte na pôvodnej doméne kurzu.";
+}
+
+signInButton.disabled = isGoogleTranslateHost;
 
 signInButton.addEventListener("click", async () => {
   signInButton.disabled = true;
