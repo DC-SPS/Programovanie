@@ -55,6 +55,23 @@
     .timeline span{padding:.35rem .6rem;border-radius:7px;background:var(--line)}
     .timeline .chosen{background:var(--acc);color:#fff}
     .timeline b{color:var(--mut)}
+    .matching-game{margin:1rem 0;padding:1rem;border:1px solid var(--line);border-radius:12px;background:var(--card)}
+    .matching-help,.matching-feedback{margin:.4rem 0;color:var(--mut)}
+    .matching-board{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.55rem}
+    .matching-column{display:grid;align-content:start;gap:.5rem;min-width:0}
+    .matching-card{width:100%;min-height:3.2rem;padding:.7rem .8rem;border:1px solid var(--line);border-radius:9px;background:var(--bg);color:var(--fg);font:inherit;text-align:left;cursor:grab;transition:transform .18s ease,background .18s ease,border-color .18s ease,opacity .18s ease}
+    .matching-card:hover{border-color:var(--acc)}
+    .matching-card:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+    .matching-card[aria-pressed="true"]{border-color:var(--acc);background:color-mix(in srgb,var(--acc) 18%,var(--bg));transform:scale(1.02)}
+    .matching-card.is-shuffling{animation:card-shuffle .55s ease both}
+    .matching-card.is-correct{border-color:var(--good);background:color-mix(in srgb,var(--good) 14%,var(--bg));cursor:default}
+    .matching-card.is-wrong{border-color:var(--bad);animation:match-nudge .28s ease}
+    .matching-card.is-dragging{opacity:.45}
+    .matching-card.is-drop-target{outline:2px dashed var(--acc);outline-offset:2px}
+    @keyframes card-shuffle{0%{opacity:.45;transform:translateY(-8px) rotate(-2deg)}55%{transform:translateY(3px) rotate(2deg)}100%{opacity:1;transform:none}}
+    @keyframes match-nudge{25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+    @media(max-width:520px){.matching-board{grid-template-columns:1fr}.matching-column::before{font-weight:750;color:var(--mut)}.matching-column:first-child::before{content:"Pojmy"}.matching-column:last-child::before{content:"Významy"}}
+    @media(prefers-reduced-motion:reduce){.matching-card,.matching-card.is-shuffling,.matching-card.is-wrong{animation:none;transition:none}}
     .split{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,210px),1fr));gap:.75rem}
     .term{padding:.9rem 1rem;border:1px solid var(--line);border-radius:10px;background:var(--card)}
     .term h3{margin:.1rem 0 .35rem}
@@ -249,19 +266,16 @@
     <p data-read-aloud="selected">Upozornenia sú pomôcka pri hľadaní problémov; nenahrádzajú porozumenie kódu ani testovanie. Podrobnejšie si preklad a spustenie vyskúšame v nasledujúcich hodinách.</p>
 
     <h2>6. Krátka aktivita</h2>
-    <p data-read-aloud="optional">Vo dvojici priraďte pojmy k ich vysvetleniam a potom vysvetlite vzťah medzi nimi:</p>
-    <div class="scroll">
-      <table>
-        <thead><tr><th>Pojem</th><th>Význam</th></tr></thead>
-        <tbody>
-          <tr><td>C</td><td>Programovací jazyk.</td></tr>
-          <tr><td>C17</td><td>Verzia normy jazyka C.</td></tr>
-          <tr><td>GCC</td><td>Kompilátor, ktorý môže prekladať programy v C.</td></tr>
-          <tr><td><code>-std=c17</code></td><td>Požiadavka na jazykový režim C17 pri preklade GCC.</td></tr>
-        </tbody>
-      </table>
-    </div>
-    <details><summary>Kontrola odpovede</summary><p>C je jazyk; C17 je verzia jeho normy; GCC je kompilátor; <code>-std=c17</code> vyberá režim normy pri preklade týmto kompilátorom.</p></details>
+    <p data-read-aloud="optional">Spojte každý pojem s jeho významom. Kartičky na začiatku zamiešame; môžete ich presúvať myšou alebo najprv vybrať pojem a potom jeho význam. Na klávesnici použite Tab a Enter.</p>
+    <section class="matching-game" id="term-matching" aria-label="Interaktívne spájanie pojmov a významov">
+      <div class="matching-board">
+        <div class="matching-column" id="matching-terms" aria-label="Pojmy"></div>
+        <div class="matching-column" id="matching-definitions" aria-label="Významy"></div>
+      </div>
+      <p class="matching-feedback" id="matching-feedback" role="status" aria-live="polite">Vyberte pojem a potom jeho význam.</p>
+      <button type="button" id="matching-reset">Zamiešať znova</button>
+    </section>
+    <details><summary>Vysvetlenie po aktivite</summary><p>C je jazyk; C17 je verzia jeho normy; GCC je kompilátor; <code>-std=c17</code> vyberá režim normy pri preklade týmto kompilátorom.</p></details>
 
     <h2>7. Interaktívne overenie</h2>
     <form class="quiz" id="knowledge-quiz">
@@ -662,6 +676,123 @@
       bindSlider(relaxSlider, "relax");
       render();
     });
+
+    (() => {
+      const game = document.getElementById("term-matching");
+      if (!game) return;
+      const termColumn = document.getElementById("matching-terms");
+      const definitionColumn = document.getElementById("matching-definitions");
+      const feedback = document.getElementById("matching-feedback");
+      const reset = document.getElementById("matching-reset");
+      const pairs = [
+        { id: "c", term: "C", definition: "Programovac\u00ed jazyk." },
+        { id: "c17", term: "C17", definition: "Verzia normy jazyka C." },
+        { id: "gcc", term: "GCC", definition: "Kompil\u00e1tor, ktor\u00fd m\u00f4\u017ee preklada\u0165 programy v C." },
+        { id: "flag", term: "-std=c17", definition: "Po\u017eiadavka na jazykov\u00fd re\u017eim C17 pri preklade GCC." }
+      ];
+      let selected = null;
+      let matched = 0;
+      let shuffleCount = 0;
+      const shuffle = (items) => {
+        const result = [...items];
+        for (let i = result.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [result[i], result[j]] = [result[j], result[i]];
+        }
+        return result;
+      };
+      const makeCard = (pair, side, label) => {
+        const card = document.createElement("button");
+        card.type = "button";
+        card.className = "matching-card";
+        card.textContent = label;
+        card.dataset.pair = pair.id;
+        card.dataset.side = side;
+        card.draggable = side === "term";
+        card.setAttribute("aria-pressed", "false");
+        card.addEventListener("click", () => {
+          if (card.disabled) return;
+          if (side === "term") {
+            game.querySelectorAll('[data-side="term"]').forEach((item) => item.setAttribute("aria-pressed", "false"));
+            selected = pair.id;
+            card.setAttribute("aria-pressed", "true");
+            feedback.textContent = "Teraz vyberte význam pre pojem „" + label + "“.";
+            return;
+          }
+          if (!selected) {
+            feedback.textContent = "Najprv vyberte pojem a potom jeho význam.";
+            return;
+          }
+          checkMatch(selected, pair.id);
+        });
+        if (side === "term") {
+          card.addEventListener("dragstart", (event) => {
+            selected = pair.id;
+            event.dataTransfer.setData("text/plain", pair.id);
+            event.dataTransfer.effectAllowed = "move";
+            card.classList.add("is-dragging");
+          });
+          card.addEventListener("dragend", () => card.classList.remove("is-dragging"));
+        } else {
+          card.addEventListener("dragover", (event) => {
+            event.preventDefault();
+            card.classList.add("is-drop-target");
+          });
+          card.addEventListener("dragleave", () => card.classList.remove("is-drop-target"));
+          card.addEventListener("drop", (event) => {
+            event.preventDefault();
+            card.classList.remove("is-drop-target");
+            checkMatch(event.dataTransfer.getData("text/plain") || selected, pair.id);
+          });
+        }
+        return card;
+      };
+      const checkMatch = (termId, definitionId) => {
+        const termCard = termColumn.querySelector('[data-pair="' + termId + '"]');
+        const definitionCard = definitionColumn.querySelector('[data-pair="' + definitionId + '"]');
+        if (!termCard || !definitionCard || termCard.disabled || definitionCard.disabled) return;
+        termColumn.querySelectorAll('[data-side="term"]').forEach((item) => item.setAttribute("aria-pressed", "false"));
+        if (termId === definitionId) {
+          termCard.disabled = true;
+          definitionCard.disabled = true;
+          termCard.classList.add("is-correct");
+          definitionCard.classList.add("is-correct");
+          termCard.setAttribute("aria-label", termCard.textContent + ", spr\u00e1vne priraden\u00e9");
+          definitionCard.setAttribute("aria-label", definitionCard.textContent + ", spr\u00e1vne priraden\u00e9");
+          matched++;
+          feedback.textContent = matched === pairs.length ? "V\u00fdborne! Spr\u00e1vne ste spojili v\u0161etky pojmy." : "Spr\u00e1vne. Zost\u00e1va spoji\u0165 " + (pairs.length - matched) + " pojmov.";
+        } else {
+          termCard.classList.add("is-wrong");
+          definitionCard.classList.add("is-wrong");
+          window.setTimeout(() => {
+            termCard.classList.remove("is-wrong");
+            definitionCard.classList.remove("is-wrong");
+          }, 350);
+          feedback.textContent = "Tieto karti\u010dky k sebe nepatria. Sk\u00faste to znova.";
+        }
+        selected = null;
+      };
+      const deal = () => {
+        selected = null;
+        matched = 0;
+        termColumn.replaceChildren(...shuffle(pairs).map((pair, index) => {
+          const card = makeCard(pair, "term", pair.term);
+          card.style.animationDelay = (index * 75) + "ms";
+          card.classList.add("is-shuffling");
+          return card;
+        }));
+        definitionColumn.replaceChildren(...shuffle(pairs).map((pair, index) => {
+          const card = makeCard(pair, "definition", pair.definition);
+          card.style.animationDelay = (index * 75) + "ms";
+          card.classList.add("is-shuffling");
+          return card;
+        }));
+        shuffleCount++;
+        feedback.textContent = shuffleCount === 1 ? "Kartičky sú zamiešané. Vyberte pojem a potom jeho význam." : "Kartičky sú znovu zamiešané. Skúste nájsť všetky dvojice.";
+      };
+      reset.addEventListener("click", deal);
+      deal();
+    })();
 
     document.getElementById("knowledge-quiz").addEventListener("submit", (event) => {
       event.preventDefault();
