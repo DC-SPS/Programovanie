@@ -89,11 +89,22 @@
     .lesson-side-panel .narration-status{font-size:.88rem}
 
     .lesson-side-panel .lesson-clock{height:auto;min-height:0;align-self:stretch}
+    .lesson-side-panel .lesson-clock__chrome{display:grid;grid-template-columns:auto minmax(0,1fr) auto auto;grid-template-areas:"lights tag clock settings" "timer-label timer-label timer settings";grid-template-rows:auto auto;align-items:center;gap:.25rem .45rem;padding:.45rem .55rem}
+    .lesson-side-panel .lesson-clock__lights{grid-area:lights;margin:0}
+    .lesson-side-panel .lesson-clock__tag{grid-area:tag;white-space:nowrap;font-size:.62rem;letter-spacing:.06em}
+    .lesson-side-panel .lesson-clock__chrome-spacer{display:none}
+    .lesson-side-panel .lesson-clock__clock{grid-area:clock;gap:0;margin:0;padding-left:.45rem}
+    .lesson-side-panel .lesson-clock__clock-label,.lesson-side-panel .lesson-clock__date{display:none}
+    .lesson-side-panel .lesson-clock__zone{display:inline-block!important;white-space:nowrap;font-size:.58rem;color:#a8bdcf}
+    .lesson-side-panel .lesson-clock__now{min-width:4.35rem;font-size:.9rem}
+    .lesson-side-panel .lesson-clock__time-label{grid-area:timer-label;display:block!important;text-align:right;font-size:.62rem}
+    .lesson-side-panel .lesson-clock__time{grid-area:timer;min-width:3.6rem;font-size:.95rem}
+    .lesson-side-panel .lesson-clock__settings{grid-area:settings;align-self:center}
     .lesson-side-panel .lesson-clock__body{display:flex;flex-direction:column;align-items:stretch;gap:.45rem;height:auto;min-height:0;padding:.55rem .75rem;align-content:start}
-    .lesson-side-panel .lesson-clock__info{display:grid;grid-template-columns:auto minmax(0,1fr);grid-template-areas:"number title" "number description";align-items:center;column-gap:.55rem;row-gap:.1rem}
-    .lesson-side-panel .lesson-clock__number{grid-area:number;max-width:6rem;margin:0;line-height:1.25}
+    .lesson-side-panel .lesson-clock__info{display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"title description";align-items:center;column-gap:.55rem;min-width:0}
+    .lesson-side-panel .lesson-clock__number{display:none}
     .lesson-side-panel .lesson-clock__title{grid-area:title;min-width:0;white-space:nowrap;font-size:.9rem}
-    .lesson-side-panel .lesson-clock__description{grid-area:description;display:block!important;min-width:0;margin:.08rem 0 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;-webkit-line-clamp:unset!important}
+    .lesson-side-panel .lesson-clock__description{grid-area:description;display:block!important;max-width:10rem;min-width:0;margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;-webkit-line-clamp:unset!important}
     .lesson-side-panel .lesson-clock__controls{justify-content:flex-end}
     .lesson-side-panel .narration-status{order:-1;padding:0 0 .35rem;border-bottom:1px solid var(--line);font-size:.9rem;font-weight:700;color:var(--fg)}
 
@@ -463,7 +474,11 @@
     document.addEventListener("DOMContentLoaded", () => {
       const lessonClock = document.querySelector(".lesson-clock");
       const sidePanel = document.querySelector(".lesson-side-panel");
-      if (lessonClock && sidePanel) sidePanel.prepend(lessonClock);
+      if (lessonClock && sidePanel) {
+        const clockTag = lessonClock.querySelector(".lesson-clock__tag");
+        if (clockTag) clockTag.textContent = "\u010cas hodiny";
+        sidePanel.prepend(lessonClock);
+      }
     });
 
     document.getElementById("knowledge-quiz").addEventListener("submit", (event) => {
