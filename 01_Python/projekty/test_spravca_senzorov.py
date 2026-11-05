@@ -12,7 +12,13 @@ from io import StringIO
 from pathlib import Path
 from unittest.mock import patch
 
-from spravca_senzorov import SenzorMeranie, SpravcaSenzorov, main
+from spravca_senzorov import (
+    PriemerneHodnoty,
+    SenzorMeranie,
+    SpravcaSenzorov,
+    StatistikaSenzora,
+    main,
+)
 
 
 class SenzorMeranieTesty(unittest.TestCase):
@@ -47,6 +53,8 @@ class SenzorMeranieTesty(unittest.TestCase):
         for vlhkost in (0, 100):
             with self.subTest(vlhkost=vlhkost):
                 meranie = SenzorMeranie("TEMP_01", 20.0, vlhkost)
+                self.assertIs(type(meranie.teplota), float)
+                self.assertIs(type(meranie.vlhkost), float)
                 self.assertEqual(meranie.vlhkost, vlhkost)
 
     def test_meranie_po_vytvoreni_nemoze_byt_zmenene(self) -> None:
@@ -74,6 +82,18 @@ class SenzorMeranieTesty(unittest.TestCase):
 
         self.assertEqual(meranie.cas, data["cas"])
 
+    def test_obnova_normalizuje_iso_utc_z_na_offset(self) -> None:
+        data = {
+            "senzor_id": "TEMP_01",
+            "teplota": 21.5,
+            "vlhkost": 45.0,
+            "cas": "2026-11-04T12:00:00Z",
+        }
+
+        meranie = SenzorMeranie.from_dict(data)
+
+        self.assertEqual(meranie.cas, "2026-11-04T12:00:00+00:00")
+
     def test_obnova_odmietne_chybajuce_pole_a_cas_bez_casoveho_pasna(self) -> None:
         data = {
             "senzor_id": "TEMP_01",
@@ -92,6 +112,13 @@ class SenzorMeranieTesty(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "ISO 8601"):
             SenzorMeranie.from_dict(data)
 
+    def test_obnova_odmietne_neznamu_json_polozku(self) -> None:
+        data = SenzorMeranie("TEMP_01", 21.5, 45.0).to_dict()
+        data["neocakavane"] = "hodnota"
+
+        with self.assertRaisesRegex(ValueError, "iba polia"):
+            SenzorMeranie.from_dict(data)
+
 
 class SpravcaSenzorovTesty(unittest.TestCase):
     def test_priemer_prazdneho_zoznamu_nie_je_definovany(self) -> None:
@@ -105,7 +132,10 @@ class SpravcaSenzorovTesty(unittest.TestCase):
         spravca.pridaj_meranie(SenzorMeranie("A", 20.0, 40.0))
         spravca.pridaj_meranie(SenzorMeranie("B", 22.0, 60.0))
 
-        self.assertEqual(spravca.vypocitaj_priemerne_hodnoty(), (21.0, 50.0))
+        self.assertEqual(
+            spravca.vypocitaj_priemerne_hodnoty(),
+            PriemerneHodnoty(21.0, 50.0),
+        )
 
     def test_priemer_teploty_zachova_male_hodnoty_pri_velkych_cislach(self) -> None:
         spravca = SpravcaSenzorov()
@@ -115,7 +145,15 @@ class SpravcaSenzorovTesty(unittest.TestCase):
         priemery = spravca.vypocitaj_priemerne_hodnoty()
 
         self.assertIsNotNone(priemery)
-        self.assertAlmostEqual(priemery[0], 1.0 / 3.0)
+        self.assertAlmostEqual(priemery.priemerna_teplota, 1.0 / 3.0)
+
+    def test_spolocny_priemer_je_nemenny_objekt(self) -> None:
+        spravca = SpravcaSenzorov()
+        spravca.pridaj_meranie(SenzorMeranie("A", 20.0, 40.0))
+        priemery = spravca.vypocitaj_priemerne_hodnoty()
+
+        with self.assertRaises(FrozenInstanceError):
+            priemery.priemerna_teplota = 99.0
 
     def test_vypocita_statistiky_pre_kazdy_senzor(self) -> None:
         spravca = SpravcaSenzorov()
@@ -125,7 +163,26 @@ class SpravcaSenzorovTesty(unittest.TestCase):
 
         self.assertEqual(
             spravca.vypocitaj_statistiky_podla_senzora(),
-            {"A": (2, 22.0, 45.0), "B": (1, 22.0, 60.0)},
+            {
+                "A": StatistikaSenzora(
+                    2,
+                    22.0,
+                    20.0,
+                    24.0,
+                    45.0,
+                    40.0,
+                    50.0,
+                ),
+                "B": StatistikaSenzora(
+                    1,
+                    22.0,
+                    22.0,
+                    22.0,
+                    60.0,
+                    60.0,
+                    60.0,
+                ),
+            },
         )
 
     def test_skupinovy_priemer_zachova_male_hodnoty_pri_velkych_cislach(self) -> None:
@@ -135,8 +192,8 @@ class SpravcaSenzorovTesty(unittest.TestCase):
 
         statistika = spravca.vypocitaj_statistiky_podla_senzora()["A"]
 
-        self.assertEqual(statistika[0], 3)
-        self.assertAlmostEqual(statistika[1], 1.0 / 3.0)
+        self.assertEqual(statistika.pocet_merani, 3)
+        self.assertAlmostEqual(statistika.priemerna_teplota, 1.0 / 3.0)
 
     def test_odmietne_objekt_ktory_nie_je_meranie(self) -> None:
         with self.assertRaises(TypeError):
@@ -145,11 +202,48 @@ class SpravcaSenzorovTesty(unittest.TestCase):
     def test_merania_poskytuju_nemenny_pohlad(self) -> None:
         spravca = SpravcaSenzorov()
         spravca.pridaj_meranie(SenzorMeranie("A", 20.0, 40.0))
+        povodny_pohlad = spravca.merania
 
-        self.assertIsInstance(spravca.merania, tuple)
-        self.assertEqual(len(spravca.merania), 1)
+        self.assertIsInstance(povodny_pohlad, tuple)
+        self.assertEqual(len(povodny_pohlad), 1)
         with self.assertRaises(AttributeError):
-            spravca.merania.append(SenzorMeranie("B", 22.0, 60.0))
+            povodny_pohlad.append(SenzorMeranie("B", 22.0, 60.0))
+        spravca.pridaj_meranie(SenzorMeranie("B", 22.0, 60.0))
+        self.assertEqual(len(povodny_pohlad), 1)
+        self.assertEqual(len(spravca.merania), 2)
+
+    def test_vyhlada_merania_podla_senzora(self) -> None:
+        spravca = SpravcaSenzorov()
+        meranie_a = SenzorMeranie("A", 20.0, 40.0)
+        spravca.pridaj_meranie(meranie_a)
+        spravca.pridaj_meranie(SenzorMeranie("B", 22.0, 60.0))
+
+        self.assertEqual(spravca.vyhladaj_merania(" A "), (meranie_a,))
+        self.assertEqual(spravca.vyhladaj_merania("CHYBA"), ())
+        with self.assertRaises(ValueError):
+            spravca.vyhladaj_merania(" ")
+
+    def test_vypocita_suhrn_pre_jeden_senzor(self) -> None:
+        spravca = SpravcaSenzorov()
+        spravca.pridaj_meranie(SenzorMeranie("A", 20.0, 40.0))
+        spravca.pridaj_meranie(SenzorMeranie("A", 24.0, 60.0))
+
+        statistika = spravca.vypocitaj_statistiku_senzora("A")
+
+        self.assertIsNotNone(statistika)
+        self.assertEqual(statistika.pocet_merani, 2)
+        self.assertEqual(statistika.priemerna_teplota, 22.0)
+        self.assertEqual(statistika.minimalna_vlhkost, 40.0)
+        self.assertEqual(statistika.maximalna_vlhkost, 60.0)
+        self.assertIsNone(spravca.vypocitaj_statistiku_senzora("CHYBA"))
+
+    def test_statistika_senzora_je_nemenny_objekt(self) -> None:
+        spravca = SpravcaSenzorov()
+        spravca.pridaj_meranie(SenzorMeranie("A", 20.0, 40.0))
+        statistika = spravca.vypocitaj_statistiku_senzora("A")
+
+        with self.assertRaises(FrozenInstanceError):
+            statistika.priemerna_teplota = 99.0
 
     def test_exportuje_json_s_casovym_pasmo(self) -> None:
         spravca = SpravcaSenzorov()
@@ -205,6 +299,19 @@ class SpravcaSenzorovTesty(unittest.TestCase):
             nacitany = SpravcaSenzorov.nacitaj_zo_json(cesta)
 
         self.assertEqual(nacitany.merania, povodny.merania)
+
+    def test_merania_mozno_nacitat_a_atomicky_nahradit_v_tom_istom_subore(self) -> None:
+        with tempfile.TemporaryDirectory() as docasny_priecinok:
+            cesta = Path(docasny_priecinok) / "merania.json"
+            povodne = SpravcaSenzorov()
+            povodne.pridaj_meranie(SenzorMeranie("TEMP_01", 21.5, 45.0))
+            povodne.uloz_do_json(cesta)
+
+            nacitane = SpravcaSenzorov.nacitaj_zo_json(cesta)
+            nacitane.uloz_do_json(cesta)
+
+            opat_nacitane = SpravcaSenzorov.nacitaj_zo_json(cesta)
+            self.assertEqual(opat_nacitane.merania, povodne.merania)
 
     def test_nacitanie_odmietne_neplatnu_json_strukturu(self) -> None:
         with tempfile.TemporaryDirectory() as docasny_priecinok:
@@ -293,6 +400,26 @@ class SpravcaSenzorovTesty(unittest.TestCase):
                 ["merania.json"],
             )
 
+    def test_chyba_pri_premenovani_docasneho_suboru_zachova_export(self) -> None:
+        spravca = SpravcaSenzorov()
+        spravca.pridaj_meranie(SenzorMeranie("TEMP_01", 21.5, 45.0))
+        with tempfile.TemporaryDirectory() as docasny_priecinok:
+            cesta = Path(docasny_priecinok) / "merania.json"
+            cesta.write_text("pôvodné dáta", encoding="utf-8")
+
+            with patch(
+                "spravca_senzorov.os.replace",
+                side_effect=OSError("chyba disku"),
+            ):
+                with self.assertRaisesRegex(OSError, "chyba disku"):
+                    spravca.uloz_do_json(cesta)
+
+            self.assertEqual(cesta.read_text(encoding="utf-8"), "pôvodné dáta")
+            nazvy_suborov = [
+                subor.name for subor in Path(docasny_priecinok).iterdir()
+            ]
+            self.assertEqual(nazvy_suborov, ["merania.json"])
+
     def test_cli_pouzije_zadanu_vystupnu_cestu(self) -> None:
         with tempfile.TemporaryDirectory() as docasny_priecinok:
             cesta = Path(docasny_priecinok) / "vlastny_vystup.json"
@@ -305,6 +432,7 @@ class SpravcaSenzorovTesty(unittest.TestCase):
         self.assertIn("vlastny_vystup.json", vystup.getvalue())
         self.assertIn("Štatistiky podľa senzora", vystup.getvalue())
         self.assertIn("TEMP_01", vystup.getvalue())
+        self.assertIn("rozsah", vystup.getvalue())
 
     def test_cli_nacita_a_znovu_exportuje_merania(self) -> None:
         with tempfile.TemporaryDirectory() as docasny_priecinok:
@@ -325,6 +453,23 @@ class SpravcaSenzorovTesty(unittest.TestCase):
 
         self.assertEqual(navratovy_kod, 0)
         self.assertIn("TEMP_09", konzola.getvalue())
+
+    def test_cli_spracuje_prazdny_vstupny_zoznam(self) -> None:
+        with tempfile.TemporaryDirectory() as docasny_priecinok:
+            vstup = Path(docasny_priecinok) / "prazdne.json"
+            vystupny_subor = Path(docasny_priecinok) / "vystup.json"
+            vstup.write_text("[]", encoding="utf-8")
+            konzola = StringIO()
+
+            with redirect_stdout(konzola):
+                navratovy_kod = main(
+                    ["--vstup", str(vstup), "--vystup", str(vystupny_subor)]
+                )
+
+            self.assertEqual(json.loads(vystupny_subor.read_text(encoding="utf-8")), [])
+
+        self.assertEqual(navratovy_kod, 0)
+        self.assertIn("zoznam meraní je prázdny", konzola.getvalue())
 
     def test_cli_odmietne_chybny_vstupny_json(self) -> None:
         with tempfile.TemporaryDirectory() as docasny_priecinok:

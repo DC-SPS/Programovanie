@@ -15,6 +15,10 @@ from pathlib import Path
 from typing import Optional, Union
 
 
+MIN_VLHKOST = 0.0
+MAX_VLHKOST = 100.0
+
+
 def _je_konecne_cislo(hodnota: object) -> bool:
     if isinstance(hodnota, bool) or not isinstance(hodnota, (int, float)):
         return False
@@ -57,19 +61,28 @@ class SenzorMeranie:
             raise ValueError("Teplota musí byť konečné číslo.")
         if (
             not _je_konecne_cislo(self.vlhkost)
-            or not 0 <= self.vlhkost <= 100
+            or not MIN_VLHKOST <= self.vlhkost <= MAX_VLHKOST
         ):
-            raise ValueError("Vlhkosť musí byť číslo v rozsahu 0 až 100 %.")
+            raise ValueError(
+                f"Vlhkosť musí byť číslo v rozsahu {MIN_VLHKOST:g} "
+                f"až {MAX_VLHKOST:g} %."
+            )
         if not isinstance(self.cas, str):
             raise ValueError("Čas merania musí byť text vo formáte ISO 8601.")
+        cas_iso = f"{self.cas[:-1]}+00:00" if self.cas.endswith("Z") else self.cas
         try:
-            casova_zona = datetime.fromisoformat(self.cas).utcoffset()
+            casova_zona = datetime.fromisoformat(cas_iso).utcoffset()
         except ValueError as chyba:
-            raise ValueError("Čas merania musí byť platný formát ISO 8601.") from chyba
+            raise ValueError(
+                "Čas merania musí byť platný formát ISO 8601."
+            ) from chyba
         if casova_zona is None:
             raise ValueError("Čas merania musí obsahovať časové pásmo.")
 
         object.__setattr__(self, "senzor_id", self.senzor_id.strip())
+        object.__setattr__(self, "teplota", float(self.teplota))
+        object.__setattr__(self, "vlhkost", float(self.vlhkost))
+        object.__setattr__(self, "cas", cas_iso)
 
     def to_dict(self) -> dict[str, object]:
         """Pripraví meranie na uloženie vo formáte JSON."""
@@ -85,6 +98,14 @@ class SenzorMeranie:
         """Vytvorí a overí meranie načítané zo slovníka JSON."""
         if not isinstance(data, dict):
             raise ValueError("Záznam merania musí byť JSON objekt.")
+        povinne_polia = {"senzor_id", "teplota", "vlhkost", "cas"}
+        chybajuce_polia = povinne_polia - data.keys()
+        nadbytocne_polia = data.keys() - povinne_polia
+        if chybajuce_polia or nadbytocne_polia:
+            raise ValueError(
+                "Záznam musí obsahovať iba polia: "
+                "senzor_id, teplota, vlhkost a cas."
+            )
         try:
             return cls(
                 senzor_id=data["senzor_id"],
@@ -94,6 +115,27 @@ class SenzorMeranie:
             )
         except KeyError as chyba:
             raise ValueError(f"V zázname chýba pole {chyba.args[0]!r}.") from chyba
+
+
+@dataclass(frozen=True)
+class StatistikaSenzora:
+    """Súhrn počtu a priemerných hodnôt pre jeden senzor."""
+
+    pocet_merani: int
+    priemerna_teplota: float
+    minimalna_teplota: float
+    maximalna_teplota: float
+    priemerna_vlhkost: float
+    minimalna_vlhkost: float
+    maximalna_vlhkost: float
+
+
+@dataclass(frozen=True)
+class PriemerneHodnoty:
+    """Priemerná teplota a vlhkosť zo všetkých meraní."""
+
+    priemerna_teplota: float
+    priemerna_vlhkost: float
 
 
 class SpravcaSenzorov:
@@ -112,6 +154,15 @@ class SpravcaSenzorov:
         if not isinstance(meranie, SenzorMeranie):
             raise TypeError("Do správcu možno pridať iba objekt SenzorMeranie.")
         self._merania.append(meranie)
+
+    def vyhladaj_merania(self, senzor_id: str) -> tuple[SenzorMeranie, ...]:
+        """Vráti všetky merania s presne zhodným ID senzora."""
+        if not isinstance(senzor_id, str) or not senzor_id.strip():
+            raise ValueError("ID senzora na vyhľadanie nesmie byť prázdne.")
+        hladane_id = senzor_id.strip()
+        return tuple(
+            meranie for meranie in self.merania if meranie.senzor_id == hladane_id
+        )
 
     @classmethod
     def nacitaj_zo_json(cls, subor_cesta: Union[str, Path]) -> "SpravcaSenzorov":
@@ -139,27 +190,49 @@ class SpravcaSenzorov:
                 ) from chyba
         return spravca
 
-    def vypocitaj_priemerne_hodnoty(self) -> Optional[tuple[float, float]]:
+    def vypocitaj_priemerne_hodnoty(self) -> Optional[PriemerneHodnoty]:
         """Vráti priemernú teplotu a vlhkosť alebo None pri prázdnom zozname."""
         merania = self.merania
         if not merania:
             return None
         priem_teplota = fsum(m.teplota for m in merania) / len(merania)
         priem_vlhkost = fsum(m.vlhkost for m in merania) / len(merania)
-        return priem_teplota, priem_vlhkost
+        return PriemerneHodnoty(priem_teplota, priem_vlhkost)
 
-    def vypocitaj_statistiky_podla_senzora(self) -> dict[str, tuple[int, float, float]]:
+    @staticmethod
+    def _vytvor_statistiku(merania: tuple[SenzorMeranie, ...]) -> StatistikaSenzora:
+        return StatistikaSenzora(
+            pocet_merani=len(merania),
+            priemerna_teplota=(
+                fsum(meranie.teplota for meranie in merania) / len(merania)
+            ),
+            minimalna_teplota=min(meranie.teplota for meranie in merania),
+            maximalna_teplota=max(meranie.teplota for meranie in merania),
+            priemerna_vlhkost=(
+                fsum(meranie.vlhkost for meranie in merania) / len(merania)
+            ),
+            minimalna_vlhkost=min(meranie.vlhkost for meranie in merania),
+            maximalna_vlhkost=max(meranie.vlhkost for meranie in merania),
+        )
+
+    def vypocitaj_statistiku_senzora(
+        self,
+        senzor_id: str,
+    ) -> Optional[StatistikaSenzora]:
+        """Vráti súhrn jedného senzora alebo None, ak nemá merania."""
+        merania = self.vyhladaj_merania(senzor_id)
+        if not merania:
+            return None
+        return self._vytvor_statistiku(merania)
+
+    def vypocitaj_statistiky_podla_senzora(self) -> dict[str, StatistikaSenzora]:
         """Vráti počet meraní a priemery teploty a vlhkosti pre každý senzor."""
         skupiny: dict[str, list[SenzorMeranie]] = {}
         for meranie in self.merania:
             skupiny.setdefault(meranie.senzor_id, []).append(meranie)
 
         return {
-            senzor_id: (
-                len(merania),
-                fsum(meranie.teplota for meranie in merania) / len(merania),
-                fsum(meranie.vlhkost for meranie in merania) / len(merania),
-            )
+            senzor_id: self._vytvor_statistiku(tuple(merania))
             for senzor_id, merania in skupiny.items()
         }
 
@@ -225,17 +298,20 @@ def main(argumenty: Optional[list[str]] = None) -> int:
     if priemery is None:
         print("Priemer nie je k dispozícii, pretože zoznam meraní je prázdny.")
     else:
-        priem_t, priem_v = priemery
-        print(f"Priemerná teplota: {priem_t:.2f} °C")
-        print(f"Priemerná vlhkosť: {priem_v:.2f} %")
+        print(f"Priemerná teplota: {priemery.priemerna_teplota:.2f} °C")
+        print(f"Priemerná vlhkosť: {priemery.priemerna_vlhkost:.2f} %")
 
     print("\nŠtatistiky podľa senzora:")
     statistiky = spravca.vypocitaj_statistiky_podla_senzora()
-    for senzor_id, (pocet, priem_t, priem_v) in statistiky.items():
+    for senzor_id, statistika in statistiky.items():
         print(
-            f"  - {senzor_id}: {pocet} meraní, "
-            f"priemerná teplota {priem_t:.2f} °C, "
-            f"priemerná vlhkosť {priem_v:.2f} %"
+            f"  - {senzor_id}: {statistika.pocet_merani} meraní, "
+            f"priemerná teplota {statistika.priemerna_teplota:.2f} °C, "
+            f"rozsah {statistika.minimalna_teplota:.2f} až "
+            f"{statistika.maximalna_teplota:.2f} °C, "
+            f"priemerná vlhkosť {statistika.priemerna_vlhkost:.2f} %, "
+            f"rozsah {statistika.minimalna_vlhkost:.2f} až "
+            f"{statistika.maximalna_vlhkost:.2f} %"
         )
 
     # Uloženie dát

@@ -4,7 +4,17 @@ Modul 01: Python - Ukážkový štartovací skript
 Tento skript demonštruje základné funkcie, prácu so zoznamami a podmienkami v Pythone.
 """
 
+from math import fsum, isfinite
 from typing import Optional
+
+
+def _je_konecne_cislo(hodnota: object) -> bool:
+    if isinstance(hodnota, bool) or not isinstance(hodnota, (int, float)):
+        return False
+    try:
+        return isfinite(hodnota)
+    except OverflowError:
+        return False
 
 
 def vypocitaj_statistiky(cisla: list[float]) -> Optional[dict[str, float]]:
@@ -12,7 +22,14 @@ def vypocitaj_statistiky(cisla: list[float]) -> Optional[dict[str, float]]:
     if not cisla:
         return None
 
-    sucet = sum(cisla)
+    if not all(_je_konecne_cislo(cislo) for cislo in cisla):
+        raise ValueError("Všetky hodnoty musia byť konečné čísla.")
+
+    try:
+        sucet = fsum(cisla)
+    except OverflowError as chyba:
+        raise ValueError("Súčet hodnôt prekročil podporovaný rozsah.") from chyba
+
     priemer = sucet / len(cisla)
     return {
         "sucet": sucet,
@@ -21,7 +38,8 @@ def vypocitaj_statistiky(cisla: list[float]) -> Optional[dict[str, float]]:
         "max": max(cisla)
     }
 
-def main():
+
+def main() -> None:
     print("=== Vitajte v module 01: Python ===")
 
     # Práca so zoznamom
@@ -36,6 +54,7 @@ def main():
     else:
         for kluc, hodnota in vysledky.items():
             print(f"  - {kluc.capitalize()}: {hodnota:.2f}")
+
 
 if __name__ == "__main__":
     main()

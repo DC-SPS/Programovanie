@@ -30,9 +30,14 @@ Algoritmické témy študujte v uvedenom poradí a priebežne si skúšajte prí
 
 ## Miniprojekt
 
-V priečinku [`projekty`](./projekty/) je ukážkový projekt na spracovanie meraní zo senzorov. Použite ho na prepojenie práce s údajmi, funkciami a základmi objektového návrhu.
+V priečinku [`projekty`](./projekty/) je ukážkový projekt na spracovanie
+meraní zo senzorov. Použite ho na prepojenie práce s údajmi, funkciami a
+základmi objektového návrhu. Podrobné pokyny na spustenie, formát súborov a
+testovanie nájdete v [návode k miniprojektu](./projekty/README.md).
 
-Projekt aj ukážka výpočtu používajú zápis typových anotácií `list[...]`, ktorý je podporovaný od Pythonu 3.9. Na ich spustenie použite Python 3.9 alebo novší ([dokumentácia Pythonu](https://docs.python.org/3/library/stdtypes.html#generic-alias-type)).
+Projekt aj ukážka výpočtu používajú zápis typových anotácií `list[...]`, ktorý
+je podporovaný od Pythonu 3.9. Na ich spustenie použite Python 3.9 alebo novší
+([dokumentácia Pythonu](https://docs.python.org/3/library/stdtypes.html#generic-alias-type)).
 
 Projekt spustíte z koreňového priečinka repozitára príkazom:
 
@@ -40,14 +45,44 @@ Projekt spustíte z koreňového priečinka repozitára príkazom:
 python 01_Python/projekty/spravca_senzorov.py
 ```
 
-Predvolene vytvorí súbor `merania_out.json` v aktuálnom pracovnom priečinku. Cestu možno zmeniť prepínačom `--vystup`, napríklad `python 01_Python/projekty/spravca_senzorov.py --vystup moje_merania.json`. Existujúci súbor možno načítať prepínačom `--vstup`, napríklad `python 01_Python/projekty/spravca_senzorov.py --vstup moje_merania.json --vystup kopia.json`. Nové časové značky sa ukladajú v UTC. Pri načítaní sa overí každý záznam vrátane jeho časového pásma; odmietajú sa aj duplicitné JSON polia a neštandardné hodnoty `NaN` či `Infinity`. ID senzora nesmie byť prázdne, teplota musí byť konečné číslo a vlhkosť musí byť v rozsahu 0 až 100 %. Ak sa merania nedajú načítať alebo uložiť, program vypíše chybu a skončí s nenulovým návratovým kódom.
+Predvolene vytvorí súbor `merania_out.json` v aktuálnom pracovnom priečinku.
+Cestu možno zmeniť prepínačom `--vystup`, napríklad:
 
-Výstup programu obsahuje aj počet meraní a priemernú teplotu a vlhkosť pre každý senzor zvlášť. Vytvorené meranie je nemenné a zoznam v správcovi možno čítať, nie priamo upravovať; nové merania sa pridávajú cez jeho metódu.
+```powershell
+python 01_Python/projekty/spravca_senzorov.py --vystup moje_merania.json
+```
+
+Existujúci súbor načítate prepínačom `--vstup` a výsledok uložíte pod iným
+názvom:
+
+```powershell
+python 01_Python/projekty/spravca_senzorov.py --vstup moje_merania.json --vystup kopia.json
+```
+
+Každý JSON záznam musí obsahovať presne polia `senzor_id`, `teplota`,
+`vlhkost` a `cas`. Nové časové značky sa ukladajú v UTC. Pri načítaní sa overí
+každý záznam vrátane jeho časového pásma; podporuje sa aj zápis UTC s príponou
+`Z`, ktorý sa normalizuje na `+00:00`. Odmietajú sa duplicitné JSON polia a
+neštandardné hodnoty `NaN` či `Infinity`. ID senzora nesmie byť prázdne,
+teplota musí byť konečné číslo a vlhkosť musí byť v rozsahu 0 až 100 %. Ak sa
+merania nedajú načítať alebo uložiť, program vypíše chybu a skončí s nenulovým
+návratovým kódom.
+
+Výstup programu obsahuje počet meraní, priemer a rozsah teploty aj vlhkosti
+pre každý senzor zvlášť. Spoločné priemery aj štatistiky senzorov vracia
+správca ako pomenované nemenné dátové objekty. Zoznam meraní v správcovi možno
+čítať, ale upravovať ho možno iba pridaním merania cez jeho metódu.
 
 Testy projektu spustíte z koreňového priečinka repozitára:
 
 ```powershell
 python -m unittest discover -s 01_Python/projekty -p "test_*.py" -v
+```
+
+Testy úvodnej štatistickej ukážky spustíte samostatne:
+
+```powershell
+python -m unittest discover -s 01_Python -p "test_main.py" -v
 ```
 
 ## Odporúčané študijné zdroje
