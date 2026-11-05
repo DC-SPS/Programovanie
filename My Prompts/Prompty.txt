@@ -2,4 +2,16 @@
 
 Uprav témy 1.1 a 1.2 (v python) tak, aby ich ovládací panel bol vizuálne aj funkčne identický s panelom v téme 4.1. (v c/c++ pod tema c ) Téma 4.1 je jediný vzor. Porovnaj priamo HTML, CSS a JavaScript všetkých troch tém a oprav skutočné rozdiely, nie iba blueprint alebo šablónu. Zachovaj rovnaké prvky, texty, poradie, rozostupy, rozmery, farby, responzívne správanie, výber hlasu a dostupných jazykov. Ovládanie musí vyzerať aj fungovať rovnako v 4.1, 4.2 a 4.3. Obsah prednášok nemeň. Po úprave porovnaj všetky tri implementácie a over, že už medzi nimi nie sú rozdiely v ovládacom paneli.
 
-2. Prompt:
+2. Prompt: Hovover a dvojklik z temy 4.1
+
+Uprav všetky výučbové témy v Python kurze a všetkých 66 tém kurzu Win32 API tak, aby efekty pri ukázaní kurzorom a správanie pri dvojkliku boli vizuálne aj funkčne rovnaké ako v téme 4.1 kurzu C. Téma 4.1 je jediný vzor.
+Najprv priamo preskúmaj HTML, CSS a JavaScript témy 4.1 a zisti, ako fungujú efekty pri hoveri, zvýraznenie obsahu a dvojklik na spustenie čítania od vybranej časti. Potom uprav skutočné stránky všetkých tém Pythonu a Win32 API. Neobmedzuj sa na blueprinty, šablóny ani ukážkovú stránku.
+Zachovaj obsah prednášok, ich existujúce interakcie, rozloženie a štruktúru. Nemeň texty ani príklady. Prispôsob spoločné správanie odlišným štruktúram stránok tak, aby fungovalo všade a nepoškodilo funkcie stránok, napríklad testy, kopírovanie kódu, poznámky či formuláre.
+Zachovaj správanie a vzhľad zo vzoru 4.1 vrátane:
+- zvýraznenia príslušnej časti pri ukázaní kurzorom a prechodu bez rušivých animácií;
+- spustenia čítania od konkrétnej časti dvojklikom;
+- správneho fungovania s výberom častí na čítanie a režimom Žiak/Učiteľ;
+- ovládania myšou aj klávesnicou a podpory prefers-reduced-motion;
+- kompatibility s ovládacím panelom, hlasmi a dostupnými jazykmi zo vzoru 4.1.
+Ak je to vhodné, použi spoločné CSS a JavaScript, aby implementácie zostali jednotné. Nepridávaj duplicitné obslužné skripty a over, že každá stránka načítava správne súbory.
+Po úpravách porovnaj výsledné HTML, CSS a JavaScript so vzorom 4.1. Over pokrytie každej Python témy a všetkých 66 Win32 tém, platnosť odkazov na spoločné súbory, syntax JavaScriptu a zachovanie obsahu prednášok. Uveď, čo si upravil a akými kontrolami si výsledok overil.

@@ -1,15 +1,25 @@
 /* Keep the shared 4.1 control panel on the same dark palette in the Win32 course. */
-.lesson-side-panel{
+.lesson-side-panel,.narration-target,.narration-option{
   --bg:#12161d;
   --fg:#e6eaf1;
   --card:#1b212b;
   --mut:#9aa6b8;
   --acc:#5aa2ff;
   --line:#2d3644;
+}
+.lesson-side-panel{
   color:var(--fg);
 }
+.narration-option{color:var(--fg)}
+.mode{--fg:#e6eaf1;--card:#1b212b;--acc:#5aa2ff;--line:#2d3644}
+.mode button{padding:6px 11px;border:0;background:var(--card);color:var(--fg);font:inherit;cursor:pointer}
+.mode button.on{background:var(--acc);color:#fff}
+.mode button:focus-visible{outline:3px solid var(--acc);outline-offset:3px}
+.teacher-note{display:none;background:#302813;border-color:#7a6322}
+body.teacher .teacher-note{display:block}
+@media(min-width:651px){.top{flex-wrap:wrap}}
 @media(min-width:1280px){
   main.page{width:860px;margin-left:max(16px,calc((100vw - 860px - 390px)/2));margin-right:374px}
 }
 .lesson-side-panel :is(button,select,input):focus-visible{outline:3px solid var(--acc);outline-offset:3px}
-@media print{.lesson-side-panel{display:none!important}}
+@media print{.lesson-side-panel,.mode{display:none!important}}
