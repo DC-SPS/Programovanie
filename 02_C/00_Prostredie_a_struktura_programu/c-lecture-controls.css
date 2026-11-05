@@ -70,7 +70,7 @@
     .narration-option{display:none;align-items:center;gap:.55rem;width:max-content;max-width:100%;margin:-.35rem 0 1rem;padding:.25rem .65rem;border:1px solid var(--line);border-radius:999px;background:var(--card);font-size:.9rem;cursor:pointer}
     body.teacher .narration-option{display:flex}
     .narration-option input{width:1.25rem;height:1.25rem;accent-color:var(--acc)}
-    body:not(.teacher) .teacher-note+.narration-option{display:none}
+    body:not(.teacher) .teacher-note+.narration-option,body:not(.teacher) .note+.narration-option{display:none}
     .narration-target{transition:outline-color .16s ease,background-color .16s ease}
     .narration-target:hover{outline:2px solid var(--acc);outline-offset:3px;background-color:color-mix(in srgb,var(--acc) 8%,transparent);cursor:pointer}
     @media(prefers-reduced-motion:reduce){.narration-target{transition:none}}
