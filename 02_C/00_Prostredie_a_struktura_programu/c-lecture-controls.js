@@ -1,6 +1,6 @@
 ﻿(() => {
-    const studentButton = document.getElementById("student-mode");
-    const teacherButton = document.getElementById("teacher-mode");
+    const studentButton = document.getElementById("student-mode") || document.getElementById("student");
+    const teacherButton = document.getElementById("teacher-mode") || document.getElementById("teacher");
     const setTeacherMode = (enabled) => {
       document.body.classList.toggle("teacher", enabled);
       studentButton.classList.toggle("on", !enabled);
@@ -8,8 +8,10 @@
       studentButton.setAttribute("aria-pressed", String(!enabled));
       teacherButton.setAttribute("aria-pressed", String(enabled));
     };
-    studentButton.addEventListener("click", () => setTeacherMode(false));
-    teacherButton.addEventListener("click", () => setTeacherMode(true));
+    if (studentButton && teacherButton) {
+      studentButton.addEventListener("click", () => setTeacherMode(false));
+      teacherButton.addEventListener("click", () => setTeacherMode(true));
+    }
 
     const readingStatus = document.getElementById("reading-status");
     const playButton = document.getElementById("play-reading");
@@ -58,11 +60,11 @@
       populateVoices();
       window.speechSynthesis.addEventListener("voiceschanged", populateVoices);
     }
-    const main = document.querySelector("main");
-    const readSelectors = ["main h2", "main h3", "main p", "main ul", "main ol", "main .card", "main .teacher-note", "main .safety-notice", "main table"];
+    const main = document.querySelector("main") || document.querySelector(".wrap");
+    const readSelectors = ["h2", "h3", "p", "ul", "ol", ".card", ".teacher-note", ".note", ".safety-notice", "table"];
     main?.querySelectorAll(readSelectors.join(",")).forEach((block) => {
       if (block.closest(".sources, footer") || block.matches(".copy-status")) return;
-      if (block.closest(".card, .teacher-note, .safety-notice") && !block.matches(".card, .teacher-note, .safety-notice")) return;
+      if (block.closest(".card, .teacher-note, .note, .safety-notice") && !block.matches(".card, .teacher-note, .note, .safety-notice")) return;
       block.dataset.readAloud = "selected";
     });
 
@@ -110,7 +112,7 @@
 
     const getSelectedItems = (startIndex = 0) => narrationItems.slice(startIndex)
       .filter(({ checkbox, block }) => {
-        const teacherOnly = block.closest(".teacher-note");
+        const teacherOnly = block.closest(".teacher-note, .note");
         return checkbox.checked && (!teacherOnly || document.body.classList.contains("teacher"));
       })
       .map(({ block }) => ({ block, text: getBlockText(block) }))
@@ -273,7 +275,7 @@
       block.title = "Dvojklikom spustiť čítanie od tejto časti";
       block.addEventListener("dblclick", (event) => {
         if (event.target.closest("[data-read-aloud]") !== block) return;
-        if (block.closest(".teacher-note") && !document.body.classList.contains("teacher")) return;
+        if (block.closest(".teacher-note, .note") && !document.body.classList.contains("teacher")) return;
         event.preventDefault();
         event.stopPropagation();
         checkbox.checked = true;
