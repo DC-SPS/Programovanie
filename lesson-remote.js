@@ -21,10 +21,11 @@ import { firebaseConfig } from "./firebase-config.js";
   };
 
   const lessonTitle = document.querySelector("main h1")?.textContent.trim() || document.title;
-  const pagePath = `${window.location.pathname}${window.location.search}`.slice(0, 500);
+  const pagePath = window.location.pathname.slice(0, 500);
   let currentSession = null;
   let stopSessionListener = null;
   let stopCommandsListener = null;
+  let listeningCommandSessionId = null;
   let heartbeatTimer = 0;
   let closing = false;
 
@@ -157,7 +158,9 @@ import { firebaseConfig } from "./firebase-config.js";
   };
 
   const listenForCommands = (session) => {
+    if (listeningCommandSessionId === session.id && stopCommandsListener) return;
     stopCommandsListener?.();
+    listeningCommandSessionId = session.id;
     const commandQuery = session.dbSdk.collection(session.ref, "commands");
     stopCommandsListener = session.dbSdk.onSnapshot(commandQuery, (snapshot) => {
       for (const change of snapshot.docChanges()) {
@@ -179,6 +182,7 @@ import { firebaseConfig } from "./firebase-config.js";
     heartbeatTimer = 0;
     stopCommandsListener?.();
     stopCommandsListener = null;
+    listeningCommandSessionId = null;
     stopSessionListener?.();
     stopSessionListener = null;
     const old = currentSession;

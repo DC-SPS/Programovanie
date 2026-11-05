@@ -1,14 +1,17 @@
 import { firebaseConfig } from "../firebase-config.js";
 
 const version = "10.14.1";
-const sdk = await Promise.all([
-  import(`https://www.gstatic.com/firebasejs/${version}/firebase-app.js`),
-  import(`https://www.gstatic.com/firebasejs/${version}/firebase-auth.js`),
-  import(`https://www.gstatic.com/firebasejs/${version}/firebase-firestore.js`),
-]).then(([app, auth, firestore]) => ({ app, auth, firestore }));
-const firebaseApp = sdk.app.getApps().length ? sdk.app.getApp() : sdk.app.initializeApp(firebaseConfig);
-const auth = sdk.auth.getAuth(firebaseApp);
-const db = sdk.firestore.getFirestore(firebaseApp);
+let sdk = null;
+try {
+  sdk = await Promise.all([
+    import(`https://www.gstatic.com/firebasejs/${version}/firebase-app.js`),
+    import(`https://www.gstatic.com/firebasejs/${version}/firebase-auth.js`),
+    import(`https://www.gstatic.com/firebasejs/${version}/firebase-firestore.js`),
+  ]).then(([app, auth, firestore]) => ({ app, auth, firestore }));
+} catch {}
+const firebaseApp = sdk ? (sdk.app.getApps().length ? sdk.app.getApp() : sdk.app.initializeApp(firebaseConfig)) : null;
+const auth = sdk ? sdk.auth.getAuth(firebaseApp) : null;
+const db = sdk ? sdk.firestore.getFirestore(firebaseApp) : null;
 
 const $ = (selector) => document.querySelector(selector);
 const connection = $("#connection");
@@ -208,7 +211,11 @@ authButton.addEventListener("click", async () => {
   try {
     const provider = new sdk.auth.GoogleAuthProvider();
     provider.setCustomParameters({ prompt: "select_account" });
-    await sdk.auth.signInWithPopup(auth, provider);
+    if (matchMedia("(pointer: coarse)").matches) {
+      await sdk.auth.signInWithRedirect(auth, provider);
+    } else {
+      await sdk.auth.signInWithPopup(auth, provider);
+    }
   } catch (error) {
     showNotice(firebaseError(error));
   } finally {
@@ -233,18 +240,14 @@ $("#pair-form").addEventListener("submit", async (event) => {
 
 for (const [type, button] of Object.entries(commands)) button.addEventListener("click", () => sendCommand(type));
 
-$("#disconnect").addEventListener("click", () => {
-  stopSession?.();
-  stopSession = null;
-  window.clearInterval(pageFreshTimer);
-  sessionStorage.removeItem("lecture-remote.session");
-  currentSession = null;
-  showNotice("");
-  showView("pair");
-  pairInput.value = "";
-  setConnection("Odpojené · zadajte nový kód", "offline");
-});
-
+if (!sdk) {
+  showView("auth");
+  setConnection("Firebase nie je dostupný", "offline");
+  showNotice(!navigator.onLine
+    ? "Telefón je offline. Po obnovení siete obnovte aplikáciu a stav sa zosynchronizuje."
+    : "Nepodarilo sa načítať Firebase SDK. Skontrolujte sieť a obnovte aplikáciu.");
+  authButton.disabled = true;
+} else {
 sdk.auth.onAuthStateChanged(auth, async (user) => {
   currentUser = user;
   if (!user) {
@@ -261,12 +264,12 @@ sdk.auth.onAuthStateChanged(auth, async (user) => {
       return;
     }
     showNotice("");
-    if (sessionStorage.getItem("lecture-remote.session")) await restoreSession();
-    else if (parameters.get("code")) {
+    if (parameters.get("code")) {
       showView("pair");
       setConnection("Prihlásené · overte párovací kód", "connected");
       pairInput.focus();
-    } else {
+    } else if (sessionStorage.getItem("lecture-remote.session")) await restoreSession();
+    else {
       showView("pair");
       setConnection("Prihlásené · čaká sa na stránku", "connected");
     }
@@ -276,6 +279,7 @@ sdk.auth.onAuthStateChanged(auth, async (user) => {
     showNotice(firebaseError(error));
   }
 });
+}
 
 window.addEventListener("online", () => {
   if (currentSession) listenToSession(currentSession.id);

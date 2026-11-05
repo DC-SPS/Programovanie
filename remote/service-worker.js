@@ -1,5 +1,5 @@
 const CACHE = "lecture-remote-shell-v1";
-const SHELL = ["./", "./index.html", "./remote.css", "./manifest.webmanifest", "./icon.svg"];
+const SHELL = ["./", "./index.html", "./remote.css", "./remote.js", "./manifest.webmanifest", "./icon.svg"];
 
 self.addEventListener("install", (event) => {
   event.waitUntil(caches.open(CACHE).then((cache) => cache.addAll(SHELL)).then(() => self.skipWaiting()));
@@ -12,7 +12,7 @@ self.addEventListener("activate", (event) => {
 self.addEventListener("fetch", (event) => {
   const url = new URL(event.request.url);
   if (event.request.method !== "GET" || url.origin !== self.location.origin || !url.pathname.startsWith("/remote/")) return;
-  if (url.pathname.endsWith(".js")) return;
+  if (url.pathname.endsWith("service-worker.js")) return;
   event.respondWith(fetch(event.request).then((response) => {
     const copy = response.clone();
     caches.open(CACHE).then((cache) => cache.put(event.request, copy));

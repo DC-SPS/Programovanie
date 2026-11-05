@@ -1,12 +1,55 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
     function signedIn() {
-      return request.auth != null && request.auth.token.email_verified == true;
+      return isAuthenticated() && request.auth.token.email_verified == true;
     }
 
     function isTeacher() {
       return signedIn() && request.auth.token.teacher == true;
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function uidUnchanged() {
+      return request.resource.data.ownerUid == resource.data.ownerUid;
+    }
+
+    function isValidRemoteSession(data) {
+      return data.keys().hasOnly([
+          'ownerUid', 'pageTitle', 'pagePath', 'pairingCode', 'pairExpiresAt',
+          'pairedDeviceId', 'pairedAt', 'pageActive', 'pageHeartbeatAt',
+          'playbackState', 'canReplay', 'createdAt'
+        ])
+        && data.ownerUid is string
+        && data.pageTitle is string
+        && data.pageTitle.size() > 0
+        && data.pageTitle.size() <= 160
+        && data.pagePath is string
+        && data.pagePath.size() <= 500
+        && (data.pairingCode == null || (data.pairingCode is string && data.pairingCode.matches('^[0-9]{6}$')))
+        && (data.pairExpiresAt == null || data.pairExpiresAt is timestamp)
+        && (data.pairedDeviceId == null || (data.pairedDeviceId is string && data.pairedDeviceId.size() >= 20 && data.pairedDeviceId.size() <= 80))
+        && (data.pairedAt == null || data.pairedAt is timestamp)
+        && data.pageActive is bool
+        && data.pageHeartbeatAt is timestamp
+        && data.playbackState in ['stopped', 'playing', 'paused']
+        && data.canReplay is bool
+        && data.createdAt is timestamp;
+    }
+
+    function isValidRemoteCommand(data, sessionId, pairedDeviceId) {
+      return data.keys().hasOnly(['type', 'targetSessionId', 'deviceId', 'createdAt'])
+        && data.type in ['play', 'pauseResume', 'stop', 'replay']
+        && data.targetSessionId == sessionId
+        && data.deviceId == pairedDeviceId
+        && data.createdAt == request.time;
     }
 
     match /users/{userId} {
@@ -36,17 +79,8 @@ service cloud.firestore {
       allow get, list: if isTeacher() && resource.data.ownerUid == request.auth.uid;
 
       allow create: if isTeacher()
-        && request.resource.data.keys().hasOnly([
-          'ownerUid', 'pageTitle', 'pagePath', 'pairingCode', 'pairExpiresAt',
-          'pairedDeviceId', 'pairedAt', 'pageActive', 'pageHeartbeatAt',
-          'playbackState', 'canReplay', 'createdAt'
-        ])
+        && isValidRemoteSession(request.resource.data)
         && request.resource.data.ownerUid == request.auth.uid
-        && request.resource.data.pageTitle is string
-        && request.resource.data.pageTitle.size() > 0
-        && request.resource.data.pageTitle.size() <= 160
-        && request.resource.data.pagePath is string
-        && request.resource.data.pagePath.size() <= 500
         && request.resource.data.pairingCode is string
         && request.resource.data.pairingCode.matches('^[0-9]{6}$')
         && request.resource.data.pairedDeviceId == null
@@ -62,8 +96,9 @@ service cloud.firestore {
       // Pairing is one-time and expires quickly. After pairing, only page
       // liveness and playback state may be changed by the page.
       allow update: if isTeacher()
-        && resource.data.ownerUid == request.auth.uid
-        && request.resource.data.ownerUid == resource.data.ownerUid
+        && isOwner(resource.data.ownerUid)
+        && isValidRemoteSession(request.resource.data)
+        && uidUnchanged()
         && request.resource.data.pageTitle == resource.data.pageTitle
         && request.resource.data.pagePath == resource.data.pagePath
         && request.resource.data.createdAt == resource.data.createdAt
@@ -103,12 +138,12 @@ service cloud.firestore {
         allow create: if ownsRemoteSession(sessionId)
           && get(/databases/$(database)/documents/remoteSessions/$(sessionId)).data.pageActive == true
           && get(/databases/$(database)/documents/remoteSessions/$(sessionId)).data.pageHeartbeatAt > request.time - duration.value(45, 's')
-          && get(/databases/$(database)/documents/remoteSessions/$(sessionId)).data.pairedDeviceId == request.resource.data.deviceId
-          && request.resource.data.keys().hasOnly(['type', 'targetSessionId', 'deviceId', 'createdAt'])
-          && request.resource.data.type in ['play', 'pauseResume', 'stop', 'replay']
-          && request.resource.data.targetSessionId == sessionId
           && request.resource.data.deviceId is string
-          && request.resource.data.createdAt == request.time;
+          && isValidRemoteCommand(
+            request.resource.data,
+            sessionId,
+            get(/databases/$(database)/documents/remoteSessions/$(sessionId)).data.pairedDeviceId
+          );
         allow update, delete: if false;
       }
     }
