@@ -17,8 +17,8 @@
     .global-course-nav{display:flex;flex-wrap:wrap;gap:.55rem;align-items:center;width:min(100% - 2rem,1000px);margin:.75rem auto 0;font:600 .9rem/1.4 system-ui,-apple-system,"Segoe UI",sans-serif}
     .global-course-nav a{display:inline-block;padding:.4rem .7rem;border:1px solid var(--line);border-radius:.55rem;text-decoration:none;color:inherit;background:var(--card)}
     .global-course-nav a:hover{text-decoration:underline}
-    .global-course-nav a:focus-visible,a:focus-visible,button:focus-visible,summary:focus-visible,select:focus-visible{outline:3px solid var(--acc);outline-offset:3px}
-    main{width:min(100% - 2rem,880px);margin:auto;padding:1rem 0 3rem}
+    .global-course-nav a:focus-visible,a:focus-visible,button:focus-visible,summary:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid var(--acc);outline-offset:3px}
+    main{width:min(100% - 2rem,860px);margin:auto;padding:16px 0 3rem}
     header{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:.65rem}
     .crumb,.muted,.status{color:var(--mut)}
     h1{font-size:clamp(1.8rem,5vw,2.6rem);line-height:1.2;margin:.8rem 0}
@@ -26,8 +26,8 @@
     h3{margin-top:1.25rem;font-size:1.1rem}
     .lead{font-size:1.08rem}
     .tags{display:flex;flex-wrap:wrap;gap:.45rem;margin:1rem 0}
-    .tag{padding:2px 9px;border:1px solid var(--line);border-radius:999px;background:var(--card);font-size:13px}
-    .card,.teacher-note,.video-card,.quiz{margin:1rem 0;padding:1rem 1.1rem;border:1px solid var(--line);border-radius:12px;background:var(--card)}
+    .tag{padding:2px 9px;border:1px solid var(--line);border-radius:6px;background:var(--line);font-size:13px}
+    .card,.teacher-note,.video-card,.quiz{margin:14px 0;padding:14px 17px;border:1px solid var(--line);border-radius:12px;background:var(--card)}
     .teacher-note{display:none;background:var(--note)}
     body.teacher .teacher-note{display:block}
     .teacher-note strong{display:block;margin-bottom:.3rem}
@@ -35,14 +35,17 @@
     .mode button,.quiz button{padding:6px 11px;border:0;background:var(--card);color:var(--fg);font:inherit;cursor:pointer}
     .mode button.on,.quiz button{background:var(--acc);color:#fff}
     .narration-controls{display:flex;flex-wrap:wrap;align-items:center;gap:.6rem;margin:1rem 0;padding:1rem;border:1px solid var(--line);border-radius:12px;background:var(--card)}
-    .narration-controls button,.read-aloud-button{min-height:44px;padding:.5rem .8rem;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--fg);font:inherit;font-weight:650;cursor:pointer}
-    .narration-controls button:first-child{background:var(--acc);border-color:var(--acc);color:#fff}
+    .narration-controls button,.narration-option input{min-height:44px}
+    .narration-controls button{padding:.5rem .8rem;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--fg);font:inherit;font-weight:650;cursor:pointer}
+    .narration-controls button:first-of-type{background:var(--acc);border-color:var(--acc);color:#fff}
     .narration-controls button:disabled{cursor:not-allowed;opacity:.55}
-    .narration-status{flex-basis:100%;margin:0;color:var(--mut)}
-    .read-aloud-row{margin:-.45rem 0 1rem}
-    .read-aloud-button{font-size:.9rem}
-    .read-aloud-button[aria-pressed="true"]{border-color:var(--acc);box-shadow:0 0 0 2px color-mix(in srgb,var(--acc) 25%,transparent)}
-    .is-speaking{background:color-mix(in srgb,var(--acc) 9%,transparent);border-radius:5px}
+    .narration-help,.narration-status{flex-basis:100%;margin:0;color:var(--mut)}
+    .narration-option{display:none;align-items:center;gap:.55rem;width:max-content;max-width:100%;margin:-.35rem 0 1rem;padding:.25rem .65rem;border:1px solid var(--line);border-radius:999px;background:var(--card);font-size:.9rem;cursor:pointer}
+    body.teacher .narration-option{display:flex}
+    .narration-option input{width:1.25rem;height:1.25rem;accent-color:var(--acc)}
+    body:not(.teacher) .teacher-note+.narration-option{display:none}
+    .speech-bubble{position:relative;padding:.85rem 1rem!important;border:2px solid var(--acc)!important;border-radius:1.2rem!important;background:color-mix(in srgb,var(--acc) 12%,var(--card))!important;box-shadow:0 4px 18px color-mix(in srgb,var(--acc) 18%,transparent)}
+    .speech-bubble::after{position:absolute;bottom:-.65rem;left:1.2rem;width:1rem;height:1rem;border-right:2px solid var(--acc);border-bottom:2px solid var(--acc);background:color-mix(in srgb,var(--acc) 12%,var(--card));content:"";transform:rotate(45deg)}
     .scroll{overflow-x:auto}
     table{width:100%;border-collapse:collapse}
     th,td{padding:.65rem .7rem;border:1px solid var(--line);text-align:left;vertical-align:top}
@@ -72,10 +75,13 @@
     .sources h2{margin-top:0}
     .sources li{margin:.4rem 0}
     footer{margin-top:2rem;padding-top:1rem;border-top:1px solid var(--line);color:var(--mut);font-size:14px}
-    @media(max-width:620px){main{width:min(100% - 1.2rem,880px)}td:first-child{white-space:normal}}
+    @media(max-width:620px){main{width:min(100% - 1.2rem,860px)}td:first-child{white-space:normal}}
     @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important}}
-    @media print{.global-course-nav,.mode,.quiz button,.narration-controls,.read-aloud-row{display:none!important}.teacher-note{display:block}main{max-width:none}}
-  </style>
+    @media print{.global-course-nav,.mode,.quiz button,.narration-controls,.narration-option{display:none!important}.teacher-note{display:block}main{max-width:none}}
+
+    .safety-notice{margin:1rem 0;padding:14px 17px;border:1px solid var(--line);border-left:5px solid var(--acc);border-radius:12px;background:var(--note)}
+    .safety-notice strong{display:block;margin-bottom:.25rem}
+</style>
   <script src="../../theme.js" defer></script>
 </head>
 <body>
@@ -84,6 +90,7 @@
     <a href="../../index.html">Všetky kurzy</a>
   </nav>
   <main>
+    <aside class="safety-notice" aria-label="Kontrola pracoviska"><strong>Začíname kontrolou pracoviska:</strong> Po príchode do učebně si skontrolujte svoje miesto, lavicu, stoličku a pridelený počítač s príslušenstvom. Každé poškodenie, chýbajúcu časť alebo inú závadu ihneď oznámte vyučujúcemu. Stručný súhrn zistených nedostatkov pošlite vyučujúcemu správou cez EduPage. Poškodené alebo nebezpečné zariadenie nepoužívajte.</aside>
     <header>
       <span class="crumb"><a href="../c-language.html">Základy jazyka C</a> › Úvod do programovania › 4.1</span>
       <div class="mode" role="group" aria-label="Zobrazenie stránky">
@@ -100,17 +107,20 @@
       <span class="tag">ISO C17</span>
     </p>
     <section class="narration-controls" aria-label="Čítanie prednášky">
-      <button id="read-lecture" type="button">Prečítať celú prednášku</button>
-      <button id="stop-reading" type="button" disabled>Zastaviť čítanie</button>
+      <button id="play-reading" type="button" aria-label="Prehrať">▶ Prehrať</button>
+      <button id="stop-reading" type="button" aria-label="Zastaviť čítanie" disabled>■ Zastaviť</button>
+      <button id="pause-reading" type="button" aria-label="Pozastaviť čítanie" disabled>⏸ Pozastaviť</button>
+      <button id="replay-reading" type="button" aria-label="Prehrať vybrané časti znova" disabled>↻ Prehrať znova</button>
+      <p class="narration-help">Začiarknuté časti sa čítajú v poradí stránky a práve čítaná sa zvýrazní v bubline. V režime Učiteľ môžete výber zmeniť; predvolene sú vybrané ciele a hlavný výklad.</p>
       <div id="reading-status" class="narration-status" role="status" aria-live="polite">
-        Vyberte časť alebo spustite čítanie celej prednášky. Slovenský hlas sa použije, ak je dostupný.
+        Vyberte, ktoré časti má učiteľ prečítať. Slovenský hlas sa použije, ak je dostupný.
       </div>
     </section>
-    <p>V tejto úvodnej hodine sa zoznámite s pôvodom jazyka C, jeho vývojom a významom jazykových noriem. Zistíte, prečo v kurze používame C17 a ako spolu súvisia jazyk, štandard a kompilátor.</p>
-    <section class="card">
+    <p data-read-aloud="selected">V tejto úvodnej hodine sa zoznámite s pôvodom jazyka C, jeho vývojom a významom jazykových noriem. Zistíte, prečo v kurze používame C17 a ako spolu súvisia jazyk, štandard a kompilátor.</p>
+    <section class="card" data-read-aloud="selected">
       <strong>Nadväznosť na predchádzajúce učivo:</strong> V predchádzajúcej časti kurzu ste navrhovali a precvičovali algoritmy v Pythone. Teraz budete rovnaké algoritmické základy postupne zapisovať v jazyku C a porovnáte jeho syntax, typy a preklad programu. Po zvládnutí C bude nasledovať C++. V tejto hodine sa pozrieme na vznik jazyka C a na to, ako štandard určuje spoločné pravidlá pre jeho programy.
     </section>
-    <section class="teacher-note">
+    <section class="teacher-note" data-read-aloud="optional">
       <strong>Ciele, predpoklady a pomôcky</strong>
       Žiak stručne opíše vznik a použitie jazyka C, rozlíši jazyk C, štandard C17 a kompilátor, vysvetlí význam dodržiavania normy a rozpozná voľbu <code>-std=c17</code> v príkaze GCC. Predpoklady: základné algoritmické myslenie a predstava o zdrojovom programe. Pomôcky: tabuľa alebo projektor, časová os a kartičky s pojmami; kompilátor je voliteľný.
     </section>
@@ -132,23 +142,23 @@
       </table>
     </div>
 
-    <h2>Ciele vyučovacej hodiny</h2>
-    <p>Po hodine dokážete:</p>
-    <ul>
+    <h2 data-read-aloud="selected">Ciele vyučovacej hodiny</h2>
+    <p data-read-aloud="selected">Po hodine dokážete:</p>
+    <ul data-read-aloud="selected">
       <li>uviesť, kto a približne kedy vytvoril jazyk C;</li>
       <li>pomenovať aspoň dve oblasti, v ktorých sa jazyk C používa;</li>
       <li>vlastnými slovami vysvetliť rozdiel medzi jazykom C, normou a kompilátorom;</li>
       <li>vysvetliť, prečo budeme pri príkladoch používať štandard C17.</li>
     </ul>
 
-    <h2>1. Prečo vznikajú jazykové normy?</h2>
-    <p>Predstavte si, že dvaja programátori napíšu rovnaký zdrojový kód, no každý používa iný prekladač. Bez spoločných pravidiel by mohli očakávať odlišné správanie toho istého programu. Norma pomáha určiť, ktoré zápisy patria do jazyka a aké správanie sa od vyhovujúcej implementácie očakáva.</p>
-    <div class="card"><strong>Otázka na úvod:</strong> Ak by si každý výrobca prekladača mohol určovať vlastnú syntax aj význam príkazov, čo by sa stalo pri prenose programu z jedného počítača na druhý?</div>
+    <h2 data-read-aloud="selected">1. Prečo vznikajú jazykové normy?</h2>
+    <p data-read-aloud="selected">Predstavte si, že dvaja programátori napíšu rovnaký zdrojový kód, no každý používa iný prekladač. Bez spoločných pravidiel by mohli očakávať odlišné správanie toho istého programu. Norma pomáha určiť, ktoré zápisy patria do jazyka a aké správanie sa od vyhovujúcej implementácie očakáva.</p>
+    <div class="card" data-read-aloud="optional"><strong>Otázka na úvod:</strong> Ak by si každý výrobca prekladača mohol určovať vlastnú syntax aj význam príkazov, čo by sa stalo pri prenose programu z jedného počítača na druhý?</div>
 
-    <h2>2. Stručná história jazyka C</h2>
-    <p>Jazyk C vytvoril <strong>Dennis Ritchie</strong> v Bellových laboratóriách na začiatku 70. rokov 20. storočia. Vyvíjal sa v súvislosti s operačným systémom Unix a umožnil písať systémový softvér efektívnejšie než v čisto strojovom alebo assemblerovom jazyku. Kniha <em>The C Programming Language</em>, ktorú napísali Brian W. Kernighan a Dennis M. Ritchie, významne prispela k rozšíreniu jazyka; jej vydanie z roku 1978 sa často označuje ako K&amp;R C.</p>
-    <p>C sa používa aj dnes, napríklad pri systémovom softvéri, operačných systémoch, ovládačoch zariadení, embedded systémoch a mikrokontroléroch. Použitie C však samo osebe neznamená, že každý program v C je automaticky rýchly alebo bezpečný: záleží aj na návrhu programu, implementácii a dôslednom overovaní.</p>
-    <div class="timeline" aria-label="Zjednodušená časová os štandardov C">
+    <h2 data-read-aloud="selected">2. Stručná história jazyka C</h2>
+    <p data-read-aloud="selected">Jazyk C vytvoril <strong>Dennis Ritchie</strong> v Bellových laboratóriách na začiatku 70. rokov 20. storočia. Vyvíjal sa v súvislosti s operačným systémom Unix a umožnil písať systémový softvér efektívnejšie než v čisto strojovom alebo assemblerovom jazyku. Kniha <em>The C Programming Language</em>, ktorú napísali Brian W. Kernighan a Dennis M. Ritchie, významne prispela k rozšíreniu jazyka; jej vydanie z roku 1978 sa často označuje ako K&amp;R C.</p>
+    <p data-read-aloud="selected">C sa používa aj dnes, napríklad pri systémovom softvéri, operačných systémoch, ovládačoch zariadení, embedded systémoch a mikrokontroléroch. Použitie C však samo osebe neznamená, že každý program v C je automaticky rýchly alebo bezpečný: záleží aj na návrhu programu, implementácii a dôslednom overovaní.</p>
+    <div class="timeline" data-read-aloud="selected" aria-label="Zjednodušená časová os štandardov C">
       <span>Začiatok 70. rokov · vznik C</span><b aria-hidden="true">→</b>
       <span>1978 · K&amp;R C</span><b aria-hidden="true">→</b>
       <span>1989 · C89 / ANSI C</span><b aria-hidden="true">→</b>
@@ -158,39 +168,39 @@
       <span class="chosen">2018 · C17</span><b aria-hidden="true">→</b>
       <span>2024 · C23</span>
     </div>
-    <p>Časová os je zjednodušená. C17 (tiež označované ako C18 podľa roku vydania ISO dokumentu) je revízia normy C11 s opravami a objasneniami; neprináša veľkú sadu nových jazykových vlastností. Novšia norma C23 existuje, ale v tomto kurze si kvôli jednotným príkladom a nástrojom zvolíme C17.</p>
+    <p data-read-aloud="selected">Časová os je zjednodušená. C17 (tiež označované ako C18 podľa roku vydania ISO dokumentu) je revízia normy C11 s opravami a objasneniami; neprináša veľkú sadu nových jazykových vlastností. Novšia norma C23 existuje, ale v tomto kurze si kvôli jednotným príkladom a nástrojom zvolíme C17.</p>
 
-    <h2>3. Jazyk, norma a kompilátor</h2>
+    <h2 data-read-aloud="selected">3. Jazyk, norma a kompilátor</h2>
     <div class="split">
-      <article class="term"><h3>Jazyk C</h3><p>Pravidlá a prostriedky, ktorými programátor vyjadruje postup riešenia.</p></article>
-      <article class="term"><h3>Norma C17</h3><p>Dokument so spoločnými pravidlami jazyka C, schválený ako ISO/IEC 9899:2018.</p></article>
-      <article class="term"><h3>Kompilátor</h3><p>Program, ktorý spracuje zdrojový kód podľa podporovaných pravidiel a vytvorí ďalší výstup, napríklad spustiteľný program.</p></article>
-      <article class="term"><h3>GCC</h3><p>Jeden z kompilátorov. Jeho prepínač môže vybrať jazykový režim, napríklad C17.</p></article>
+      <article class="term" data-read-aloud="selected"><h3>Jazyk C</h3><p>Pravidlá a prostriedky, ktorými programátor vyjadruje postup riešenia.</p></article>
+      <article class="term" data-read-aloud="selected"><h3>Norma C17</h3><p>Dokument so spoločnými pravidlami jazyka C, schválený ako ISO/IEC 9899:2018.</p></article>
+      <article class="term" data-read-aloud="selected"><h3>Kompilátor</h3><p>Program, ktorý spracuje zdrojový kód podľa podporovaných pravidiel a vytvorí ďalší výstup, napríklad spustiteľný program.</p></article>
+      <article class="term" data-read-aloud="selected"><h3>GCC</h3><p>Jeden z kompilátorov. Jeho prepínač môže vybrať jazykový režim, napríklad C17.</p></article>
     </div>
-    <p>Norma nie je samotný kompilátor a jej zvolením sa nový nástroj neinštaluje. Kompilátory sa môžu líšiť verziou, podporou vlastností a rozšíreniami. Preto pri výučbe nastavíme spoločný jazykový režim a zároveň budeme kompilovať s upozorneniami.</p>
+    <p data-read-aloud="selected">Norma nie je samotný kompilátor a jej zvolením sa nový nástroj neinštaluje. Kompilátory sa môžu líšiť verziou, podporou vlastností a rozšíreniami. Preto pri výučbe nastavíme spoločný jazykový režim a zároveň budeme kompilovať s upozorneniami.</p>
 
-    <h2>4. Prečo používame C17?</h2>
-    <ul>
+    <h2 data-read-aloud="selected">4. Prečo používame C17?</h2>
+    <ul data-read-aloud="selected">
       <li>Príklady v kurze budú mať spoločné a predvídateľné pravidlá.</li>
       <li>Kompilátor nás môže upozorniť na podozrivé alebo neštandardné zápisy.</li>
       <li>Príkaz prekladu bude jasne uvádzať, podľa ktorej verzie jazyka program skúšame preložiť.</li>
       <li>C17 je vhodný spoločný základ pre používané učebné nástroje; zmienime aj to, že existujú novšie normy.</li>
     </ul>
-    <div class="card"><strong>Rozdiel, ktorý si zapamätajte:</strong> C je jazyk, C17 je verzia jeho normy a GCC je jeden z nástrojov, ktorý môže program v zvolenom režime preložiť.</div>
+    <div class="card" data-read-aloud="selected"><strong>Rozdiel, ktorý si zapamätajte:</strong> C je jazyk, C17 je verzia jeho normy a GCC je jeden z nástrojov, ktorý môže program v zvolenom režime preložiť.</div>
 
-    <h2>5. Ako sa norma objaví v príkaze?</h2>
-    <p>Neskôr budeme zdrojový súbor v jazyku C prekladať príkazom podobným tomuto:</p>
-    <pre><code>gcc -std=c17 -Wall -Wextra -Wpedantic main.c -o program</code></pre>
-    <ul>
+    <h2 data-read-aloud="selected">5. Ako sa norma objaví v príkaze?</h2>
+    <p data-read-aloud="selected">Neskôr budeme zdrojový súbor v jazyku C prekladať príkazom podobným tomuto:</p>
+    <pre data-read-aloud="optional"><code>gcc -std=c17 -Wall -Wextra -Wpedantic main.c -o program</code></pre>
+    <ul data-read-aloud="selected">
       <li><code>gcc</code> spustí kompilátor GCC;</li>
       <li><code>-std=c17</code> požiada GCC o režim jazyka C17;</li>
       <li><code>-Wall -Wextra -Wpedantic</code> zapne skupiny upozornení a kontrolu prenositeľnosti;</li>
       <li><code>main.c</code> je zdrojový súbor a <code>-o program</code> určuje názov výsledného programu.</li>
     </ul>
-    <p>Upozornenia sú pomôcka pri hľadaní problémov; nenahrádzajú porozumenie kódu ani testovanie. Podrobnejšie si preklad a spustenie vyskúšame v nasledujúcich hodinách.</p>
+    <p data-read-aloud="selected">Upozornenia sú pomôcka pri hľadaní problémov; nenahrádzajú porozumenie kódu ani testovanie. Podrobnejšie si preklad a spustenie vyskúšame v nasledujúcich hodinách.</p>
 
     <h2>6. Krátka aktivita</h2>
-    <p>Vo dvojici priraďte pojmy k ich vysvetleniam a potom vysvetlite vzťah medzi nimi:</p>
+    <p data-read-aloud="optional">Vo dvojici priraďte pojmy k ich vysvetleniam a potom vysvetlite vzťah medzi nimi:</p>
     <div class="scroll">
       <table>
         <thead><tr><th>Pojem</th><th>Význam</th></tr></thead>
@@ -268,61 +278,96 @@
     teacherButton.addEventListener("click", () => setTeacherMode(true));
 
     const readingStatus = document.getElementById("reading-status");
-    const readLectureButton = document.getElementById("read-lecture");
-    const stopReadingButton = document.getElementById("stop-reading");
+    const playButton = document.getElementById("play-reading");
+    const stopButton = document.getElementById("stop-reading");
+    const pauseButton = document.getElementById("pause-reading");
+    const replayButton = document.getElementById("replay-reading");
     const speechSupported = "speechSynthesis" in window && "SpeechSynthesisUtterance" in window;
-    const readableParagraphs = [...document.querySelectorAll(
-      "main p:not(.result), main .card, main .teacher-note",
-    )].filter((block) => {
-      return !block.matches("p") || !block.closest(".card, .teacher-note");
+    const narrationItems = [...document.querySelectorAll("[data-read-aloud]")].map((block, index) => {
+      const blockId = block.id || `narration-block-${index + 1}`;
+      const row = document.createElement("label");
+      const checkbox = document.createElement("input");
+      block.id = blockId;
+      row.className = "narration-option";
+      checkbox.type = "checkbox";
+      checkbox.checked = block.dataset.readAloud === "selected";
+      checkbox.setAttribute("aria-describedby", blockId);
+      row.append(checkbox, document.createTextNode("Zahrnúť do čítania"));
+      if (block.matches(".term")) {
+        block.append(row);
+      } else {
+        block.after(row);
+      }
+      return { block, checkbox };
     });
-    let activeParagraph = null;
-    let paragraphQueue = [];
-    let readingSequence = false;
+    let activeBlock = null;
+    let readingQueue = [];
+    let previousSelection = [];
     let readingRun = 0;
+    let isReading = false;
+    let isPaused = false;
 
-    const paragraphText = (paragraph) => paragraph.innerText.replace(/\s+/g, " ").trim();
-    const getVisibleReadingBlocks = () => readableParagraphs.filter((block) => {
-      const teacherOnly = block.closest(".teacher-note");
-      const hiddenAnswer = block.closest("details:not([open])");
-      const teacherCanRead = !teacherOnly || document.body.classList.contains("teacher");
-      return paragraphText(block) && teacherCanRead && !hiddenAnswer;
-    });
+    const getBlockText = (block) => {
+      const copy = block.cloneNode(true);
+      copy.querySelectorAll(".narration-option").forEach((option) => option.remove());
+      return copy.textContent
+        .replace(/→/g, ", ")
+        .replace(/[ \t]*\n[ \t]*/g, ". ")
+        .replace(/\s+/g, " ")
+        .trim();
+    };
 
-    const setActiveParagraph = (paragraph) => {
-      activeParagraph?.classList.remove("is-speaking");
-      activeParagraph = paragraph;
-      activeParagraph?.classList.add("is-speaking");
+    const getSelectedItems = () => narrationItems
+      .filter(({ checkbox, block }) => {
+        const teacherOnly = block.closest(".teacher-note");
+        return checkbox.checked && (!teacherOnly || document.body.classList.contains("teacher"));
+      })
+      .map(({ block }) => ({ block, text: getBlockText(block) }))
+      .filter(({ text }) => text.length > 0);
+
+    const setActiveBlock = (block) => {
+      activeBlock?.classList.remove("speech-bubble");
+      activeBlock = block;
+      activeBlock?.classList.add("speech-bubble");
+    };
+
+    const updateControls = () => {
+      playButton.disabled = !speechSupported || isReading;
+      stopButton.disabled = !isReading;
+      pauseButton.disabled = !isReading;
+      pauseButton.textContent = isPaused ? "▶ Pokračovať" : "⏸ Pozastaviť";
+      pauseButton.setAttribute(
+        "aria-label",
+        isPaused ? "Pokračovať v čítaní" : "Pozastaviť čítanie",
+      );
+      replayButton.disabled = !speechSupported || previousSelection.length === 0;
     };
 
     const stopReading = (message = "Čítanie je zastavené.") => {
       readingRun += 1;
-      readingSequence = false;
-      paragraphQueue = [];
-      window.speechSynthesis.cancel();
-      setActiveParagraph(null);
-      document.querySelectorAll(".read-aloud-button").forEach((button) => {
-        button.setAttribute("aria-pressed", "false");
-      });
-      stopReadingButton.disabled = true;
-      readLectureButton.disabled = !speechSupported;
+      readingQueue = [];
+      isReading = false;
+      isPaused = false;
+      if (speechSupported) window.speechSynthesis.cancel();
+      setActiveBlock(null);
+      updateControls();
       readingStatus.textContent = message;
     };
 
-    const speakNextParagraph = (run) => {
+    const speakNextBlock = (run) => {
       if (run !== readingRun) return;
-      const paragraph = paragraphQueue.shift();
-      if (!paragraph) {
-        readingSequence = false;
-        setActiveParagraph(null);
-        stopReadingButton.disabled = true;
-        readLectureButton.disabled = !speechSupported;
-        readingStatus.textContent = "Prednáška bola dočítaná.";
+      const item = readingQueue.shift();
+      if (!item) {
+        isReading = false;
+        isPaused = false;
+        setActiveBlock(null);
+        updateControls();
+        readingStatus.textContent = "Vybrané časti boli prečítané.";
         return;
       }
 
-      setActiveParagraph(paragraph);
-      const utterance = new SpeechSynthesisUtterance(paragraphText(paragraph));
+      setActiveBlock(item.block);
+      const utterance = new SpeechSynthesisUtterance(item.text);
       const slovakVoice = window.speechSynthesis.getVoices().find((voice) =>
         voice.lang.toLowerCase().startsWith("sk"),
       );
@@ -331,74 +376,62 @@
       if (slovakVoice) utterance.voice = slovakVoice;
       utterance.onstart = () => {
         if (run === readingRun) {
-        readingStatus.textContent = `Čítam: ${paragraphText(paragraph).slice(0, 110)}`;
+          const currentIndex = previousSelection.length - readingQueue.length;
+          readingStatus.textContent = `Čítam časť ${currentIndex} z ${previousSelection.length}.`;
         }
       };
       utterance.onend = () => {
-        if (run !== readingRun) return;
-        document.querySelectorAll(".read-aloud-button[aria-pressed=\"true\"]").forEach((button) => {
-          button.setAttribute("aria-pressed", "false");
-        });
-        if (readingSequence) {
-          speakNextParagraph(run);
-        } else {
-          setActiveParagraph(null);
-          stopReadingButton.disabled = true;
-          readingStatus.textContent = "Text bol prečítaný.";
-        }
+        if (run === readingRun) speakNextBlock(run);
       };
       utterance.onerror = (event) => {
         if (run !== readingRun || event.error === "canceled" || event.error === "interrupted") return;
-        readingSequence = false;
-        paragraphQueue = [];
-        setActiveParagraph(null);
-        stopReadingButton.disabled = true;
-        readLectureButton.disabled = false;
-        document.querySelectorAll(".read-aloud-button[aria-pressed=\"true\"]").forEach((button) => {
-          button.setAttribute("aria-pressed", "false");
-        });
+        isReading = false;
+        isPaused = false;
+        readingQueue = [];
+        setActiveBlock(null);
+        updateControls();
         readingStatus.textContent = "Čítanie sa nepodarilo spustiť. Skontrolujte hlasové výstupy prehliadača.";
       };
       window.speechSynthesis.speak(utterance);
     };
 
-    const startReading = (paragraphs, button = null) => {
+    const startReading = (items) => {
       if (!speechSupported) {
         readingStatus.textContent = "Tento prehliadač nepodporuje hlasové čítanie textu.";
         return;
       }
-      stopReading("Spúšťam čítanie…");
+      if (items.length === 0) {
+        readingStatus.textContent = "Začiarknite aspoň jednu časť, ktorú má učiteľ prečítať.";
+        return;
+      }
+      stopReading("");
       readingRun += 1;
-      readingSequence = paragraphs.length > 1;
-      paragraphQueue = [...paragraphs];
-      stopReadingButton.disabled = false;
-      readLectureButton.disabled = true;
-      if (button) button.setAttribute("aria-pressed", "true");
-      speakNextParagraph(readingRun);
+      readingQueue = [...items];
+      previousSelection = [...items];
+      isReading = true;
+      isPaused = false;
+      updateControls();
+      readingStatus.textContent = `Spúšťam čítanie ${items.length} vybraných častí.`;
+      speakNextBlock(readingRun);
     };
 
-    if (speechSupported) {
-      readableParagraphs.forEach((paragraph, index) => {
-        const blockId = paragraph.id || `readable-block-${index + 1}`;
-        paragraph.id = blockId;
-        const row = document.createElement("div");
-        const button = document.createElement("button");
-        row.className = "read-aloud-row";
-        button.className = "read-aloud-button";
-        button.type = "button";
-        button.textContent = "Prečítať túto časť";
-        button.setAttribute("aria-describedby", blockId);
-        button.setAttribute("aria-pressed", "false");
-        button.addEventListener("click", () => startReading([paragraph], button));
-        row.append(button);
-        paragraph.after(row);
-      });
-      readLectureButton.addEventListener("click", () => startReading(getVisibleReadingBlocks()));
-      stopReadingButton.addEventListener("click", () => stopReading());
-    } else {
-      readLectureButton.disabled = true;
-      readingStatus.textContent = "Tento prehliadač nepodporuje hlasové čítanie textu.";
-    }
+    playButton.addEventListener("click", () => startReading(getSelectedItems()));
+    stopButton.addEventListener("click", () => stopReading());
+    pauseButton.addEventListener("click", () => {
+      if (!isReading || !speechSupported) return;
+      if (isPaused) {
+        window.speechSynthesis.resume();
+        isPaused = false;
+        readingStatus.textContent = "Čítanie pokračuje.";
+      } else {
+        window.speechSynthesis.pause();
+        isPaused = true;
+        readingStatus.textContent = "Čítanie je pozastavené.";
+      }
+      updateControls();
+    });
+    replayButton.addEventListener("click", () => startReading(previousSelection));
+    updateControls();
 
     document.getElementById("knowledge-quiz").addEventListener("submit", (event) => {
       event.preventDefault();

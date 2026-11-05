@@ -1,3 +1,6 @@
+
+> **Začíname kontrolou pracoviska:** Po príchode do učebně si skontrolujte svoje miesto, lavicu, stoličku a pridelený počítač s príslušenstvom. Každé poškodenie, chýbajúcu časť alebo inú závadu ihneď oznámte vyučujúcemu. Stručný súhrn zistených nedostatkov pošlite vyučujúcemu správou cez EduPage. Poškodené alebo nebezpečné zariadenie nepoužívajte.
+
 # Modul 02: C – Procedurálne Programovanie a Správa Pamäte
 
 Vítajte v treťom module. Programovací jazyk **C** je univerzálny, efektívny a systémový programovací jazyk. Tvorí základ vývoja operačných systémov, embedded zariadení, mikrokontrolérov v mechatronike a ovládačov hardvéru.

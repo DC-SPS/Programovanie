@@ -1,3 +1,6 @@
+
+> **Začíname kontrolou pracoviska:** Po príchode do učebně si skontrolujte svoje miesto, lavicu, stoličku a pridelený počítač s príslušenstvom. Každé poškodenie, chýbajúcu časť alebo inú závadu ihneď oznámte vyučujúcemu. Stručný súhrn zistených nedostatkov pošlite vyučujúcemu správou cez EduPage. Poškodené alebo nebezpečné zariadenie nepoužívajte.
+
 # Lekcia 06: Ukazovatele a Správa Pamäte
 
 ## 1. Cieľ lekcie
