@@ -19,6 +19,17 @@
     h2{margin-top:2rem}
     .lead,.muted{color:var(--muted)}
     .card{margin:1.5rem 0;padding:1.25rem;border:1px solid var(--border);border-radius:12px;background:var(--surface)}
+    .lesson-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:1rem;margin:1rem 0 1.5rem}
+    .lesson-preview{overflow:hidden;display:flex;flex-direction:column;min-width:0;border:1px solid var(--border);border-radius:16px;background:var(--surface);text-decoration:none;color:var(--text);transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease}
+    .lesson-preview:hover{transform:translateY(-3px);border-color:var(--accent);box-shadow:0 12px 28px color-mix(in srgb,var(--text) 12%,transparent)}
+    .lesson-preview:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+    .lesson-preview img{display:block;width:100%;aspect-ratio:16/9;object-fit:cover;background:#0b1723}
+    .lesson-preview-copy{display:flex;flex:1;flex-direction:column;align-items:flex-start;padding:1rem 1.1rem 1.15rem}
+    .lesson-preview-kicker{margin:0 0 .45rem;color:var(--accent);font-size:.78rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase}
+    .lesson-preview h3{margin:0;font-size:1.25rem;line-height:1.35}
+    .lesson-preview-description{margin:.45rem 0 .9rem;color:var(--muted)}
+    .lesson-preview-open{margin-top:auto;color:var(--accent);font-weight:750}
+    @media(prefers-reduced-motion:reduce){.lesson-preview{transition:none}.lesson-preview:hover{transform:none}}
     .pdf-frame{display:block;width:100%;height:78vh;min-height:560px;margin:1rem 0;border:1px solid var(--border);border-radius:8px;background:var(--surface)}
     footer{margin-top:2rem;padding-top:1rem;border-top:1px solid var(--border);color:var(--muted)}
 
@@ -36,11 +47,35 @@
     <section class="card" aria-labelledby="lesson-heading">
       <h2 id="lesson-heading">Prednášky</h2>
       <p>Začnite historickým úvodom a normou C17, potom vytvorte prvý program v C a naučte sa rozpoznať chyby pri jeho preklade a ladení.</p>
-      <ol>
-        <li><a href="00_Prostredie_a_struktura_programu/4.1_Historicky_uvod_a_normy_jazyka_C.html">Prednáška 4.1 – Historický úvod a normy jazyka C</a></li>
-        <li><a href="00_Prostredie_a_struktura_programu/4.2_Prvy_program_v_jazyku_C.html">Prednáška 4.2 – Prvý program v jazyku C</a></li>
-        <li><a href="00_Prostredie_a_struktura_programu/4.3_Ladenie_a_spustenie_programu.html">Prednáška 4.3 – Ladenie a spustenie programu</a></li>
-      </ol>
+      <div class="lesson-grid" aria-label="Náhľady prednášok">
+        <a class="lesson-preview" href="00_Prostredie_a_struktura_programu/4.1_Historicky_uvod_a_normy_jazyka_C.html">
+          <img src="00_Prostredie_a_struktura_programu/4.1-historicky-uvod-nahlad.png" alt="Historický počítač a moderný monitor s ukážkou programu v jazyku C" loading="lazy">
+          <div class="lesson-preview-copy">
+            <span class="lesson-preview-kicker">Úvod do jazyka C</span>
+            <h3>4.1 Historický úvod a normy jazyka C</h3>
+            <p class="lesson-preview-description">Od prvých počítačov k dnešnému C: vznik jazyka, vývoj noriem a význam režimu C17.</p>
+            <span class="lesson-preview-open">Otvoriť tému →</span>
+          </div>
+        </a>
+        <a class="lesson-preview" href="00_Prostredie_a_struktura_programu/4.2_Prvy_program_v_jazyku_C.html">
+          <img src="00_Prostredie_a_struktura_programu/4.2-prvy-program-nahlad.png" alt="Monitor zobrazuje prvý krátky program v C a jeho pozdrav v termináli" loading="lazy">
+          <div class="lesson-preview-copy">
+            <span class="lesson-preview-kicker">Prvý program</span>
+            <h3>4.2 Prvý program v jazyku C</h3>
+            <p class="lesson-preview-description">Napíšte program „Ahoj, svet!“, spoznajte funkciu <code>main</code>, výpis pomocou <code>printf</code> a cestu od zdrojového kódu k výstupu.</p>
+            <span class="lesson-preview-open">Otvoriť tému →</span>
+          </div>
+        </a>
+        <a class="lesson-preview" href="00_Prostredie_a_struktura_programu/4.3_Ladenie_a_spustenie_programu.html">
+          <img src="00_Prostredie_a_struktura_programu/4.3-ladenie-a-spustenie-nahlad.png" alt="Programátor opravuje chybu v programe C, spúšťa ho a overuje výstup" loading="lazy">
+          <div class="lesson-preview-copy">
+            <span class="lesson-preview-kicker">Preklad, spustenie a ladenie</span>
+            <h3>4.3 Ladenie a spustenie programu</h3>
+            <p class="lesson-preview-description">Prečítajte diagnostiku GCC, opravte chybu, spustite program a porovnajte skutočný výstup s očakávaným.</p>
+            <span class="lesson-preview-open">Otvoriť tému →</span>
+          </div>
+        </a>
+      </div>
     </section>
     <section class="card" aria-labelledby="material-heading">
       <h2 id="material-heading">Študijné podklady</h2>
