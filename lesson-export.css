@@ -1,0 +1,29 @@
+/* Shared lesson guidance, source index, glossary and print layout. */
+.lesson-guidance{margin:1rem 0;padding:14px 17px;border:1px solid #2b5674;border-left:5px solid #42bdf2;border-radius:12px;background:#102133;color:#eaf4ff}
+.lesson-guidance strong{display:block;margin-bottom:.25rem;color:#bfe7ff}
+.lesson-export-sections{margin-top:2rem}
+.lesson-export-sections section{margin:14px 0;padding:14px 17px;border:1px solid #2d3b4b;border-radius:12px;background:#1b2430;color:#eaf0f7}
+.lesson-export-sections h2{margin-top:.2rem}
+.lesson-export-sections li{margin:.4rem 0}
+.lesson-export-sections dl{display:grid;grid-template-columns:minmax(8rem,.35fr) 1fr;gap:.3rem .8rem}
+.lesson-export-sections dt{font-weight:750}
+.lesson-export-sections dd{margin:0}
+.lesson-export-button{margin-left:.5rem;padding:.4rem .7rem;border:1px solid #34475b;border-radius:.55rem;background:#101a26;color:inherit;font:600 .9rem/1.4 system-ui,sans-serif;cursor:pointer}
+.lesson-export-button:focus-visible{outline:3px solid #42bdf2;outline-offset:3px}
+@media(max-width:520px){.lesson-export-sections dl{grid-template-columns:1fr;gap:.1rem}.lesson-export-sections dd{margin-bottom:.5rem}}
+@media print{
+  .lesson-export-button,.global-course-nav,.mode,.narration-controls,.narration-option,.lesson-side-panel,.back,.nav,.top button,.top a,.settings-link,.settings{display:none!important}
+  html,body{background:#fff!important;color:#111!important;color-scheme:light!important;font-size:11pt!important}
+  main,.page,.wrap,.w{width:auto!important;max-width:none!important;margin:0!important;padding:10mm 12mm!important;background:#fff!important;color:#111!important;box-shadow:none!important}
+  main>*{break-inside:auto}
+  .card,.panel,.term,.lesson-guidance,.lesson-export-sections section,blockquote,pre,table,.quiz,.notice,.hero{break-inside:avoid;page-break-inside:avoid;box-shadow:none!important}
+  .lesson-guidance,.lesson-export-sections section{background:#fff!important;color:#111!important;border-color:#777!important}
+  .lesson-guidance strong{color:#111!important}
+  a{color:#111!important;text-decoration:none!important}
+  button,input,select,textarea{display:none!important}
+  iframe,video{display:none!important}
+  pre{white-space:pre-wrap!important;overflow:visible!important}
+  thead{display:table-header-group}
+  tr{break-inside:avoid;page-break-inside:avoid}
+  footer{break-inside:avoid}
+}

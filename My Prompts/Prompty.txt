@@ -15,3 +15,17 @@ Zachovaj správanie a vzhľad zo vzoru 4.1 vrátane:
 - kompatibility s ovládacím panelom, hlasmi a dostupnými jazykmi zo vzoru 4.1.
 Ak je to vhodné, použi spoločné CSS a JavaScript, aby implementácie zostali jednotné. Nepridávaj duplicitné obslužné skripty a over, že každá stránka načítava správne súbory.
 Po úpravách porovnaj výsledné HTML, CSS a JavaScript so vzorom 4.1. Over pokrytie každej Python témy a všetkých 66 Win32 tém, platnosť odkazov na spoločné súbory, syntax JavaScriptu a zachovanie obsahu prednášok. Uveď, čo si upravil a akými kontrolami si výsledok overil.
+
+3. Prompt: Pridanie pokyny na zacatie a ukoncenie hodiny + register
+
+Uprav všetky výučbové stránky Pythonu a všetkých 66 lekcií Win32 API tak, aby každá mala pokyny a export do PDF podľa témy 4.1 kurzu C. Téma 4.1 je jediný vzor. Použi priložené obrázky ako označenie prvkov, ktoré treba skontrolovať.
+Najprv preskúmaj priamo HTML, CSS a JavaScript témy 4.1. Zisti, ako sú vytvorené a ako fungujú:
+- úvodné upozornenie na kontrolu pracoviska;
+- priebežné bezpečnostné pokyny v texte;
+- záverečné pokyny pred odchodom;
+- sekcie odporúčaných zdrojov a registra pojmov;
+- tlačidlo Exportovať do PDF a výsledný vzhľad stránky pri tlači alebo uložení do PDF.
+Potom uprav skutočné stránky všetkých tém Pythonu a všetkých 66 lekcií Win32 API. Neobmedzuj zmeny na blueprinty, šablóny ani prehľadové stránky. Použi spoločné CSS a JavaScript tam, kde to pomôže zachovať jednotné správanie, a oprav odkazy tak, aby fungovali zo všetkých priečinkov.
+Zachovaj existujúci obsah prednášok, ukážky, cvičenia a funkčné prvky. Nemeň ich texty ani príklady. Pokyny doplň podľa účelu konkrétnej lekcie; nevkladaj všade rovnaký odsek bez ohľadu na tému. Zachovaj vizuálne usporiadanie vzoru 4.1 pre navigáciu, režim Žiak/Učiteľ a exportné tlačidlo. Pri exporte do PDF skry ovládacie prvky, navigáciu a tlačidlá, zachovaj čitateľné farby, okraje a rozdelenie obsahu a zabráň nevhodnému zalomeniu kariet a blokov.
+Žlté zvýraznenia na obrázkoch sú iba anotácie oblastí, ktorým treba venovať pozornosť; nepridávaj ich ako dizajnový prvok na stránky.
+Po úpravách porovnaj HTML, CSS a JavaScript každej upravenej stránky s témou 4.1. Over pokrytie všetkých stránok, funkčnosť exportného tlačidla, platnosť odkazov na spoločné súbory, syntax JavaScriptu a zachovanie pôvodného obsahu. Uveď, čo si upravil a akými kontrolami si výsledok overil.

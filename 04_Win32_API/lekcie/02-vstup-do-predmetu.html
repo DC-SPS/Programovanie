@@ -11,6 +11,7 @@
 </style>
 <link rel="stylesheet" href="../../02_C/00_Prostredie_a_struktura_programu/c-lecture-controls.css">
 <link rel="stylesheet" href="win32-controls-theme.css">
+  <link rel="stylesheet" href="../../lesson-export.css">
 </head>
 <body><nav class="global-course-nav" aria-label="Navigácia kurzov"><a href="../../win32-api.html">Kurz Win32 API</a><a href="../struktura.html">Osnova hodín</a><a href="../../index.html">Všetky kurzy</a></nav>  <aside class="lesson-side-panel" aria-label="Ovládanie hodiny a čítania">
     <section class="narration-controls" aria-label="Čítanie prednášky">
@@ -61,6 +62,7 @@
 <footer>Win32 API · Aplikovaná informatika · 4. ročník SPŠ</footer>
 </main><script>
 document.getElementById('quiz').addEventListener('submit',function(event){event.preventDefault();const selected=this.querySelector('input[name="answer"]:checked');const feedback=document.getElementById('feedback');if(!selected){feedback.textContent='Najprv vyber jednu odpoveď.';feedback.className='error';return}if(selected.value==='b'){feedback.textContent='Správne. Win32 program používa Windows API a zostavuje sa pre Windows.';feedback.className='success'}else{feedback.textContent='Skús znova. Hľadaj odpoveď, ktorá spomína natívny C++ program, Windows API a Windows.';feedback.className='error'}});
-</script><script src="../../lesson-top.js" defer></script><script src="../../02_C/00_Prostredie_a_struktura_programu/c-lecture-controls.js" defer></script></body></html>
+</script><script src="../../lesson-top.js" defer></script><script src="../../02_C/00_Prostredie_a_struktura_programu/c-lecture-controls.js" defer></script>  <script src="../../lesson-export.js" defer></script>
+</body></html>
 
 
