@@ -3,7 +3,7 @@
   const main = document.querySelector("main");
   if (!panel || !main) return;
 
-  const selectors = ["main h2", "main h3", "main p", "main .card", "main .teacher-note", "main .safety-notice", "main table"];
+  const selectors = ["main h2", "main h3", "main p", "main ul", "main ol", "main .card", "main .teacher-note", "main .safety-notice", "main table"];
   main.querySelectorAll(selectors.join(",")).forEach((block, index) => {
     if (block.closest(".sources, footer") || block.matches(".copy-status")) return;
     if (block.closest(".card, .teacher-note, .safety-notice") && !block.matches(".card, .teacher-note, .safety-notice")) return;

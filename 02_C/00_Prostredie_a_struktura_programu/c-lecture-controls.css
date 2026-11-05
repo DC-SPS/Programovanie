@@ -1,0 +1,38 @@
+/* Shared controls layout based on lecture 4.1. */
+.lesson-side-panel{position:fixed;top:16px;right:16px;z-index:1100;display:flex;flex-direction:column;gap:.75rem;width:min(350px,calc(100vw - 32px));max-height:calc(100vh - 32px);overflow-y:auto;padding:.55rem;border:1px solid #2b5674;border-radius:14px;background:rgba(8,18,29,.96);color:#edf6ff;box-shadow:0 12px 38px rgba(0,0,0,.32);backdrop-filter:blur(12px)}
+.lesson-side-panel .lesson-clock{position:relative;top:auto;flex:none;height:auto;min-height:0;margin:0;border:1px solid #2b5674;border-radius:.8rem;overflow:hidden;background:#0b1723;color:#edf6ff}
+.lesson-side-panel .lesson-clock__chrome{display:flex;flex-wrap:nowrap;align-items:center;gap:.5rem;padding:.55rem .7rem;background:#12334b}
+.lesson-side-panel .lesson-clock__tag,.lesson-side-panel .lesson-clock__chrome-spacer,.lesson-side-panel .lesson-clock__time-label,.lesson-side-panel .lesson-clock__time{display:none!important}
+.lesson-side-panel .lesson-clock__clock{display:flex;align-items:center;gap:.3rem;margin-left:auto;padding-left:.5rem}
+.lesson-side-panel .lesson-clock__clock-label,.lesson-side-panel .lesson-clock__date{display:none}
+.lesson-side-panel .lesson-clock__now{min-width:4.2rem;font-size:.88rem;color:#fff}
+.lesson-side-panel .lesson-clock__zone{display:inline-block!important;white-space:nowrap;font-size:.58rem;color:#a8bdcf}
+.lesson-side-panel .lesson-clock__settings{flex:none;margin-left:.1rem}
+.lesson-side-panel .lesson-clock__body{display:block;height:auto;min-height:0;padding:.55rem .65rem;background:#08121d}
+.lesson-side-panel .lesson-clock__info,.lesson-side-panel .lesson-clock__controls,.lesson-side-panel .lesson-clock__number,.lesson-side-panel .lesson-clock__title,.lesson-side-panel .lesson-clock__description,.lesson-side-panel .lesson-clock__progress{display:none!important}
+.lesson-side-panel .narration-controls{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));align-items:center;justify-items:stretch;gap:.45rem;margin:0;padding:.65rem;border:1px solid #263b50;border-radius:12px;background:#111b29;color:#edf6ff}
+.lesson-side-panel .narration-controls button{text-align:center;border-color:#263b50;background:#111b29;color:#edf6ff}
+.lesson-side-panel .narration-controls button:first-of-type{background:#5798f5;border-color:#5798f5;color:#fff}
+.lesson-side-panel .narration-controls button:disabled{opacity:.48}
+.lesson-side-panel .narration-controls .narration-speed{grid-column:1/-1;grid-row:1;justify-content:space-between;gap:.65rem;width:100%;margin:0;color:#f3f6fb}
+.lesson-side-panel .narration-controls .narration-speed select{flex:none;min-width:8.5rem;max-width:65%;background:#0b111b;color:#fff;border-color:#2e3b4c}
+.lesson-side-panel .narration-voice,.lesson-side-panel .narration-volume{grid-column:1/-1;display:grid;grid-template-columns:1fr;gap:.25rem;margin:0;color:#f3f6fb;font-size:.82rem;font-weight:650}
+.lesson-side-panel .narration-voice select{width:100%;min-height:38px;padding:.3rem .5rem;border:1px solid #2e3b4c;border-radius:8px;background:#0b111b;color:#fff;font:inherit}
+.lesson-side-panel .narration-volume-heading{display:flex;justify-content:space-between;gap:.5rem}.lesson-side-panel .narration-volume input{width:100%;accent-color:#5798f5}
+.lesson-side-panel .narration-volume-help{grid-column:1/-1;margin:0;color:#a8bdcf;font-size:.7rem;font-weight:400;text-align:left}
+.lesson-side-panel .narration-status:empty{display:none!important}
+.lesson-duration{margin:0 0 .55rem;padding:.45rem .6rem;border:1px solid #2b5674;border-radius:.6rem;background:#0b1723;color:#edf6ff}
+.lesson-duration-heading{display:flex;align-items:center;justify-content:space-between;gap:.5rem}.lesson-duration-heading strong{font-size:.78rem;color:#bae6fd}
+.lesson-duration-time{font:800 1.05rem/1.1 Consolas,"Cascadia Code",monospace;font-variant-numeric:tabular-nums;color:#fff}
+.lesson-duration-controls{display:flex;gap:.35rem;margin-top:.4rem}.lesson-duration-controls button{flex:1;min-height:2rem;padding:.35rem .45rem;border:1px solid #32617e;border-radius:.45rem;background:#12334b;color:#e6f6ff;font:700 .72rem system-ui,"Segoe UI",sans-serif;cursor:pointer}.lesson-duration-controls button:disabled{opacity:.5;cursor:not-allowed}
+.pomodoro-context{display:block;min-width:0;margin:.1rem 0 .4rem;padding-bottom:.35rem;border-bottom:1px solid #25415a;font-size:.78rem;font-weight:750;color:#f1f8ff;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pomodoro-panel{padding:.65rem .7rem;border:1px solid #2b5674;border-radius:.7rem;background:#0b1723;color:#edf6ff}
+.pomodoro-heading{display:flex;align-items:center;justify-content:space-between;gap:.5rem;margin-bottom:.5rem}.pomodoro-heading strong{font-size:.88rem;letter-spacing:.04em;color:#bae6fd}
+.pomodoro-phase{padding:.2rem .5rem;border-radius:999px;background:#123b57;color:#7dd3fc;font-size:.68rem;font-weight:800;letter-spacing:.08em}.pomodoro-time{font:800 1.35rem/1.1 Consolas,"Cascadia Code",monospace;font-variant-numeric:tabular-nums;color:#fff}
+.pomodoro-sliders{display:grid;grid-template-columns:1fr 1fr;gap:.65rem}.pomodoro-slider{display:grid;grid-template-columns:1fr auto;align-items:center;gap:.15rem .35rem;color:#c7d7e5;font-size:.7rem;font-weight:650}.pomodoro-slider output{color:#fff;font-variant-numeric:tabular-nums}.pomodoro-slider input{grid-column:1/-1;width:100%;margin:.12rem 0;accent-color:#38bdf8;cursor:pointer}
+.pomodoro-toast{position:fixed;top:16px;right:374px;z-index:1400;max-width:min(22rem,calc(100vw - 2rem));padding:.85rem 1rem;border:1px solid #38bdf8;border-radius:.75rem;background:#0b1723;color:#edf6ff;box-shadow:0 12px 36px rgba(0,0,0,.32);font-weight:750}.pomodoro-toast[hidden]{display:none}
+.narration-option{border-color:#2e3b4c;background:#111b29;color:#edf6ff}.speech-bubble{background:#12334b!important}
+@media(min-width:1280px){main{width:min(100% - 2rem,860px);margin-left:max(16px,calc((100vw - 860px - 390px)/2));margin-right:374px}}
+@media(max-width:1279px){.lesson-side-panel{top:auto;right:8px;bottom:8px;left:8px;width:auto;max-height:min(46vh,420px);padding:.45rem}.pomodoro-toast{right:16px}main{padding-bottom:min(52vh,470px)}}
+@media(max-width:620px){.lesson-side-panel{max-height:44vh}.lesson-side-panel .narration-controls{gap:.4rem;padding:.65rem}.lesson-side-panel .narration-controls button{min-height:40px;padding:.4rem;font-size:.9rem}}
+@media print{.lesson-side-panel{display:none!important}main{width:auto;margin:0;padding:0}}
