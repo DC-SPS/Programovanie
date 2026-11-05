@@ -220,7 +220,7 @@
           <option value="en">English — angličtina</option>
         </select>
       </label>
-      <p id="page-language-status" class="page-language-status" role="status" aria-live="polite">Preklad sa otvorí v novej karte; táto stránka zostane v slovenčine.</p>
+      <p id="page-language-status" class="page-language-status" role="status" aria-live="polite">Vyberte jazyk a v Chrome použite ikonu prekladu v adresnom riadku alebo pravé tlačidlo myši → Preložiť.</p>
       <label class="narration-voice" for="narration-voice">Hlas
         <select id="narration-voice" aria-label="Vyberte hlas na čítanie"><option value="">Automaticky – slovenský hlas</option></select>
       </label>
@@ -431,25 +431,15 @@
         pageLanguageStatus.textContent = "Zobrazuje sa pôvodná slovenská stránka.";
         return;
       }
-      if (!/^https?:$/.test(window.location.protocol)) {
-        pageLanguageStatus.textContent = "Preklad funguje po zverejnení stránky na webe; lokálnu kópiu Google Translate nevie načítať.";
-        pageLanguageSelect.value = "sk";
-        return;
-      }
-      const translateUrl = new URL("https://translate.google.com/translate");
-      translateUrl.searchParams.set("sl", "sk");
-      translateUrl.searchParams.set("tl", targetLanguage);
-      translateUrl.searchParams.set("u", window.location.href);
-      const translationLink = document.createElement("a");
-      translationLink.href = translateUrl.toString();
-      translationLink.target = "_blank";
-      translationLink.rel = "noopener noreferrer";
-      translationLink.hidden = true;
-      document.body.append(translationLink);
-      translationLink.click();
-      translationLink.remove();
-      pageLanguageStatus.textContent = "Preložená kópia sa otvára v novej karte. Ak ju prehliadač zablokoval, povoľte vyskakovacie okná pre túto stránku. Pôvodná stránka zostáva otvorená.";
-      pageLanguageSelect.value = "sk";
+      const languageNames = {
+        hu: "maďarčiny",
+        uk: "ukrajinčiny",
+        cs: "češtiny",
+        pl: "poľštiny",
+        de: "nemčiny",
+        en: "angličtiny"
+      };
+      pageLanguageStatus.textContent = `V Chrome zvoľte ikonu prekladu v adresnom riadku alebo kliknite pravým tlačidlom myši a vyberte „Preložiť do ${languageNames[targetLanguage] || "zvoleného jazyka"}“. Preklad zostane na tejto stránke a zachová aktuálne prihlásenie.`;
     });
 
     const studentButton = document.getElementById("student-mode");

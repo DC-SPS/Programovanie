@@ -3,7 +3,17 @@ import { firebaseConfig } from "./firebase-config.js";
 const signInButton = document.getElementById("google-sign-in");
 const signOutButton = document.getElementById("google-sign-out");
 const status = document.getElementById("auth-status");
-signInButton.disabled = false;
+
+const translatedProxyHost = window.location.hostname.endsWith(".translate.goog");
+if (translatedProxyHost) {
+  const originalLoginUrl = new URL("https://programovanie-sps.vercel.app/login.html");
+  const requestedNext = new URLSearchParams(window.location.search).get("next");
+  if (isLocalPath(requestedNext)) originalLoginUrl.searchParams.set("next", normalizeLocalPath(requestedNext));
+  status.textContent = "Prihlasovanie sa presúva na pôvodnú doménu kurzu, kde ho Firebase povoľuje.";
+  window.location.replace(originalLoginUrl.toString());
+} else {
+  signInButton.disabled = false;
+}
 
 signInButton.addEventListener("click", async () => {
   signInButton.disabled = true;
@@ -34,7 +44,7 @@ signInButton.addEventListener("click", async () => {
 
     status.textContent = "Prihlásenie potvrdené. Otvára sa stránka…";
     const next = new URLSearchParams(window.location.search).get("next");
-    window.location.replace(isLocalPath(next) ? next : "/");
+    window.location.replace(isLocalPath(next) ? normalizeLocalPath(next) : "/");
   } catch (error) {
     status.textContent = "Prihlásenie zlyhalo: " + (error.message || "Neznáma chyba.");
     signInButton.disabled = false;
@@ -74,5 +84,16 @@ function loadFirebaseAuth() {
 }
 
 function isLocalPath(path) {
-  return typeof path === "string" && path.startsWith("/") && !path.startsWith("//") && !path.startsWith("/login");
+  if (typeof path !== "string" || !path || path.includes("\\")) return false;
+  const normalized = normalizeLocalPath(path);
+  if (normalized.startsWith("//") || /^\/login(?:\.html|\/|$)/i.test(normalized)) return false;
+  try {
+    return new URL(normalized, window.location.origin).origin === window.location.origin;
+  } catch {
+    return false;
+  }
+}
+
+function normalizeLocalPath(path) {
+  return path.startsWith("/") ? path : `/${path}`;
 }
