@@ -339,6 +339,18 @@
     <h2>8. Lístok pri odchode</h2>
     <p>Dokončite vetu: <strong>„C17 je … a pri preklade ho zvolím pomocou …“</strong></p>
     <details><summary>Očakávaná odpoveď</summary><p>C17 je verzia normy jazyka C a v príkaze GCC ju zvolím pomocou <code>-std=c17</code>.</p></details>
+    <section class="card" aria-labelledby="setup-project-heading">
+      <h3 id="setup-project-heading">Malý projekt za 5 bodov: Pripravte si prostredie na C a C++</h3>
+      <p>Nainštalujte Visual Studio Code, kompilátor podporujúci C aj C++ a rozšírenie C/C++ od Microsoftu. Postupujte podľa pokynov vyučujúceho pre operačný systém v učebni a po inštalácii overte, že nástroje fungujú.</p>
+      <ol>
+        <li><strong>1 bod:</strong> Visual Studio Code je nainštalovaný a spustí sa.</li>
+        <li><strong>1 bod:</strong> Kompilátor C/C++ je nainštalovaný a dostupný v termináli; overte príkazmi <code>gcc --version</code> a <code>g++ --version</code> alebo ekvivalentnými príkazmi pre použitý kompilátor.</li>
+        <li><strong>1 bod:</strong> Vo VS Code je nainštalované rozšírenie <strong>C/C++ od Microsoftu</strong>.</li>
+        <li><strong>1 bod:</strong> Vytvorte, preložte a spustite krátky program v jazyku C.</li>
+        <li><strong>1 bod:</strong> Vytvorte, preložte a spustite krátky program v jazyku C++.</li>
+      </ol>
+      <p><strong>Odovzdanie:</strong> Ukážte vyučujúcemu nainštalované prostredie a oba spustené programy, prípadne priložte snímku obrazovky podľa jeho pokynov. Ak inštalácia vyžaduje oprávnenia správcu, požiadajte o pomoc vyučujúceho a nič neinštalujte obchádzaním školských pravidiel.</p>
+    </section>
 
     <h2>9. Ukončenie práce v učebni</h2>
     <aside class="safety-reminder" data-read-aloud="optional"><strong>Pred odchodom:</strong> Uložte svoju prácu, odhláste sa z používateľského konta a počítač vypnite, ak vyučujúci neurčí inak. Stoličku, lavicu aj pracovné miesto zanechajte čisté a v pôvodnom stave.</aside>
@@ -422,6 +434,10 @@
     let isPaused = false;
     let restartCurrentOnResume = false;
     let speechRestartTimeout = 0;
+    let estimateInterval = 0;
+    let currentStartedAt = 0;
+    let currentPausedAt = 0;
+    let currentEstimateMs = 0;
 
     const getBlockText = (block) => {
       const copy = block.cloneNode(true);
@@ -440,6 +456,23 @@
       })
       .map(({ block }) => ({ block, text: getBlockText(block) }))
       .filter(({ text }) => text.length > 0);
+
+    const estimateSpeechMs = (text) => {
+      const words = text.trim().split(/\s+/).filter(Boolean).length;
+      return Math.max(1000, Math.ceil(words / (150 * Number(speedSelect.value)) * 60_000));
+    };
+    const formatEstimate = (milliseconds) => {
+      const totalSeconds = Math.ceil(Math.max(0, milliseconds) / 1000);
+      return String(Math.floor(totalSeconds / 60)).padStart(2, "0") + ":" + String(totalSeconds % 60).padStart(2, "0");
+    };
+    const updateReadingEstimate = () => {
+      if (!isReading || !activeItem) return;
+      const elapsed = currentStartedAt ? (currentPausedAt || Date.now()) - currentStartedAt : 0;
+      const currentRemaining = Math.max(0, currentEstimateMs - elapsed);
+      const totalRemaining = currentRemaining + readingQueue.reduce((total, item) => total + estimateSpeechMs(item.text), 0);
+      const currentIndex = previousSelection.length - readingQueue.length;
+      readingStatus.textContent = `Čítam časť ${currentIndex} z ${previousSelection.length} · odsek ~${formatEstimate(currentRemaining)} · celé čítanie ~${formatEstimate(totalRemaining)}.`;
+    };
 
     const setActiveBlock = (block) => {
       activeBlock?.classList.remove("speech-bubble");
@@ -469,6 +502,10 @@
       speechRestartTimeout = 0;
       readingQueue = [];
       activeItem = null;
+      currentStartedAt = 0;
+      currentPausedAt = 0;
+      window.clearInterval(estimateInterval);
+      estimateInterval = 0;
       restartCurrentOnResume = false;
       isReading = false;
       isPaused = false;
@@ -485,6 +522,8 @@
         activeItem = null;
         isReading = false;
         isPaused = false;
+        window.clearInterval(estimateInterval);
+        estimateInterval = 0;
         setActiveBlock(null);
         updateControls();
         readingStatus.textContent = "Vybrané časti boli prečítané.";
@@ -492,6 +531,9 @@
       }
 
       activeItem = item;
+      currentStartedAt = 0;
+      currentPausedAt = 0;
+      currentEstimateMs = estimateSpeechMs(item.text);
       setActiveBlock(item.block);
       const utterance = new SpeechSynthesisUtterance(item.text);
       const slovakVoice = window.speechSynthesis.getVoices().find((voice) =>
@@ -502,13 +544,17 @@
       if (slovakVoice) utterance.voice = slovakVoice;
       utterance.onstart = () => {
         if (run === readingRun) {
-          const currentIndex = previousSelection.length - readingQueue.length;
-          readingStatus.textContent = `Čítam časť ${currentIndex} z ${previousSelection.length}.`;
+          currentStartedAt = Date.now();
+          updateReadingEstimate();
+          window.clearInterval(estimateInterval);
+          estimateInterval = window.setInterval(updateReadingEstimate, 1000);
         }
       };
       utterance.onend = () => {
         if (run === readingRun) {
           activeItem = null;
+          currentStartedAt = 0;
+          currentPausedAt = 0;
           speakNextBlock(run);
         }
       };
@@ -517,6 +563,10 @@
         isReading = false;
         isPaused = false;
         activeItem = null;
+        currentStartedAt = 0;
+        currentPausedAt = 0;
+        window.clearInterval(estimateInterval);
+        estimateInterval = 0;
         restartCurrentOnResume = false;
         readingQueue = [];
         setActiveBlock(null);
@@ -564,6 +614,8 @@
           isPaused = false;
           scheduleNextBlock(readingRun);
         } else {
+          if (currentPausedAt && currentStartedAt) currentStartedAt += Date.now() - currentPausedAt;
+          currentPausedAt = 0;
           window.speechSynthesis.resume();
           isPaused = false;
         }
@@ -576,6 +628,7 @@
         }
         window.speechSynthesis.pause();
         isPaused = true;
+        currentPausedAt = Date.now();
         readingStatus.textContent = "Čítanie je pozastavené.";
       }
       updateControls();
@@ -618,6 +671,8 @@
       window.speechSynthesis.resume();
       readingQueue.unshift(activeItem);
       activeItem = null;
+      currentStartedAt = 0;
+      currentPausedAt = 0;
       readingStatus.textContent = "Rýchlosť " + label + " je nastavená. Aktuálna časť sa prehrá znova od začiatku.";
       scheduleNextBlock(readingRun);
     });
@@ -977,16 +1032,16 @@
           details.before(placeholder);
           details.open = true;
           printSection.append(details);
-          return { details, placeholder };
+          return { details, placeholder, wasOpen: details.open };
         });
         footer.before(printSection);
       });
 
       window.addEventListener("afterprint", () => {
-        savedDetails.forEach(({ details, placeholder }) => {
+        savedDetails.forEach(({ details, placeholder, wasOpen }) => {
           placeholder.before(details);
           placeholder.remove();
-          details.open = false;
+          details.open = wasOpen;
         });
         savedDetails = [];
         printSection?.remove();
