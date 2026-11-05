@@ -19,6 +19,7 @@
     .global-course-nav a:hover{text-decoration:underline}
     .global-course-nav a:focus-visible,a:focus-visible,button:focus-visible,summary:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid var(--acc);outline-offset:3px}
     main{width:min(100% - 2rem,860px);margin:auto;padding:16px 0 3rem}
+    main :is(p,li,td,dd,blockquote){text-align:justify;text-justify:inter-word}
     header{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:.65rem}
     .crumb,.muted,.status{color:var(--mut)}
     h1{font-size:clamp(1.8rem,5vw,2.6rem);line-height:1.2;margin:.8rem 0}
@@ -50,7 +51,6 @@
     .narration-option input{width:1.25rem;height:1.25rem;accent-color:var(--acc)}
     body:not(.teacher) .teacher-note+.narration-option{display:none}
     .narration-target{transition:outline-color .16s ease,background-color .16s ease;text-align:justify;text-justify:inter-word}
-    .narration-target :is(p,li,td){text-align:justify;text-justify:inter-word}
     .narration-target:hover{outline:2px solid var(--acc);outline-offset:3px;background-color:color-mix(in srgb,var(--acc) 8%,transparent);cursor:pointer}
     @media(prefers-reduced-motion:reduce){.narration-target{transition:none}}
     .speech-bubble{position:relative;padding:.85rem 1rem!important;border:2px solid var(--acc)!important;border-radius:1.2rem!important;background:color-mix(in srgb,var(--acc) 12%,var(--card))!important;box-shadow:0 4px 18px color-mix(in srgb,var(--acc) 18%,transparent)}
@@ -242,7 +242,7 @@
       <span class="tag">ISO C17</span>
     </p>
 
-    <p data-read-aloud="selected">V tejto úvodnej hodine sa zoznámite s pôvodom jazyka C, jeho vývojom a významom jazykových noriem. Zistíte, prečo v kurze používame C17 a ako spolu súvisia jazyk, štandard a kompilátor.</p>
+    <p data-read-aloud="selected">V tejto úvodnej hodine sa zoznámite s pôvodom <strong>jazyka C</strong>, jeho vývojom a významom <strong>jazykových noriem</strong>. Zistíte, prečo v kurze používame <strong>C17</strong> a ako spolu súvisia jazyk, štandard a <strong>kompilátor</strong>.</p>
     <section class="card" data-read-aloud="selected">
       <strong>Nadväznosť na predchádzajúce učivo:</strong> V predchádzajúcej časti kurzu ste navrhovali a precvičovali algoritmy v Pythone. Teraz budete rovnaké algoritmické základy postupne zapisovať v jazyku C a porovnáte jeho syntax, typy a preklad programu. Po zvládnutí C bude nasledovať C++. V tejto hodine sa pozrieme na vznik jazyka C a na to, ako štandard určuje spoločné pravidlá pre jeho programy.
     </section>
@@ -262,7 +262,7 @@
           <tr><td>21–31 min</td><td>10 min</td><td>Jazyk, norma a kompilátor</td><td>Rozlíšiť pojmy a vysvetliť potrebu štandardizácie.</td></tr>
           <tr><td>31–38 min</td><td>7 min</td><td>C17 v príkaze GCC</td><td>Prečítať príkaz prekladu a vysvetliť voľbu štandardu.</td></tr>
           <tr><td>38–43 min</td><td>5 min</td><td>Aktivita a kontrola</td><td>Priradiť pojmy a overiť ich porozumenie.</td></tr>
-          <tr><td>43–45 min</td><td>2 min</td><td>Záver</td><td>Lístok pri odchode: vysvetliť, čo znamená C17.</td></tr>
+          <tr><td>43–45 min</td><td>2 min</td><td>Záver</td><td>Záverečná aktivita: vysvetliť, čo znamená C17.</td></tr>
           <tr><td colspan="2"><strong>Spolu: 45 min</strong></td><td colspan="2">Jedna vyučovacia hodina trvá 45 minút.</td></tr>
         </tbody>
       </table>
@@ -282,8 +282,8 @@
     <div class="card" data-read-aloud="optional"><strong>Otázka na úvod:</strong> Ak by si každý výrobca prekladača mohol určovať vlastnú syntax aj význam príkazov, čo by sa stalo pri prenose programu z jedného počítača na druhý?</div>
 
     <h2 data-read-aloud="selected">2. Stručná história jazyka C</h2>
-    <p data-read-aloud="selected">Jazyk C vytvoril <strong>Dennis Ritchie</strong> v Bellových laboratóriách na začiatku 70. rokov 20. storočia. Vyvíjal sa v súvislosti s operačným systémom Unix a umožnil písať systémový softvér efektívnejšie než v čisto strojovom alebo assemblerovom jazyku. Kniha <em>The C Programming Language</em>, ktorú napísali Brian W. Kernighan a Dennis M. Ritchie, významne prispela k rozšíreniu jazyka; jej vydanie z roku 1978 sa často označuje ako K&amp;R C.</p>
-    <p data-read-aloud="selected">C sa používa aj dnes, napríklad pri systémovom softvéri, operačných systémoch, ovládačoch zariadení, embedded systémoch a mikrokontroléroch. Použitie C však samo osebe neznamená, že každý program v C je automaticky rýchly alebo bezpečný: záleží aj na návrhu programu, implementácii a dôslednom overovaní.</p>
+    <p data-read-aloud="selected">Jazyk C vytvoril <strong>Dennis Ritchie</strong> v Bellových laboratóriách na začiatku <strong>70. rokov 20. storočia</strong>. Vyvíjal sa v súvislosti s operačným systémom <strong>Unix</strong> a umožnil písať <strong>systémový softvér</strong> efektívnejšie než v čisto strojovom alebo assemblerovom jazyku. Kniha <em>The C Programming Language</em>, ktorú napísali Brian W. Kernighan a Dennis M. Ritchie, významne prispela k rozšíreniu jazyka; jej vydanie z roku 1978 sa často označuje ako <strong>K&amp;R C</strong>.</p>
+    <p data-read-aloud="selected"><strong>C sa používa</strong> aj dnes, napríklad pri systémovom softvéri, operačných systémoch, ovládačoch zariadení, <strong>embedded systémoch</strong> a mikrokontroléroch. Použitie C však samo osebe neznamená, že každý program v C je automaticky rýchly alebo bezpečný: záleží aj na návrhu programu, implementácii a dôslednom overovaní.</p>
     <div class="timeline" data-read-aloud="selected" aria-label="Zjednodušená časová os štandardov C">
       <span>Začiatok 70. rokov · vznik C</span><b aria-hidden="true">→</b>
       <span>1978 · K&amp;R C</span><b aria-hidden="true">→</b>
@@ -303,14 +303,14 @@
       <article class="term" data-read-aloud="selected"><h3>Kompilátor</h3><p><strong>Program, ktorý spracuje zdrojový kód</strong> podľa podporovaných pravidiel a vytvorí ďalší výstup, napríklad spustiteľný program.</p></article>
       <article class="term" data-read-aloud="selected"><h3>GCC</h3><p><strong>Súbor kompilátorov</strong>. Jeho prepínač môže vybrať jazykový režim, napríklad C17.</p></article>
     </div>
-    <p data-read-aloud="selected">Norma nie je samotný kompilátor a jej zvolením sa nový nástroj neinštaluje. Kompilátory sa môžu líšiť verziou, podporou vlastností a rozšíreniami. Preto pri výučbe nastavíme spoločný jazykový režim a zároveň budeme kompilovať s upozorneniami.</p>
+    <p data-read-aloud="selected"><strong>Norma nie je samotný kompilátor</strong> a jej zvolením sa nový nástroj neinštaluje. Kompilátory sa môžu líšiť verziou, podporou vlastností a rozšíreniami. Preto pri výučbe nastavíme spoločný <strong>jazykový režim</strong> a zároveň budeme kompilovať s upozorneniami.</p>
 
     <h2 data-read-aloud="selected">4. Prečo používame C17?</h2>
     <ul data-read-aloud="selected">
-      <li>Príklady v kurze budú mať spoločné a predvídateľné pravidlá.</li>
-      <li>Kompilátor nás môže upozorniť na podozrivé alebo neštandardné zápisy.</li>
-      <li>Príkaz prekladu bude jasne uvádzať, podľa ktorej verzie jazyka program skúšame preložiť.</li>
-      <li>C17 je vhodný spoločný základ pre používané učebné nástroje; zmienime aj to, že existujú novšie normy.</li>
+      <li>Príklady v kurze budú mať <strong>spoločné a predvídateľné pravidlá</strong>.</li>
+      <li>Kompilátor nás môže upozorniť na <strong>podozrivé alebo neštandardné zápisy</strong>.</li>
+      <li>Príkaz prekladu bude jasne uvádzať, podľa ktorej <strong>verzie jazyka</strong> program skúšame preložiť.</li>
+      <li><strong>C17</strong> je vhodný spoločný základ pre používané učebné nástroje; zmienime aj to, že existujú novšie normy.</li>
     </ul>
     <div class="card" data-read-aloud="selected"><strong>Rozdiel, ktorý si zapamätajte:</strong> C je jazyk, C17 je verzia jeho normy a GCC je jeden z nástrojov, ktorý môže program v zvolenom režime preložiť.</div>
 
@@ -361,7 +361,7 @@
       <p class="result" id="quiz-result" aria-live="polite"></p>
     </form>
 
-    <h2>8. Lístok pri odchode</h2>
+    <h2>8. Záverečná aktivita</h2>
     <p>Dokončite vetu: <strong>„C17 je … a pri preklade ho zvolím pomocou …“</strong></p>
     <details><summary>Očakávaná odpoveď</summary><p>C17 je verzia normy jazyka C a v príkaze GCC ju zvolím pomocou <code>-std=c17</code>.</p></details>
     <section class="card" data-read-aloud="selected" aria-labelledby="setup-project-heading">
