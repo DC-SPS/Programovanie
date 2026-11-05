@@ -11,10 +11,10 @@
     .lesson-side-panel .lesson-clock__info,.lesson-side-panel .lesson-clock__controls,.lesson-side-panel .lesson-clock__number,.lesson-side-panel .lesson-clock__title,.lesson-side-panel .lesson-clock__description,.lesson-side-panel .lesson-clock__progress{display:none!important}
     .lesson-side-panel .narration-controls{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));align-items:center;justify-items:stretch;gap:.45rem;padding:.65rem}
     .lesson-side-panel .narration-controls button{text-align:center}
-    .lesson-side-panel .narration-controls .narration-speed{grid-column:1/-1;grid-row:1;justify-content:center;gap:.65rem;width:100%;margin:0}
+    .lesson-side-panel .narration-controls .narration-speed{grid-column:1/-1;justify-content:center;gap:.65rem;width:100%;margin:0}
     .lesson-side-panel .narration-controls .narration-speed select{flex:none;min-width:8.5rem}
     .narration-voice,.narration-volume{grid-column:1/-1;display:grid;grid-template-columns:1fr;gap:.25rem;margin:0;color:var(--fg);font-size:.82rem;font-weight:650}
-    .narration-voice select{width:100%;min-height:38px;padding:.3rem .5rem;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--fg);font:inherit}
+    .narration-voice select{width:100%;max-width:none;min-height:38px;padding:.3rem .5rem;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--fg);font:inherit}
     .narration-volume-heading{display:flex;justify-content:space-between;gap:.5rem}.narration-volume input{width:100%;accent-color:var(--acc)}
     .narration-volume-help{grid-column:1/-1;margin:0;color:var(--mut);font-size:.7rem;font-weight:400;text-align:center}
     .lesson-side-panel .narration-status{grid-column:1/-1;text-align:center}

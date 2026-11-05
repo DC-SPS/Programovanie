@@ -3,38 +3,189 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="{{STRUČNÝ OPIS TÉMY}}">
-  <title>{{ČÍSLO}} {{NÁZOV TÉMY}}</title>
+  <meta name="description" content="Prednáška 4.1: stručná história jazyka C a význam noriem C17.">
+  <title>4.1 Historický úvod a normy jazyka C</title>
   <style>
     :root{color-scheme:light;--bg:#f7f8fa;--fg:#1c2330;--card:#fff;--mut:#5b6678;--acc:#1f6feb;--line:#d9dee7;--note:#fff4d6;--good:#18743a;--bad:#b42318}
     @media(prefers-color-scheme:dark){:root:not([data-theme="light"]){color-scheme:dark;--bg:#12161d;--fg:#e6eaf1;--card:#1b212b;--mut:#9aa6b8;--acc:#5aa2ff;--line:#2d3644;--note:#3a3017;--good:#63d58a;--bad:#ff8a80}}
     :root[data-theme="light"]{color-scheme:light;--bg:#f7f8fa;--fg:#1c2330;--card:#fff;--mut:#5b6678;--acc:#1f6feb;--line:#d9dee7;--note:#fff4d6;--good:#18743a;--bad:#b42318}
     :root[data-theme="dark"]{color-scheme:dark;--bg:#12161d;--fg:#e6eaf1;--card:#1b212b;--mut:#9aa6b8;--acc:#5aa2ff;--line:#2d3644;--note:#3a3017;--good:#63d58a;--bad:#ff8a80}
-    *{box-sizing:border-box}html{scroll-padding-top:1rem}
+    *{box-sizing:border-box}
+    html{scroll-padding-top:1rem}
     body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.65 system-ui,-apple-system,"Segoe UI",sans-serif}
     a{color:var(--acc)}
     .global-course-nav{display:flex;flex-wrap:wrap;gap:.55rem;align-items:center;width:min(100% - 2rem,1000px);margin:.75rem auto 0;font:600 .9rem/1.4 system-ui,-apple-system,"Segoe UI",sans-serif}
     .global-course-nav a{display:inline-block;padding:.4rem .7rem;border:1px solid var(--line);border-radius:.55rem;text-decoration:none;color:inherit;background:var(--card)}
+    .global-course-nav a:hover{text-decoration:underline}
     .global-course-nav a:focus-visible,a:focus-visible,button:focus-visible,summary:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid var(--acc);outline-offset:3px}
     main{width:min(100% - 2rem,860px);margin:auto;padding:16px 0 3rem}
     main :is(p,li,td,dd,blockquote){text-align:justify;text-justify:inter-word}
     header{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:.65rem}
-    .crumb,.muted{color:var(--mut)}h1{font-size:clamp(1.8rem,5vw,2.6rem);line-height:1.2;margin:.8rem 0}h2{margin-top:2rem;font-size:1.4rem}h3{margin-top:1.25rem;font-size:1.1rem}
-    .tags{display:flex;flex-wrap:wrap;gap:.45rem;margin:1rem 0}.tag{padding:2px 9px;border:1px solid var(--line);border-radius:6px;background:var(--line);font-size:13px}
-    .card,.teacher-note,.quiz,.sources{margin:14px 0;padding:14px 17px;border:1px solid var(--line);border-radius:12px;background:var(--card)}
-    .teacher-note{display:none;background:var(--note)}body.teacher .teacher-note{display:block}.mode{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}.mode button{padding:6px 11px;border:0;background:var(--card);color:var(--fg);font:inherit;cursor:pointer}.mode button.on{background:var(--acc);color:#fff}
-    .pdf-export{padding:.4rem .7rem;border:1px solid var(--line);border-radius:.55rem;background:var(--card);color:var(--fg);font:600 .9rem/1.4 system-ui,-apple-system,"Segoe UI",sans-serif;cursor:pointer}
-    .scroll{overflow-x:auto}table{width:100%;border-collapse:collapse}th,td{padding:.65rem .7rem;border:1px solid var(--line);text-align:left;vertical-align:top}th{background:var(--card)}
-    pre{max-width:100%;overflow-x:auto;padding:1rem;border-radius:9px;background:#0f172a;color:#e2e8f0;font:14px/1.55 ui-monospace,SFMono-Regular,Consolas,monospace}code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace}
-    .safety-notice{margin:1rem 0;padding:14px 17px;border:1px solid var(--line);border-left:5px solid var(--acc);border-radius:12px;background:var(--note)}
-    .quiz label{display:block;margin:.85rem 0 .25rem;font-weight:650}.quiz select{width:100%;padding:.55rem;border:1px solid var(--line);border-radius:7px;background:var(--bg);color:var(--fg);font:inherit}.quiz select.wrong{border-color:var(--bad);box-shadow:0 0 0 2px color-mix(in srgb,var(--bad) 22%,transparent)}.quiz button{margin-top:1rem;padding:.55rem .8rem;border:0;border-radius:7px;background:var(--acc);color:#fff;font:inherit;cursor:pointer}.result{min-height:1.5em;font-weight:650}.good{color:var(--good)}.bad{color:var(--bad)}
-    .sources{margin-top:2rem}.glossary-list{display:grid;grid-template-columns:minmax(8rem,.35fr) 1fr;gap:.3rem .8rem}.glossary-list dt{font-weight:750}.glossary-list dd{margin:0}footer{margin-top:2rem;padding-top:1rem;border-top:1px solid var(--line);color:var(--mut);font-size:14px}
-    body:not(.teacher) .narration-option{display:none}body.teacher .narration-option{display:flex}.narration-target{transition:outline-color .16s ease,background-color .16s ease}.narration-target:hover{outline:2px solid var(--acc);outline-offset:3px;background-color:color-mix(in srgb,var(--acc) 8%,transparent);cursor:pointer}
-    @media(max-width:620px){main{width:min(100% - 1.2rem,860px)}td:first-child{white-space:normal}.glossary-list{grid-template-columns:1fr}.glossary-list dd{margin-bottom:.5rem}}
+    .crumb,.muted,.status{color:var(--mut)}
+    h1{font-size:clamp(1.8rem,5vw,2.6rem);line-height:1.2;margin:.8rem 0}
+    h2{margin-top:2rem;font-size:1.4rem}
+    h3{margin-top:1.25rem;font-size:1.1rem}
+    .lead{font-size:1.08rem}
+    .tags{display:flex;flex-wrap:wrap;gap:.45rem;margin:1rem 0}
+    .tag{padding:2px 9px;border:1px solid var(--line);border-radius:6px;background:var(--line);font-size:13px}
+    .card,.teacher-note,.video-card,.quiz{margin:14px 0;padding:14px 17px;border:1px solid var(--line);border-radius:12px;background:var(--card)}
+    .teacher-note{display:none;background:var(--note)}
+    body.teacher .teacher-note{display:block}
+    .teacher-note strong{display:block;margin-bottom:.3rem}
+    .mode{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+    .mode button,.quiz button{padding:6px 11px;border:0;background:var(--card);color:var(--fg);font:inherit;cursor:pointer}
+    .mode button.on,.quiz button{background:var(--acc);color:#fff}
+    .pdf-export{margin-left:.5rem;padding:.4rem .7rem;border:1px solid var(--line);border-radius:.55rem;background:var(--card);color:var(--fg);font:600 .9rem/1.4 system-ui,-apple-system,"Segoe UI",sans-serif;cursor:pointer}
+    .narration-controls{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));align-items:center;gap:.45rem;margin:1rem 0;padding:.7rem;border:1px solid var(--line);border-radius:12px;background:var(--card)}
+    .narration-controls button,.narration-option input{min-height:44px}
+    .narration-controls button{width:100%;min-width:0;padding:.45rem .5rem;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--fg);font:inherit;font-weight:650;cursor:pointer}
+    .narration-controls button:first-of-type{background:var(--acc);border-color:var(--acc);color:#fff}
+    .narration-controls button:disabled{cursor:not-allowed;opacity:.55}
+    .narration-speed{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;gap:.45rem;color:var(--fg);font-size:.85rem;font-weight:650}
+    .narration-speed select{min-height:38px;padding:.3rem .5rem;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--fg);font:inherit}
+    .narration-speed select:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+    .page-language-help{grid-column:1/-1;margin:0;color:var(--mut);font-size:.75rem;line-height:1.4}
+    .narration-status{grid-column:1/-1;margin:0;color:var(--mut)}
+    .narration-option{display:none;align-items:center;gap:.55rem;width:max-content;max-width:100%;margin:-.35rem 0 1rem;padding:.25rem .65rem;border:1px solid var(--line);border-radius:999px;background:var(--card);font-size:.9rem;cursor:pointer}
+    body.teacher .narration-option{display:flex}
+    .narration-option input{width:1.25rem;height:1.25rem;accent-color:var(--acc)}
+    body:not(.teacher) .teacher-note+.narration-option{display:none}
+    .narration-target{transition:outline-color .16s ease,background-color .16s ease;text-align:justify;text-justify:inter-word}
+    .narration-target:hover{outline:2px solid var(--acc);outline-offset:3px;background-color:color-mix(in srgb,var(--acc) 8%,transparent);cursor:pointer}
+    @media(prefers-reduced-motion:reduce){.narration-target{transition:none}}
+    .speech-bubble{position:relative;padding:.85rem 1rem!important;border:2px solid var(--acc)!important;border-radius:1.2rem!important;background:color-mix(in srgb,var(--acc) 12%,var(--card))!important;box-shadow:0 4px 18px color-mix(in srgb,var(--acc) 18%,transparent)}
+    .speech-bubble::after{position:absolute;bottom:-.65rem;left:1.2rem;width:1rem;height:1rem;border-right:2px solid var(--acc);border-bottom:2px solid var(--acc);background:color-mix(in srgb,var(--acc) 12%,var(--card));content:"";transform:rotate(45deg)}
+    .scroll{overflow-x:auto}
+    table{width:100%;border-collapse:collapse}
+    th,td{padding:.65rem .7rem;border:1px solid var(--line);text-align:left;vertical-align:top}
+    th{background:var(--card)}
+    td:first-child{white-space:nowrap;font-weight:700}
+    .timeline{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:.5rem;margin:1rem 0;padding:1rem;border:1px solid var(--line);border-radius:12px;background:var(--card);font-weight:700}
+    .timeline span{padding:.35rem .6rem;border-radius:7px;background:var(--line)}
+    .timeline .chosen{background:var(--acc);color:#fff}
+    .timeline b{color:var(--mut)}
+    .matching-game{margin:1rem 0;padding:1rem;border:1px solid var(--line);border-radius:12px;background:var(--card)}
+    .matching-help,.matching-feedback{margin:.4rem 0;color:var(--mut)}
+    .matching-board{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.55rem}
+    .matching-column{display:grid;align-content:start;gap:.5rem;min-width:0}
+    .matching-card{width:100%;min-height:3.2rem;padding:.7rem .8rem;border:1px solid var(--line);border-radius:9px;background:var(--bg);color:var(--fg);font:inherit;text-align:left;cursor:grab;transition:transform .18s ease,background .18s ease,border-color .18s ease,opacity .18s ease}
+    .matching-card:hover{border-color:var(--acc)}
+    .matching-card:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+    .matching-card[aria-pressed="true"]{border-color:var(--acc);background:color-mix(in srgb,var(--acc) 18%,var(--bg));transform:scale(1.02)}
+    .matching-card.is-shuffling{animation:card-shuffle .55s ease both}
+    .matching-card.is-correct{border-color:var(--good);background:color-mix(in srgb,var(--good) 14%,var(--bg));cursor:default}
+    .matching-card.is-wrong{border-color:var(--bad);animation:match-nudge .28s ease}
+    .matching-card.is-dragging{opacity:.45}
+    .matching-card.is-drop-target{outline:2px dashed var(--acc);outline-offset:2px}
+    @keyframes card-shuffle{0%{opacity:.45;transform:translateY(-8px) rotate(-2deg)}55%{transform:translateY(3px) rotate(2deg)}100%{opacity:1;transform:none}}
+    @keyframes match-nudge{25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+    @media(max-width:520px){.matching-board{grid-template-columns:1fr}.matching-column::before{font-weight:750;color:var(--mut)}.matching-column:first-child::before{content:"Pojmy"}.matching-column:last-child::before{content:"Významy"}}
+    @media(prefers-reduced-motion:reduce){.matching-card,.matching-card.is-shuffling,.matching-card.is-wrong{animation:none;transition:none}}
+    .split{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,210px),1fr));gap:.75rem}
+    .term{padding:.9rem 1rem;border:1px solid var(--line);border-radius:10px;background:var(--card)}
+    .term h3{margin:.1rem 0 .35rem}
+    pre{max-width:100%;margin:.65rem 0 1rem;padding:1rem;border-radius:9px;overflow-x:auto;background:#0f172a;color:#e2e8f0;font:14px/1.55 ui-monospace,SFMono-Regular,Consolas,monospace}
+    code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace}
+    :not(pre)>code{padding:.08rem .28rem;border-radius:4px;background:color-mix(in srgb,var(--line) 55%,transparent)}
+    .video-frame{display:block;width:100%;aspect-ratio:16/9;border:0;border-radius:8px;background:#000}
+    .video-card p{margin:.5rem 0}
+    .quiz label{display:block;margin:.85rem 0 .25rem;font-weight:650}
+    .quiz select{width:100%;padding:.55rem;border:1px solid var(--line);border-radius:7px;background:var(--bg);color:var(--fg);font:inherit}
+    .quiz select.wrong{border-color:var(--bad);box-shadow:0 0 0 2px color-mix(in srgb,var(--bad) 22%,transparent)}
+    .quiz button{margin-top:1rem;border-radius:7px}
+    .result{min-height:1.5em;font-weight:650}
+    .good{color:var(--good)}.bad{color:var(--bad)}
+    details{margin:.8rem 0;padding:.65rem .85rem;border:1px solid var(--line);border-radius:9px;background:var(--card)}
+    summary{cursor:pointer;font-weight:650}
+    .sources{margin-top:2rem;padding:1rem 1.1rem;border:1px solid var(--line);border-radius:12px;background:var(--card)}
+    .sources h2{margin-top:0}
+    .sources li{margin:.4rem 0}
+    .glossary-list{display:grid;grid-template-columns:minmax(8rem,.35fr) 1fr;gap:.3rem .8rem}
+    .glossary-list dt{font-weight:750}
+    .glossary-list dd{margin:0}
+    footer{margin-top:2rem;padding-top:1rem;border-top:1px solid var(--line);color:var(--mut);font-size:14px}
+    @media(max-width:620px){main{width:min(100% - 1.2rem,860px)}td:first-child{white-space:normal}}
+    @media(max-width:520px){.glossary-list{grid-template-columns:1fr;gap:.1rem}.glossary-list dd{margin-bottom:.5rem}}
     @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important}}
-    @media print{.global-course-nav,.mode,.pdf-export,.lesson-side-panel,.narration-option,.quiz button{display:none!important}.teacher-note{display:block}main{width:auto;max-width:none;margin:0;padding:0}.print-solution-sheet{break-before:page;page-break-before:always}}
-  </style>
-  <link rel="stylesheet" href="c-lecture-controls.css">
+    @media print{.global-course-nav,.mode,.pdf-export,.quiz button,.narration-controls,.narration-option,.lesson-side-panel{display:none!important}.teacher-note{display:block}main{max-width:none}}
+    @media print{
+      a[href^="http://"],a[href^="https://"]{color:inherit!important;text-decoration:none!important}
+      a[href^="http://"]::after,a[href^="https://"]::after{content:none!important}
+      .video-frame{display:none!important}
+      .quiz select{display:none!important}
+      .quiz label{margin:.75rem 0;padding-bottom:.4rem;border-bottom:1px solid #bbb;break-inside:avoid}
+      .quiz label::after{display:block;margin-top:.35rem;color:#555;font-weight:400;content:"Odpoveď: ______________________________________________"}
+      #matching-reset{display:none!important}
+      .print-solution-sheet{margin-top:2rem;padding-top:1rem;border-top:2px solid #222;break-before:page;page-break-before:always}
+      .print-solution-sheet h2{margin-top:0}
+      .print-solution-sheet li{margin:.5rem 0}
+    }
+
+    .safety-notice,.safety-reminder{margin:1rem 0;padding:14px 17px;border:1px solid var(--line);border-left:5px solid var(--acc);border-radius:12px;background:var(--note)}
+    .safety-notice strong,.safety-reminder strong{display:block;margin-bottom:.25rem}
+
+    @page{size:A4;margin:0}
+
+    .lesson-side-panel{position:fixed;top:16px;right:16px;z-index:1100;display:flex;flex-direction:column;gap:.75rem;width:min(350px,calc(100vw - 32px));max-height:calc(100vh - 32px);overflow-y:auto;padding:.55rem;border:1px solid var(--line);border-radius:14px;background:color-mix(in srgb,var(--bg) 94%,transparent);box-shadow:0 12px 38px color-mix(in srgb,#000 22%,transparent);backdrop-filter:blur(12px)}
+    .lesson-side-panel .lesson-clock{position:relative;top:auto;flex:none;height:auto;min-height:0;margin:0;border-radius:.8rem;overflow:hidden}
+    .lesson-side-panel .lesson-clock__chrome{display:flex;flex-wrap:nowrap;align-items:center;gap:.5rem;padding:.55rem .7rem}
+    .lesson-side-panel .lesson-clock__tag,.lesson-side-panel .lesson-clock__chrome-spacer,.lesson-side-panel .lesson-clock__time-label,.lesson-side-panel .lesson-clock__time{display:none!important}
+    .lesson-side-panel .lesson-clock__clock{display:flex;align-items:center;gap:.3rem;margin-left:auto;padding-left:.5rem}
+    .lesson-side-panel .lesson-clock__clock-label,.lesson-side-panel .lesson-clock__date{display:none}
+    .lesson-side-panel .lesson-clock__now{min-width:4.2rem;font-size:.88rem}
+    .lesson-side-panel .lesson-clock__zone{display:inline-block!important;white-space:nowrap;font-size:.58rem;color:#a8bdcf}
+    .lesson-side-panel .lesson-clock__settings{flex:none;margin-left:.1rem}
+    .lesson-side-panel .lesson-clock__body{display:block;height:auto;min-height:0;padding:.55rem .65rem}
+    .lesson-side-panel .lesson-clock__info,.lesson-side-panel .lesson-clock__controls,.lesson-side-panel .lesson-clock__number,.lesson-side-panel .lesson-clock__title,.lesson-side-panel .lesson-clock__description,.lesson-side-panel .lesson-clock__progress{display:none!important}
+    .lesson-side-panel .narration-controls{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));align-items:center;justify-items:stretch;gap:.45rem;padding:.65rem}
+    .lesson-side-panel .narration-controls button{text-align:center}
+    .lesson-side-panel .narration-controls .narration-speed{grid-column:1/-1;justify-content:center;gap:.65rem;width:100%;margin:0}
+    .lesson-side-panel .narration-controls .narration-speed select{flex:none;min-width:8.5rem}
+    .narration-voice,.narration-volume{grid-column:1/-1;display:grid;grid-template-columns:1fr;gap:.25rem;margin:0;color:var(--fg);font-size:.82rem;font-weight:650}
+    .narration-voice select{width:100%;min-height:38px;padding:.3rem .5rem;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--fg);font:inherit}
+    .narration-volume-heading{display:flex;justify-content:space-between;gap:.5rem}.narration-volume input{width:100%;accent-color:var(--acc)}
+    .narration-volume-help{grid-column:1/-1;margin:0;color:var(--mut);font-size:.7rem;font-weight:400;text-align:center}
+    .lesson-side-panel .narration-status{grid-column:1/-1;text-align:center}
+    .lesson-side-panel .narration-status:empty{display:none!important}
+    .lesson-duration{margin-bottom:.55rem;padding:.45rem .6rem;border:1px solid #2b5674;border-radius:.6rem;background:#0b1723;color:#edf6ff}
+    .lesson-duration-heading{display:flex;align-items:center;justify-content:space-between;gap:.5rem}
+    .lesson-duration-heading strong{font-size:.78rem;color:#bae6fd}
+    .lesson-duration-time{font:800 1.05rem/1.1 Consolas,"Cascadia Code",monospace;font-variant-numeric:tabular-nums;color:#fff}
+    .lesson-duration-controls{display:flex;gap:.35rem;margin-top:.4rem}
+    .lesson-duration-controls button{flex:1;min-height:2rem;padding:.35rem .45rem;border:1px solid #32617e;border-radius:.45rem;background:#12334b;color:#e6f6ff;font:700 .72rem system-ui,"Segoe UI",sans-serif;cursor:pointer}
+    .lesson-duration-controls button:disabled{opacity:.5;cursor:not-allowed}
+    .lesson-duration-controls button:focus-visible{outline:3px solid #fde047;outline-offset:2px}
+    .pomodoro-context{display:block;min-width:0;margin:.1rem 0 .4rem;padding-bottom:.35rem;border-bottom:1px solid #25415a}
+    .pomodoro-context-title{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:.78rem;font-weight:750;color:#f1f8ff}
+    .pomodoro-panel{padding:.65rem .7rem;border:1px solid #2b5674;border-radius:.7rem;background:#0b1723;color:#edf6ff}
+    .pomodoro-heading{display:flex;align-items:center;justify-content:space-between;gap:.5rem;margin-bottom:.5rem}
+    .pomodoro-heading strong{font-size:.88rem;letter-spacing:.04em;color:#bae6fd}
+    .pomodoro-readout{display:flex;align-items:center;gap:.55rem}
+    .pomodoro-phase{padding:.2rem .5rem;border-radius:999px;background:#123b57;color:#7dd3fc;font-size:.68rem;font-weight:800;letter-spacing:.08em}
+    .pomodoro-phase[data-phase="relax"]{background:#173b2a;color:#86efac}
+    .pomodoro-time{font:800 1.35rem/1.1 Consolas,"Cascadia Code",monospace;font-variant-numeric:tabular-nums;color:#fff}
+    .pomodoro-controls{display:flex;gap:.4rem;margin:.5rem 0}
+    .pomodoro-controls button{flex:1;min-height:2.15rem;padding:.4rem .55rem;border:1px solid #32617e;border-radius:.5rem;background:#12334b;color:#e6f6ff;font:700 .78rem system-ui,"Segoe UI",sans-serif;cursor:pointer}
+    .pomodoro-controls button:hover:not(:disabled){background:#164766;border-color:#38bdf8}
+    .pomodoro-controls button:disabled{opacity:.5;cursor:not-allowed}
+    .pomodoro-sliders{display:grid;grid-template-columns:1fr 1fr;gap:.65rem}
+    .pomodoro-slider{display:grid;grid-template-columns:1fr auto;align-items:center;gap:.15rem .35rem;color:#c7d7e5;font-size:.7rem;font-weight:650}
+    .pomodoro-slider output{color:#fff;font-variant-numeric:tabular-nums}
+    .pomodoro-slider input{grid-column:1/-1;width:100%;margin:.12rem 0;accent-color:#38bdf8;cursor:pointer}
+    .pomodoro-slider input:focus-visible,.pomodoro-controls button:focus-visible{outline:3px solid #fde047;outline-offset:2px}
+    .narration-status:empty{display:none}
+    .lesson-side-panel .narration-status:not(:empty){display:grid;grid-template-columns:1fr;gap:.2rem;padding:.3rem 0 0;border-top:1px solid var(--line);font-size:.78rem;font-weight:650;color:var(--fg)}
+    .reading-progress,.reading-times{display:block;width:100%;justify-self:center;white-space:nowrap;text-align:center}.reading-progress{color:#facc15}.reading-times{color:#38bdf8;font-size:.76rem}
+    .pomodoro-toast{position:fixed;top:16px;right:374px;z-index:1400;max-width:min(22rem,calc(100vw - 2rem));padding:.85rem 1rem;border:1px solid #38bdf8;border-radius:.75rem;background:#0b1723;color:#edf6ff;box-shadow:0 12px 36px rgba(0,0,0,.32);font-weight:750}
+    .pomodoro-toast[data-phase="relax"]{border-color:#86efac}
+    .pomodoro-toast[hidden]{display:none}
+    @media(max-width:1279px){.pomodoro-toast{right:16px}}
+
+    @media(min-width:1280px){main{width:860px;margin-left:max(16px,calc((100vw - 860px - 390px)/2));margin-right:374px}}
+    @media(max-width:1279px){.lesson-side-panel{top:auto;right:8px;bottom:8px;left:8px;width:auto;max-height:min(46vh,420px);padding:.45rem}main{padding-bottom:min(52vh,470px)}}
+    @media(max-width:620px){.lesson-side-panel{max-height:44vh}.lesson-side-panel .narration-controls{gap:.4rem;padding:.65rem}.lesson-side-panel .narration-controls button{min-height:40px;padding:.4rem;font-size:.9rem}.lesson-side-panel .narration-status{font-size:.8rem}}
+    @media print{.lesson-side-panel{position:static;width:auto;max-height:none;overflow:visible;padding:0;border:0;background:#fff;box-shadow:none;backdrop-filter:none}.lesson-side-panel .lesson-clock{display:block}main{width:auto;margin:0;padding:12mm 14mm}}
+</style>
   <script src="../../theme.js" defer></script>
   <script src="../../lesson-top.js" defer></script>
 </head>
@@ -43,8 +194,6 @@
     <a href="../c-language.html">Prehľad kurzu C</a>
     <a href="../../index.html">Všetky kurzy</a>
   </nav>
-
-  <!-- Spoločný panel podľa 4.1. Zachovajte markup a ID ovládačov. -->
   <aside class="lesson-side-panel" aria-label="Ovládanie hodiny a čítania">
     <section class="narration-controls" aria-label="Čítanie prednášky">
       <button id="play-reading" type="button" aria-label="Prehrať">▶ Prehrať</button>
@@ -53,9 +202,14 @@
       <button id="replay-reading" type="button" aria-label="Prehrať vybrané časti znova" disabled>↻ Prehrať znova</button>
       <label class="narration-speed" for="narration-speed">Rýchlosť čítania
         <select id="narration-speed" aria-label="Rýchlosť hlasového čítania">
-          <option value="0.25">0,25×</option><option value="0.5">0,5×</option><option value="0.75">0,75×</option>
-          <option value="1" selected>1× – normálna</option><option value="1.25">1,25×</option><option value="1.5">1,5×</option>
-          <option value="1.75">1,75×</option><option value="2">2×</option>
+          <option value="0.25">0,25×</option>
+          <option value="0.5">0,5×</option>
+          <option value="0.75">0,75×</option>
+          <option value="1" selected>1× – normálna</option>
+          <option value="1.25">1,25×</option>
+          <option value="1.5">1,5×</option>
+          <option value="1.75">1,75×</option>
+          <option value="2">2×</option>
         </select>
       </label>
       <p class="page-language-help">Jazyk zmeníte priamo v Google Translate: kliknite na názov cieľového jazyka v hornej lište a vyberte maďarčinu, ukrajinčinu alebo iný jazyk.</p>
@@ -70,11 +224,10 @@
       <div id="reading-status" class="narration-status" role="status" aria-live="polite"></div>
     </section>
   </aside>
-
   <main>
-    <aside class="safety-notice" data-read-aloud="selected" aria-label="Kontrola pracoviska"><strong>Začíname kontrolou pracoviska:</strong> {{BEZPEČNOSTNÉ UPOZORNENIE PRE KURZ}}</aside>
+    <aside class="safety-notice" data-read-aloud="selected" aria-label="Začiatok hodiny a kontrola pracoviska"><strong>Začíname kontrolou pracoviska:</strong> Po príchode skontrolujte lavicu, stoličku, pridelený počítač, monitor, klávesnicu, myš a viditeľnú kabeláž. Chýbajúcu časť, poškodenie alebo inú závadu, napríklad poškodenú izoláciu kábla či uvoľnenú zásuvku, ihneď ústne oznámte vyučujúcemu. Potom mu pošlite stručný súhrn cez EduPage, aby sa stav pracoviska zaznamenal. Poškodené, nefunkčné ani nebezpečné zariadenie nepoužívajte.</aside>
     <header>
-      <span class="crumb"><a href="../c-language.html">Základy jazyka C</a> › {{TEMATICKÝ CELOK}} › {{ČÍSLO}}</span>
+      <span class="crumb"><a href="../c-language.html">Základy jazyka C</a> › Úvod do programovania › 4.1</span>
       <div class="mode" role="group" aria-label="Zobrazenie stránky">
         <button id="student-mode" class="on" type="button" aria-pressed="true">Žiak</button>
         <button id="teacher-mode" type="button" aria-pressed="false">Učiteľ</button>
@@ -82,98 +235,946 @@
       <button class="pdf-export" type="button" onclick="window.print()">Exportovať do PDF</button>
     </header>
 
-    <h1>{{ČÍSLO}} {{NÁZOV TÉMY}}</h1>
-    <p class="lead">{{JEDNOVETOVÝ ÚVOD DO TÉMY}}</p>
-    <div class="tags"><span class="tag">1 × 45 min</span><span class="tag">{{TEMATICKÝ CELOK}}</span><span class="tag">{{JAZYK / NÁSTROJ}}</span></div>
+    <h1>4.1 Historický úvod a normy jazyka C</h1>
+    <p class="lead subtitle">
+      <span class="tag">Tematický celok 4</span>
+      <span class="tag">Jazyk C</span>
+      <span class="tag">ISO C17</span>
+    </p>
 
-    <section class="card" data-read-aloud="selected" aria-labelledby="connection-heading">
-      <h2 id="connection-heading">Nadväznosť na predchádzajúcu tému</h2>
-      <p>{{ČO ŽIAK UŽ VIE A AKO NA TO TÁTO TÉMA NADVÄZUJE}}</p>
+    <p data-read-aloud="selected">V tejto úvodnej hodine sa zoznámite s pôvodom <strong>jazyka C</strong>, jeho vývojom a významom <strong>jazykových noriem</strong>. Zistíte, prečo v kurze používame <strong>C17</strong> a ako spolu súvisia jazyk, štandard a <strong>kompilátor</strong>.</p>
+    <section class="card" data-read-aloud="selected">
+      <strong>Nadväznosť na predchádzajúce učivo:</strong> V predchádzajúcej časti kurzu ste navrhovali a precvičovali algoritmy v Pythone. Teraz budete rovnaké algoritmické základy postupne zapisovať v jazyku C a porovnáte jeho syntax, typy a preklad programu. Po zvládnutí C bude nasledovať C++. V tejto hodine sa pozrieme na vznik jazyka C a na to, ako štandard určuje spoločné pravidlá pre jeho programy.
     </section>
-    <section class="teacher-note" data-read-aloud="optional"><strong>Ciele, predpoklady a pomôcky</strong><p>{{METODICKÁ POZNÁMKA PRE UČITEĽA}}</p></section>
+    <section class="teacher-note" data-read-aloud="optional">
+      <strong>Ciele, predpoklady a pomôcky</strong>
+      Žiak stručne opíše vznik a použitie jazyka C, rozlíši jazyk C, štandard C17 a kompilátor, vysvetlí význam dodržiavania normy a rozpozná voľbu <code>-std=c17</code> v príkaze GCC. Predpoklady: základné algoritmické myslenie a predstava o zdrojovom programe. Pomôcky: tabuľa alebo projektor, časová os a kartičky s pojmami; kompilátor je voliteľný.
+    </section>
 
     <h2>Plán hodiny (45 minút)</h2>
-    <div class="scroll"><table><thead><tr><th>Čas</th><th>Trvanie</th><th>Časť hodiny</th><th>Činnosť a zámer</th></tr></thead>
-      <tbody>
-        <tr><td>0–5 min</td><td>5 min</td><td>Motivácia</td><td>{{ÚVODNÁ OTÁZKA ALEBO SITUÁCIA}}</td></tr>
-        <tr><td>5–15 min</td><td>10 min</td><td>Výklad</td><td>{{KĽÚČOVÝ POJEM ALEBO PRVÝ KROK}}</td></tr>
-        <tr><td>15–30 min</td><td>15 min</td><td>Príklad a precvičenie</td><td>{{RIADENÁ UKÁŽKA A AKTIVITA}}</td></tr>
-        <tr><td>30–40 min</td><td>10 min</td><td>Samostatná práca</td><td>{{ÚLOHA S OČAKÁVANÝM VÝSLEDKOM}}</td></tr>
-        <tr><td>40–45 min</td><td>5 min</td><td>Zhrnutie</td><td>{{KONTROLNÁ OTÁZKA ALEBO VÝSTUPNÁ ÚLOHA}}</td></tr>
-      </tbody>
-    </table></div>
+    <div class="scroll">
+      <table>
+        <thead><tr><th>Čas</th><th>Trvanie</th><th>Časť hodiny</th><th>Činnosť a zámer</th></tr></thead>
+        <tbody>
+          <tr><td>0–5 min</td><td>5 min</td><td>Motivácia</td><td>Prečo potrebujeme spoločné pravidlá pre zápis programov?</td></tr>
+          <tr><td>5–13 min</td><td>8 min</td><td>Vznik jazyka C</td><td>Stručne predstaviť vznik C a prostredie, pre ktoré sa jazyk rozvíjal.</td></tr>
+          <tr><td>13–21 min</td><td>8 min</td><td>Vývoj a použitie</td><td>Umiestniť dôležité míľniky na časovú os a uviesť oblasti použitia.</td></tr>
+          <tr><td>21–31 min</td><td>10 min</td><td>Jazyk, norma a kompilátor</td><td>Rozlíšiť pojmy a vysvetliť potrebu štandardizácie.</td></tr>
+          <tr><td>31–38 min</td><td>7 min</td><td>C17 v príkaze GCC</td><td>Prečítať príkaz prekladu a vysvetliť voľbu štandardu.</td></tr>
+          <tr><td>38–43 min</td><td>5 min</td><td>Aktivita a kontrola</td><td>Priradiť pojmy a overiť ich porozumenie.</td></tr>
+          <tr><td>43–45 min</td><td>2 min</td><td>Záver</td><td>Záverečná aktivita: vysvetliť, čo znamená C17.</td></tr>
+          <tr><td colspan="2"><strong>Spolu: 45 min</strong></td><td colspan="2">Jedna vyučovacia hodina trvá 45 minút.</td></tr>
+        </tbody>
+      </table>
+    </div>
 
-    <h2>Ciele vyučovacej hodiny</h2>
-    <p>Po hodine dokážete:</p>
-    <ul data-read-aloud="selected"><li>{{POZOROVATEĽNÝ CIEĽ 1}}</li><li>{{POZOROVATEĽNÝ CIEĽ 2}}</li><li>{{POZOROVATEĽNÝ CIEĽ 3}}</li></ul>
+    <h2 data-read-aloud="selected">Ciele vyučovacej hodiny</h2>
+    <p data-read-aloud="selected">Po hodine dokážete:</p>
+    <ul data-read-aloud="selected">
+      <li>uviesť, kto a približne kedy vytvoril jazyk C;</li>
+      <li>pomenovať aspoň dve oblasti, v ktorých sa jazyk C používa;</li>
+      <li>vlastnými slovami vysvetliť rozdiel medzi jazykom C, normou a kompilátorom;</li>
+      <li>vysvetliť, prečo budeme pri príkladoch používať štandard C17.</li>
+    </ul>
 
-    <!-- Skopírujte blok výkladu podľa potreby. Každý blok má jednu hlavnú myšlienku. -->
-    <h2>1. {{NÁZOV PRVEJ ČASTI}}</h2>
-    <p data-read-aloud="selected">{{VYSVETLENIE POJMU, JEHO VÝZNAMU A SÚVISLOSTÍ}}</p>
-    <div class="card" data-read-aloud="optional"><strong>Otázka na úvod:</strong> {{OTÁZKA NA ZAPOJENIE TRIEDY}}</div>
+    <h2 data-read-aloud="selected">1. Prečo vznikajú jazykové normy?</h2>
+    <p data-read-aloud="selected">Predstavte si, že dvaja programátori napíšu rovnaký <strong>zdrojový kód</strong>, no každý používa iný prekladač. Bez spoločných pravidiel by mohli očakávať odlišné správanie toho istého programu. <strong>Norma</strong> pomáha určiť, ktoré zápisy patria do jazyka a aké správanie sa od vyhovujúcej implementácie očakáva.</p>
+    <div class="card" data-read-aloud="optional"><strong>Otázka na úvod:</strong> Ak by si každý výrobca prekladača mohol určovať vlastnú syntax aj význam príkazov, čo by sa stalo pri prenose programu z jedného počítača na druhý?</div>
 
-    <h2>2. {{NÁZOV ĎALŠEJ ČASTI}}</h2>
-    <p data-read-aloud="selected">{{POSTUPNÝ VÝKLAD S PRÍKLADOM}}</p>
-    <pre data-read-aloud="optional"><code>{{VOLITEĽNÝ KÓDOVÝ PRÍKLAD}}</code></pre>
-    <p>{{VYSVETLENIE OČAKÁVANÉHO VÝSLEDKU A ČASTÉHO OMYLU}}</p>
+    <h2 data-read-aloud="selected">2. Stručná história jazyka C</h2>
+    <p data-read-aloud="selected">Jazyk C vytvoril <strong>Dennis Ritchie</strong> v Bellových laboratóriách na začiatku <strong>70. rokov 20. storočia</strong>. Vyvíjal sa v súvislosti s operačným systémom <strong>Unix</strong> a umožnil písať <strong>systémový softvér</strong> efektívnejšie než v čisto strojovom alebo assemblerovom jazyku. Kniha <em>The C Programming Language</em>, ktorú napísali Brian W. Kernighan a Dennis M. Ritchie, významne prispela k rozšíreniu jazyka; jej vydanie z roku 1978 sa často označuje ako <strong>K&amp;R C</strong>.</p>
+    <p data-read-aloud="selected"><strong>C sa používa</strong> aj dnes, napríklad pri systémovom softvéri, operačných systémoch, ovládačoch zariadení, <strong>embedded systémoch</strong> a mikrokontroléroch. Použitie C však samo osebe neznamená, že každý program v C je automaticky rýchly alebo bezpečný: záleží aj na návrhu programu, implementácii a dôslednom overovaní.</p>
+    <div class="timeline" data-read-aloud="selected" aria-label="Zjednodušená časová os štandardov C">
+      <span>Začiatok 70. rokov · vznik C</span><b aria-hidden="true">→</b>
+      <span>1978 · K&amp;R C</span><b aria-hidden="true">→</b>
+      <span>1989 · C89 / ANSI C</span><b aria-hidden="true">→</b>
+      <span>1990 · C90 / ISO</span><b aria-hidden="true">→</b>
+      <span>1999 · C99</span><b aria-hidden="true">→</b>
+      <span>2011 · C11</span><b aria-hidden="true">→</b>
+      <span class="chosen">2018 · C17</span><b aria-hidden="true">→</b>
+      <span>2024 · C23</span>
+    </div>
+    <p data-read-aloud="selected">Časová os je zjednodušená. <strong>C17</strong> (tiež označované ako <strong>C18</strong> podľa roku vydania ISO dokumentu) je revízia normy C11 s opravami a objasneniami; neprináša veľkú sadu nových jazykových vlastností. Novšia norma <strong>C23</strong> existuje, ale v tomto kurze si kvôli jednotným príkladom a nástrojom zvolíme C17.</p>
 
-    <h2>3. Precvičenie</h2>
-    <section class="card"><h3>{{NÁZOV ÚLOHY}}</h3><p>{{ZADANIE, KROKY, VÝSTUP A KRITÉRIÁ ÚSPECHU}}</p></section>
+    <h2 data-read-aloud="selected">3. Jazyk, norma a kompilátor</h2>
+    <div class="split">
+      <article class="term" data-read-aloud="selected"><h3>Jazyk C</h3><p><strong>Pravidlá a prostriedky</strong>, ktorými programátor vyjadruje postup riešenia.</p></article>
+      <article class="term" data-read-aloud="selected"><h3>Norma C17</h3><p>Dokument so <strong>spoločnými pravidlami jazyka C</strong>, schválený ako ISO/IEC 9899:2018.</p></article>
+      <article class="term" data-read-aloud="selected"><h3>Kompilátor</h3><p><strong>Program, ktorý spracuje zdrojový kód</strong> podľa podporovaných pravidiel a vytvorí ďalší výstup, napríklad spustiteľný program.</p></article>
+      <article class="term" data-read-aloud="selected"><h3>GCC</h3><p><strong>Súbor kompilátorov</strong>. Jeho prepínač môže vybrať jazykový režim, napríklad C17.</p></article>
+    </div>
+    <p data-read-aloud="selected"><strong>Norma nie je samotný kompilátor</strong> a jej zvolením sa nový nástroj neinštaluje. Kompilátory sa môžu líšiť verziou, podporou vlastností a rozšíreniami. Preto pri výučbe nastavíme spoločný <strong>jazykový režim</strong> a zároveň budeme kompilovať s upozorneniami.</p>
 
-    <h2>4. Interaktívne overenie</h2>
+    <h2 data-read-aloud="selected">4. Prečo používame C17?</h2>
+    <ul data-read-aloud="selected">
+      <li>Príklady v kurze budú mať <strong>spoločné a predvídateľné pravidlá</strong>.</li>
+      <li>Kompilátor nás môže upozorniť na <strong>podozrivé alebo neštandardné zápisy</strong>.</li>
+      <li>Príkaz prekladu bude jasne uvádzať, podľa ktorej <strong>verzie jazyka</strong> program skúšame preložiť.</li>
+      <li><strong>C17</strong> je vhodný spoločný základ pre používané učebné nástroje; zmienime aj to, že existujú novšie normy.</li>
+    </ul>
+    <div class="card" data-read-aloud="selected"><strong>Rozdiel, ktorý si zapamätajte:</strong> C je jazyk, C17 je verzia jeho normy a GCC je jeden z nástrojov, ktorý môže program v zvolenom režime preložiť.</div>
+
+    <h2 data-read-aloud="selected">5. Ako sa norma objaví v príkaze?</h2>
+    <p data-read-aloud="selected">Neskôr budeme zdrojový súbor v jazyku C prekladať príkazom podobným tomuto:</p>
+    <pre data-read-aloud="optional"><code>gcc -std=c17 -Wall -Wextra -Wpedantic main.c -o program</code></pre>
+    <ul data-read-aloud="selected">
+      <li><code>gcc</code> spustí kompilátor GCC;</li>
+      <li><code>-std=c17</code> požiada GCC o režim jazyka C17;</li>
+      <li><code>-Wall -Wextra -Wpedantic</code> zapne skupiny upozornení a kontrolu prenositeľnosti;</li>
+      <li><code>main.c</code> je zdrojový súbor a <code>-o program</code> určuje názov výsledného programu.</li>
+    </ul>
+    <p data-read-aloud="selected">Upozornenia sú pomôcka pri hľadaní problémov; nenahrádzajú porozumenie kódu ani testovanie. Podrobnejšie si preklad a spustenie vyskúšame v nasledujúcich hodinách.</p>
+    <aside class="safety-reminder" data-read-aloud="optional"><strong>Pri práci so softvérom a školskou sieťou:</strong> Neinštalujte vlastný softvér, nemeňte systémové nastavenia ani konfiguráciu periférií a neobchádzajte sieťové obmedzenia bez súhlasu vyučujúceho. Na školskú komunikáciu používajte EduPage alebo školský účet.</aside>
+
+    <h2>6. Krátka aktivita</h2>
+    <aside class="safety-reminder" data-read-aloud="optional"><strong>Bezpečne počas celej práce:</strong> Nemanipulujte s kabelážou a zásuvkami, neotvárajte skrine počítačov a nepripájajte neschválené elektrické zariadenia. Pri počítači nejedzte ani nepite a udržiavajte pracovisko čisté.</aside>
+    <p data-read-aloud="optional">Spojte každý pojem s jeho významom. Kartičky na začiatku zamiešame; môžete ich presúvať myšou alebo najprv vybrať pojem a potom jeho význam. Na klávesnici použite Tab a Enter.</p>
+    <section class="matching-game" id="term-matching" aria-label="Interaktívne spájanie pojmov a významov">
+      <div class="matching-board">
+        <div class="matching-column" id="matching-terms" aria-label="Pojmy"></div>
+        <div class="matching-column" id="matching-definitions" aria-label="Významy"></div>
+      </div>
+      <p class="matching-feedback" id="matching-feedback" role="status" aria-live="polite">Vyberte pojem a potom jeho význam.</p>
+      <button type="button" id="matching-reset">Zamiešať znova</button>
+    </section>
+    <details><summary>Vysvetlenie po aktivite</summary><p>C je jazyk; C17 je verzia jeho normy; GCC je kompilátor; <code>-std=c17</code> vyberá režim normy pri preklade týmto kompilátorom.</p></details>
+
+    <h2>7. Interaktívne overenie</h2>
     <form class="quiz" id="knowledge-quiz">
-      <label for="q1">{{OTÁZKA 1}}</label>
-      <select id="q1" data-answer="spravne-1" required>
-        <option value="">Vyberte odpoveď</option>
-        <option value="spravne-1">{{SPRÁVNA ODPOVEĎ 1}}</option>
-        <option value="rusic-1">{{PLAUSIBILNÝ RUŠIČ 1}}</option>
+      <label for="q1">1. Kto vytvoril jazyk C?</label>
+      <select id="q1" data-answer="ritchie" required>
+        <option value="">Vyberte odpoveď</option><option value="ritchie">Dennis Ritchie</option><option value="stroustrup">Bjarne Stroustrup</option><option value="kernighan">Linus Torvalds</option>
       </select>
-      <label for="q2">{{OTÁZKA 2}}</label>
-      <select id="q2" data-answer="spravne-2" required>
-        <option value="">Vyberte odpoveď</option>
-        <option value="spravne-2">{{SPRÁVNA ODPOVEĎ 2}}</option>
-        <option value="rusic-2">{{PLAUSIBILNÝ RUŠIČ 2}}</option>
+      <label for="q2">2. Čo je C17?</label>
+      <select id="q2" data-answer="standard" required>
+        <option value="">Vyberte odpoveď</option><option value="compiler">Kompilátor C</option><option value="standard">Verzia normy jazyka C</option><option value="editor">Textový editor</option>
       </select>
-      <label for="q3">{{OTÁZKA 3}}</label>
-      <select id="q3" data-answer="spravne-3" required>
-        <option value="">Vyberte odpoveď</option>
-        <option value="spravne-3">{{SPRÁVNA ODPOVEĎ 3}}</option>
-        <option value="rusic-3">{{PLAUSIBILNÝ RUŠIČ 3}}</option>
+      <label for="q3">3. Čo vyjadruje voľba <code>-std=c17</code> v príkaze GCC?</label>
+      <select id="q3" data-answer="mode" required>
+        <option value="">Vyberte odpoveď</option><option value="mode">Požiadavku na jazykový režim C17</option><option value="install">Inštaláciu kompilátora</option><option value="filename">Názov zdrojového súboru</option>
+      </select>
+      <label for="q4">4. Je C17 najnovšia norma jazyka C?</label>
+      <select id="q4" data-answer="no" required>
+        <option value="">Vyberte odpoveď</option><option value="yes">Áno</option><option value="no">Nie, existuje aj C23</option>
       </select>
       <button type="submit">Skontrolovať odpovede</button>
-      <p id="quiz-result" class="result" role="status" aria-live="polite"></p>
+      <p class="result" id="quiz-result" aria-live="polite"></p>
     </form>
 
-    <h2>5. Zhrnutie a otázky na zopakovanie</h2>
-    <ul><li>{{KĽÚČOVÝ POZNATOK 1}}</li><li>{{KĽÚČOVÝ POZNATOK 2}}</li><li>{{KĽÚČOVÝ POZNATOK 3}}</li></ul>
-    <p><strong>Výstupná otázka:</strong> {{KRÁTKA OTÁZKA NA KONTROLU POROZUMENIA}}</p>
+    <h2>8. Záverečná aktivita</h2>
+    <p>Dokončite vetu: <strong>„C17 je … a pri preklade ho zvolím pomocou …“</strong></p>
+    <details><summary>Očakávaná odpoveď</summary><p>C17 je verzia normy jazyka C a v príkaze GCC ju zvolím pomocou <code>-std=c17</code>.</p></details>
+    <section class="card" data-read-aloud="selected" aria-labelledby="setup-project-heading">
+      <h3 id="setup-project-heading">Malý projekt za 5 bodov: Pripravte si prostredie na C a C++</h3>
+      <p>Projekt je hodnotený <strong>5 bodmi</strong>. Úplné zadanie vrátane pokynov na vypracovanie a odovzdanie nájdete v EduPage. Riaďte sa zverejneným postupom; nástroje na školský počítač neinštalujte bez súhlasu vyučujúceho alebo správcu.</p>
+    </section>
+    <section class="card" data-read-aloud="selected" aria-labelledby="project-work-rules-heading">
+      <h3 id="project-work-rules-heading">Pravidlá práce na projekte a postup po skoršom odovzdaní</h3>
+      <h4>1. Práca na projekte počas vyučovacej hodiny</h4>
+      <ul>
+        <li><strong>Samostatnosť a sústredenie:</strong> Po zadaní projektu pracujte na svojej úlohe samostatne, sústredene a podľa technickej dokumentácie alebo pokynov vyučujúceho.</li>
+        <li><strong>Legálne a povolené zdroje:</strong> Používajte schválené vývojové prostredia, legálny softvér, oficiálne študijné materiály a online zdroje povolené vyučujúcim. Nesťahujte obsah, nehrajte hry ani nespúšťajte aplikácie, ktoré nesúvisia s vyučovaním.</li>
+        <li><strong>Ukladanie a konzultácie:</strong> Prácu pravidelne ukladajte, prípadne commitujte do Gitu alebo do určenej zložky. Pri technickom probléme alebo nejasnosti zdvihnite ruku a počkajte na vyučujúceho; nevykrikujte cez miestnosť.</li>
+      </ul>
+      <h4>2. Po skoršom dokončení a odovzdaní</h4>
+      <p>Ak dokončíte a odovzdáte projekt alebo jeho určenú časť skôr, zostaňte na svojom pracovisku až do oficiálneho konca hodiny. Neodchádzajte od počítača, nerušte spolužiakov, nepoužívajte mobil na súkromné účely a neopúšťajte učebňu.</p>
+      <ol>
+        <li><strong>Skontrolujte úplnosť:</strong> Overte názvy a uloženie všetkých súborov a skontrolujte splnenie kritérií zadania.</li>
+        <li><strong>Pokračujte rozširujúcou úlohou:</strong> Vypracujte bonusové vylepšenie, optimalizáciu alebo doplnkovú nadstavbu, ktorú zadal vyučujúci.</li>
+        <li><strong>Venujte sa samoštúdiu:</strong> Ak nemáte rozširujúcu úlohu, opakujte preberanú látku, študujte odbornú literatúru alebo dokumentáciu, prípadne riešte úlohy na portáloch odporučených vyučujúcim.</li>
+        <li><strong>Zachovajte pokoj:</strong> Do zvonenia a oficiálneho ukončenia hodiny pracujte potichu a nerušte spolužiakov, ktorí ešte dokončujú svoje projekty.</li>
+      </ol>
+    </section>
 
-    <section class="sources"><h2>Použité a odporúčané zdroje</h2><ul><li><a href="{{URL}}">{{NÁZOV ZDROJA}}</a> – {{ČO ZDROJ PODPORUJE}}</li></ul></section>
-    <section class="card" aria-labelledby="glossary-heading"><h2 id="glossary-heading">Register pojmov a skratiek</h2><dl class="glossary-list"><dt>{{POJEM}}</dt><dd>{{KRÁTKE A PRESNÉ VYSVETLENIE}}</dd></dl></section>
+    <h2>9. Ukončenie práce v učebni</h2>
+    <aside class="safety-reminder" data-read-aloud="optional"><strong>Pred odchodom:</strong> Uložte svoju prácu, odhláste sa z používateľského konta a počítač vypnite, ak vyučujúci neurčí inak. Stoličku, lavicu aj pracovné miesto zanechajte čisté a v pôvodnom stave.</aside>
+    <section class="teacher-note" data-read-aloud="optional"><strong>Kontrola učebne po hodine</strong> Pred odchodom triedy skontrolujte pracoviská a stav učebne. Škodu spôsobenú úmyselne alebo z nedbanlivosti zaznamenajte a postupujte podľa Školského poriadku vrátane riešenia opravy alebo náhrady škody so zákonným zástupcom.</section>
 
-    <footer><a href="../c-language.html">Späť na prehľad kurzu C</a> · <a href="../../index.html">Všetky kurzy</a></footer>
+    <h2>Videopodpora – pozri, pochop a vyskúšaj</h2>
+    <article class="video-card">
+      <h3>Kurz C C++ – Informatika s Mišom</h3>
+      <p>Playlist obsahuje videá o C aj C++. Konkrétnu položku venovanú histórii a normám C sa nepodarilo overiť, preto neuvádzame neoverený názov videa ani časový úsek. Ak v playliste nenájdete vhodnú ukážku k histórii alebo norme C, túto časť preskočte.</p>
+      <iframe class="video-frame" src="https://www.youtube-nocookie.com/embed/videoseries?list=PLNAMH_0HgWT_lzUDYYKHYczKvjT4xqLCn" title="Playlist Kurz C C++ – Informatika s Mišom" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+      <p><a href="https://www.youtube.com/playlist?list=PLNAMH_0HgWT_lzUDYYKHYczKvjT4xqLCn" target="_blank" rel="noopener noreferrer">Otvoriť celý playlist na YouTube</a></p>
+      <p><strong>Pri sledovaní:</strong> všímajte si, či video používa C alebo C++; tieto jazyky nie sú totožné.</p>
+      <p><strong>Otázky:</strong> Ktorý jazyk sa vo videu používa? Spomína video štandard alebo iba konkrétny kompilátor?</p>
+      <p><strong>Vyskúšajte:</strong> Vysvetlite vlastnými slovami rozdiel medzi jazykom, normou a kompilátorom.</p>
+    </article>
+
+    <section class="sources">
+      <h2>Odporúčané zdroje</h2>
+      <ul>
+        <li><a href="https://www.iso.org/standard/74528.html" target="_blank" rel="noopener noreferrer">ISO/IEC 9899:2018 – Programming languages — C</a> — norma známa ako C17/C18.</li>
+        <li><a href="https://www.open-std.org/jtc1/sc22/wg14/www/docs/n1570.pdf" target="_blank" rel="noopener noreferrer">N1570 – návrh komisie pre C11</a> — verejne dostupný technický podklad k vývoju štandardu C.</li>
+        <li><a href="https://gcc.gnu.org/onlinedocs/gcc/C-Dialect-Options.html" target="_blank" rel="noopener noreferrer">GCC: voľby dialektu C</a> — prepínače na výber štandardu pri preklade.</li>
+        <li><a href="https://www.bell-labs.com/usr/dmr/www/chist.html" target="_blank" rel="noopener noreferrer">Dennis Ritchie: The Development of the C Language</a> — historický pohľad autora na vznik jazyka C.</li>
+        <li><a href="https://www.w3schools.com/c/" target="_blank" rel="noopener noreferrer">W3Schools: C Tutorial</a> — doplnkový úvod do syntaxe jazyka C.</li>
+      </ul>
+      <p class="muted">Na ďalšej hodine nadviažeme vytvorením prvého programu v C17. Pri porovnávaní zdrojov nezamieňajte syntax C so syntaxou C++.</p>
+    </section>
+    <section class="card" data-read-aloud="selected" aria-labelledby="glossary-heading">
+      <h2 id="glossary-heading">Register pojmov a skratiek</h2>
+      <dl class="glossary-list">
+        <dt>Jazyk C</dt><dd>Programovací jazyk používaný okrem iného na tvorbu systémového softvéru a programov pre mikrokontroléry.</dd>
+        <dt>C++</dt><dd>Samostatný programovací jazyk príbuzný jazyku C; má vlastnú syntax aj štandardy.</dd>
+        <dt>Norma jazyka</dt><dd>Dokument, ktorý stanovuje spoločné pravidlá zápisu a správania programu.</dd>
+        <dt>C17 / C18</dt><dd>Označenia revízie normy C vydanej ako ISO/IEC 9899:2018.</dd>
+        <dt>C89 / C90</dt><dd>Označenia prvej široko prijatej normy C podľa rokov jej schválenia ANSI a ISO.</dd>
+        <dt>C99 / C11 / C23</dt><dd>Označenia vydaní normy jazyka C podľa rokov ich vydania.</dd>
+        <dt>Kompilátor</dt><dd>Program, ktorý prekladá zdrojový kód podľa pravidiel zvoleného jazyka a vytvára výsledný program alebo iný výstup.</dd>
+        <dt>GCC</dt><dd><em>GNU Compiler Collection</em> — súbor kompilátorov a súvisiacich nástrojov projektu GNU.</dd>
+        <dt><code>-std=c17</code></dt><dd>Voľba pre GCC, ktorá požaduje preklad v jazykovom režime C17.</dd>
+        <dt><code>-Wall</code>, <code>-Wextra</code>, <code>-Wpedantic</code></dt><dd>Voľby GCC, ktoré zapínajú skupiny upozornení na možné problémy a neštandardné zápisy.</dd>
+        <dt><code>-o</code></dt><dd>Voľba GCC, za ktorou nasleduje názov vytvoreného výstupného súboru.</dd>
+        <dt>ISO</dt><dd><em>International Organization for Standardization</em> — Medzinárodná organizácia pre normalizáciu.</dd>
+        <dt>IEC</dt><dd><em>International Electrotechnical Commission</em> — Medzinárodná elektrotechnická komisia.</dd>
+        <dt>ISO/IEC</dt><dd>Označenie spoločnej normy vydanej organizáciami ISO a IEC.</dd>
+        <dt>ANSI</dt><dd><em>American National Standards Institute</em> — americká organizácia pre normalizáciu.</dd>
+        <dt>K&amp;R</dt><dd>Skratka priezvisk Kernighan a Ritchie; používa sa aj pre ich známu knihu o jazyku C a skorú podobu jazyka.</dd>
+        <dt>Unix</dt><dd>Rodina operačných systémov, pri vývoji ktorých sa jazyk C významne uplatnil.</dd>
+        <dt>Embedded systém</dt><dd>Počítačový systém zabudovaný do zariadenia, ktorý riadi jeho vybrané funkcie.</dd>
+        <dt>BOZP</dt><dd>Bezpečnosť a ochrana zdravia pri práci.</dd>
+        <dt>EduPage</dt><dd>Školský informačný systém používaný na komunikáciu a zdieľanie pokynov.</dd>
+      </dl>
+    </section>
+    <footer><a href="../c-language.html">Späť na prehľad kurzu C</a> · <a href="4.2_Prvy_program_v_jazyku_C.html">Pokračovať prednáškou 4.2 →</a> · <a href="../../index.html">Všetky kurzy</a></footer>
   </main>
-  <script src="c-lecture-controls.js" defer></script>
   <script>
+    const studentButton = document.getElementById("student-mode");
+    const teacherButton = document.getElementById("teacher-mode");
+    const setTeacherMode = (enabled) => {
+      document.body.classList.toggle("teacher", enabled);
+      studentButton.classList.toggle("on", !enabled);
+      teacherButton.classList.toggle("on", enabled);
+      studentButton.setAttribute("aria-pressed", String(!enabled));
+      teacherButton.setAttribute("aria-pressed", String(enabled));
+    };
+    studentButton.addEventListener("click", () => setTeacherMode(false));
+    teacherButton.addEventListener("click", () => setTeacherMode(true));
+
+    const readingStatus = document.getElementById("reading-status");
+    const playButton = document.getElementById("play-reading");
+    const stopButton = document.getElementById("stop-reading");
+    const pauseButton = document.getElementById("pause-reading");
+    const replayButton = document.getElementById("replay-reading");
+    const speedSelect = document.getElementById("narration-speed");
+    const voiceSelect = document.getElementById("narration-voice");
+    const volumeSelect = document.getElementById("narration-volume");
+    const volumeValue = document.getElementById("narration-volume-value");
+    const narrationSpeedKey = "lesson-narration.playback-rate.v2";
+    const narrationVoiceKey = "lesson-narration.voice";
+    const narrationVolumeKey = "lesson-narration.volume";
+    const speechSupported = "speechSynthesis" in window && "SpeechSynthesisUtterance" in window;
+    let availableVoices = [];
+    const availableRates = new Set([0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2]);
+    try {
+      const savedRate = Number(window.localStorage.getItem(narrationSpeedKey));
+      if (availableRates.has(savedRate)) speedSelect.value = String(savedRate);
+    } catch (_) {
+      // Keep the default rate when browser storage is unavailable.
+    }
+    try {
+      const savedVolume = Number(window.localStorage.getItem(narrationVolumeKey));
+      if (Number.isFinite(savedVolume) && savedVolume >= 0 && savedVolume <= 100) volumeSelect.value = String(savedVolume);
+    } catch (_) {
+      // Keep the default speech volume if browser storage is unavailable.
+    }
+    volumeValue.value = volumeSelect.value + " %";
+    volumeValue.textContent = volumeSelect.value + " %";
+    const populateVoices = () => {
+      if (!speechSupported) return;
+      let savedVoice = "";
+      try { savedVoice = window.localStorage.getItem(narrationVoiceKey) || ""; } catch (_) { /* Voice selection remains available for this page. */ }
+      availableVoices = window.speechSynthesis.getVoices();
+      const sortedVoices = [...availableVoices].sort((a, b) => {
+        const aSk = a.lang.toLowerCase().startsWith("sk") ? 0 : 1;
+        const bSk = b.lang.toLowerCase().startsWith("sk") ? 0 : 1;
+        return aSk - bSk || a.lang.localeCompare(b.lang) || a.name.localeCompare(b.name);
+      });
+      voiceSelect.replaceChildren(new Option("Automaticky – slovenský hlas", ""));
+      sortedVoices.forEach((voice) => voiceSelect.add(new Option(`${voice.name} (${voice.lang})`, voice.voiceURI)));
+      voiceSelect.value = sortedVoices.some((voice) => voice.voiceURI === savedVoice) ? savedVoice : "";
+    };
+    if (speechSupported) {
+      populateVoices();
+      window.speechSynthesis.addEventListener("voiceschanged", populateVoices);
+    }
+    const narrationItems = [...document.querySelectorAll("[data-read-aloud]")].map((block, index) => {
+      const blockId = block.id || `narration-block-${index + 1}`;
+      const row = document.createElement("label");
+      const checkbox = document.createElement("input");
+      block.id = blockId;
+      block.classList.add("narration-target");
+      row.className = "narration-option";
+      checkbox.type = "checkbox";
+      checkbox.checked = true;
+      checkbox.setAttribute("aria-describedby", blockId);
+      row.append(checkbox, document.createTextNode("Zahrnúť do čítania"));
+      if (block.matches(".term")) {
+        block.append(row);
+      } else {
+        block.after(row);
+      }
+      return { block, checkbox };
+    });
+    let activeBlock = null;
+    let readingQueue = [];
+    let previousSelection = [];
+    let activeItem = null;
+    let readingRun = 0;
+    let isReading = false;
+    let isPaused = false;
+    let restartCurrentOnResume = false;
+    let speechRestartTimeout = 0;
+    let estimateInterval = 0;
+    let currentStartedAt = 0;
+    let currentPausedAt = 0;
+    let currentEstimateMs = 0;
+
+    const getBlockText = (block) => {
+      const copy = block.cloneNode(true);
+      copy.querySelectorAll(".narration-option").forEach((option) => option.remove());
+      return copy.textContent
+        .replace(/→/g, ", ")
+        .replace(/[ \t]*\n[ \t]*/g, ". ")
+        .replace(/\s+/g, " ")
+        .trim();
+    };
+
+    const getSelectedItems = (startIndex = 0) => narrationItems.slice(startIndex)
+      .filter(({ checkbox, block }) => {
+        const teacherOnly = block.closest(".teacher-note");
+        return checkbox.checked && (!teacherOnly || document.body.classList.contains("teacher"));
+      })
+      .map(({ block }) => ({ block, text: getBlockText(block) }))
+      .filter(({ text }) => text.length > 0);
+
+    const estimateSpeechMs = (text) => {
+      const words = text.trim().split(/\s+/).filter(Boolean).length;
+      return Math.max(1000, Math.ceil(words / (150 * Number(speedSelect.value)) * 60_000 * 1.3));
+    };
+    const formatEstimate = (milliseconds) => {
+      const totalSeconds = Math.ceil(Math.max(0, milliseconds) / 1000);
+      return String(Math.floor(totalSeconds / 60)).padStart(2, "0") + ":" + String(totalSeconds % 60).padStart(2, "0");
+    };
+    const updateReadingEstimate = () => {
+      if (!isReading || !activeItem) return;
+      const elapsed = currentStartedAt ? (currentPausedAt || Date.now()) - currentStartedAt : 0;
+      const currentRemaining = Math.max(0, currentEstimateMs - elapsed);
+      const totalRemaining = currentRemaining + readingQueue.reduce((total, item) => total + estimateSpeechMs(item.text), 0);
+      const currentIndex = previousSelection.length - readingQueue.length;
+      const progress = document.createElement("span");
+      progress.className = "reading-progress";
+      progress.textContent = `Čítam časť ${currentIndex} z ${previousSelection.length}.`;
+      const times = document.createElement("span");
+      times.className = "reading-times";
+      times.textContent = `Odsek ~${formatEstimate(currentRemaining)} · celé čítanie ~${formatEstimate(totalRemaining)}.`;
+      readingStatus.replaceChildren(progress, times);
+    };
+
+    const setActiveBlock = (block) => {
+      activeBlock?.classList.remove("speech-bubble");
+      activeBlock = block;
+      activeBlock?.classList.add("speech-bubble");
+      activeBlock?.scrollIntoView({
+        behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth",
+        block: "center",
+      });
+    };
+
+    const updateControls = () => {
+      playButton.disabled = !speechSupported || isReading;
+      stopButton.disabled = !isReading;
+      pauseButton.disabled = !isReading;
+      pauseButton.textContent = isPaused ? "▶ Pokračovať" : "⏸ Pozastaviť";
+      pauseButton.setAttribute(
+        "aria-label",
+        isPaused ? "Pokračovať v čítaní" : "Pozastaviť čítanie",
+      );
+      replayButton.disabled = !speechSupported || previousSelection.length === 0;
+    };
+
+    const stopReading = (message = "Čítanie je zastavené.") => {
+      readingRun += 1;
+      window.clearTimeout(speechRestartTimeout);
+      speechRestartTimeout = 0;
+      readingQueue = [];
+      activeItem = null;
+      currentStartedAt = 0;
+      currentPausedAt = 0;
+      window.clearInterval(estimateInterval);
+      estimateInterval = 0;
+      restartCurrentOnResume = false;
+      isReading = false;
+      isPaused = false;
+      if (speechSupported) window.speechSynthesis.cancel();
+      setActiveBlock(null);
+      updateControls();
+      readingStatus.textContent = message;
+    };
+
+    const speakNextBlock = (run) => {
+      if (run !== readingRun) return;
+      const item = readingQueue.shift();
+      if (!item) {
+        activeItem = null;
+        isReading = false;
+        isPaused = false;
+        window.clearInterval(estimateInterval);
+        estimateInterval = 0;
+        setActiveBlock(null);
+        updateControls();
+        readingStatus.textContent = "Vybrané časti boli prečítané.";
+        return;
+      }
+
+      activeItem = item;
+      currentStartedAt = 0;
+      currentPausedAt = 0;
+      currentEstimateMs = estimateSpeechMs(item.text);
+      setActiveBlock(item.block);
+      const utterance = new SpeechSynthesisUtterance(item.text);
+      const selectedVoice = availableVoices.find((voice) => voice.voiceURI === voiceSelect.value);
+      const slovakVoice = selectedVoice || availableVoices.find((voice) => voice.lang.toLowerCase().startsWith("sk"));
+      utterance.lang = slovakVoice?.lang || "sk-SK";
+      utterance.rate = Number(speedSelect.value);
+      utterance.volume = Number(volumeSelect.value) / 100;
+      if (slovakVoice) utterance.voice = slovakVoice;
+      utterance.onstart = () => {
+        if (run === readingRun) {
+          currentStartedAt = Date.now();
+          updateReadingEstimate();
+          window.clearInterval(estimateInterval);
+          estimateInterval = window.setInterval(updateReadingEstimate, 1000);
+        }
+      };
+      utterance.onend = () => {
+        if (run === readingRun) {
+          activeItem = null;
+          currentStartedAt = 0;
+          currentPausedAt = 0;
+          speakNextBlock(run);
+        }
+      };
+      utterance.onerror = (event) => {
+        if (run !== readingRun || event.error === "canceled" || event.error === "interrupted") return;
+        isReading = false;
+        isPaused = false;
+        activeItem = null;
+        currentStartedAt = 0;
+        currentPausedAt = 0;
+        window.clearInterval(estimateInterval);
+        estimateInterval = 0;
+        restartCurrentOnResume = false;
+        readingQueue = [];
+        setActiveBlock(null);
+        updateControls();
+        readingStatus.textContent = "Čítanie sa nepodarilo spustiť. Skontrolujte hlasové výstupy prehliadača.";
+      };
+      window.speechSynthesis.speak(utterance);
+    };
+
+    const scheduleNextBlock = (run) => {
+      window.clearTimeout(speechRestartTimeout);
+      speechRestartTimeout = window.setTimeout(() => {
+        speechRestartTimeout = 0;
+        if (run === readingRun && isReading && !isPaused) speakNextBlock(run);
+      }, 100);
+    };
+
+    const startReading = (items) => {
+      if (!speechSupported) {
+        readingStatus.textContent = "Tento prehliadač nepodporuje hlasové čítanie textu.";
+        return;
+      }
+      if (items.length === 0) {
+        readingStatus.textContent = "Začiarknite aspoň jednu časť, ktorú má učiteľ prečítať.";
+        return;
+      }
+      stopReading("");
+      readingRun += 1;
+      readingQueue = [...items];
+      previousSelection = [...items];
+      isReading = true;
+      isPaused = false;
+      updateControls();
+      readingStatus.textContent = `Spúšťam čítanie ${items.length} vybraných častí.`;
+      scheduleNextBlock(readingRun);
+    };
+
+    narrationItems.forEach(({ block, checkbox }, index) => {
+      block.title = "Dvojklikom spustiť čítanie od tejto časti";
+      block.addEventListener("dblclick", (event) => {
+        if (event.target.closest("[data-read-aloud]") !== block) return;
+        if (block.closest(".teacher-note") && !document.body.classList.contains("teacher")) return;
+        event.preventDefault();
+        event.stopPropagation();
+        checkbox.checked = true;
+        startReading(getSelectedItems(index));
+      });
+    });
+
+    playButton.addEventListener("click", () => startReading(getSelectedItems()));
+    stopButton.addEventListener("click", () => stopReading());
+    pauseButton.addEventListener("click", () => {
+      if (!isReading || !speechSupported) return;
+      if (isPaused) {
+        if (restartCurrentOnResume) {
+          restartCurrentOnResume = false;
+          isPaused = false;
+          scheduleNextBlock(readingRun);
+        } else {
+          if (currentPausedAt && currentStartedAt) currentStartedAt += Date.now() - currentPausedAt;
+          currentPausedAt = 0;
+          window.speechSynthesis.resume();
+          isPaused = false;
+        }
+        readingStatus.textContent = "Čítanie pokračuje.";
+      } else {
+        if (speechRestartTimeout) {
+          window.clearTimeout(speechRestartTimeout);
+          speechRestartTimeout = 0;
+          restartCurrentOnResume = true;
+        }
+        window.speechSynthesis.pause();
+        isPaused = true;
+        currentPausedAt = Date.now();
+        readingStatus.textContent = "Čítanie je pozastavené.";
+      }
+      updateControls();
+    });
+    replayButton.addEventListener("click", () => startReading(previousSelection));
+    const restartSpeechForSetting = (message) => {
+      if (!isReading) {
+        readingStatus.textContent = message;
+        return;
+      }
+      if (isPaused) {
+        if (activeItem) {
+          window.speechSynthesis.cancel();
+          window.speechSynthesis.resume();
+          readingQueue.unshift(activeItem);
+          activeItem = null;
+          currentStartedAt = 0;
+          currentPausedAt = 0;
+        }
+        restartCurrentOnResume = true;
+        readingStatus.textContent = message + " Po pokračovaní sa aktuálna časť začne znova.";
+        return;
+      }
+      if (!activeItem) {
+        if (speechRestartTimeout) scheduleNextBlock(readingRun);
+        readingStatus.textContent = message;
+        return;
+      }
+      readingRun += 1;
+      window.clearTimeout(speechRestartTimeout);
+      speechRestartTimeout = 0;
+      window.speechSynthesis.cancel();
+      window.speechSynthesis.resume();
+      readingQueue.unshift(activeItem);
+      activeItem = null;
+      currentStartedAt = 0;
+      currentPausedAt = 0;
+      readingStatus.textContent = message + " Aktuálna časť sa začne znova.";
+      scheduleNextBlock(readingRun);
+    };
+    voiceSelect.addEventListener("change", () => {
+      try { window.localStorage.setItem(narrationVoiceKey, voiceSelect.value); } catch (_) { /* The voice still applies to this page. */ }
+      restartSpeechForSetting("Hlas čítania bol zmenený.");
+    });
+    volumeSelect.addEventListener("input", () => {
+      volumeValue.value = volumeSelect.value + " %";
+      volumeValue.textContent = volumeSelect.value + " %";
+    });
+    volumeSelect.addEventListener("change", () => {
+      try { window.localStorage.setItem(narrationVolumeKey, volumeSelect.value); } catch (_) { /* The volume still applies to this page. */ }
+      restartSpeechForSetting("Hlasitosť čítania bola zmenená.");
+    });
+    speedSelect.addEventListener("change", () => {
+      const rate = Number(speedSelect.value);
+      try {
+        window.localStorage.setItem(narrationSpeedKey, String(rate));
+      } catch (_) {
+        // The selected rate still applies to this page if storage is unavailable.
+      }
+      const label = speedSelect.selectedOptions[0]?.textContent || (rate + "×");
+      restartSpeechForSetting("Rýchlosť " + label + " je nastavená.");
+    });
+    updateControls();
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const lessonClock = document.querySelector(".lesson-clock");
+      const sidePanel = document.querySelector(".lesson-side-panel");
+      if (!lessonClock || !sidePanel) return;
+      sidePanel.prepend(lessonClock);
+
+      const clockBody = lessonClock.querySelector(".lesson-clock__body");
+      lessonClock.querySelector(".lesson-clock__progress")?.remove();
+      if (!clockBody) return;
+      const lessonTitle = clockBody.querySelector(".lesson-clock__title")?.textContent.trim() || "4.1";
+      clockBody.replaceChildren();
+
+      const make = (tag, className, text) => {
+        const element = document.createElement(tag);
+        if (className) element.className = className;
+        if (text) element.textContent = text;
+        return element;
+      };
+      const lessonTimer = make("section", "lesson-duration");
+      lessonTimer.setAttribute("aria-label", "45-min\u00fatov\u00fd \u010dasova\u010d vyu\u010dovacej hodiny");
+      const lessonHeading = make("div", "lesson-duration-heading");
+      lessonHeading.append(make("strong", "", "\u010cas celej hodiny"));
+      const lessonTime = make("time", "lesson-duration-time", "45:00");
+      lessonTime.setAttribute("aria-label", "Zost\u00e1vaj\u00faci \u010das celej vyu\u010dovacej hodiny");
+      lessonHeading.append(lessonTime);
+      const lessonControls = make("div", "lesson-duration-controls");
+      const startButton = make("button", "", "Spusti\u0165 hodinu");
+      startButton.type = "button";
+      const pauseButton = make("button", "", "Pozastavi\u0165");
+      pauseButton.type = "button";
+      pauseButton.disabled = true;
+      const resetButton = make("button", "", "Vynulova\u0165");
+      resetButton.type = "button";
+      lessonControls.append(startButton, pauseButton, resetButton);
+      lessonTimer.append(lessonHeading, lessonControls);
+
+      const pomodoro = make("section", "pomodoro-panel");
+      pomodoro.setAttribute("aria-label", "Pomodoro \u010dasova\u010d pr\u00e1ce a oddychu");
+      const heading = make("div", "pomodoro-heading");
+      heading.append(make("strong", "", "Pomodoro"));
+      const readout = make("div", "pomodoro-readout");
+      const phaseLabel = make("span", "pomodoro-phase", "PR\u00c1CA");
+      phaseLabel.dataset.phase = "work";
+      const pomodoroTime = make("time", "pomodoro-time", "25:00");
+      pomodoroTime.setAttribute("aria-label", "Zost\u00e1vaj\u00faci \u010das f\u00e1zy Pomodoro");
+      readout.append(phaseLabel, pomodoroTime);
+      heading.append(readout);
+      const context = make("div", "pomodoro-context");
+      context.append(make("strong", "pomodoro-context-title", lessonTitle));
+
+      const sliders = make("div", "pomodoro-sliders");
+      const addSlider = (label, min, max, step, initial) => {
+        const field = make("label", "pomodoro-slider");
+        const caption = make("span", "", label);
+        const output = make("output", "", initial + " min");
+        const range = make("input");
+        range.type = "range";
+        range.min = String(min);
+        range.max = String(max);
+        range.step = String(step);
+        range.value = String(initial);
+        range.setAttribute("aria-label", "D\u013a\u017eka f\u00e1zy " + label.toLowerCase() + " v min\u00fatach");
+        field.append(caption, output, range);
+        sliders.append(field);
+        return { range, output };
+      };
+      const workSlider = addSlider("Pr\u00e1ca", 5, 60, 5, 25);
+      const relaxSlider = addSlider("Relax", 1, 15, 1, 5);
+      pomodoro.append(heading, context, sliders);
+      clockBody.append(lessonTimer, pomodoro);
+
+      const toast = make("div", "pomodoro-toast");
+      toast.setAttribute("role", "status");
+      toast.setAttribute("aria-live", "polite");
+      toast.hidden = true;
+      document.body.append(toast);
+
+      let phase = "work";
+      let lessonRemaining = 45 * 60 * 1000;
+      let pomodoroRemaining = 25 * 60 * 1000;
+      let lessonEndAt = 0;
+      let pomodoroEndAt = 0;
+      let intervalId = 0;
+      let toastTimeout = 0;
+      const durationFor = (currentPhase) => Number((currentPhase === "work" ? workSlider : relaxSlider).range.value) * 60 * 1000;
+      const format = (milliseconds) => {
+        const seconds = Math.ceil(milliseconds / 1000);
+        return String(Math.floor(seconds / 60)).padStart(2, "0") + ":" + String(seconds % 60).padStart(2, "0");
+      };
+      const phaseName = () => phase === "work" ? "PR\u00c1CA" : "RELAX";
+      const render = () => {
+        lessonTime.textContent = format(lessonRemaining);
+        pomodoroTime.textContent = format(pomodoroRemaining);
+        phaseLabel.textContent = phaseName();
+        phaseLabel.dataset.phase = phase;
+      };
+      const notify = (message, currentPhase = phase) => {
+        toast.textContent = message;
+        toast.dataset.phase = currentPhase;
+        toast.hidden = false;
+        window.clearTimeout(toastTimeout);
+        toastTimeout = window.setTimeout(() => { toast.hidden = true; }, 5000);
+      };
+      const stopAtLessonEnd = () => {
+        window.clearInterval(intervalId);
+        intervalId = 0;
+        lessonRemaining = 0;
+        render();
+        startButton.disabled = false;
+        startButton.textContent = "Spusti\u0165 znova";
+        pauseButton.disabled = true;
+        notify("Koniec 45-min\u00fatovej vyu\u010dovacej hodiny.", "relax");
+      };
+      const tick = () => {
+        const now = Date.now();
+        lessonRemaining = Math.max(0, lessonEndAt - now);
+        pomodoroRemaining = Math.max(0, pomodoroEndAt - now);
+        if (lessonRemaining === 0) {
+          stopAtLessonEnd();
+          return;
+        }
+        if (pomodoroRemaining === 0) {
+          phase = phase === "work" ? "relax" : "work";
+          pomodoroRemaining = durationFor(phase);
+          pomodoroEndAt = now + pomodoroRemaining;
+          notify("Pomodoro \u00b7 " + phaseName() + " \u00b7 " + format(pomodoroRemaining));
+        }
+        render();
+      };
+      startButton.addEventListener("click", () => {
+        if (intervalId) return;
+        const now = Date.now();
+        lessonEndAt = now + lessonRemaining;
+        pomodoroEndAt = now + pomodoroRemaining;
+        intervalId = window.setInterval(tick, 200);
+        startButton.disabled = true;
+        startButton.textContent = "Hodina be\u017e\u00ed";
+        pauseButton.disabled = false;
+        notify("Spusten\u00e1 hodina \u00b7 Pomodoro PR\u00c1CA");
+      });
+      pauseButton.addEventListener("click", () => {
+        if (!intervalId) return;
+        tick();
+        if (!intervalId) return;
+        window.clearInterval(intervalId);
+        intervalId = 0;
+        startButton.disabled = false;
+        startButton.textContent = "Pokra\u010dova\u0165";
+        pauseButton.disabled = true;
+      });
+      resetButton.addEventListener("click", () => {
+        window.clearInterval(intervalId);
+        intervalId = 0;
+        phase = "work";
+        lessonRemaining = 45 * 60 * 1000;
+        pomodoroRemaining = durationFor("work");
+        render();
+        startButton.disabled = false;
+        startButton.textContent = "Spusti\u0165 hodinu";
+        pauseButton.disabled = true;
+        toast.hidden = true;
+      });
+      const bindSlider = (slider, sliderPhase) => {
+        slider.range.addEventListener("input", () => {
+          slider.output.textContent = slider.range.value + " min";
+          if (phase === sliderPhase) {
+            pomodoroRemaining = durationFor(phase);
+            if (intervalId) pomodoroEndAt = Date.now() + pomodoroRemaining;
+            render();
+          }
+        });
+      };
+      bindSlider(workSlider, "work");
+      bindSlider(relaxSlider, "relax");
+      render();
+    });
+
+    (() => {
+      const game = document.getElementById("term-matching");
+      if (!game) return;
+      const termColumn = document.getElementById("matching-terms");
+      const definitionColumn = document.getElementById("matching-definitions");
+      const feedback = document.getElementById("matching-feedback");
+      const reset = document.getElementById("matching-reset");
+      const pairs = [
+        { id: "c", term: "C", definition: "Programovac\u00ed jazyk." },
+        { id: "c17", term: "C17", definition: "Verzia normy jazyka C." },
+        { id: "gcc", term: "GCC", definition: "Kompil\u00e1tor, ktor\u00fd m\u00f4\u017ee preklada\u0165 programy v C." },
+        { id: "flag", term: "-std=c17", definition: "Po\u017eiadavka na jazykov\u00fd re\u017eim C17 pri preklade GCC." }
+      ];
+      let selected = null;
+      let matched = 0;
+      let shuffleCount = 0;
+      const shuffle = (items) => {
+        const result = [...items];
+        for (let i = result.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [result[i], result[j]] = [result[j], result[i]];
+        }
+        return result;
+      };
+      const makeCard = (pair, side, label) => {
+        const card = document.createElement("button");
+        card.type = "button";
+        card.className = "matching-card";
+        card.textContent = label;
+        card.dataset.pair = pair.id;
+        card.dataset.side = side;
+        card.draggable = side === "term";
+        card.setAttribute("aria-pressed", "false");
+        card.addEventListener("click", () => {
+          if (card.disabled) return;
+          if (side === "term") {
+            game.querySelectorAll('[data-side="term"]').forEach((item) => item.setAttribute("aria-pressed", "false"));
+            selected = pair.id;
+            card.setAttribute("aria-pressed", "true");
+            feedback.textContent = "Teraz vyberte význam pre pojem „" + label + "“.";
+            return;
+          }
+          if (!selected) {
+            feedback.textContent = "Najprv vyberte pojem a potom jeho význam.";
+            return;
+          }
+          checkMatch(selected, pair.id);
+        });
+        if (side === "term") {
+          card.addEventListener("dragstart", (event) => {
+            selected = pair.id;
+            event.dataTransfer.setData("text/plain", pair.id);
+            event.dataTransfer.effectAllowed = "move";
+            card.classList.add("is-dragging");
+          });
+          card.addEventListener("dragend", () => card.classList.remove("is-dragging"));
+        } else {
+          card.addEventListener("dragover", (event) => {
+            event.preventDefault();
+            card.classList.add("is-drop-target");
+          });
+          card.addEventListener("dragleave", () => card.classList.remove("is-drop-target"));
+          card.addEventListener("drop", (event) => {
+            event.preventDefault();
+            card.classList.remove("is-drop-target");
+            checkMatch(event.dataTransfer.getData("text/plain") || selected, pair.id);
+          });
+        }
+        return card;
+      };
+      const checkMatch = (termId, definitionId) => {
+        const termCard = termColumn.querySelector('[data-pair="' + termId + '"]');
+        const definitionCard = definitionColumn.querySelector('[data-pair="' + definitionId + '"]');
+        if (!termCard || !definitionCard || termCard.disabled || definitionCard.disabled) return;
+        termColumn.querySelectorAll('[data-side="term"]').forEach((item) => item.setAttribute("aria-pressed", "false"));
+        if (termId === definitionId) {
+          termCard.disabled = true;
+          definitionCard.disabled = true;
+          termCard.classList.add("is-correct");
+          definitionCard.classList.add("is-correct");
+          termCard.setAttribute("aria-label", termCard.textContent + ", spr\u00e1vne priraden\u00e9");
+          definitionCard.setAttribute("aria-label", definitionCard.textContent + ", spr\u00e1vne priraden\u00e9");
+          matched++;
+          feedback.textContent = matched === pairs.length ? "V\u00fdborne! Spr\u00e1vne ste spojili v\u0161etky pojmy." : "Spr\u00e1vne. Zost\u00e1va spoji\u0165 " + (pairs.length - matched) + " pojmov.";
+        } else {
+          termCard.classList.add("is-wrong");
+          definitionCard.classList.add("is-wrong");
+          window.setTimeout(() => {
+            termCard.classList.remove("is-wrong");
+            definitionCard.classList.remove("is-wrong");
+          }, 350);
+          feedback.textContent = "Tieto karti\u010dky k sebe nepatria. Sk\u00faste to znova.";
+        }
+        selected = null;
+      };
+      const deal = () => {
+        selected = null;
+        matched = 0;
+        termColumn.replaceChildren(...shuffle(pairs).map((pair, index) => {
+          const pairNumber = pairs.indexOf(pair) + 1;
+          const card = makeCard(pair, "term", pairNumber + ". " + pair.term);
+          card.style.animationDelay = (index * 75) + "ms";
+          card.classList.add("is-shuffling");
+          return card;
+        }));
+        definitionColumn.replaceChildren(...shuffle(pairs).map((pair, index) => {
+          const pairLetter = String.fromCharCode(65 + pairs.indexOf(pair));
+          const card = makeCard(pair, "definition", pairLetter + ". " + pair.definition);
+          card.style.animationDelay = (index * 75) + "ms";
+          card.classList.add("is-shuffling");
+          return card;
+        }));
+        shuffleCount++;
+        feedback.textContent = shuffleCount === 1 ? "Kartičky sú zamiešané. Vyberte pojem a potom jeho význam." : "Kartičky sú znovu zamiešané. Skúste nájsť všetky dvojice.";
+      };
+      reset.addEventListener("click", deal);
+      deal();
+    })();
+
     document.getElementById("knowledge-quiz").addEventListener("submit", (event) => {
       event.preventDefault();
-      const selects = [...event.currentTarget.querySelectorAll("select")];
+      const questions = [...event.currentTarget.querySelectorAll("select")];
       const result = document.getElementById("quiz-result");
-      if (selects.some((select) => !select.value)) {
-        selects.forEach((select) => select.setAttribute("aria-invalid", String(!select.value)));
+      if (questions.some((question) => !question.value)) {
+        questions.forEach((question) => {
+          const invalid = !question.value;
+          question.classList.toggle("wrong", invalid);
+          question.setAttribute("aria-invalid", String(invalid));
+        });
         result.className = "result bad";
         result.textContent = "Najprv vyberte odpoveď pri každej otázke.";
         return;
       }
-      const correct = selects.filter((select) => select.value === select.dataset.answer).length;
-      selects.forEach((select) => {
-        const wrong = select.value !== select.dataset.answer;
-        select.classList.toggle("wrong", wrong);
-        select.setAttribute("aria-invalid", String(wrong));
+      const correct = questions.filter((question) => question.value === question.dataset.answer).length;
+      questions.forEach((question) => {
+        const invalid = question.value !== question.dataset.answer;
+        question.classList.toggle("wrong", invalid);
+        question.setAttribute("aria-invalid", String(invalid));
       });
-      result.className = `result ${correct === selects.length ? "good" : "bad"}`;
-      result.textContent = `Správne odpovede: ${correct} z ${selects.length}.${correct === selects.length ? " Výborne!" : " Skúste si zopakovať označené otázky."}`;
+      result.className = `result ${correct === questions.length ? "good" : "bad"}`;
+      result.textContent = `Správne odpovede: ${correct} zo ${questions.length}.${correct === questions.length ? " Výborne!" : " Červeným orámovaním sú označené odpovede na zopakovanie."}`;
     });
+  </script>
+  <script>
+    (() => {
+      let savedDetails = [];
+      let printSection = null;
+
+      window.addEventListener("beforeprint", () => {
+        if (printSection) return;
+        const main = document.querySelector("main");
+        const footer = main?.querySelector("footer");
+        if (!main || !footer) return;
+
+        printSection = document.createElement("section");
+        printSection.className = "print-solution-sheet";
+        printSection.setAttribute("aria-label", "Riešenia úloh");
+        printSection.innerHTML = "<h2>Riešenia úloh</h2>";
+        const list = document.createElement("ol");
+
+        const matching = document.createElement("li");
+        matching.innerHTML = "<strong>Spájanie kartičiek:</strong> 1–A, 2–B, 3–C, 4–D. C — programovací jazyk; C17 — verzia normy jazyka C; GCC — kompilátor; <code>-std=c17</code> — voľba jazykového režimu C17.";
+        list.append(matching);
+
+        document.querySelectorAll("#knowledge-quiz select[data-answer]").forEach((select) => {
+          const option = [...select.options].find((item) => item.value === select.dataset.answer);
+          const label = document.querySelector(`label[for="${select.id}"]`);
+          if (!option) return;
+          const item = document.createElement("li");
+          item.textContent = `${label?.textContent.trim() || "Otázka"} ${option.textContent.trim()}`;
+          list.append(item);
+        });
+        printSection.append(list);
+
+        savedDetails = [...main.querySelectorAll("details")].map((details) => {
+          const placeholder = document.createComment("pôvodné miesto riešenia");
+          details.before(placeholder);
+          details.open = true;
+          printSection.append(details);
+          return { details, placeholder, wasOpen: details.open };
+        });
+        footer.before(printSection);
+      });
+
+      window.addEventListener("afterprint", () => {
+        savedDetails.forEach(({ details, placeholder, wasOpen }) => {
+          placeholder.before(details);
+          placeholder.remove();
+          details.open = wasOpen;
+        });
+        savedDetails = [];
+        printSection?.remove();
+        printSection = null;
+      });
+    })();
   </script>
 </body>
 </html>

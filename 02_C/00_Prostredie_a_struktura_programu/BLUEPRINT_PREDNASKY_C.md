@@ -1,15 +1,16 @@
 # Blueprint prednášky C
 
-Tento blueprint vychádza zo stránky [4.1 Historický úvod a normy jazyka C](./4.1_Historicky_uvod_a_normy_jazyka_C.html). Použite ho na založenie novej témy aj na postupné zjednotenie už existujúcich stránok. Hotový štartovací súbor je [TEMPLATE_PREDNASKY_C.html](./TEMPLATE_PREDNASKY_C.html).
+Stránka [4.1 Historický úvod a normy jazyka C](./4.1_Historicky_uvod_a_normy_jazyka_C.html) je záväzný blueprint aj zdrojová šablóna. Súbor [TEMPLATE_PREDNASKY_C.html](./TEMPLATE_PREDNASKY_C.html) je jej úplná kópia. Pri každej novej téme vytvorte kópiu šablóny a prepíšte obsah priamo v nej. Zachovajte formát, poradie, rozloženie, nastavenia, ovládanie a spoločné skripty stránky 4.1.
 
 ## Použitie
 
 ### Nová téma
 
-1. Skopírujte `TEMPLATE_PREDNASKY_C.html` do priečinka tematického celku a pomenujte súbor podľa zaužívaného číslovania tém.
-2. Nahraďte všetky `TODO` a `{{...}}` hodnotami novej témy. Zachovajte kód panelu, odkazy na spoločné skripty a identifikátory ovládacích prvkov.
-3. Upravte obsahové sekcie tak, aby zodpovedali cieľom a náročnosti témy. Voliteľné sekcie pridajte iba vtedy, keď podporujú učenie.
-4. Skontrolujte navigáciu, odkazy, odpovede kvízu a zaradenie stránky do README tematického celku.
+1. Skopírujte `TEMPLATE_PREDNASKY_C.html` do priečinka tematického celku a pomenujte kópiu podľa zaužívaného číslovania tém.
+2. Prepíšte číslo a názov témy, navigáciu a všetok odborný text. Každý príklad, otázku, odpoveď, zdroj a odkaz prispôsobte novej téme.
+3. Zachovajte existujúce sekcie a ich poradie. Ak časť pre novú tému nemá obsah, odstráňte celú príslušnú sekciu vrátane jej navigačného odkazu; nepridávajte náhradný prázdny blok. Zachovajte rozloženie a vizuálne nastavenia zostávajúcich častí.
+4. Zachovajte spoločný panel, jeho poradie ovládacích prvkov, identifikátory, štýly a skripty. Odstráňte iba obsahovo voliteľné časti stránky 4.1 a ich výlučne súvisiace skripty; spoločné ovládanie nemažte.
+5. Skontrolujte navigáciu, odkazy, odpovede kvízu a zaradenie stránky do README tematického celku.
 
 ### Existujúca téma
 
@@ -38,7 +39,7 @@ Videá, väčšia projektová úloha, učiteľské riešenia, bezpečnostná pri
 
 ## Spoločné ovládanie
 
-Panel vpravo preberajte z ukážky v [4.1](./4.1_Historicky_uvod_a_normy_jazyka_C.html) alebo použite spoločné súbory `c-lecture-controls.css` a `c-lecture-controls.js`. Panel obsahuje:
+Panel vpravo kopírujte presne zo stránky [4.1](./4.1_Historicky_uvod_a_normy_jazyka_C.html), vrátane poradia prvkov. Panel obsahuje:
 
 - čas a nastavenie časového pásma z `../../lesson-top.js`;
 - 45-minútový časovač hodiny a Pomodoro;
@@ -48,7 +49,7 @@ Panel vpravo preberajte z ukážky v [4.1](./4.1_Historicky_uvod_a_normy_jazyka_
 
 ### Povinné ovládanie hlasu
 
-V každej téme musí byť pod rýchlosťou čítania viditeľný nadpis „Hlas“ a rozbaľovací zoznam hlasov. Nevypúšťajte ho ani vtedy, keď prehliadač poskytuje iba automatický hlas. Zachovajte túto štruktúru a ID; spoločný skript doplní dostupné hlasy zariadenia, uprednostní slovenčinu a zapamätá výber:
+V každej téme musí byť pod rýchlosťou čítania viditeľný nadpis „Hlas“ a rozbaľovací zoznam hlasov. Nevypúšťajte ho ani vtedy, keď prehliadač poskytuje iba automatický hlas. Zachovajte túto štruktúru a ID; spoločný skript načíta všetky hlasy a jazyky, ktoré poskytne prehliadač/zariadenie, zoradí slovenčinu na začiatok a zapamätá výber. Ponuka nie je pevne obmedzená na slovenčinu:
 
 ```html
 <label class="narration-voice" for="narration-voice">
@@ -68,7 +69,7 @@ Povinné skripty v `<head>`:
 <script src="../../lesson-top.js" defer></script>
 ```
 
-Spoločný panel vložte raz do `<body>` pred `<main>`. Jeho presné HTML je v štartovacom súbore. Na koniec stránky vložte:
+Spoločný panel vložte raz do `<body>` pred `<main>`. Jeho presné HTML je na stránke 4.1. Na koniec stránky vložte:
 
 ```html
 <script src="c-lecture-controls.js" defer></script>
