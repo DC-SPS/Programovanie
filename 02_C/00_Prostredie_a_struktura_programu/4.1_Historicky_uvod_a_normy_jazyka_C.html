@@ -115,6 +115,8 @@
     .safety-notice,.safety-reminder{margin:1rem 0;padding:14px 17px;border:1px solid var(--line);border-left:5px solid var(--acc);border-radius:12px;background:var(--note)}
     .safety-notice strong,.safety-reminder strong{display:block;margin-bottom:.25rem}
 
+    @page{size:A4;margin:0}
+
     .lesson-side-panel{position:fixed;top:16px;right:16px;z-index:1100;display:flex;flex-direction:column;gap:.75rem;width:min(350px,calc(100vw - 32px));max-height:calc(100vh - 32px);overflow-y:auto;padding:.55rem;border:1px solid var(--line);border-radius:14px;background:color-mix(in srgb,var(--bg) 94%,transparent);box-shadow:0 12px 38px color-mix(in srgb,#000 22%,transparent);backdrop-filter:blur(12px)}
     .lesson-side-panel .lesson-clock{position:relative;top:auto;flex:none;height:auto;min-height:0;margin:0;border-radius:.8rem;overflow:hidden}
     .lesson-side-panel .lesson-clock__chrome{display:flex;flex-wrap:nowrap;align-items:center;gap:.5rem;padding:.55rem .7rem}
@@ -130,6 +132,10 @@
     .lesson-side-panel .narration-controls button{text-align:center}
     .lesson-side-panel .narration-controls .narration-speed{grid-column:1/-1;grid-row:1;justify-content:center;gap:.65rem;width:100%;margin:0}
     .lesson-side-panel .narration-controls .narration-speed select{flex:none;min-width:8.5rem}
+    .narration-voice,.narration-volume{grid-column:1/-1;display:grid;grid-template-columns:1fr;gap:.25rem;margin:0;color:var(--fg);font-size:.82rem;font-weight:650}
+    .narration-voice select{width:100%;min-height:38px;padding:.3rem .5rem;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--fg);font:inherit}
+    .narration-volume-heading{display:flex;justify-content:space-between;gap:.5rem}.narration-volume input{width:100%;accent-color:var(--acc)}
+    .narration-volume-help{grid-column:1/-1;margin:0;color:var(--mut);font-size:.7rem;font-weight:400;text-align:center}
     .lesson-side-panel .narration-status{grid-column:1/-1;text-align:center}
     .lesson-side-panel .narration-status:empty{display:none!important}
     .lesson-duration{margin-bottom:.55rem;padding:.45rem .6rem;border:1px solid #2b5674;border-radius:.6rem;background:#0b1723;color:#edf6ff}
@@ -160,7 +166,7 @@
     .pomodoro-slider input:focus-visible,.pomodoro-controls button:focus-visible{outline:3px solid #fde047;outline-offset:2px}
     .narration-status:empty{display:none}
     .lesson-side-panel .narration-status:not(:empty){display:grid;grid-template-columns:1fr;gap:.2rem;padding:.3rem 0 0;border-top:1px solid var(--line);font-size:.78rem;font-weight:650;color:var(--fg)}
-    .reading-progress,.reading-times{display:block;white-space:nowrap;text-align:center}.reading-times{font-size:.76rem}
+    .reading-progress,.reading-times{display:block;width:100%;justify-self:center;white-space:nowrap;text-align:center}.reading-progress{color:#facc15}.reading-times{color:#38bdf8;font-size:.76rem}
     .pomodoro-toast{position:fixed;top:16px;right:374px;z-index:1400;max-width:min(22rem,calc(100vw - 2rem));padding:.85rem 1rem;border:1px solid #38bdf8;border-radius:.75rem;background:#0b1723;color:#edf6ff;box-shadow:0 12px 36px rgba(0,0,0,.32);font-weight:750}
     .pomodoro-toast[data-phase="relax"]{border-color:#86efac}
     .pomodoro-toast[hidden]{display:none}
@@ -169,7 +175,7 @@
     @media(min-width:1280px){main{width:860px;margin-left:max(16px,calc((100vw - 860px - 390px)/2));margin-right:374px}}
     @media(max-width:1279px){.lesson-side-panel{top:auto;right:8px;bottom:8px;left:8px;width:auto;max-height:min(46vh,420px);padding:.45rem}main{padding-bottom:min(52vh,470px)}}
     @media(max-width:620px){.lesson-side-panel{max-height:44vh}.lesson-side-panel .narration-controls{gap:.4rem;padding:.65rem}.lesson-side-panel .narration-controls button{min-height:40px;padding:.4rem;font-size:.9rem}.lesson-side-panel .narration-status{font-size:.8rem}}
-    @media print{.lesson-side-panel{position:static;width:auto;max-height:none;overflow:visible;padding:0;border:0;background:#fff;box-shadow:none;backdrop-filter:none}.lesson-side-panel .lesson-clock{display:block}main{width:auto;margin:0;padding:0}}
+    @media print{.lesson-side-panel{position:static;width:auto;max-height:none;overflow:visible;padding:0;border:0;background:#fff;box-shadow:none;backdrop-filter:none}.lesson-side-panel .lesson-clock{display:block}main{width:auto;margin:0;padding:12mm 14mm}}
 </style>
   <script src="../../theme.js" defer></script>
   <script src="../../lesson-top.js" defer></script>
@@ -196,6 +202,14 @@
           <option value="1.75">1,75×</option>
           <option value="2">2×</option>
         </select>
+      </label>
+      <label class="narration-voice" for="narration-voice">Hlas
+        <select id="narration-voice" aria-label="Vyberte hlas na čítanie"><option value="">Automaticky – slovenský hlas</option></select>
+      </label>
+      <label class="narration-volume" for="narration-volume">
+        <span class="narration-volume-heading"><span>Hlasitosť čítania</span><output id="narration-volume-value" for="narration-volume">100 %</output></span>
+        <input id="narration-volume" type="range" min="0" max="100" step="5" value="100" aria-label="Hlasitosť hlasového čítania">
+        <span class="narration-volume-help">Upravuje hlasitosť čítania, nie celkovú hlasitosť zariadenia.</span>
       </label>
       <div id="reading-status" class="narration-status" role="status" aria-live="polite"></div>
     </section>
@@ -340,17 +354,26 @@
     <h2>8. Lístok pri odchode</h2>
     <p>Dokončite vetu: <strong>„C17 je … a pri preklade ho zvolím pomocou …“</strong></p>
     <details><summary>Očakávaná odpoveď</summary><p>C17 je verzia normy jazyka C a v príkaze GCC ju zvolím pomocou <code>-std=c17</code>.</p></details>
-    <section class="card" aria-labelledby="setup-project-heading">
+    <section class="card" data-read-aloud="selected" aria-labelledby="setup-project-heading">
       <h3 id="setup-project-heading">Malý projekt za 5 bodov: Pripravte si prostredie na C a C++</h3>
-      <p>Nainštalujte Visual Studio Code, kompilátor podporujúci C aj C++ a rozšírenie C/C++ od Microsoftu. Postupujte podľa pokynov vyučujúceho pre operačný systém v učebni a po inštalácii overte, že nástroje fungujú.</p>
+      <p>Projekt je hodnotený <strong>5 bodmi</strong>. Úplné zadanie vrátane pokynov na vypracovanie a odovzdanie nájdete v EduPage. Riaďte sa zverejneným postupom; nástroje na školský počítač neinštalujte bez súhlasu vyučujúceho alebo správcu.</p>
+    </section>
+    <section class="card" data-read-aloud="selected" aria-labelledby="project-work-rules-heading">
+      <h3 id="project-work-rules-heading">Pravidlá práce na projekte a postup po skoršom odovzdaní</h3>
+      <h4>1. Práca na projekte počas vyučovacej hodiny</h4>
+      <ul>
+        <li><strong>Samostatnosť a sústredenie:</strong> Po zadaní projektu pracujte na svojej úlohe samostatne, sústredene a podľa technickej dokumentácie alebo pokynov vyučujúceho.</li>
+        <li><strong>Legálne a povolené zdroje:</strong> Používajte schválené vývojové prostredia, legálny softvér, oficiálne študijné materiály a online zdroje povolené vyučujúcim. Nesťahujte obsah, nehrajte hry ani nespúšťajte aplikácie, ktoré nesúvisia s vyučovaním.</li>
+        <li><strong>Ukladanie a konzultácie:</strong> Prácu pravidelne ukladajte, prípadne commitujte do Gitu alebo do určenej zložky. Pri technickom probléme alebo nejasnosti zdvihnite ruku a počkajte na vyučujúceho; nevykrikujte cez miestnosť.</li>
+      </ul>
+      <h4>2. Po skoršom dokončení a odovzdaní</h4>
+      <p>Ak dokončíte a odovzdáte projekt alebo jeho určenú časť skôr, zostaňte na svojom pracovisku až do oficiálneho konca hodiny. Neodchádzajte od počítača, nerušte spolužiakov, nepoužívajte mobil na súkromné účely a neopúšťajte učebňu.</p>
       <ol>
-        <li><strong>1 bod:</strong> Visual Studio Code je nainštalovaný a spustí sa.</li>
-        <li><strong>1 bod:</strong> Kompilátor C/C++ je nainštalovaný a dostupný v termináli; overte príkazmi <code>gcc --version</code> a <code>g++ --version</code> alebo ekvivalentnými príkazmi pre použitý kompilátor.</li>
-        <li><strong>1 bod:</strong> Vo VS Code je nainštalované rozšírenie <strong>C/C++ od Microsoftu</strong>.</li>
-        <li><strong>1 bod:</strong> Vytvorte, preložte a spustite krátky program v jazyku C.</li>
-        <li><strong>1 bod:</strong> Vytvorte, preložte a spustite krátky program v jazyku C++.</li>
+        <li><strong>Skontrolujte úplnosť:</strong> Overte názvy a uloženie všetkých súborov a skontrolujte splnenie kritérií zadania.</li>
+        <li><strong>Pokračujte rozširujúcou úlohou:</strong> Vypracujte bonusové vylepšenie, optimalizáciu alebo doplnkovú nadstavbu, ktorú zadal vyučujúci.</li>
+        <li><strong>Venujte sa samoštúdiu:</strong> Ak nemáte rozširujúcu úlohu, opakujte preberanú látku, študujte odbornú literatúru alebo dokumentáciu, prípadne riešte úlohy na portáloch odporučených vyučujúcim.</li>
+        <li><strong>Zachovajte pokoj:</strong> Do zvonenia a oficiálneho ukončenia hodiny pracujte potichu a nerušte spolužiakov, ktorí ešte dokončujú svoje projekty.</li>
       </ol>
-      <p><strong>Odovzdanie:</strong> Ukážte vyučujúcemu nainštalované prostredie a oba spustené programy, prípadne priložte snímku obrazovky podľa jeho pokynov. Ak inštalácia vyžaduje oprávnenia správcu, požiadajte o pomoc vyučujúceho a nič neinštalujte obchádzaním školských pravidiel.</p>
     </section>
 
     <h2>9. Ukončenie práce v učebni</h2>
@@ -400,14 +423,46 @@
     const pauseButton = document.getElementById("pause-reading");
     const replayButton = document.getElementById("replay-reading");
     const speedSelect = document.getElementById("narration-speed");
+    const voiceSelect = document.getElementById("narration-voice");
+    const volumeSelect = document.getElementById("narration-volume");
+    const volumeValue = document.getElementById("narration-volume-value");
     const narrationSpeedKey = "lesson-narration.playback-rate.v2";
+    const narrationVoiceKey = "lesson-narration.voice";
+    const narrationVolumeKey = "lesson-narration.volume";
     const speechSupported = "speechSynthesis" in window && "SpeechSynthesisUtterance" in window;
+    let availableVoices = [];
     const availableRates = new Set([0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2]);
     try {
       const savedRate = Number(window.localStorage.getItem(narrationSpeedKey));
       if (availableRates.has(savedRate)) speedSelect.value = String(savedRate);
     } catch (_) {
       // Keep the default rate when browser storage is unavailable.
+    }
+    try {
+      const savedVolume = Number(window.localStorage.getItem(narrationVolumeKey));
+      if (Number.isFinite(savedVolume) && savedVolume >= 0 && savedVolume <= 100) volumeSelect.value = String(savedVolume);
+    } catch (_) {
+      // Keep the default speech volume if browser storage is unavailable.
+    }
+    volumeValue.value = volumeSelect.value + " %";
+    volumeValue.textContent = volumeSelect.value + " %";
+    const populateVoices = () => {
+      if (!speechSupported) return;
+      let savedVoice = "";
+      try { savedVoice = window.localStorage.getItem(narrationVoiceKey) || ""; } catch (_) { /* Voice selection remains available for this page. */ }
+      availableVoices = window.speechSynthesis.getVoices();
+      const sortedVoices = [...availableVoices].sort((a, b) => {
+        const aSk = a.lang.toLowerCase().startsWith("sk") ? 0 : 1;
+        const bSk = b.lang.toLowerCase().startsWith("sk") ? 0 : 1;
+        return aSk - bSk || a.lang.localeCompare(b.lang) || a.name.localeCompare(b.name);
+      });
+      voiceSelect.replaceChildren(new Option("Automaticky – slovenský hlas", ""));
+      sortedVoices.forEach((voice) => voiceSelect.add(new Option(`${voice.name} (${voice.lang})`, voice.voiceURI)));
+      voiceSelect.value = sortedVoices.some((voice) => voice.voiceURI === savedVoice) ? savedVoice : "";
+    };
+    if (speechSupported) {
+      populateVoices();
+      window.speechSynthesis.addEventListener("voiceschanged", populateVoices);
     }
     const narrationItems = [...document.querySelectorAll("[data-read-aloud]")].map((block, index) => {
       const blockId = block.id || `narration-block-${index + 1}`;
@@ -543,11 +598,11 @@
       currentEstimateMs = estimateSpeechMs(item.text);
       setActiveBlock(item.block);
       const utterance = new SpeechSynthesisUtterance(item.text);
-      const slovakVoice = window.speechSynthesis.getVoices().find((voice) =>
-        voice.lang.toLowerCase().startsWith("sk"),
-      );
+      const selectedVoice = availableVoices.find((voice) => voice.voiceURI === voiceSelect.value);
+      const slovakVoice = selectedVoice || availableVoices.find((voice) => voice.lang.toLowerCase().startsWith("sk"));
       utterance.lang = slovakVoice?.lang || "sk-SK";
       utterance.rate = Number(speedSelect.value);
+      utterance.volume = Number(volumeSelect.value) / 100;
       if (slovakVoice) utterance.voice = slovakVoice;
       utterance.onstart = () => {
         if (run === readingRun) {
@@ -641,16 +696,9 @@
       updateControls();
     });
     replayButton.addEventListener("click", () => startReading(previousSelection));
-    speedSelect.addEventListener("change", () => {
-      const rate = Number(speedSelect.value);
-      try {
-        window.localStorage.setItem(narrationSpeedKey, String(rate));
-      } catch (_) {
-        // The selected rate still applies to this page if storage is unavailable.
-      }
-      const label = speedSelect.selectedOptions[0]?.textContent || (rate + "×");
+    const restartSpeechForSetting = (message) => {
       if (!isReading) {
-        readingStatus.textContent = "";
+        readingStatus.textContent = message;
         return;
       }
       if (isPaused) {
@@ -659,16 +707,16 @@
           window.speechSynthesis.resume();
           readingQueue.unshift(activeItem);
           activeItem = null;
+          currentStartedAt = 0;
+          currentPausedAt = 0;
         }
         restartCurrentOnResume = true;
-        readingStatus.textContent = "Rýchlosť " + label + " je nastavená. Po pokračovaní sa aktuálna časť začne znova.";
+        readingStatus.textContent = message + " Po pokračovaní sa aktuálna časť začne znova.";
         return;
       }
       if (!activeItem) {
-        if (speechRestartTimeout) {
-          scheduleNextBlock(readingRun);
-          readingStatus.textContent = "Rýchlosť " + label + " je nastavená.";
-        }
+        if (speechRestartTimeout) scheduleNextBlock(readingRun);
+        readingStatus.textContent = message;
         return;
       }
       readingRun += 1;
@@ -680,8 +728,30 @@
       activeItem = null;
       currentStartedAt = 0;
       currentPausedAt = 0;
-      readingStatus.textContent = "Rýchlosť " + label + " je nastavená. Aktuálna časť sa prehrá znova od začiatku.";
+      readingStatus.textContent = message + " Aktuálna časť sa začne znova.";
       scheduleNextBlock(readingRun);
+    };
+    voiceSelect.addEventListener("change", () => {
+      try { window.localStorage.setItem(narrationVoiceKey, voiceSelect.value); } catch (_) { /* The voice still applies to this page. */ }
+      restartSpeechForSetting("Hlas čítania bol zmenený.");
+    });
+    volumeSelect.addEventListener("input", () => {
+      volumeValue.value = volumeSelect.value + " %";
+      volumeValue.textContent = volumeSelect.value + " %";
+    });
+    volumeSelect.addEventListener("change", () => {
+      try { window.localStorage.setItem(narrationVolumeKey, volumeSelect.value); } catch (_) { /* The volume still applies to this page. */ }
+      restartSpeechForSetting("Hlasitosť čítania bola zmenená.");
+    });
+    speedSelect.addEventListener("change", () => {
+      const rate = Number(speedSelect.value);
+      try {
+        window.localStorage.setItem(narrationSpeedKey, String(rate));
+      } catch (_) {
+        // The selected rate still applies to this page if storage is unavailable.
+      }
+      const label = speedSelect.selectedOptions[0]?.textContent || (rate + "×");
+      restartSpeechForSetting("Rýchlosť " + label + " je nastavená.");
     });
     updateControls();
 
@@ -961,13 +1031,15 @@
         selected = null;
         matched = 0;
         termColumn.replaceChildren(...shuffle(pairs).map((pair, index) => {
-          const card = makeCard(pair, "term", pair.term);
+          const pairNumber = pairs.indexOf(pair) + 1;
+          const card = makeCard(pair, "term", pairNumber + ". " + pair.term);
           card.style.animationDelay = (index * 75) + "ms";
           card.classList.add("is-shuffling");
           return card;
         }));
         definitionColumn.replaceChildren(...shuffle(pairs).map((pair, index) => {
-          const card = makeCard(pair, "definition", pair.definition);
+          const pairLetter = String.fromCharCode(65 + pairs.indexOf(pair));
+          const card = makeCard(pair, "definition", pairLetter + ". " + pair.definition);
           card.style.animationDelay = (index * 75) + "ms";
           card.classList.add("is-shuffling");
           return card;
@@ -1021,7 +1093,7 @@
         const list = document.createElement("ol");
 
         const matching = document.createElement("li");
-        matching.innerHTML = "<strong>Spájanie pojmov:</strong> C — programovací jazyk; C17 — verzia normy jazyka C; GCC — kompilátor; <code>-std=c17</code> — voľba jazykového režimu C17.";
+        matching.innerHTML = "<strong>Spájanie kartičiek:</strong> 1–A, 2–B, 3–C, 4–D. C — programovací jazyk; C17 — verzia normy jazyka C; GCC — kompilátor; <code>-std=c17</code> — voľba jazykového režimu C17.";
         list.append(matching);
 
         document.querySelectorAll("#knowledge-quiz select[data-answer]").forEach((select) => {
