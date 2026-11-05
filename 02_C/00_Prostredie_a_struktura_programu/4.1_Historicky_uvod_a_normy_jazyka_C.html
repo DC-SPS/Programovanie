@@ -49,7 +49,8 @@
     body.teacher .narration-option{display:flex}
     .narration-option input{width:1.25rem;height:1.25rem;accent-color:var(--acc)}
     body:not(.teacher) .teacher-note+.narration-option{display:none}
-    .narration-target{transition:outline-color .16s ease,background-color .16s ease}
+    .narration-target{transition:outline-color .16s ease,background-color .16s ease;text-align:justify;text-justify:inter-word}
+    .narration-target :is(p,li,td){text-align:justify;text-justify:inter-word}
     .narration-target:hover{outline:2px solid var(--acc);outline-offset:3px;background-color:color-mix(in srgb,var(--acc) 8%,transparent);cursor:pointer}
     @media(prefers-reduced-motion:reduce){.narration-target{transition:none}}
     .speech-bubble{position:relative;padding:.85rem 1rem!important;border:2px solid var(--acc)!important;border-radius:1.2rem!important;background:color-mix(in srgb,var(--acc) 12%,var(--card))!important;box-shadow:0 4px 18px color-mix(in srgb,var(--acc) 18%,transparent)}
@@ -99,8 +100,12 @@
     .sources{margin-top:2rem;padding:1rem 1.1rem;border:1px solid var(--line);border-radius:12px;background:var(--card)}
     .sources h2{margin-top:0}
     .sources li{margin:.4rem 0}
+    .glossary-list{display:grid;grid-template-columns:minmax(8rem,.35fr) 1fr;gap:.3rem .8rem}
+    .glossary-list dt{font-weight:750}
+    .glossary-list dd{margin:0}
     footer{margin-top:2rem;padding-top:1rem;border-top:1px solid var(--line);color:var(--mut);font-size:14px}
     @media(max-width:620px){main{width:min(100% - 1.2rem,860px)}td:first-child{white-space:normal}}
+    @media(max-width:520px){.glossary-list{grid-template-columns:1fr;gap:.1rem}.glossary-list dd{margin-bottom:.5rem}}
     @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important}}
     @media print{.global-course-nav,.mode,.pdf-export,.quiz button,.narration-controls,.narration-option,.lesson-side-panel{display:none!important}.teacher-note{display:block}main{max-width:none}}
     @media print{
@@ -273,7 +278,7 @@
     </ul>
 
     <h2 data-read-aloud="selected">1. Prečo vznikajú jazykové normy?</h2>
-    <p data-read-aloud="selected">Predstavte si, že dvaja programátori napíšu rovnaký zdrojový kód, no každý používa iný prekladač. Bez spoločných pravidiel by mohli očakávať odlišné správanie toho istého programu. Norma pomáha určiť, ktoré zápisy patria do jazyka a aké správanie sa od vyhovujúcej implementácie očakáva.</p>
+    <p data-read-aloud="selected">Predstavte si, že dvaja programátori napíšu rovnaký <strong>zdrojový kód</strong>, no každý používa iný prekladač. Bez spoločných pravidiel by mohli očakávať odlišné správanie toho istého programu. <strong>Norma</strong> pomáha určiť, ktoré zápisy patria do jazyka a aké správanie sa od vyhovujúcej implementácie očakáva.</p>
     <div class="card" data-read-aloud="optional"><strong>Otázka na úvod:</strong> Ak by si každý výrobca prekladača mohol určovať vlastnú syntax aj význam príkazov, čo by sa stalo pri prenose programu z jedného počítača na druhý?</div>
 
     <h2 data-read-aloud="selected">2. Stručná história jazyka C</h2>
@@ -289,14 +294,14 @@
       <span class="chosen">2018 · C17</span><b aria-hidden="true">→</b>
       <span>2024 · C23</span>
     </div>
-    <p data-read-aloud="selected">Časová os je zjednodušená. C17 (tiež označované ako C18 podľa roku vydania ISO dokumentu) je revízia normy C11 s opravami a objasneniami; neprináša veľkú sadu nových jazykových vlastností. Novšia norma C23 existuje, ale v tomto kurze si kvôli jednotným príkladom a nástrojom zvolíme C17.</p>
+    <p data-read-aloud="selected">Časová os je zjednodušená. <strong>C17</strong> (tiež označované ako <strong>C18</strong> podľa roku vydania ISO dokumentu) je revízia normy C11 s opravami a objasneniami; neprináša veľkú sadu nových jazykových vlastností. Novšia norma <strong>C23</strong> existuje, ale v tomto kurze si kvôli jednotným príkladom a nástrojom zvolíme C17.</p>
 
     <h2 data-read-aloud="selected">3. Jazyk, norma a kompilátor</h2>
     <div class="split">
-      <article class="term" data-read-aloud="selected"><h3>Jazyk C</h3><p>Pravidlá a prostriedky, ktorými programátor vyjadruje postup riešenia.</p></article>
-      <article class="term" data-read-aloud="selected"><h3>Norma C17</h3><p>Dokument so spoločnými pravidlami jazyka C, schválený ako ISO/IEC 9899:2018.</p></article>
-      <article class="term" data-read-aloud="selected"><h3>Kompilátor</h3><p>Program, ktorý spracuje zdrojový kód podľa podporovaných pravidiel a vytvorí ďalší výstup, napríklad spustiteľný program.</p></article>
-      <article class="term" data-read-aloud="selected"><h3>GCC</h3><p>Jeden z kompilátorov. Jeho prepínač môže vybrať jazykový režim, napríklad C17.</p></article>
+      <article class="term" data-read-aloud="selected"><h3>Jazyk C</h3><p><strong>Pravidlá a prostriedky</strong>, ktorými programátor vyjadruje postup riešenia.</p></article>
+      <article class="term" data-read-aloud="selected"><h3>Norma C17</h3><p>Dokument so <strong>spoločnými pravidlami jazyka C</strong>, schválený ako ISO/IEC 9899:2018.</p></article>
+      <article class="term" data-read-aloud="selected"><h3>Kompilátor</h3><p><strong>Program, ktorý spracuje zdrojový kód</strong> podľa podporovaných pravidiel a vytvorí ďalší výstup, napríklad spustiteľný program.</p></article>
+      <article class="term" data-read-aloud="selected"><h3>GCC</h3><p><strong>Súbor kompilátorov</strong>. Jeho prepínač môže vybrať jazykový režim, napríklad C17.</p></article>
     </div>
     <p data-read-aloud="selected">Norma nie je samotný kompilátor a jej zvolením sa nový nástroj neinštaluje. Kompilátory sa môžu líšiť verziou, podporou vlastností a rozšíreniami. Preto pri výučbe nastavíme spoločný jazykový režim a zároveň budeme kompilovať s upozorneniami.</p>
 
@@ -406,6 +411,31 @@
         <li><a href="https://www.w3schools.com/c/" target="_blank" rel="noopener noreferrer">W3Schools: C Tutorial</a> — doplnkový úvod do syntaxe jazyka C.</li>
       </ul>
       <p class="muted">Na ďalšej hodine nadviažeme vytvorením prvého programu v C17. Pri porovnávaní zdrojov nezamieňajte syntax C so syntaxou C++.</p>
+    </section>
+    <section class="card" data-read-aloud="selected" aria-labelledby="glossary-heading">
+      <h2 id="glossary-heading">Register pojmov a skratiek</h2>
+      <dl class="glossary-list">
+        <dt>Jazyk C</dt><dd>Programovací jazyk používaný okrem iného na tvorbu systémového softvéru a programov pre mikrokontroléry.</dd>
+        <dt>C++</dt><dd>Samostatný programovací jazyk príbuzný jazyku C; má vlastnú syntax aj štandardy.</dd>
+        <dt>Norma jazyka</dt><dd>Dokument, ktorý stanovuje spoločné pravidlá zápisu a správania programu.</dd>
+        <dt>C17 / C18</dt><dd>Označenia revízie normy C vydanej ako ISO/IEC 9899:2018.</dd>
+        <dt>C89 / C90</dt><dd>Označenia prvej široko prijatej normy C podľa rokov jej schválenia ANSI a ISO.</dd>
+        <dt>C99 / C11 / C23</dt><dd>Označenia vydaní normy jazyka C podľa rokov ich vydania.</dd>
+        <dt>Kompilátor</dt><dd>Program, ktorý prekladá zdrojový kód podľa pravidiel zvoleného jazyka a vytvára výsledný program alebo iný výstup.</dd>
+        <dt>GCC</dt><dd><em>GNU Compiler Collection</em> — súbor kompilátorov a súvisiacich nástrojov projektu GNU.</dd>
+        <dt><code>-std=c17</code></dt><dd>Voľba pre GCC, ktorá požaduje preklad v jazykovom režime C17.</dd>
+        <dt><code>-Wall</code>, <code>-Wextra</code>, <code>-Wpedantic</code></dt><dd>Voľby GCC, ktoré zapínajú skupiny upozornení na možné problémy a neštandardné zápisy.</dd>
+        <dt><code>-o</code></dt><dd>Voľba GCC, za ktorou nasleduje názov vytvoreného výstupného súboru.</dd>
+        <dt>ISO</dt><dd><em>International Organization for Standardization</em> — Medzinárodná organizácia pre normalizáciu.</dd>
+        <dt>IEC</dt><dd><em>International Electrotechnical Commission</em> — Medzinárodná elektrotechnická komisia.</dd>
+        <dt>ISO/IEC</dt><dd>Označenie spoločnej normy vydanej organizáciami ISO a IEC.</dd>
+        <dt>ANSI</dt><dd><em>American National Standards Institute</em> — americká organizácia pre normalizáciu.</dd>
+        <dt>K&amp;R</dt><dd>Skratka priezvisk Kernighan a Ritchie; používa sa aj pre ich známu knihu o jazyku C a skorú podobu jazyka.</dd>
+        <dt>Unix</dt><dd>Rodina operačných systémov, pri vývoji ktorých sa jazyk C významne uplatnil.</dd>
+        <dt>Embedded systém</dt><dd>Počítačový systém zabudovaný do zariadenia, ktorý riadi jeho vybrané funkcie.</dd>
+        <dt>BOZP</dt><dd>Bezpečnosť a ochrana zdravia pri práci.</dd>
+        <dt>EduPage</dt><dd>Školský informačný systém používaný na komunikáciu a zdieľanie pokynov.</dd>
+      </dl>
     </section>
     <footer><a href="../c-language.html">Späť na prehľad kurzu C</a> · <a href="4.2_Prvy_program_v_jazyku_C.html">Pokračovať prednáškou 4.2 →</a> · <a href="../../index.html">Všetky kurzy</a></footer>
   </main>
