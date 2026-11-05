@@ -24,6 +24,95 @@ service cloud.firestore {
       allow read, write: if false;
     }
 
+    // Teacher-only remote speech control. Session IDs are random per page load;
+    // a paired device can write commands only to its exact live session.
+    function ownsRemoteSession(sessionId) {
+      return isTeacher()
+        && exists(/databases/$(database)/documents/remoteSessions/$(sessionId))
+        && get(/databases/$(database)/documents/remoteSessions/$(sessionId)).data.ownerUid == request.auth.uid;
+    }
+
+    match /remoteSessions/{sessionId} {
+      allow get, list: if isTeacher() && resource.data.ownerUid == request.auth.uid;
+
+      allow create: if isTeacher()
+        && request.resource.data.keys().hasOnly([
+          'ownerUid', 'pageTitle', 'pagePath', 'pairingCode', 'pairExpiresAt',
+          'pairedDeviceId', 'pairedAt', 'pageActive', 'pageHeartbeatAt',
+          'playbackState', 'canReplay', 'createdAt'
+        ])
+        && request.resource.data.ownerUid == request.auth.uid
+        && request.resource.data.pageTitle is string
+        && request.resource.data.pageTitle.size() > 0
+        && request.resource.data.pageTitle.size() <= 160
+        && request.resource.data.pagePath is string
+        && request.resource.data.pagePath.size() <= 500
+        && request.resource.data.pairingCode is string
+        && request.resource.data.pairingCode.matches('^[0-9]{6}$')
+        && request.resource.data.pairedDeviceId == null
+        && request.resource.data.pairedAt == null
+        && request.resource.data.pageActive == true
+        && request.resource.data.playbackState == 'stopped'
+        && request.resource.data.canReplay == false
+        && request.resource.data.createdAt == request.time
+        && request.resource.data.pageHeartbeatAt == request.time
+        && request.resource.data.pairExpiresAt > request.time
+        && request.resource.data.pairExpiresAt < request.time + duration.value(3, 'm');
+
+      // Pairing is one-time and expires quickly. After pairing, only page
+      // liveness and playback state may be changed by the page.
+      allow update: if isTeacher()
+        && resource.data.ownerUid == request.auth.uid
+        && request.resource.data.ownerUid == resource.data.ownerUid
+        && request.resource.data.pageTitle == resource.data.pageTitle
+        && request.resource.data.pagePath == resource.data.pagePath
+        && request.resource.data.createdAt == resource.data.createdAt
+        && (
+          (
+            resource.data.pairedDeviceId == null
+            && resource.data.pairExpiresAt > request.time
+            && request.resource.data.pairingCode == null
+            && request.resource.data.pairExpiresAt == null
+            && request.resource.data.pairedDeviceId is string
+            && request.resource.data.pairedDeviceId.size() >= 20
+            && request.resource.data.pairedDeviceId.size() <= 80
+            && request.resource.data.pairedAt == request.time
+            && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+              'pairingCode', 'pairExpiresAt', 'pairedDeviceId', 'pairedAt'
+            ])
+          )
+          || (
+            request.resource.data.pairedDeviceId == resource.data.pairedDeviceId
+            && request.resource.data.pairedAt == resource.data.pairedAt
+            && request.resource.data.pairingCode == resource.data.pairingCode
+            && request.resource.data.pairExpiresAt == resource.data.pairExpiresAt
+            && request.resource.data.pageActive is bool
+            && request.resource.data.playbackState in ['stopped', 'playing', 'paused']
+            && request.resource.data.canReplay is bool
+            && request.resource.data.pageHeartbeatAt == request.time
+            && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+              'pageActive', 'pageHeartbeatAt', 'playbackState', 'canReplay'
+            ])
+          )
+        );
+
+      allow delete: if isTeacher() && resource.data.ownerUid == request.auth.uid;
+
+      match /commands/{commandId} {
+        allow read: if ownsRemoteSession(sessionId);
+        allow create: if ownsRemoteSession(sessionId)
+          && get(/databases/$(database)/documents/remoteSessions/$(sessionId)).data.pageActive == true
+          && get(/databases/$(database)/documents/remoteSessions/$(sessionId)).data.pageHeartbeatAt > request.time - duration.value(45, 's')
+          && get(/databases/$(database)/documents/remoteSessions/$(sessionId)).data.pairedDeviceId == request.resource.data.deviceId
+          && request.resource.data.keys().hasOnly(['type', 'targetSessionId', 'deviceId', 'createdAt'])
+          && request.resource.data.type in ['play', 'pauseResume', 'stop', 'replay']
+          && request.resource.data.targetSessionId == sessionId
+          && request.resource.data.deviceId is string
+          && request.resource.data.createdAt == request.time;
+        allow update, delete: if false;
+      }
+    }
+
     match /{document=**} {
       allow read, write: if false;
     }

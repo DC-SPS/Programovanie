@@ -117,7 +117,8 @@ int WINAPI wWinMain(
 <footer>Win32 API · Aplikovaná informatika · 4. ročník SPŠ · <a href="https://learn.microsoft.com/en-us/windows/win32/learnwin32/creating-a-window">Microsoft Learn: Create a window</a> · <a href="https://learn.microsoft.com/en-us/windows/win32/learnwin32/writing-the-window-procedure">Writing the Window Procedure</a> · <a href="https://learn.microsoft.com/en-us/windows/win32/learnwin32/closing-the-window">Closing the Window</a> · <a href="https://learn.microsoft.com/en-us/cpp/build/reference/subsystem">MSVC /SUBSYSTEM</a></footer>
 </main><script>
 document.getElementById('quiz').addEventListener('submit',function(event){event.preventDefault();const selected=this.querySelector('input[name="answer"]:checked');const feedback=document.getElementById('feedback');if(!selected){feedback.textContent='Najprv vyber jednu odpoveď.';feedback.className='error';return}if(selected.value==='a'){feedback.textContent='Správne. Triedu najprv zaregistrujeme, aby ju Windows mohol použiť pri vytvorení okna.';feedback.className='success'}else{feedback.textContent='Skús znova. Registrácia pripraví triedu; konkrétnu inštanciu vytvára iná funkcia.';feedback.className='error'}});
-</script><script src="../../lesson-top.js" defer></script><script src="../../02_C/00_Prostredie_a_struktura_programu/c-lecture-controls.js" defer></script>  <script src="../../lesson-export.js" defer></script>
+</script><script src="../../lesson-top.js" defer></script><script src="../../02_C/00_Prostredie_a_struktura_programu/c-lecture-controls.js" defer></script>
+  <script type="module" src="../../lesson-remote.js"></script>  <script src="../../lesson-export.js" defer></script>
 </body></html>
 
 

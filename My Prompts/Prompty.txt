@@ -52,3 +52,16 @@ Na záver uveď, ktoré prehľadové stránky si upravil a ako si overil úplnos
 
 5. Prompt: Výroba APP pre ovladanie čitania stránky
 
+Vytvor mobilnú aplikáciu na ovládanie čítania práve otvorenej prednáškovej stránky v tomto projekte.
+Aplikácia má slúžiť ako jednoduchý diaľkový ovládač na telefóne. Po prihlásení zobrazuje iba názov aktívnej stránky a štyri tlačidlá:
+- Prehrať – spustí čítanie aktuálne otvorenej stránky;
+- Pozastaviť/Pokračovať – pozastaví čítanie alebo pokračuje v ňom;
+- Zastaviť – ukončí čítanie;
+- Prehrať znova – zopakuje posledné čítanie.
+Použi rovnaký učiteľský Firebase účet a spôsob prihlasovania, aké už používa tento projekt. Najprv preskúmaj existujúcu Firebase konfiguráciu, autentifikáciu a ovládanie hlasového čítania. Znovu použi existujúce komponenty a pravidlá prístupu, ak sú použiteľné. Nevkladaj do aplikácie tajné kľúče ani servisné údaje.
+Navrhni bezpečný spôsob prepojenia telefónu s aktuálne otvorenou stránkou. Telefón musí vedieť rozpoznať, ktorú stránku ovláda, a príkazy sa majú týkať iba tejto stránky. Zobraz stav spojenia, názov stránky a stav prehrávania. Ak spojenie vypadne, zobraz zrozumiteľnú informáciu a po obnovení spojenia synchronizuj stav. Zabráň tomu, aby príkaz omylom ovládal inú otvorenú prednášku.
+Rozhranie prispôsob telefónu: veľké dobre ovládateľné tlačidlá, jasné stavy, prístupnosť a responzívny dizajn. Aplikácia nemá obsahovať prehliadač prednášok, zoznam kurzov ani ďalšie funkcie mimo tohto ovládania.
+Najprv preskúmaj štruktúru projektu a over, či súčasná webová stránka a jej hlasové čítanie umožňujú bezpečnú komunikáciu s mobilnou aplikáciou. Potom navrhni a implementuj kompletné riešenie vrátane potrebných zmien na stránke, mobilnej aplikácie, Firebase autentifikácie a bezpečnostných pravidiel. Zachovaj existujúce ovládanie prednášok.
+Nezverejňuj aplikáciu ani nemeň produkčné Firebase pravidlá bez výslovného schválenia. Pred dokončením over prihlásenie, spárovanie so stránkou, všetky štyri ovládacie príkazy, obnovu spojenia a odmietnutie príkazov z neprihláseného alebo nespárovaného zariadenia. Uveď, čo si implementoval, ako sa telefón páruje so stránkou a aké kontroly si vykonal.
+
+6. Prompt:

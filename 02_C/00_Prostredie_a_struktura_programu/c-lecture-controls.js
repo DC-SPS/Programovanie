@@ -161,6 +161,13 @@
         isPaused ? "Pokračovať v čítaní" : "Pozastaviť čítanie",
       );
       replayButton.disabled = !speechSupported || previousSelection.length === 0;
+      window.dispatchEvent(new CustomEvent("lesson-reading-state", {
+        detail: {
+          isReading,
+          isPaused,
+          canReplay: previousSelection.length > 0,
+        },
+      }));
     };
 
     const stopReading = (message = "Čítanie je zastavené.") => {
@@ -371,6 +378,17 @@
       restartSpeechForSetting("Rýchlosť " + label + " je nastavená.");
     });
     updateControls();
+    window.lessonSpeechRemote = Object.freeze({
+      play: () => playButton.click(),
+      pauseResume: () => pauseButton.click(),
+      stop: () => stopButton.click(),
+      replay: () => replayButton.click(),
+      getState: () => ({
+        isReading,
+        isPaused,
+        canReplay: previousSelection.length > 0,
+      }),
+    });
 
     document.addEventListener("DOMContentLoaded", () => {
       const lessonClock = document.querySelector(".lesson-clock");

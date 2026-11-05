@@ -80,7 +80,8 @@ int main() {
 <footer>Win32 API · Aplikovaná informatika · 4. ročník SPŠ · <a href="https://learn.microsoft.com/en-us/cpp/cpp/classes-and-structs-cpp">Microsoft Learn: Classes and structs (C++)</a></footer>
 </main><script>
 document.getElementById('quiz').addEventListener('submit',function(event){event.preventDefault();const selected=this.querySelector('input[name="answer"]:checked');const feedback=document.getElementById('feedback');if(!selected){feedback.textContent='Najprv vyber jednu odpoveď.';feedback.className='error';return}if(selected.value==='b'){feedback.textContent='Správne. Premenná je lokálna a jej životnosť sa končí pri opustení bloku.';feedback.className='success'}else{feedback.textContent='Skús znova. Rozlišuj definíciu triedy od rozsahu konkrétnej premennej.';feedback.className='error'}});
-</script><script src="../../lesson-top.js" defer></script><script src="../../02_C/00_Prostredie_a_struktura_programu/c-lecture-controls.js" defer></script>  <script src="../../lesson-export.js" defer></script>
+</script><script src="../../lesson-top.js" defer></script><script src="../../02_C/00_Prostredie_a_struktura_programu/c-lecture-controls.js" defer></script>
+  <script type="module" src="../../lesson-remote.js"></script>  <script src="../../lesson-export.js" defer></script>
 </body></html>
 
 

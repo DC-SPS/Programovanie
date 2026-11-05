@@ -83,7 +83,8 @@ int main() {
 <footer>Win32 API · Aplikovaná informatika · 4. ročník SPŠ · <a href="https://learn.microsoft.com/en-us/cpp/cpp/fundamental-types-cpp">Microsoft Learn: Fundamental types</a></footer>
 </main><script>
 document.getElementById('quiz').addEventListener('submit',function(event){event.preventDefault();const selected=this.querySelector('input[name="answer"]:checked');const feedback=document.getElementById('feedback');if(!selected){feedback.textContent='Najprv vyber jednu odpoveď.';feedback.className='error';return}if(selected.value==='a'){feedback.textContent='Správne. bool uchováva pravdivostnú hodnotu true alebo false.';feedback.className='success'}else{feedback.textContent='Skús znova. Hľadáme typ s dvoma pravdivostnými hodnotami.';feedback.className='error'}});
-</script><script src="../../lesson-top.js" defer></script><script src="../../02_C/00_Prostredie_a_struktura_programu/c-lecture-controls.js" defer></script>  <script src="../../lesson-export.js" defer></script>
+</script><script src="../../lesson-top.js" defer></script><script src="../../02_C/00_Prostredie_a_struktura_programu/c-lecture-controls.js" defer></script>
+  <script type="module" src="../../lesson-remote.js"></script>  <script src="../../lesson-export.js" defer></script>
 </body></html>
 
 
