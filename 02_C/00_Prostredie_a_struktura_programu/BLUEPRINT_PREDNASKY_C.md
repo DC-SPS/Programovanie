@@ -43,8 +43,23 @@ Panel vpravo preberajte z ukážky v [4.1](./4.1_Historicky_uvod_a_normy_jazyka_
 - čas a nastavenie časového pásma z `../../lesson-top.js`;
 - 45-minútový časovač hodiny a Pomodoro;
 - prehratie, zastavenie, pozastavenie a opakovanie hlasového čítania;
-- rýchlosť čítania, výber hlasu a hlasitosť;
+- rýchlosť čítania, viditeľný popis **Hlas** s rozbaľovacím výberom hlasu a hlasitosť;
 - výber častí na čítanie v režime Učiteľ.
+
+### Povinné ovládanie hlasu
+
+V každej téme musí byť pod rýchlosťou čítania viditeľný nadpis „Hlas“ a rozbaľovací zoznam hlasov. Nevypúšťajte ho ani vtedy, keď prehliadač poskytuje iba automatický hlas. Zachovajte túto štruktúru a ID; spoločný skript doplní dostupné hlasy zariadenia, uprednostní slovenčinu a zapamätá výber:
+
+```html
+<label class="narration-voice" for="narration-voice">
+  <span class="narration-voice-label">Hlas</span>
+  <select id="narration-voice" aria-label="Vyberte hlas na čítanie">
+    <option value="">Automaticky – slovenský hlas</option>
+  </select>
+</label>
+```
+
+Neodstraňujte ani nezakrývajte `.narration-voice` alebo `#narration-voice` pri úprave štýlov. Ak sa hlas v zozname ešte nezobrazuje, spoločný skript ho doplní po načítaní hlasov prehliadača.
 
 Povinné skripty v `<head>`:
 
@@ -82,5 +97,6 @@ Používajte relatívne cesty z priečinka konkrétnej stránky. Ak je téma hlb
 - [ ] Kvíz, tlačidlá, kopírovanie kódu a ďalšie interakcie majú funkčnú spätnú väzbu.
 - [ ] Učiteľské poznámky sa zobrazujú iba v režime Učiteľ.
 - [ ] Panel obsahuje všetky ovládače podľa vzoru 4.1 a je na stránke iba raz.
+- [ ] Pod rýchlosťou čítania je viditeľný popis **Hlas** aj výber hlasu s ID `narration-voice`.
 - [ ] Register, zdroje, interné odkazy a odkazy v päte sú vyplnené.
 - [ ] Pri úprave existujúcej témy sa nestratil jej jedinečný obsah ani dôležité ID odkazované skriptami.
