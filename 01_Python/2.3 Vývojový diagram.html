@@ -12,8 +12,39 @@
 :root[data-theme="dark"]{color-scheme:dark;--bg:#12161d;--fg:#e6eaf1;--card:#1b212b;--mut:#9aa6b8;--acc:#5aa2ff;--line:#2d3644;--note:#3a3017}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.65 system-ui,-apple-system,"Segoe UI",sans-serif}a{color:var(--acc)}.wrap{width:min(100% - 2rem,860px);margin:auto;padding:16px}header{display:flex;flex-wrap:wrap;justify-content:space-between;gap:10px}.muted{color:var(--mut)}h1{font-size:clamp(1.7rem,5vw,2.3rem);line-height:1.2}.tag{padding:2px 9px;border-radius:6px;background:var(--line);font-size:13px}.card,.note{margin:14px 0;padding:14px 17px;border:1px solid var(--line);border-radius:12px;background:var(--card)}.note{background:var(--note);display:none}body.teacher .note{display:block}.mode{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}.mode button{padding:6px 11px;border:0;background:var(--card);color:var(--fg);font:inherit;cursor:pointer}.mode button.on{background:var(--acc);color:#fff}button:focus-visible,a:focus-visible{outline:3px solid var(--acc);outline-offset:3px}table{width:100%;border-collapse:collapse}th,td{padding:8px 10px;border:1px solid var(--line);text-align:left;vertical-align:top}.scroll{overflow-x:auto}.sources,footer{margin-top:26px;padding-top:12px;border-top:1px solid var(--line)}footer{color:var(--mut);font-size:14px}.lesson-image{display:block;width:100%;height:auto;margin:18px 0;border:1px solid var(--line);border-radius:12px}.image-caption{margin-top:-10px;color:var(--mut);font-size:14px}pre{margin:12px 0;background:#0f172a;color:#e2e8f0;padding:12px;border-radius:8px;overflow-x:auto;font-size:14px;line-height:1.5}.symbol-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));gap:12px}.symbol-list .card{margin:0}.symbol-icon{display:block;width:100%;height:84px;margin:2px 0 10px}.diagram-example{margin:16px 0;padding:16px;border:1px solid var(--line);border-radius:12px;background:var(--card)}.diagram-example svg{display:block;width:min(100%,520px);height:auto;margin:auto}.diagram-example figcaption{margin-top:12px;color:var(--mut);font-size:14px}
 </style>
+<link rel="stylesheet" href="../02_C/00_Prostredie_a_struktura_programu/c-lecture-controls.css">
 </head>
-<body><nav class="global-course-nav" aria-label="Navigácia kurzov"><a href="index.html">Python – prehľad kurzu</a><a href="../index.html">Všetky kurzy</a></nav><div class="wrap">
+<body><nav class="global-course-nav" aria-label="Navigácia kurzov"><a href="index.html">Python – prehľad kurzu</a><a href="../index.html">Všetky kurzy</a></nav>  <aside class="lesson-side-panel" aria-label="Ovládanie hodiny a čítania">
+    <section class="narration-controls" aria-label="Čítanie prednášky">
+      <button id="play-reading" type="button" aria-label="Prehrať">▶ Prehrať</button>
+      <button id="stop-reading" type="button" aria-label="Zastaviť čítanie" disabled>■ Zastaviť</button>
+      <button id="pause-reading" type="button" aria-label="Pozastaviť čítanie" disabled>⏸ Pozastaviť</button>
+      <button id="replay-reading" type="button" aria-label="Prehrať vybrané časti znova" disabled>↻ Prehrať znova</button>
+      <label class="narration-speed" for="narration-speed">Rýchlosť čítania
+        <select id="narration-speed" aria-label="Rýchlosť hlasového čítania">
+          <option value="0.25">0,25×</option>
+          <option value="0.5">0,5×</option>
+          <option value="0.75">0,75×</option>
+          <option value="1" selected>1× – normálna</option>
+          <option value="1.25">1,25×</option>
+          <option value="1.5">1,5×</option>
+          <option value="1.75">1,75×</option>
+          <option value="2">2×</option>
+        </select>
+      </label>
+      <p class="page-language-help">Jazyk zmeníte priamo v Google Translate: kliknite na názov cieľového jazyka v hornej lište a vyberte maďarčinu, ukrajinčinu alebo iný jazyk.</p>
+      <label class="narration-voice" for="narration-voice"><span class="narration-voice-label">Hlas</span>
+        <select id="narration-voice" aria-label="Vyberte hlas na čítanie"><option value="">Automaticky – slovenský hlas</option></select>
+      </label>
+      <label class="narration-volume" for="narration-volume">
+        <span class="narration-volume-heading"><span>Hlasitosť čítania</span><output id="narration-volume-value" for="narration-volume">100 %</output></span>
+        <input id="narration-volume" type="range" min="0" max="100" step="5" value="100" aria-label="Hlasitosť hlasového čítania">
+        <span class="narration-volume-help">Upravuje hlasitosť čítania, nie celkovú hlasitosť zariadenia.</span>
+      </label>
+      <div id="reading-status" class="narration-status" role="status" aria-live="polite"></div>
+    </section>
+  </aside>
+<div class="wrap">
 <header><span class="muted"><a href="index.html">Prehľad tém</a> › Algoritmus a algoritmizácia › 2.3</span><div><a href="../nastavenia.html">Nastavenia vzhľadu</a> · <div class="mode" role="group" aria-label="Zobrazenie"><button class="on" id="student" type="button" aria-pressed="true">Žiak</button><button id="teacher" type="button" aria-pressed="false">Učiteľ</button></div></div></header>
 <h1>2.3 Vývojový diagram</h1><p><span class="tag">1 × 45 min</span> <span class="tag">Pracovná osnova</span></p>
 
@@ -38,5 +69,4 @@ print("Súčet:", sucet)</code></pre><p>Pri trasovaní pre hodnoty <code>a = 4</
 <section class="sources"><h2>Použité zdroje</h2><ul><li><a href="https://www.itnetwork.sk/navrh/uml/vyvojove-diagramy" target="_blank" rel="noopener noreferrer">ITnetwork – 8. diel: Vývojové diagramy</a>.</li><li><a href="2.1%20Algoritmus%20-%20z%C3%A1kladn%C3%A9%20pojmy,%20vlastnosti%20algoritmov.html">Téma 2.1: algoritmus a jeho vlastnosti</a>.</li><li>Ilustrácia k téme: <a href="../img/V%C3%BDvojov%C3%BD%20diagram_%20Preh%C4%BEadn%C3%BD%20sprievodca.png">Vývojový diagram – prehľadný sprievodca</a>.</li></ul></section>
 <footer><a href="2.2 Základné formy a typy algoritmov.html">Späť na 2.2</a> · <a href="index.html">Prehľad tém</a> · <a href="2.4 Algoritmizácia výpočtu plôch a objemov.html">Pokračovať na 2.4</a></footer>
 </div><script>
-const s=document.getElementById("student"),t=document.getElementById("teacher");function mode(isTeacher){document.body.classList.toggle("teacher",isTeacher);s.classList.toggle("on",!isTeacher);t.classList.toggle("on",isTeacher);s.setAttribute("aria-pressed",String(!isTeacher));t.setAttribute("aria-pressed",String(isTeacher))}s.addEventListener("click",()=>mode(false));t.addEventListener("click",()=>mode(true));
-</script><script src="../theme.js"></script><script src="../lesson-top.js" defer></script></body></html>
+</script><script src="../theme.js"></script><script src="../lesson-top.js" defer></script><script src="../02_C/00_Prostredie_a_struktura_programu/c-lecture-controls.js" defer></script></body></html>

@@ -1,0 +1,15 @@
+/* Keep the shared 4.1 control panel on the same dark palette in the Win32 course. */
+.lesson-side-panel{
+  --bg:#12161d;
+  --fg:#e6eaf1;
+  --card:#1b212b;
+  --mut:#9aa6b8;
+  --acc:#5aa2ff;
+  --line:#2d3644;
+  color:var(--fg);
+}
+@media(min-width:1280px){
+  main.page{width:860px;margin-left:max(16px,calc((100vw - 860px - 390px)/2));margin-right:374px}
+}
+.lesson-side-panel :is(button,select,input):focus-visible{outline:3px solid var(--acc);outline-offset:3px}
+@media print{.lesson-side-panel{display:none!important}}

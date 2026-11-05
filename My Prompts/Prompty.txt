@@ -1,0 +1,5 @@
+1. Prompt: Úprava praveho panelu a citania stranky - univerzalne:
+
+Uprav témy 1.1 a 1.2 (v python) tak, aby ich ovládací panel bol vizuálne aj funkčne identický s panelom v téme 4.1. (v c/c++ pod tema c ) Téma 4.1 je jediný vzor. Porovnaj priamo HTML, CSS a JavaScript všetkých troch tém a oprav skutočné rozdiely, nie iba blueprint alebo šablónu. Zachovaj rovnaké prvky, texty, poradie, rozostupy, rozmery, farby, responzívne správanie, výber hlasu a dostupných jazykov. Ovládanie musí vyzerať aj fungovať rovnako v 4.1, 4.2 a 4.3. Obsah prednášok nemeň. Po úprave porovnaj všetky tri implementácie a over, že už medzi nimi nie sú rozdiely v ovládacom paneli.
+
+2. Prompt:

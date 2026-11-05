@@ -45,8 +45,39 @@ footer{margin-top:30px;padding:14px 0;border-top:1px solid var(--line);color:var
 @media(max-width:600px){.w{width:100%;padding:12px}.diagram{padding:8px}th,td{padding:7px}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important}}
 </style>
+<link rel="stylesheet" href="../02_C/00_Prostredie_a_struktura_programu/c-lecture-controls.css">
 </head>
 <body><nav class="global-course-nav" aria-label="Navigácia kurzov"><a href="index.html">Python – prehľad kurzu</a><a href="../index.html">Všetky kurzy</a></nav>
+  <aside class="lesson-side-panel" aria-label="Ovládanie hodiny a čítania">
+    <section class="narration-controls" aria-label="Čítanie prednášky">
+      <button id="play-reading" type="button" aria-label="Prehrať">▶ Prehrať</button>
+      <button id="stop-reading" type="button" aria-label="Zastaviť čítanie" disabled>■ Zastaviť</button>
+      <button id="pause-reading" type="button" aria-label="Pozastaviť čítanie" disabled>⏸ Pozastaviť</button>
+      <button id="replay-reading" type="button" aria-label="Prehrať vybrané časti znova" disabled>↻ Prehrať znova</button>
+      <label class="narration-speed" for="narration-speed">Rýchlosť čítania
+        <select id="narration-speed" aria-label="Rýchlosť hlasového čítania">
+          <option value="0.25">0,25×</option>
+          <option value="0.5">0,5×</option>
+          <option value="0.75">0,75×</option>
+          <option value="1" selected>1× – normálna</option>
+          <option value="1.25">1,25×</option>
+          <option value="1.5">1,5×</option>
+          <option value="1.75">1,75×</option>
+          <option value="2">2×</option>
+        </select>
+      </label>
+      <p class="page-language-help">Jazyk zmeníte priamo v Google Translate: kliknite na názov cieľového jazyka v hornej lište a vyberte maďarčinu, ukrajinčinu alebo iný jazyk.</p>
+      <label class="narration-voice" for="narration-voice"><span class="narration-voice-label">Hlas</span>
+        <select id="narration-voice" aria-label="Vyberte hlas na čítanie"><option value="">Automaticky – slovenský hlas</option></select>
+      </label>
+      <label class="narration-volume" for="narration-volume">
+        <span class="narration-volume-heading"><span>Hlasitosť čítania</span><output id="narration-volume-value" for="narration-volume">100 %</output></span>
+        <input id="narration-volume" type="range" min="0" max="100" step="5" value="100" aria-label="Hlasitosť hlasového čítania">
+        <span class="narration-volume-help">Upravuje hlasitosť čítania, nie celkovú hlasitosť zariadenia.</span>
+      </label>
+      <div id="reading-status" class="narration-status" role="status" aria-live="polite"></div>
+    </section>
+  </aside>
 <div class="w">
 <header>
 <span class="crumb"><a href="index.html">Výučbové materiály</a> › 2. Algoritmus, algoritmizácia › 2.9</span>
@@ -213,18 +244,7 @@ Hlavný cieľ: uskutočniť výlet pre prihlásenú skupinu. Časti: zozbierať 
 <footer><a href="index.html">Späť na prehľad prednášok</a> · <a href="2.10%20Algoritmiz%C3%A1cia%20funkci%C3%AD.html">Pokračovať na tému 2.10</a> · <a href="../nastavenia.html">Nastavenia vzhľadu</a></footer>
 </div>
 <script>
-const studentButton=document.getElementById("student-mode");
-const teacherButton=document.getElementById("teacher-mode");
-function setMode(teacher){
- document.body.classList.toggle("teacher",teacher);
- studentButton.classList.toggle("on",!teacher);
- teacherButton.classList.toggle("on",teacher);
- studentButton.setAttribute("aria-pressed",String(!teacher));
- teacherButton.setAttribute("aria-pressed",String(teacher));
-}
-studentButton.addEventListener("click",()=>setMode(false));
-teacherButton.addEventListener("click",()=>setMode(true));
 </script>
 <script src="../theme.js"></script>
-<script src="../lesson-top.js" defer></script></body>
+<script src="../lesson-top.js" defer></script><script src="../02_C/00_Prostredie_a_struktura_programu/c-lecture-controls.js" defer></script></body>
 </html>

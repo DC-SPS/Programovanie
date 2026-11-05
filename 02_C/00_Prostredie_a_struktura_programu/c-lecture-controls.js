@@ -1,6 +1,6 @@
 ﻿(() => {
-    const studentButton = document.getElementById("student-mode") || document.getElementById("student");
-    const teacherButton = document.getElementById("teacher-mode") || document.getElementById("teacher");
+    const studentButton = document.getElementById("student-mode") || document.getElementById("student") || document.getElementById("bs");
+    const teacherButton = document.getElementById("teacher-mode") || document.getElementById("teacher") || document.getElementById("bt");
     const setTeacherMode = (enabled) => {
       document.body.classList.toggle("teacher", enabled);
       studentButton.classList.toggle("on", !enabled);
@@ -60,7 +60,7 @@
       populateVoices();
       window.speechSynthesis.addEventListener("voiceschanged", populateVoices);
     }
-    const main = document.querySelector("main") || document.querySelector(".wrap");
+    const main = document.querySelector("main") || document.querySelector(".wrap") || document.querySelector(".w");
     const readSelectors = ["h2", "h3", "p", "ul", "ol", ".card", ".teacher-note", ".note", ".safety-notice", "table"];
     main?.querySelectorAll(readSelectors.join(",")).forEach((block) => {
       if (block.closest(".sources, footer") || block.matches(".copy-status")) return;

@@ -15,8 +15,39 @@
 /* Interaktívny test 3.2 */
 .quiz-card h3{margin-top:0}.test-question{margin:16px 0;padding:14px;border:1px solid var(--line);border-radius:10px}.test-question legend{padding:0 6px;font-weight:700}.test-question>label{display:flex;align-items:flex-start;gap:10px;margin:8px 0;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--card);cursor:pointer}.test-question>br{display:none}.test-question input[type=radio]{appearance:auto;display:inline-block;flex:0 0 auto;width:1.1rem;height:1.1rem;margin:3px 0 0;accent-color:var(--acc)}.test-question input{margin-right:8px}.test-feedback{min-height:1.5em;margin:8px 0 0;color:var(--mut)}.test-feedback.correct,.match-feedback.correct{color:#16803c}.test-feedback.incorrect,.match-feedback.incorrect{color:#c43131}.matching-question figure{margin:8px 0 14px}.matching-question .lesson-image{max-height:230px;object-fit:contain}.matching-question pre{margin:10px 0}.match-row{display:grid;grid-template-columns:minmax(200px,1fr) minmax(190px,1fr) minmax(90px,auto);align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid var(--line)}.match-row select{width:100%;padding:8px;border:1px solid var(--line);border-radius:6px;background:var(--card);color:var(--fg);font:inherit}.match-feedback{font-size:14px}.quiz-actions{display:flex;flex-wrap:wrap;gap:10px}.quiz-actions button{padding:9px 14px;border:0;border-radius:7px;background:var(--acc);color:white;font:inherit;cursor:pointer}.quiz-actions .secondary{background:var(--line);color:var(--fg)}.quiz-result{font-weight:700;min-height:1.7em}@media(max-width:600px){.match-row{grid-template-columns:1fr;gap:4px}}
 </style>
+<link rel="stylesheet" href="../02_C/00_Prostredie_a_struktura_programu/c-lecture-controls.css">
 </head>
-<body><nav class="global-course-nav" aria-label="Navigácia kurzov"><a href="index.html">Python – prehľad kurzu</a><a href="../index.html">Všetky kurzy</a></nav><div class="wrap">
+<body><nav class="global-course-nav" aria-label="Navigácia kurzov"><a href="index.html">Python – prehľad kurzu</a><a href="../index.html">Všetky kurzy</a></nav>  <aside class="lesson-side-panel" aria-label="Ovládanie hodiny a čítania">
+    <section class="narration-controls" aria-label="Čítanie prednášky">
+      <button id="play-reading" type="button" aria-label="Prehrať">▶ Prehrať</button>
+      <button id="stop-reading" type="button" aria-label="Zastaviť čítanie" disabled>■ Zastaviť</button>
+      <button id="pause-reading" type="button" aria-label="Pozastaviť čítanie" disabled>⏸ Pozastaviť</button>
+      <button id="replay-reading" type="button" aria-label="Prehrať vybrané časti znova" disabled>↻ Prehrať znova</button>
+      <label class="narration-speed" for="narration-speed">Rýchlosť čítania
+        <select id="narration-speed" aria-label="Rýchlosť hlasového čítania">
+          <option value="0.25">0,25×</option>
+          <option value="0.5">0,5×</option>
+          <option value="0.75">0,75×</option>
+          <option value="1" selected>1× – normálna</option>
+          <option value="1.25">1,25×</option>
+          <option value="1.5">1,5×</option>
+          <option value="1.75">1,75×</option>
+          <option value="2">2×</option>
+        </select>
+      </label>
+      <p class="page-language-help">Jazyk zmeníte priamo v Google Translate: kliknite na názov cieľového jazyka v hornej lište a vyberte maďarčinu, ukrajinčinu alebo iný jazyk.</p>
+      <label class="narration-voice" for="narration-voice"><span class="narration-voice-label">Hlas</span>
+        <select id="narration-voice" aria-label="Vyberte hlas na čítanie"><option value="">Automaticky – slovenský hlas</option></select>
+      </label>
+      <label class="narration-volume" for="narration-volume">
+        <span class="narration-volume-heading"><span>Hlasitosť čítania</span><output id="narration-volume-value" for="narration-volume">100 %</output></span>
+        <input id="narration-volume" type="range" min="0" max="100" step="5" value="100" aria-label="Hlasitosť hlasového čítania">
+        <span class="narration-volume-help">Upravuje hlasitosť čítania, nie celkovú hlasitosť zariadenia.</span>
+      </label>
+      <div id="reading-status" class="narration-status" role="status" aria-live="polite"></div>
+    </section>
+  </aside>
+<div class="wrap">
 <header><span class="muted"><a href="index.html">Prehľad tém</a> › 3. Programovanie všeobecne › 3.2</span><div><a href="../nastavenia.html">Nastavenia vzhľadu</a> · <div class="mode" role="group" aria-label="Zobrazenie"><button class="on" id="student" type="button" aria-pressed="true">Žiak</button><button id="teacher" type="button" aria-pressed="false">Učiteľ</button></div></div></header>
 <h1>3.2 Jazyky vyššieho typu a OOP v Pythone</h1><p><span class="tag">2 × 45 min</span> <span class="tag">Vyššie programovacie jazyky</span> <span class="tag">Objektovo orientované programovanie</span></p>
 
@@ -251,5 +282,4 @@ print("Odpovede boli uložené do spatna_vazba.json.")</code></pre><ul><li><code
 <footer><a href="3.1%20Programovacie%20jazyky%20a%20ich%20delenie.html">Späť na 3.1</a> · <a href="index.html">Prehľad tém</a></footer>
 </div><script>
 document.querySelectorAll("pre").forEach(function(code){var wrapper=document.createElement("div"),actions=document.createElement("div"),button=document.createElement("button"),editor=document.createElement("a"),status=document.createElement("p");wrapper.className="code-sample";actions.className="copy-actions";button.className="copy-btn";button.type="button";button.textContent="Kopírovať kód";editor.href="https://www.programiz.com/python-programming/online-compiler/";editor.target="_blank";editor.rel="noopener noreferrer";editor.textContent="Vyskúšať online";status.className="copy-status";status.setAttribute("role","status");status.setAttribute("aria-live","polite");code.parentNode.insertBefore(wrapper,code);wrapper.appendChild(actions);actions.appendChild(button);actions.appendChild(editor);wrapper.appendChild(code);wrapper.appendChild(status);button.addEventListener("click",function(){if(!navigator.clipboard||!navigator.clipboard.writeText){status.textContent="Kopírovanie nie je dostupné. Označte kód a použite Ctrl+C.";return;}navigator.clipboard.writeText(code.innerText).then(function(){status.textContent="Kód skopírovaný.";}).catch(function(){status.textContent="Kód sa nepodarilo skopírovať. Označte ho a použite Ctrl+C.";});});});
-const s=document.getElementById("student"),t=document.getElementById("teacher");function mode(isTeacher){document.body.classList.toggle("teacher",isTeacher);s.classList.toggle("on",!isTeacher);t.classList.toggle("on",isTeacher);s.setAttribute("aria-pressed",String(!isTeacher));t.setAttribute("aria-pressed",String(isTeacher))}s.addEventListener("click",()=>mode(false));t.addEventListener("click",()=>mode(true));
-</script><script src="../theme.js"></script><script src="../lesson-top.js" defer></script></body></html>
+</script><script src="../theme.js"></script><script src="../lesson-top.js" defer></script><script src="../02_C/00_Prostredie_a_struktura_programu/c-lecture-controls.js" defer></script></body></html>
