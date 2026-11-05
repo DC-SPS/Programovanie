@@ -8,6 +8,7 @@
     if (block.closest(".sources, footer") || block.matches(".copy-status")) return;
     if (block.closest(".card, .teacher-note, .safety-notice") && !block.matches(".card, .teacher-note, .safety-notice")) return;
     block.dataset.readAloud = "selected";
+    block.classList.add("narration-target");
     block.id ||= `narration-block-${index + 1}`;
     const row = document.createElement("label");
     const checkbox = document.createElement("input");
@@ -37,10 +38,29 @@
   const pause = controls.querySelector("#pause-reading");
   const replay = controls.querySelector("#replay-reading");
   const speed = controls.querySelector("#narration-speed");
+  const voiceSelect = controls.querySelector("#narration-voice");
+  const volume = controls.querySelector("#narration-volume");
+  const volumeValue = controls.querySelector("#narration-volume-value");
   const status = controls.querySelector("#reading-status");
   const supported = "speechSynthesis" in window && "SpeechSynthesisUtterance" in window;
   const rateKey = "lesson-narration.playback-rate.v2";
   try { speed.value = window.localStorage.getItem(rateKey) || "1"; } catch { speed.value = "1"; }
+  const voicesKey = "lesson-narration.voice.v1";
+  const volumeKey = "lesson-narration.volume.v1";
+  let voices = [];
+  try { volume.value = window.localStorage.getItem(volumeKey) || "100"; } catch { volume.value = "100"; }
+  if (volumeValue) volumeValue.value = `${volume.value} %`;
+  const populateVoices = () => {
+    if (!voiceSelect || !supported) return;
+    const savedVoice = (() => { try { return window.localStorage.getItem(voicesKey) || ""; } catch { return ""; } })();
+    voices = window.speechSynthesis.getVoices().filter((voice) => voice.lang.toLowerCase().startsWith("sk"));
+    voiceSelect.replaceChildren(new Option("Automatický hlas", ""));
+    voices.forEach((voice) => voiceSelect.add(new Option(`${voice.name} (${voice.lang})`, voice.voiceURI)));
+    if (voices.some((voice) => voice.voiceURI === savedVoice)) voiceSelect.value = savedVoice;
+    else if (voices.length) voiceSelect.value = voices.find((voice) => voice.default)?.voiceURI || voices[0].voiceURI;
+  };
+  populateVoices();
+  if (supported) window.speechSynthesis.addEventListener("voiceschanged", populateVoices);
   let queue = [];
   let previous = [];
   let current = null;
@@ -68,6 +88,12 @@
       block.scrollIntoView({ behavior: "smooth", block: "center" });
     }
   };
+  const estimate = (items) => Math.ceil(items.reduce((sum, item) => sum + item.text.length, 0) / (14 * Number(speed.value)));
+  const formatEstimate = (seconds) => {
+    const minutes = Math.floor(seconds / 60);
+    const rest = seconds % 60;
+    return `~${String(minutes).padStart(2, "0")}:${String(rest).padStart(2, "0")}`;
+  };
   const speakNext = (token) => {
     if (token !== run) return;
     current = queue.shift();
@@ -78,13 +104,16 @@
     const utterance = new SpeechSynthesisUtterance(current.text);
     utterance.lang = "sk-SK";
     utterance.rate = Number(speed.value);
+    utterance.volume = Number(volume.value) / 100;
+    utterance.voice = voices.find((voice) => voice.voiceURI === voiceSelect?.value) || null;
     utterance.onend = () => { if (token === run) speakNext(token); };
     utterance.onerror = (event) => {
       if (token !== run || ["canceled", "interrupted"].includes(event.error)) return;
       active = false; paused = false; highlight(null); status.textContent = "Hlasové čítanie sa nepodarilo spustiť."; render();
     };
     window.speechSynthesis.speak(utterance);
-    status.textContent = `Čítam: ${current.text.slice(0, 90)}${current.text.length > 90 ? "…" : ""}`;
+    const index = previous.findIndex((item) => item.block === current.block);
+    status.textContent = `Čítam časť ${Math.max(1, index + 1)} z ${previous.length} · odsek ${formatEstimate(estimate([current]))} · celé čítanie ${formatEstimate(estimate([current, ...queue]))}`;
   };
   const start = (items) => {
     if (!supported) { status.textContent = "Tento prehliadač nepodporuje hlasové čítanie."; return; }
@@ -109,6 +138,65 @@
     try { window.localStorage.setItem(rateKey, speed.value); } catch { /* Keep the current page setting. */ }
     if (active && !paused) start([...(current ? [current] : []), ...queue]);
     else if (active && paused && current) { window.speechSynthesis.cancel(); queue.unshift(current); current = null; }
+  });
+  voiceSelect?.addEventListener("change", () => {
+    try { window.localStorage.setItem(voicesKey, voiceSelect.value); } catch { /* Keep the current page setting. */ }
+    if (active && !paused) start([...(current ? [current] : []), ...queue]);
+    else if (active && paused && current) { window.speechSynthesis.cancel(); queue.unshift(current); current = null; }
+  });
+  volume.addEventListener("input", () => {
+    if (volumeValue) volumeValue.value = `${volume.value} %`;
+  });
+  volume.addEventListener("change", () => {
+    try { window.localStorage.setItem(volumeKey, volume.value); } catch { /* Keep the current page setting. */ }
+    if (active && !paused) start([...(current ? [current] : []), ...queue]);
+    else if (active && paused && current) { window.speechSynthesis.cancel(); queue.unshift(current); current = null; }
+  });
+  main.querySelectorAll(".narration-option").forEach((row) => {
+    const block = row.previousElementSibling;
+    block?.addEventListener("dblclick", () => {
+      const items = selections();
+      const clickedIndex = items.findIndex((item) => item.block === block);
+      if (clickedIndex >= 0) start(items.slice(clickedIndex));
+    });
+  });
+
+  let printSheet = null;
+  const printRestore = [];
+  window.addEventListener("beforeprint", () => {
+    if (printSheet) return;
+    const footer = main.querySelector("footer");
+    if (!footer) return;
+    printSheet = document.createElement("section");
+    printSheet.className = "print-solution-sheet";
+    printSheet.setAttribute("aria-label", "Riešenia úloh a odpovede");
+    printSheet.innerHTML = "<h2>Riešenia úloh a odpovede</h2>";
+    const list = document.createElement("ol");
+    main.querySelectorAll(".quiz select[data-answer]").forEach((select) => {
+      const option = [...select.options].find((item) => item.value === select.dataset.answer);
+      const label = main.querySelector(`label[for=\"${select.id}\"]`);
+      if (option) { const item = document.createElement("li"); item.textContent = `${label?.textContent.trim() || "Otázka"} ${option.textContent.trim()}`; list.append(item); }
+    });
+    if (list.children.length) printSheet.append(list);
+    const detailsList = document.createElement("div");
+    detailsList.className = "print-solutions-details";
+    main.querySelectorAll("details").forEach((details) => {
+      const placeholder = document.createComment("miesto riešenia v online stránke");
+      const wasOpen = details.open;
+      details.before(placeholder);
+      details.open = true;
+      detailsList.append(details);
+      printRestore.push({ node: details, placeholder, wasOpen });
+    });
+    if (detailsList.children.length) printSheet.append(detailsList);
+    if (!list.children.length && !detailsList.children.length) { printSheet = null; return; }
+    footer.before(printSheet);
+  });
+  window.addEventListener("afterprint", () => {
+    printRestore.forEach(({ node, placeholder, wasOpen }) => { placeholder.before(node); placeholder.remove(); node.open = wasOpen; });
+    printRestore.length = 0;
+    printSheet?.remove();
+    printSheet = null;
   });
   render();
 
