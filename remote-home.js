@@ -106,9 +106,15 @@ pinForm.addEventListener("submit", async (event) => {
     }, data.expiresInSeconds * 1000);
   } catch (error) {
     hideQr();
-    status.textContent = error?.code === "functions/permission-denied"
-      ? "Tento účet nemá oprávnenie ukladať PIN."
-      : "PIN sa nepodarilo uložiť. Skontrolujte serverové nastavenie alebo skúste znova.";
+    if (error?.code === "functions/permission-denied") {
+      status.textContent = "Tento účet nemá oprávnenie ukladať PIN.";
+    } else if (["functions/not-found", "functions/unavailable", "functions/internal"].includes(error?.code)) {
+      status.textContent = "Firebase funkcia saveRemotePin nie je nasadená alebo dostupná. QR sa zobrazí až po jej nasadení a nastavení REMOTE_PIN_PEPPER.";
+    } else if (error?.code === "functions/unauthenticated") {
+      status.textContent = "Prihlásenie vypršalo. Znova sa prihláste a uložte PIN.";
+    } else {
+      status.textContent = "PIN sa nepodarilo uložiť. Skontrolujte Firebase Functions a skúste znova.";
+    }
   } finally {
     saveButton.disabled = false;
   }
