@@ -90,7 +90,7 @@ async function pairPage(code) {
         && data.pairExpiresAt?.toMillis() > Date.now();
     })
     .sort((a, b) => b.data().createdAt.toMillis() - a.data().createdAt.toMillis())[0];
-  if (!sessionDoc) throw new Error("Kód 134679 sa nenašiel alebo už vypršal. Vytvorte ho znova na otvorenej prednáške.");
+  if (!sessionDoc) throw new Error("Kód sa nenašiel alebo už vypršal. Vytvorte nový na otvorenej prednáške.");
   const ref = sessionDoc.ref;
 
   await fs.runTransaction(db, async (transaction) => {
@@ -131,7 +131,7 @@ async function listenToSession(sessionId) {
       sessionStorage.removeItem("lecture-remote.session");
       currentSession = null;
       setConnection("Prednášková stránka sa odpojila", "offline");
-      showNotice("Stránka už nie je dostupná. Po otvorení prednášky zadajte kód 134679 a spárujte telefón znova.");
+      showNotice("Stránka už nie je dostupná. Po otvorení prednášky naskenujte jej nový QR kód a spárujte telefón znova.");
       showView("pair");
       return;
     }
@@ -152,7 +152,7 @@ async function listenToSession(sessionId) {
       stopSession = null;
       showView("pair");
       setConnection("Prednášková stránka je zavretá", "offline");
-      showNotice("Keď otvoríš ďalšiu prednášku, zadaj kód 134679 a spáruj telefón znova.");
+      showNotice("Keď otvoríš ďalšiu prednášku, naskenuj jej nový QR kód a spáruj telefón znova.");
       return;
     }
     if (isStale(data.pageHeartbeatAt)) {
