@@ -11,6 +11,23 @@ import { firebaseConfig } from "./firebase-config.js";
   let firestore;
   let sessionRef;
   let heartbeatTimer = 0;
+  let publishNotice;
+
+  function showPublishError(error) {
+    if (!publishNotice) {
+      publishNotice = document.createElement("p");
+      publishNotice.setAttribute("role", "status");
+      Object.assign(publishNotice.style, {
+        position: "fixed", left: "12px", bottom: "12px", zIndex: "99999",
+        maxWidth: "min(460px, calc(100vw - 24px))", margin: "0", padding: "10px 14px",
+        borderRadius: "8px", background: "#411d29", color: "#ffe4e6",
+        font: "14px/1.4 system-ui, sans-serif", boxShadow: "0 4px 20px #0005",
+      });
+      document.body.append(publishNotice);
+    }
+    const code = error?.code || "unknown";
+    publishNotice.textContent = `Mobilné zrkadlo sa nepripojilo k prednáške (${code}). Skontrolujte nasadenie Firestore pravidiel.`;
+  }
 
   function getOrCreateRoomId() {
     const storageKey = "lectureRemoteRoomId";
@@ -33,8 +50,11 @@ import { firebaseConfig } from "./firebase-config.js";
         pageActive: true,
         updatedAt: firestore.serverTimestamp(),
       }, { merge: true });
+      publishNotice?.remove();
+      publishNotice = null;
     } catch (error) {
       console.error("Mobilné zrkadlo: stránku sa nepodarilo zverejniť.", error);
+      showPublishError(error);
     }
   }
 
@@ -53,5 +73,8 @@ import { firebaseConfig } from "./firebase-config.js";
     window.addEventListener("pagehide", () => clearInterval(heartbeatTimer), { once: true });
   }
 
-  start().catch((error) => console.error("Mobilné zrkadlo: nepodarilo sa spustiť zdieľanie.", error));
+  start().catch((error) => {
+    console.error("Mobilné zrkadlo: nepodarilo sa spustiť zdieľanie.", error);
+    showPublishError(error);
+  });
 })();

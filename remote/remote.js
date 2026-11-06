@@ -97,9 +97,15 @@ if (!/^[a-f0-9]{48}$/.test(sessionId)) {
   showNotice("Otvorte túto stránku cez QR kód z hlavnej stránky kurzu.");
 } else {
   setConnection("Hľadám otvorenú prednášku…");
-  firestore.onSnapshot(firestore.doc(db, "lectureMirrors", sessionId), (snapshot) => {
+  firestore.onSnapshot(firestore.doc(db, "lectureMirrors", sessionId), { includeMetadataChanges: true }, (snapshot) => {
+    if (snapshot.metadata.fromCache) {
+      setConnection("Pripájam sa k internetu…");
+      showNotice("Overujem, či počítač zverejnil otvorenú prednášku.");
+      return;
+    }
     if (!snapshot.exists()) {
-      showWaiting();
+      setConnection("Počítač ešte nezverejnil prednášku", "offline");
+      showNotice("QR kód musí byť otvorený na tom istom počítači a v tom istom prehliadači ako prednáška. Obnovte prednášku na počítači.");
       return;
     }
     showPage(snapshot.data());
