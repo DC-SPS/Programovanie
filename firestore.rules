@@ -10,7 +10,11 @@ service cloud.firestore {
     }
 
     function isTeacher() {
-      return signedIn() && request.auth.token.teacher == true;
+      // No-cost alternative to Identity Platform blocking functions and custom claims:
+      // grant teacher access only to this verified Google account. Firestore evaluates
+      // this on every request; the client UI is not the security boundary.
+      return signedIn()
+        && request.auth.token.email == 'dusan.cabala.sps@gmail.com';
     }
 
     function isOwner(userId) {

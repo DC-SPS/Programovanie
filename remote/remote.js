@@ -73,10 +73,6 @@ function showView(view) {
   controlView.hidden = view !== "control";
 }
 
-function requireTeacherClaim(user) {
-  return user.getIdTokenResult().then((result) => result.claims.teacher === true);
-}
-
 async function pairPage(code) {
   const normalizedCode = String(code || "").trim();
   if (!/^\d{6}$/.test(normalizedCode)) throw new Error("Zadajte platný šesťmiestny kód.");
@@ -257,12 +253,6 @@ sdk.auth.onAuthStateChanged(auth, async (user) => {
     return;
   }
   try {
-    if (!await requireTeacherClaim(user)) {
-      showView("auth");
-      setConnection("Účet nemá učiteľské oprávnenie", "error");
-      showNotice("Učiteľský Google účet je prihlásený, ale Firebase token nemá učiteľské oprávnenie.");
-      return;
-    }
     showNotice("");
     if (parameters.get("code")) {
       showView("pair");

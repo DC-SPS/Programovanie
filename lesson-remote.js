@@ -79,7 +79,7 @@ import { renderQrCode } from "./remote-qr.js";
   const createPairing = async () => {
     pairButton.disabled = true;
     pairingBox.hidden = true;
-    setMessage("Overujem učiteľské oprávnenie…");
+    setMessage("Overujem Firebase účet…");
     try {
       const { auth, db, dbSdk } = await loadFirebase();
       const user = auth.currentUser;
@@ -88,12 +88,6 @@ import { renderQrCode } from "./remote-qr.js";
         location.assign(`/login.html?next=${next}`);
         return;
       }
-      const token = await user.getIdTokenResult();
-      if (token.claims.teacher !== true) {
-        setMessage("Toto konto nemá aktívne učiteľské Firebase oprávnenie.", true);
-        return;
-      }
-
       await closeSession(dbSdk, false);
       const id = crypto.randomUUID();
       const code = newPairingCode();
@@ -226,7 +220,7 @@ import { renderQrCode } from "./remote-qr.js";
 })();
 
 function firebaseErrorText(error) {
-  if (error?.code === "permission-denied") return "Firebase odmietol prístup. Overte učiteľské oprávnenie a nasadené pravidlá.";
+  if (error?.code === "permission-denied") return "Firebase odmietol prístup. Prihláste sa overeným učiteľským Google účtom a skontrolujte nasadené Firestore pravidlá.";
   if (!navigator.onLine) return "Zariadenie je offline. Po obnovení siete skúste znova.";
   return "Spojenie s Firebase sa nepodarilo. Skontrolujte konfiguráciu a skúste znova.";
 }
