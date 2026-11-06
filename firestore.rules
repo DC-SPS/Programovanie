@@ -27,9 +27,8 @@ service cloud.firestore {
 
     function isValidRemoteSession(data) {
       return data.keys().hasOnly([
-          'ownerUid', 'pageTitle', 'pagePath', 'pairingCode', 'pairExpiresAt',
-          'pairedDeviceId', 'pairedAt', 'pageActive', 'pageHeartbeatAt',
-          'playbackState', 'canReplay', 'createdAt'
+          'ownerUid', 'pageTitle', 'pagePath', 'pageActive', 'pageHeartbeatAt',
+          'playbackState', 'canReplay', 'canRestartCurrent', 'createdAt'
         ])
         && data.ownerUid is string
         && data.pageTitle is string
@@ -37,22 +36,19 @@ service cloud.firestore {
         && data.pageTitle.size() <= 160
         && data.pagePath is string
         && data.pagePath.size() <= 500
-        && (data.pairingCode == null || (data.pairingCode is string && data.pairingCode.matches('^[0-9]{6}$')))
-        && (data.pairExpiresAt == null || data.pairExpiresAt is timestamp)
-        && (data.pairedDeviceId == null || (data.pairedDeviceId is string && data.pairedDeviceId.size() >= 20 && data.pairedDeviceId.size() <= 80))
-        && (data.pairedAt == null || data.pairedAt is timestamp)
         && data.pageActive is bool
         && data.pageHeartbeatAt is timestamp
         && data.playbackState in ['stopped', 'playing', 'paused']
         && data.canReplay is bool
+        && data.canRestartCurrent is bool
         && data.createdAt is timestamp;
     }
 
-    function isValidRemoteCommand(data, sessionId, pairedDeviceId) {
+    function isValidRemoteCommand(data, sessionId, deviceId) {
       return data.keys().hasOnly(['type', 'targetSessionId', 'deviceId', 'createdAt'])
-        && data.type in ['play', 'pauseResume', 'stop', 'replay']
+        && data.type in ['play', 'pauseResume', 'stop', 'restartLesson', 'restartCurrent']
         && data.targetSessionId == sessionId
-        && data.deviceId == pairedDeviceId
+        && data.deviceId == deviceId
         && data.createdAt == request.time;
     }
 
@@ -71,8 +67,9 @@ service cloud.firestore {
       allow read, write: if false;
     }
 
-    // Teacher-only remote speech control. Session IDs are random per page load;
-    // a paired device can write commands only to its exact live session.
+    // Teacher-only remote speech control. The PIN verifier is held in a
+    // GitHub file protected by an HMAC pepper in Cloud Functions Secrets.
+    // Devices become authorized only through the callable PIN verifier.
     function ownsRemoteSession(sessionId) {
       return isTeacher()
         && exists(/databases/$(database)/documents/remoteSessions/$(sessionId))
@@ -85,20 +82,15 @@ service cloud.firestore {
       allow create: if isTeacher()
         && isValidRemoteSession(request.resource.data)
         && request.resource.data.ownerUid == request.auth.uid
-        && request.resource.data.pairingCode is string
-        && request.resource.data.pairingCode.matches('^[0-9]{6}$')
-        && request.resource.data.pairedDeviceId == null
-        && request.resource.data.pairedAt == null
         && request.resource.data.pageActive == true
         && request.resource.data.playbackState == 'stopped'
         && request.resource.data.canReplay == false
+        && request.resource.data.canRestartCurrent == false
         && request.resource.data.createdAt == request.time
-        && request.resource.data.pageHeartbeatAt == request.time
-        && request.resource.data.pairExpiresAt > request.time
-        && request.resource.data.pairExpiresAt < request.time + duration.value(25, 'h');
+        && request.resource.data.pageHeartbeatAt == request.time;
 
-      // Pairing is one-time and expires quickly. After pairing, only page
-      // liveness and playback state may be changed by the page.
+      // Only the owner page may publish liveness/playback state. Pairing data
+      // and PIN verification are never writable through the public client SDK.
       allow update: if isTeacher()
         && isOwner(resource.data.ownerUid)
         && isValidRemoteSession(request.resource.data)
@@ -106,34 +98,14 @@ service cloud.firestore {
         && request.resource.data.pageTitle == resource.data.pageTitle
         && request.resource.data.pagePath == resource.data.pagePath
         && request.resource.data.createdAt == resource.data.createdAt
-        && (
-          (
-            resource.data.pairedDeviceId == null
-            && resource.data.pairExpiresAt > request.time
-            && request.resource.data.pairingCode == null
-            && request.resource.data.pairExpiresAt == null
-            && request.resource.data.pairedDeviceId is string
-            && request.resource.data.pairedDeviceId.size() >= 20
-            && request.resource.data.pairedDeviceId.size() <= 80
-            && request.resource.data.pairedAt == request.time
-            && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
-              'pairingCode', 'pairExpiresAt', 'pairedDeviceId', 'pairedAt'
-            ])
-          )
-          || (
-            request.resource.data.pairedDeviceId == resource.data.pairedDeviceId
-            && request.resource.data.pairedAt == resource.data.pairedAt
-            && request.resource.data.pairingCode == resource.data.pairingCode
-            && request.resource.data.pairExpiresAt == resource.data.pairExpiresAt
-            && request.resource.data.pageActive is bool
-            && request.resource.data.playbackState in ['stopped', 'playing', 'paused']
-            && request.resource.data.canReplay is bool
-            && request.resource.data.pageHeartbeatAt == request.time
-            && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
-              'pageActive', 'pageHeartbeatAt', 'playbackState', 'canReplay'
-            ])
-          )
-        );
+        && request.resource.data.pageActive is bool
+        && request.resource.data.playbackState in ['stopped', 'playing', 'paused']
+        && request.resource.data.canReplay is bool
+        && request.resource.data.canRestartCurrent is bool
+        && request.resource.data.pageHeartbeatAt == request.time
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+          'pageActive', 'pageHeartbeatAt', 'playbackState', 'canReplay', 'canRestartCurrent'
+        ]);
 
       allow delete: if isTeacher() && resource.data.ownerUid == request.auth.uid;
 
@@ -143,13 +115,26 @@ service cloud.firestore {
           && get(/databases/$(database)/documents/remoteSessions/$(sessionId)).data.pageActive == true
           && get(/databases/$(database)/documents/remoteSessions/$(sessionId)).data.pageHeartbeatAt > request.time - duration.value(45, 's')
           && request.resource.data.deviceId is string
+          && request.resource.data.deviceId.matches('^[A-Fa-f0-9-]{36}$')
+          && exists(/databases/$(database)/documents/remoteDevices/$(request.auth.uid + '_' + request.resource.data.deviceId))
+          && get(/databases/$(database)/documents/remoteDevices/$(request.auth.uid + '_' + request.resource.data.deviceId)).data.ownerUid == request.auth.uid
           && isValidRemoteCommand(
             request.resource.data,
             sessionId,
-            get(/databases/$(database)/documents/remoteSessions/$(sessionId)).data.pairedDeviceId
+            request.resource.data.deviceId
           );
         allow update, delete: if false;
       }
+    }
+
+    match /remoteDevices/{deviceKey} {
+      // Devices are provisioned only by the trusted PIN verifier callable.
+      allow read, write: if false;
+    }
+
+    match /remotePinAttempts/{attemptKey} {
+      // PIN rate limiting is managed by trusted server code only.
+      allow read, write: if false;
     }
 
     match /{document=**} {

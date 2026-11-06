@@ -20,24 +20,26 @@
       <button class="primary wide" id="sign-in" type="button">Prihlásiť sa cez Google</button>
     </section>
     <section id="pair-view" class="card" aria-labelledby="pair-title" hidden>
-      <h1 id="pair-title">Pripojiť otvorenú prednášku</h1>
-      <p>Naskenujte QR kód z tlačidla <strong>Ovládač</strong> na otvorenej prednáške, prihláste sa učiteľským účtom a zadajte pevný PIN <strong>134679</strong>.</p>
+      <p class="eyebrow">Režim Prednášajúci</p>
+      <h1 id="pair-title">Pripojiť ovládač</h1>
+      <p>Prihlásili ste sa učiteľským účtom. Zadajte svoj PIN; aplikácia potom nájde aktívnu prednášku otvorenú na počítači.</p>
       <form id="pair-form">
-        <label for="pair-code">Párovací kód</label>
-        <input id="pair-code" name="code" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" maxlength="6" required aria-describedby="pair-help">
-        <small id="pair-help">PIN je vždy 134679. QR kód určuje konkrétnu otvorenú prednášku a možno ho spárovať iba raz.</small>
-        <button class="primary wide" type="submit">Spárovať stránku</button>
+        <label for="pair-code">PIN ovládača</label>
+        <input id="pair-code" name="code" type="password" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" maxlength="6" required aria-describedby="pair-help">
+        <small id="pair-help">PIN nastavuje učiteľ na hlavnej stránke. Overenie prebieha bezpečne na serveri.</small>
+        <button class="primary wide" type="submit">Pripojiť</button>
       </form>
     </section>
     <section id="control-view" class="card controls" aria-labelledby="page-title" hidden>
-      <p class="eyebrow">Aktívna stránka</p>
-      <h1 id="page-title">—</h1>
+      <p class="eyebrow">Režim Prednášajúci · aktívna prednáška</p>
+      <h1 id="page-title">Čaká sa na prednášku</h1>
       <p class="playback" id="playback-state" role="status" aria-live="polite">Zastavené</p>
       <div class="button-grid">
         <button class="primary" id="play" type="button" disabled>▶ <span>Prehrať</span></button>
         <button id="pause-resume" type="button" disabled>Ⅱ <span>Pozastaviť</span></button>
         <button class="stop" id="stop" type="button" disabled>■ <span>Zastaviť</span></button>
-        <button id="replay" type="button" disabled>↻ <span>Prehrať znova</span></button>
+        <button id="restart-lesson" type="button" disabled>↻ <span>Od začiatku</span></button>
+        <button id="restart-current" type="button" disabled>⟲ <span>Aktuálny odsek</span></button>
       </div>
     </section>
     <p class="notice" id="notice" role="alert" hidden></p>

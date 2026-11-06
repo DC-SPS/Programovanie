@@ -46,10 +46,10 @@
       font: 16px/1.6 system-ui, -apple-system, "Segoe UI", sans-serif;
     }
     .page { position: relative; width: min(100% - 2rem, 1100px); margin-inline: auto; }
-    header { padding: clamp(5rem, 12vw, 8rem) 0 3rem; text-align: center; }
+    header { padding: clamp(5rem, 12vw, 8rem) 20rem 3rem 0; text-align: left; }
     .eyebrow { color: var(--accent); font-size: .82rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; }
     h1 { margin: .6rem 0; font-size: clamp(2.4rem, 7vw, 4.5rem); line-height: 1.1; letter-spacing: -.04em; }
-    header p { max-width: 600px; margin: 1rem auto 0; color: var(--muted); font-size: 1.1rem; }
+    header p { max-width: 600px; margin: 1rem 0 0; color: var(--muted); font-size: 1.1rem; }
     h2 { margin: 0 0 1.25rem; font-size: 1.45rem; }
     .courses { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 290px), 1fr)); gap: 1.25rem; padding-bottom: 4rem; }
     .course {
@@ -78,7 +78,7 @@
     .account-link:hover, .account-link:focus-visible { border-color: var(--accent); }
     .coming-soon { opacity: .88; }
     .coming-soon .tag { color: var(--muted); }
-    .remote-card { position: absolute; top: 1rem; right: 0; z-index: 2; display: grid; justify-items: center; gap: .35rem; margin: 0; padding: .65rem; border: 1px solid var(--border); border-radius: .8rem; background: color-mix(in srgb, var(--surface) 94%, transparent); box-shadow: 0 8px 28px #0002; }
+    .remote-card { position: absolute; top: 1rem; right: 0; z-index: 2; display: grid; width: min(100%, 19rem); max-height: calc(100vh - 1.5rem); overflow: auto; justify-items: center; gap: .35rem; margin: 0; padding: .65rem; border: 1px solid var(--border); border-radius: .8rem; background: color-mix(in srgb, var(--surface) 94%, transparent); box-shadow: 0 8px 28px #0002; }
     .remote-card h2 { margin: 0; font-size: .88rem; }
     .remote-card p { display: none; }
     .remote-card a { color: var(--accent); font-size: .75rem; }
@@ -86,7 +86,13 @@
     .home-remote-qr { width: 132px; height: 132px; padding: 6px; border-radius: .5rem; background: #fff; display: grid; place-items: center; }
     .home-remote-qr canvas, .home-remote-qr img { display: block; max-width: 100%; height: auto; }
     .remote-fallback { text-decoration: none; font-weight: 700; }
-    @media (max-width: 600px) { header { padding-top: 10rem; } .remote-card { top: .75rem; right: 0; padding: .45rem; } .home-remote-qr { width: 104px; height: 104px; } }
+    .remote-pin-settings { width: min(100%, 19rem); margin-top: .4rem; padding-top: .65rem; border-top: 1px solid var(--border); text-align: left; }
+    .remote-pin-settings h3 { margin: 0 0 .25rem; font-size: .82rem; }
+    .remote-pin-settings p,.remote-pin-settings label { display: block; margin: .25rem 0; color: var(--muted); font-size: .72rem; }
+    .remote-pin-settings input { width: 100%; min-height: 2.5rem; padding: .4rem .6rem; border: 1px solid var(--border); border-radius: .5rem; background: var(--bg); color: var(--text); }
+    .remote-pin-settings button { min-height: 2.4rem; padding: .35rem .65rem; border: 1px solid var(--border); border-radius: .5rem; background: var(--surface); color: var(--text); font: 700 .75rem system-ui,sans-serif; cursor: pointer; }
+    .remote-pin-settings [role="status"] { min-height: 1.2em; }
+    @media (max-width: 600px) { header { padding: 1.5rem 0 3rem; text-align: center; } header p { margin-inline: auto; } .remote-card { position: relative; top: auto; right: auto; width: min(100%, 19rem); margin: .75rem 0 0 auto; padding: .55rem; } }
     footer { padding: 1rem 0 2rem; border-top: 1px solid var(--border); color: var(--muted); text-align: center; font-size: .9rem; }
     footer a { color: inherit; }
     @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; } }
@@ -98,9 +104,20 @@
       <div class="eyebrow">Mobilný ovládač</div>
       <h2 id="remote-heading">Naskenuj QR</h2>
       <p>Naskenujte QR kód telefónom a otvorte ovládač. Prihláste sa učiteľským účtom Firebase, ktorý používate v tomto projekte.</p>
-      <p>Konkrétnu prednášku spárujete jednorazovým QR kódom z jej otvorenej stránky. Ten platí krátko a je viazaný iba na danú stránku.</p>
+      <p>Po prihlásení sa ovládač pripojí k aktívnej prednáške otvorenej na počítači.</p>
       <div class="home-remote-qr" id="home-remote-qr" role="img" aria-label="QR kód na otvorenie mobilného ovládača"></div>
       <a class="remote-fallback" href="remote/">Otvoriť ovládač</a>
+      <section class="remote-pin-settings" aria-labelledby="pin-settings-title">
+        <h3 id="pin-settings-title">Nastavenie PIN-u</h3>
+        <p>PIN sa uloží do repozitára ako chránený overovač. Samotný PIN sa nezobrazuje.</p>
+        <button id="pin-sign-in" type="button">Prihlásiť učiteľa</button>
+        <form id="pin-settings-form" hidden>
+          <label for="remote-pin">Nový šesťmiestny PIN</label>
+          <input id="remote-pin" type="password" inputmode="numeric" autocomplete="new-password" pattern="[0-9]{6}" maxlength="6" required>
+          <button type="submit">Uložiť PIN</button>
+        </form>
+        <p id="pin-settings-status" role="status" aria-live="polite"></p>
+      </section>
     </section>
     <header>
       <div class="eyebrow">Výučbové materiály</div>

@@ -1,17 +1,16 @@
 import { firebaseConfig } from "../firebase-config.js";
 
 const version = "10.14.1";
-let sdk = null;
-try {
-  sdk = await Promise.all([
-    import(`https://www.gstatic.com/firebasejs/${version}/firebase-app.js`),
-    import(`https://www.gstatic.com/firebasejs/${version}/firebase-auth.js`),
-    import(`https://www.gstatic.com/firebasejs/${version}/firebase-firestore.js`),
-  ]).then(([app, auth, firestore]) => ({ app, auth, firestore }));
-} catch {}
-const firebaseApp = sdk ? (sdk.app.getApps().length ? sdk.app.getApp() : sdk.app.initializeApp(firebaseConfig)) : null;
-const auth = sdk ? sdk.auth.getAuth(firebaseApp) : null;
-const db = sdk ? sdk.firestore.getFirestore(firebaseApp) : null;
+const [appSdk, authSdk, firestore, functionsSdk] = await Promise.all([
+  import(`https://www.gstatic.com/firebasejs/${version}/firebase-app.js`),
+  import(`https://www.gstatic.com/firebasejs/${version}/firebase-auth.js`),
+  import(`https://www.gstatic.com/firebasejs/${version}/firebase-firestore.js`),
+  import(`https://www.gstatic.com/firebasejs/${version}/firebase-functions.js`),
+]);
+const app = appSdk.getApps().length ? appSdk.getApp() : appSdk.initializeApp(firebaseConfig);
+const auth = authSdk.getAuth(app);
+const db = firestore.getFirestore(app);
+const functions = functionsSdk.getFunctions(app, "europe-west3");
 
 const $ = (selector) => document.querySelector(selector);
 const connection = $("#connection");
@@ -19,23 +18,22 @@ const authView = $("#auth-view");
 const pairView = $("#pair-view");
 const controlView = $("#control-view");
 const notice = $("#notice");
-const pairInput = $("#pair-code");
+const pinInput = $("#pair-code");
 const authButton = $("#sign-in");
 const commands = {
   play: $("#play"),
   pauseResume: $("#pause-resume"),
   stop: $("#stop"),
-  replay: $("#replay"),
+  restartLesson: $("#restart-lesson"),
+  restartCurrent: $("#restart-current"),
 };
-const stateLabels = { playing: "Prehráva sa", paused: "Pozastavené", stopped: "Zastavené" };
-const parameters = new URLSearchParams(location.search);
-const pairingSessionId = parameters.get("session") || "";
 
 let currentUser = null;
 let currentSession = null;
+let stopActiveLessons = null;
 let stopSession = null;
 let pageFreshTimer = 0;
-let deviceId = "";
+let deviceId;
 let connected = false;
 
 try {
@@ -57,169 +55,185 @@ function setConnection(text, state = "connecting") {
   updateButtons();
 }
 
-function updateButtons(data = currentSession?.data) {
-  const live = connected && data?.pageActive === true;
-  commands.play.disabled = !live || data.playbackState === "playing";
-  commands.pauseResume.disabled = !live || data.playbackState === "stopped";
-  commands.pauseResume.querySelector("span").textContent = data?.playbackState === "paused" ? "Pokračovať" : "Pozastaviť";
-  commands.pauseResume.firstChild.textContent = data?.playbackState === "paused" ? "▶ " : "Ⅱ ";
-  commands.stop.disabled = !live || data.playbackState === "stopped";
-  commands.replay.disabled = !live || data.canReplay !== true;
-}
-
 function showView(view) {
   authView.hidden = view !== "auth";
   pairView.hidden = view !== "pair";
   controlView.hidden = view !== "control";
 }
 
-async function pairPage(code) {
-  const normalizedCode = String(code || "").trim();
-  if (normalizedCode !== "134679") throw new Error("Nesprávny PIN. Zadajte 134679.");
-  if (!/^[A-Za-z0-9_-]{20,80}$/.test(pairingSessionId)) throw new Error("Najprv naskenujte QR kód z tlačidla Ovládač na otvorenej prednáške.");
-  const fs = sdk.firestore;
-  const ref = fs.doc(db, "remoteSessions", pairingSessionId);
-  const sessionDoc = await fs.getDoc(ref);
-  if (!sessionDoc.exists()) throw new Error("Táto prednáška sa nenašla. Znova naskenujte QR kód z jej otvorenej stránky.");
-  const initial = sessionDoc.data();
-  if (initial.ownerUid !== currentUser.uid) throw new Error("Prihláste sa rovnakým učiteľským účtom ako na počítači.");
-  if (initial.pairingCode !== "134679") throw new Error("Tento QR kód už bol použitý alebo nie je platný. Znova naskenujte QR kód z otvorenej prednášky.");
-  if (initial.pageActive !== true || initial.pairExpiresAt?.toMillis() < Date.now()) throw new Error("Prednáška už nie je aktívna. Znova naskenujte QR kód z otvorenej stránky.");
-  if (initial.pairedDeviceId) throw new Error("Táto prednáška už má pripojený telefón.");
-
-  await fs.runTransaction(db, async (transaction) => {
-    const fresh = await transaction.get(ref);
-    if (!fresh.exists()) throw new Error("Prednášková stránka už nie je dostupná.");
-    const data = fresh.data();
-    if (data.ownerUid !== currentUser.uid || data.pairingCode !== "134679") throw new Error("Tento QR kód už bol použitý alebo nie je platný.");
-    if (data.pageActive !== true || !data.pairExpiresAt || data.pairExpiresAt.toMillis() < Date.now()) throw new Error("Táto relácia už nie je aktívna. Otvorte ovládač na prednáške a naskenujte jeho QR kód.");
-    if (data.pairedDeviceId) throw new Error("Táto prednáška už má pripojený telefón.");
-    transaction.update(ref, {
-      pairingCode: null,
-      pairExpiresAt: null,
-      pairedDeviceId: deviceId,
-      pairedAt: fs.serverTimestamp(),
-    });
-  });
-
-  currentSession = { id: sessionDoc.id, ref, data: sessionDoc.data() };
-  sessionStorage.setItem("lecture-remote.session", sessionDoc.id);
-  parameters.delete("session");
-  history.replaceState(null, "", `${location.pathname}${parameters.size ? `?${parameters}` : ""}`);
-  await listenToSession(sessionDoc.id);
+function updateButtons(data = currentSession?.data) {
+  const live = connected && data?.pageActive === true && !isStale(data.pageHeartbeatAt);
+  commands.play.disabled = !live || data.playbackState === "playing";
+  commands.pauseResume.disabled = !live || data.playbackState === "stopped";
+  commands.pauseResume.querySelector("span").textContent = data?.playbackState === "paused" ? "Pokračovať" : "Pozastaviť";
+  commands.pauseResume.firstChild.textContent = data?.playbackState === "paused" ? "▶ " : "Ⅱ ";
+  commands.stop.disabled = !live || data.playbackState === "stopped";
+  commands.restartLesson.disabled = !live;
+  commands.restartCurrent.disabled = !live || data.canRestartCurrent !== true;
 }
 
-async function listenToSession(sessionId) {
+function showWaitingForLesson() {
   stopSession?.();
+  stopSession = null;
+  currentSession = null;
+  clearInterval(pageFreshTimer);
+  $("#page-title").textContent = "Čaká sa na aktívnu prednášku";
+  $("#playback-state").textContent = "Otvorte prednášku na počítači";
   showView("control");
-  setConnection("Pripájam sa k stránke…");
-  const fs = sdk.firestore;
-  const ref = fs.doc(db, "remoteSessions", sessionId);
-  stopSession = fs.onSnapshot(ref, { includeMetadataChanges: true }, (snapshot) => {
+  setConnection("Pripojené k účtu · čakám na prednášku", "connected");
+  updateButtons(null);
+}
+
+function isStale(timestamp) {
+  return !timestamp || Date.now() - timestamp.toMillis() > 35_000;
+}
+
+function listenToSession(sessionId, initialData) {
+  if (currentSession?.id === sessionId && stopSession) {
+    currentSession.data = initialData;
+    updateButtons(initialData);
+    return;
+  }
+  stopSession?.();
+  const ref = firestore.doc(db, "remoteSessions", sessionId);
+  currentSession = { id: sessionId, ref, data: initialData };
+  showView("control");
+  stopSession = firestore.onSnapshot(ref, { includeMetadataChanges: true }, (snapshot) => {
     if (snapshot.metadata.fromCache) {
-      setConnection("Spojenie prerušené · čakám na sieť", "offline");
-      showNotice("Telefón je offline. Ovládanie sa obnoví po návrate spojenia.");
+      setConnection("Offline · čakám na obnovenie siete", "offline");
+      showNotice("Ovládanie sa obnoví po návrate spojenia.");
       return;
     }
     if (!snapshot.exists()) {
-      sessionStorage.removeItem("lecture-remote.session");
       currentSession = null;
-      setConnection("Prednášková stránka sa odpojila", "offline");
-      showNotice("Stránka už nie je dostupná. Po otvorení prednášky naskenujte jej nový QR kód a spárujte telefón znova.");
-      showView("pair");
+      setConnection("Prednáška už nie je dostupná", "offline");
+      showNotice("Otvorte prednášku na počítači. Ovládač sa pripojí automaticky.");
+      updateButtons(null);
       return;
     }
     const data = snapshot.data();
     currentSession = { id: sessionId, ref, data };
-    if (data.ownerUid !== currentUser.uid || data.pairedDeviceId !== deviceId) {
-      setConnection("Toto zariadenie už nie je spárované", "error");
-      showNotice("Pre bezpečnosť sú príkazy vypnuté. Spárujte telefón s otvorenou stránkou znova.");
+    if (data.ownerUid !== currentUser.uid) {
+      showWaitingForLesson();
       return;
     }
     $("#page-title").textContent = data.pageTitle || "Prednáška";
-    $("#playback-state").textContent = stateLabels[data.playbackState] || "Zastavené";
+    $("#playback-state").textContent = ({ playing: "Prehráva sa", paused: "Pozastavené", stopped: "Zastavené" })[data.playbackState] || "Zastavené";
+    if (!data.pageActive || isStale(data.pageHeartbeatAt)) {
+      setConnection("Prednáška sa odpojila · čakám", "offline");
+      showNotice("Keď otvoríte prednášku alebo prepnete na jej kartu, ovládanie sa pripojí automaticky.");
+      updateButtons(null);
+      return;
+    }
     showNotice("");
-    if (data.pageActive !== true) {
-      sessionStorage.removeItem("lecture-remote.session");
-      currentSession = null;
-      stopSession?.();
-      stopSession = null;
-      showView("pair");
-      setConnection("Prednášková stránka je zavretá", "offline");
-      showNotice("Keď otvoríš ďalšiu prednášku, naskenuj jej nový QR kód a spáruj telefón znova.");
-      return;
-    }
-    if (isStale(data.pageHeartbeatAt)) {
-      setConnection("Stránka nereaguje · synchronizujem spojenie", "offline");
-      showNotice("Po obnovení spojenia sa stav zosynchronizuje automaticky.");
-      return;
-    }
-    setConnection("Pripojené k otvorenej stránke", "connected");
+    setConnection("Pripojené k aktívnej prednáške", "connected");
     updateButtons(data);
   }, (error) => {
     setConnection("Spojenie prerušené", "offline");
     showNotice(firebaseError(error));
   });
-  window.clearInterval(pageFreshTimer);
+  clearInterval(pageFreshTimer);
   pageFreshTimer = window.setInterval(() => {
     if (currentSession?.data && isStale(currentSession.data.pageHeartbeatAt)) {
-      setConnection("Stránka nereaguje · čakám na obnovenie", "offline");
-      showNotice("Po obnovení spojenia sa stav zosynchronizuje automaticky.");
+      setConnection("Prednáška nereaguje · čakám na obnovenie", "offline");
+      updateButtons(null);
     }
   }, 5_000);
 }
 
-function isStale(timestamp) {
-  return !timestamp || Date.now() - timestamp.toMillis() > 45_000;
+function watchActiveLessons() {
+  stopActiveLessons?.();
+  showView("control");
+  setConnection("Hľadám aktívnu prednášku…");
+  const activeQuery = firestore.query(
+    firestore.collection(db, "remoteSessions"),
+    firestore.where("ownerUid", "==", currentUser.uid),
+  );
+  stopActiveLessons = firestore.onSnapshot(activeQuery, (snapshot) => {
+    const active = snapshot.docs
+      .map((doc) => ({ id: doc.id, data: doc.data() }))
+      .filter(({ data }) => data.pageActive === true && !isStale(data.pageHeartbeatAt))
+      .sort((a, b) => b.data.pageHeartbeatAt.toMillis() - a.data.pageHeartbeatAt.toMillis())[0];
+    if (!active) {
+      showWaitingForLesson();
+      return;
+    }
+    listenToSession(active.id, active.data);
+  }, (error) => {
+    setConnection("Prednášku sa nepodarilo nájsť", "error");
+    showNotice(firebaseError(error));
+  });
+}
+
+async function submitPin(event) {
+  event.preventDefault();
+  const button = event.currentTarget.querySelector("button[type=submit]");
+  button.disabled = true;
+  showNotice("");
+  setConnection("Overujem prístup…");
+  try {
+    const verify = functionsSdk.httpsCallable(functions, "verifyRemotePin");
+    await verify({ pin: pinInput.value, deviceId });
+    pinInput.value = "";
+    sessionStorage.setItem(`lecture-remote.verified.${currentUser.uid}`, "yes");
+    watchActiveLessons();
+  } catch (error) {
+    setConnection("Pripojenie sa nepodarilo", "error");
+    showNotice(firebaseError(error));
+  } finally {
+    button.disabled = false;
+  }
 }
 
 async function sendCommand(type) {
   const session = currentSession;
-  if (!connected || !session || session.data?.pageActive !== true || isStale(session.data.pageHeartbeatAt)) {
-    setConnection("Stránka nie je pripojená", "offline");
-    showNotice("Príkaz sa neposlal. Obnovte spojenie s otvorenou prednáškou.");
+  if (!connected || !session || !session.data?.pageActive || isStale(session.data.pageHeartbeatAt)) {
+    setConnection("Nie je pripojené k aktívnej prednáške", "offline");
+    updateButtons(null);
     return;
   }
   try {
-    await sdk.firestore.addDoc(sdk.firestore.collection(session.ref, "commands"), {
+    await firestore.addDoc(firestore.collection(session.ref, "commands"), {
       type,
       targetSessionId: session.id,
       deviceId,
-      createdAt: sdk.firestore.serverTimestamp(),
+      createdAt: firestore.serverTimestamp(),
     });
   } catch (error) {
+    if (error?.code === "permission-denied" && currentUser) {
+      sessionStorage.removeItem(`lecture-remote.verified.${currentUser.uid}`);
+      stopActiveLessons?.();
+      stopActiveLessons = null;
+      stopSession?.();
+      stopSession = null;
+      currentSession = null;
+      showView("pair");
+      setConnection("PIN sa zmenil · pripojte sa znova", "error");
+      showNotice("Zadajte aktuálny PIN ovládača.");
+      return;
+    }
     setConnection("Príkaz sa nepodarilo odoslať", "error");
     showNotice(firebaseError(error));
   }
 }
 
-async function restoreSession() {
-  const sessionId = sessionStorage.getItem("lecture-remote.session");
-  if (!sessionId) {
-    showView("pair");
-    setConnection("Prihlásené · čaká sa na spárovanie", "connected");
-    return;
-  }
-  showView("control");
-  await listenToSession(sessionId);
-}
-
 function firebaseError(error) {
-  if (error?.code === "permission-denied") return "Firebase odmietol prístup. Prihláste sa učiteľským účtom a overte bezpečnostné pravidlá.";
-  if (error?.code === "unavailable" || !navigator.onLine) return "Sieťové spojenie sa prerušilo. Po obnovení sa stav zosynchronizuje.";
+  if (!navigator.onLine || error?.code === "functions/unavailable" || error?.code === "unavailable") {
+    return "Služba je nedostupná alebo telefón nemá internetové spojenie. Skúste to znova po obnovení siete.";
+  }
+  if (error?.code === "functions/permission-denied") return "PIN alebo oprávnenie účtu nie je správne.";
+  if (error?.code === "functions/failed-precondition") return "Učiteľ ešte nenastavil PIN ovládača.";
+  if (error?.code === "permission-denied") return "Firebase odmietol prístup. Skontrolujte prihlásenie a nasadené pravidlá.";
   return error?.message || "Operáciu sa nepodarilo dokončiť.";
 }
 
 authButton.addEventListener("click", async () => {
   authButton.disabled = true;
   try {
-    const provider = new sdk.auth.GoogleAuthProvider();
+    const provider = new authSdk.GoogleAuthProvider();
     provider.setCustomParameters({ prompt: "select_account" });
-    if (matchMedia("(pointer: coarse)").matches) {
-      await sdk.auth.signInWithRedirect(auth, provider);
-    } else {
-      await sdk.auth.signInWithPopup(auth, provider);
-    }
+    if (matchMedia("(pointer: coarse)").matches) await authSdk.signInWithRedirect(auth, provider);
+    else await authSdk.signInWithPopup(auth, provider);
   } catch (error) {
     showNotice(firebaseError(error));
   } finally {
@@ -227,62 +241,33 @@ authButton.addEventListener("click", async () => {
   }
 });
 
-$("#pair-form").addEventListener("submit", async (event) => {
-  event.preventDefault();
-  const submit = event.currentTarget.querySelector("button[type=submit]");
-  submit.disabled = true;
-  showNotice("");
-  setConnection("Overujem kód stránky…");
-  try {
-    await pairPage(pairInput.value);
-  } catch (error) {
-    setConnection("Spárovanie sa nepodarilo", "error");
-    showNotice(firebaseError(error));
-    submit.disabled = false;
-  }
-});
-
+$("#pair-form").addEventListener("submit", submitPin);
 for (const [type, button] of Object.entries(commands)) button.addEventListener("click", () => sendCommand(type));
 
-if (!sdk) {
-  showView("auth");
-  setConnection("Firebase nie je dostupný", "offline");
-  showNotice(!navigator.onLine
-    ? "Telefón je offline. Po obnovení siete obnovte aplikáciu a stav sa zosynchronizuje."
-    : "Nepodarilo sa načítať Firebase SDK. Skontrolujte sieť a obnovte aplikáciu.");
-  authButton.disabled = true;
-} else {
-sdk.auth.onAuthStateChanged(auth, async (user) => {
+authSdk.onAuthStateChanged(auth, (user) => {
   currentUser = user;
   if (!user) {
+    stopActiveLessons?.();
+    stopActiveLessons = null;
     stopSession?.();
+    stopSession = null;
+    currentSession = null;
     showView("auth");
     setConnection("Vyžaduje sa učiteľské prihlásenie", "error");
     return;
   }
-  try {
-    showNotice("");
-    if (pairingSessionId) {
-      showView("pair");
-      setConnection("Prihlásené · overte párovací kód", "connected");
-      pairInput.focus();
-    } else if (sessionStorage.getItem("lecture-remote.session")) await restoreSession();
-    else {
-      showView("pair");
-      setConnection("Prihlásené · čaká sa na stránku", "connected");
-    }
-  } catch (error) {
-    showView("auth");
-    setConnection("Overenie účtu zlyhalo", "error");
-    showNotice(firebaseError(error));
+  showNotice("");
+  if (sessionStorage.getItem(`lecture-remote.verified.${user.uid}`) === "yes") watchActiveLessons();
+  else {
+    showView("pair");
+    setConnection("Prihlásené · zadajte PIN", "connected");
   }
 });
-}
 
 window.addEventListener("online", () => {
-  if (currentSession) listenToSession(currentSession.id);
+  if (currentUser && sessionStorage.getItem(`lecture-remote.verified.${currentUser.uid}`) === "yes") watchActiveLessons();
 });
 window.addEventListener("offline", () => {
   setConnection("Sieťové spojenie prerušené", "offline");
-  showNotice("Ovládanie je pozastavené. Obnoví sa po návrate spojenia.");
+  updateButtons(null);
 });

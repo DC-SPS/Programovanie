@@ -209,6 +209,7 @@
       currentPausedAt = 0;
       currentEstimateMs = estimateSpeechMs(item.text);
       setActiveBlock(item.block);
+      updateControls();
       const utterance = new SpeechSynthesisUtterance(item.text);
       const selectedVoice = availableVoices.find((voice) => voice.voiceURI === voiceSelect.value);
       const slovakVoice = selectedVoice || availableVoices.find((voice) => voice.lang.toLowerCase().startsWith("sk"));
@@ -378,15 +379,22 @@
       restartSpeechForSetting("Rýchlosť " + label + " je nastavená.");
     });
     updateControls();
+    const restartCurrent = () => {
+      const current = activeItem || previousSelection.find(({ block }) => block === activeBlock);
+      if (current) startReading([current]);
+    };
     window.lessonSpeechRemote = Object.freeze({
       play: () => playButton.click(),
       pauseResume: () => pauseButton.click(),
       stop: () => stopButton.click(),
       replay: () => replayButton.click(),
+      restartLesson: () => startReading(getSelectedItems()),
+      restartCurrent,
       getState: () => ({
         isReading,
         isPaused,
         canReplay: previousSelection.length > 0,
+        canRestartCurrent: Boolean(activeItem || previousSelection.some(({ block }) => block === activeBlock)),
       }),
     });
 

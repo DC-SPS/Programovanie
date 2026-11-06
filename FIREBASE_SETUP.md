@@ -1,38 +1,32 @@
-# Nastavenie Firebase
+# Nastavenie mobiln�ho ovl�da�a
 
-## Učiteľský prístup bez Cloud Functions
+## Poh�ady
 
-Ovládanie prednášok nepotrebuje vlastné tokenové nároky, blokovacie funkcie Identity Platform, Secret Manager ani Cloud Functions. Učiteľský prístup kontrolujú Firestore Security Rules podľa overeného Google účtu. Povolený účet je `dusan.cabala.sps@gmail.com`.
+- **�iak** a **U�ite�** s� existuj�ce re�imy na str�nkach kurzov.
+- **Predn�aj�ci** je mobiln� ovl�da� otvoren� QR k�dom na hlavnej str�nke. Po u�ite�skom prihl�sen� a overen� PIN-u sa pripoj� k akt�vnej karte predn�ky.
+- Mobil pon�ka prehratie, pozastavenie/pokra�ovanie, zastavenie, re�tart celej predn�ky a re�tart aktu�lneho odseku.
 
-Kontrola e-mailu v `firestore.rules` je bezpečnostná hranica. Iný účet môže zobraziť prihlasovací alebo párovací formulár, ale Firestore mu odmietne čítanie aj zápis. Prístup nezabezpečuj iba kontrolou v JavaScripte.
+## Bezpe�n� ulo�enie PIN-u
 
-## Projekt Firebase
+Webov� klient nikdy neuklad� ani ne��ta PIN z repozit�ra. Hlavn� str�nka odo�le nov� nastavenie do Firebase callable Function. Function over� povolen� ��et u�ite�a, vytvor� HMAC-SHA-256 pomocou serverov�ho pepperu a cez obmedzen� GitHub token ulo�� iba HMAC overova� do `.github/remote-pin-hmac.json`. Mobil posiela PIN iba serverovej Function na overenie. Firestore uklad� iba autoriz�ciu zariadenia a stav rel�cie, nikdy PIN ani jeho overova�.
 
-- Projekt: `programovanie-sps`.
-- Konfigurácia webovej aplikácie: `firebase-config.js`.
-- Hosting: `https://programovanie-sps.web.app`.
-- Projekt používa bezplatný plán Spark. Nenasadzuj Cloud Functions ani tajomstvá do Secret Managera; tie vyžadujú plán Blaze s fakturáciou.
-- Databáza Firestore ešte nebola vytvorená. Vytvor predvolenú databázu v edícii **Standard** vo vhodnom regióne. Pre toto riešenie bez fakturácie nepouži Enterprise. Vytvorenie databázy zároveň povolí príslušné API. Edícia Standard má na pláne Spark bezplatné limity; pri ich prekročení sa používanie služby na zvyšok fakturačného obdobia zastaví.
-- V Firebase Authentication musí byť povolené prihlásenie cez Google a doména webu musí byť medzi autorizovanými doménami.
+## Po�iadavky na nasadenie
 
-## Zapnutie diaľkového ovládača
+Projekt aktu�lne pou��va Firebase Spark. Callable Functions vy�aduj� pl�n Blaze, preto t�to implement�cia zatia� nem��e fungova� na �ivej str�nke bez zmeny pl�nu a v�slovn�ho nasadenia. Ni� z toho som nenasadil.
 
-1. Vo Firebase Console otvor projekt `programovanie-sps`.
-2. V **Firestore Database** vytvor predvolenú databázu v edícii **Standard**, vo vhodnom regióne a v produkčnom režime.
-3. V **Authentication → Sign-in method** over, že je povolený Google. Skontroluj aj autorizovanú doménu webu.
-4. Po kontrole lokálnych zmien v `firestore.rules` nasaď iba bezpečnostné pravidlá z koreňového priečinka projektu:
+Po samostatnom schv�len� konfigur�cie nastav vo Firebase Secrets:
 
-   ```powershell
-   firebase deploy --only firestore:rules --project programovanie-sps
-   ```
+```powershell
+firebase functions:secrets:set REMOTE_PIN_GITHUB_TOKEN --project programovanie-sps
+firebase functions:secrets:set REMOTE_PIN_PEPPER --project programovanie-sps
+```
 
-5. Na prednáške aj v mobilnom ovládači sa prihlás overeným Google účtom uvedeným v `firestore.rules`. Telefón spáruj krátkodobým kódom z otvorenej prednášky.
+GitHub token mus� by� fine-grained a ma� iba opr�vnenie **Contents: Read and write** pre repozit�r `DC-SPS/Programovanie`. Pepper mus� by� n�hodn� tajn� k��� a ulo�en� iba vo Firebase Secrets. Ani jeden �daj nevkladaj do klienta alebo repozit�ra. Account `TEACHER_EMAIL` je u� potrebn� pre existuj�ce identity blocking functions, ale PIN funkcie samostatne kontroluj� overen� u�ite�sk� ��et.
 
-## Bezpečnostné poznámky
+Po nastaven� Secrets treba nain�talova� z�vislosti v `remote-functions/`, otestova� pravidl� vo Firebase Emulator Suite a a� po schv�len� samostatne nasadi� codebase `remote` (`firebase deploy --only functions:remote`) a Firestore rules (`firebase deploy --only firestore:rules --project programovanie-sps`). Existuj�ci identity-blocking codebase `default` sa t�m nemen�. Hosting sa nasadzuje samostatne.
 
-- Diaľkové relácie sú viazané na Firebase UID povoleného učiteľského účtu. QR relácia platí, kým je stránka aktívna (najviac 24 hodín), a dá sa spárovať iba raz.
-- Mobilný PIN je pevne `134679`. Nie je to bezpečnostný token: väzbu na stránku tvorí náhodný identifikátor v QR kóde a prístup povoľujú iba Firestore pravidlá pre prihlásený učiteľský účet. QR relácia je jednorazová a platí len počas aktívnej otvorenej prednášky; PIN sa nezobrazuje na hlavnej stránke.
-- Pravidlá Firestore obmedzujú reláciu na jej vlastníka a spárovaný telefón. Neprihlásené účty ani iné účty nemôžu čítať relácie alebo zapisovať príkazy.
-- Pri zmene učiteľského účtu aktualizuj povolený e-mail v `firestore.rules`, skontroluj zmenu a nasaď pravidlá. Toto riešenie nepoužíva Firebase custom claim.
-- Staršie funkcie v `functions/index.js` nie sú súčasťou riešenia bez fakturácie. Nenasadzuj ich v pláne Spark.
-- Prihlasovanie žiakov, zber ich aktivít a e-mailové reporty zostávajú vypnuté, kým sa osobitne neschvália a nenavrhnú.
+## Rel�cie a opr�vnenia
+
+Predn�kov� str�nka vytvor� n�hodn� rel�ciu a ozna�uje ju akt�vnou iba po�as zobrazenia jej karty. Mobil sleduje rel�cie prihl�sen�ho u�ite�a a vyber� akt�vnu pod�a heartbeat-u. Firestore odmietne pr�kazy od in�ho ��tu, neautorizovan�ho zariadenia, neakt�vnej str�nky alebo zastaranej rel�cie. Opakovan� nespr�vne PIN pokusy sa do�asne zablokuj�.
+
+Webov� konfigur�cia Firebase je verejn� klientsk� konfigur�cia, nie servisn� k���. Do repozit�ra neukladaj service-account JSON, GitHub token, pepper ani in� tajn� poverenia.
