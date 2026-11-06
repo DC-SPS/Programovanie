@@ -51,6 +51,7 @@ function showWaitingForLesson(message = "Otvorte prednášku na počítači.") {
   clearInterval(freshnessTimer);
   mirror.hidden = true;
   mirror.removeAttribute("src");
+  delete mirror.dataset.pageUrl;
   showView("control");
   setConnection("Čakám na aktívnu prednášku", "offline");
   showNotice(message);
@@ -60,6 +61,7 @@ function setMirrorPage(data) {
   let pageUrl;
   try {
     pageUrl = new URL(data.pagePath, location.origin);
+    if (pageUrl.pathname.endsWith("/")) pageUrl.pathname += "index.html";
   } catch {
     showNotice("Stránku prednášky sa nepodarilo otvoriť.");
     return;
@@ -137,15 +139,14 @@ function installMirrorControls() {
   const style = doc.createElement("style");
   style.textContent = `
     html,body{min-height:100%;height:auto;margin:0!important}
-    .global-course-nav,.course-nav,.mode,.lesson-top,.breadcrumb,.pdf-export,footer{display:none!important}
-    .lesson-side-panel{position:sticky!important;top:0!important;right:auto!important;bottom:auto!important;left:auto!important;z-index:5000!important;width:100%!important;max-height:56vh!important;margin:0!important;border-radius:0 0 14px 14px!important;backdrop-filter:blur(12px)}
-    main{width:auto!important;max-width:none!important;margin:0!important;padding:1rem!important;padding-bottom:1rem!important}
+    .lesson-side-panel{position:sticky!important;top:0!important;right:auto!important;bottom:auto!important;left:auto!important;z-index:5000!important;width:100%!important;max-height:56vh!important;overflow:auto!important;margin:0!important;border-radius:0 0 14px 14px!important;backdrop-filter:blur(12px)}
     @media(max-width:620px){.lesson-side-panel{max-height:57vh!important}.lesson-side-panel .narration-controls{gap:.4rem!important}.lesson-side-panel .narration-controls button{min-height:42px!important}}
   `;
   doc.head.append(style);
 
   const panel = doc.querySelector(".lesson-side-panel");
   if (!panel) return;
+  doc.body.prepend(panel);
   panel.addEventListener("click", (event) => {
     const button = event.target.closest("button");
     if (!button) return;

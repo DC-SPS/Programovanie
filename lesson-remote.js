@@ -3,7 +3,7 @@ import { firebaseConfig } from "./firebase-config.js";
 (() => {
   const control = window.lessonSpeechRemote;
   const main = document.querySelector("main");
-  if (!control || !main) return;
+  if (!main) return;
   if (new URLSearchParams(location.search).get("remoteMirror") === "1") return;
 
   const version = "10.14.1";
@@ -88,7 +88,7 @@ import { firebaseConfig } from "./firebase-config.js";
   };
 
   const publishPlayback = async () => {
-    if (!session || closing) return;
+    if (!session || closing || !control) return;
     const { dbSdk, ref } = session;
     const state = control.getState();
     try {
@@ -116,13 +116,13 @@ import { firebaseConfig } from "./firebase-config.js";
         const command = change.doc.data();
         if (command.targetSessionId !== activeSession.id) continue;
         if (!command.createdAt || Date.now() - command.createdAt.toMillis() > 30_000) continue;
-        const actions = {
+        const actions = control ? {
           play: control.play,
           pauseResume: control.pauseResume,
           stop: control.stop,
           restartLesson: control.restartLesson,
           restartCurrent: control.restartCurrent,
-        };
+        } : {};
         if (actions[command.type]) {
           actions[command.type]();
         } else if (command.type === "panelClick") {
@@ -148,7 +148,7 @@ import { firebaseConfig } from "./firebase-config.js";
     stopCommands = null;
     clearInterval(heartbeatTimer);
     heartbeatTimer = 0;
-    window.removeEventListener("lesson-reading-state", publishPlayback);
+    if (control) window.removeEventListener("lesson-reading-state", publishPlayback);
     if (markInactive) {
       try {
         await old.dbSdk.updateDoc(old.ref, {
@@ -182,7 +182,7 @@ import { firebaseConfig } from "./firebase-config.js";
     });
     session = next;
     listenForCommands(next);
-    window.addEventListener("lesson-reading-state", publishPlayback);
+    if (control) window.addEventListener("lesson-reading-state", publishPlayback);
     await publishPresence();
     heartbeatTimer = window.setInterval(publishPresence, 10_000);
   };
@@ -210,7 +210,12 @@ import { firebaseConfig } from "./firebase-config.js";
         stopSession(false);
         return;
       }
-      startSession(user).catch(() => stopSession(false));
+      startSession(user).catch((error) => {
+        console.error("Nepodarilo sa zaregistrovať aktívnu stránku pre mobilné zrkadlo.", error);
+        stopSession(false);
+      });
     });
-  }).catch(() => {});
+  }).catch((error) => {
+    console.error("Nepodarilo sa spustiť Firebase pre mobilné zrkadlo.", error);
+  });
 })();
