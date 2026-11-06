@@ -21,17 +21,47 @@ const app = appSdk.getApps().length ? appSdk.getApp() : appSdk.initializeApp(fir
 const auth = authSdk.getAuth(app);
 const functions = functionsSdk.getFunctions(app, "europe-west3");
 
-const pinForm = document.querySelector("#pin-settings-form");
-const pinInput = document.querySelector("#remote-pin");
+const createButton = document.querySelector("#create-remote-pin");
 const signInButton = document.querySelector("#pin-sign-in");
+const settingsPanel = document.querySelector("#pin-settings-panel");
+const pinOutput = document.querySelector("#remote-pin");
 const status = document.querySelector("#pin-settings-status");
+let currentUser = null;
+let hidePinTimer = 0;
+
+function clearDisplayedPin(message = "") {
+  clearTimeout(hidePinTimer);
+  hidePinTimer = 0;
+  pinOutput.value = "";
+  pinOutput.textContent = "";
+  pinOutput.hidden = true;
+  status.textContent = message;
+}
+
+async function clearServerPin() {
+  const clear = functionsSdk.httpsCallable(functions, "clearRemotePin");
+  await clear();
+}
+
+authSdk.beforeAuthStateChanged(auth, async (nextUser) => {
+  if (currentUser && (!nextUser || nextUser.uid !== currentUser.uid)) {
+    clearDisplayedPin("Mažem jednorazový PIN a prístup spárovaných zariadení…");
+    try {
+      await clearServerPin();
+    } catch {
+      // The server-side PIN expires automatically if cleanup cannot reach Firebase.
+    }
+    clearDisplayedPin();
+  }
+});
 
 authSdk.onAuthStateChanged(auth, (user) => {
+  currentUser = user;
   const authorizedSession = Boolean(user?.emailVerified);
   signInButton.hidden = authorizedSession;
-  pinForm.hidden = !authorizedSession;
-  if (!user) status.textContent = "Prihláste sa učiteľským účtom, aby ste mohli meniť nastavenie.";
-  else status.textContent = "";
+  settingsPanel.hidden = !authorizedSession;
+  if (!authorizedSession) clearDisplayedPin("Prihláste sa učiteľským účtom, aby ste vytvorili PIN.");
+  else status.textContent = "PIN ešte nebol vytvorený.";
 });
 
 signInButton.addEventListener("click", async () => {
@@ -47,21 +77,22 @@ signInButton.addEventListener("click", async () => {
   }
 });
 
-pinForm.addEventListener("submit", async (event) => {
-  event.preventDefault();
-  const button = pinForm.querySelector("button[type=submit]");
-  button.disabled = true;
-  status.textContent = "Ukladám nastavenie…";
+createButton.addEventListener("click", async () => {
+  createButton.disabled = true;
+  clearDisplayedPin("Vytváram jednorazový PIN…");
   try {
-    const savePin = functionsSdk.httpsCallable(functions, "saveRemotePin");
-    await savePin({ pin: pinInput.value });
-    pinInput.value = "";
-    status.textContent = "PIN bol uložený. Hodnota sa nezobrazuje.";
+    const createPin = functionsSdk.httpsCallable(functions, "createRemotePin");
+    const { data } = await createPin();
+    pinOutput.value = data.pin;
+    pinOutput.textContent = data.pin;
+    pinOutput.hidden = false;
+    status.textContent = "Zadajte tento PIN v mobile. Platí 10 minút a funguje iba raz.";
+    hidePinTimer = window.setTimeout(() => clearDisplayedPin("PIN vymazaný. Vytvorte nový, ak ho ešte potrebujete."), data.expiresInSeconds * 1000);
   } catch (error) {
     status.textContent = error?.code === "functions/permission-denied"
-      ? "Tento účet nemá oprávnenie meniť PIN."
-      : "PIN sa nepodarilo uložiť. Skontrolujte serverové nastavenie alebo skúste znova.";
+      ? "Tento účet nemá oprávnenie vytvoriť PIN."
+      : "PIN sa nepodarilo vytvoriť. Skontrolujte serverové nastavenie alebo skúste znova.";
   } finally {
-    button.disabled = false;
+    createButton.disabled = false;
   }
 });

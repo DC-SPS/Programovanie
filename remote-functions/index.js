@@ -1,15 +1,13 @@
 const { onCall, HttpsError } = require("firebase-functions/v2/https");
+const { onSchedule } = require("firebase-functions/v2/scheduler");
 const { defineSecret } = require("firebase-functions/params");
 const { initializeApp } = require("firebase-admin/app");
 const { FieldValue, Timestamp, getFirestore } = require("firebase-admin/firestore");
-const { createHmac, timingSafeEqual } = require("node:crypto");
+const { createHmac, randomInt, timingSafeEqual } = require("node:crypto");
 
-const githubToken = defineSecret("REMOTE_PIN_GITHUB_TOKEN");
 const pinPepper = defineSecret("REMOTE_PIN_PEPPER");
-const githubOwner = "DC-SPS";
-const githubRepository = "Programovanie";
-const githubPinPath = ".github/remote-pin-hmac.json";
 const teacherAccountEmail = "dusan.cabala.sps@gmail.com";
+const pinLifetimeMs = 10 * 60 * 1000;
 initializeApp();
 
 function requireTeacher(request) {
@@ -20,114 +18,50 @@ function requireTeacher(request) {
   return request.auth.uid;
 }
 
-function pinMac(pin) {
-  return createHmac("sha256", pinPepper.value()).update(`remote-pin:v1:${pin}`).digest("base64url");
+function pinMac(uid, pin) {
+  return createHmac("sha256", pinPepper.value()).update(`remote-pin:v1:${uid}:${pin}`).digest();
 }
 
 function validatePin(pin) {
-  if (typeof pin !== "string" || !/^\d{6}$/.test(pin)) {
+  if (typeof pin !== "string" || !/^\\d{6}$/.test(pin)) {
     throw new HttpsError("invalid-argument", "Enter a six-digit PIN.");
   }
 }
 
-async function githubRequest(method, body) {
-  const response = await fetch(`https://api.github.com/repos/${githubOwner}/${githubRepository}/contents/${githubPinPath}`, {
-    method,
-    headers: {
-      Authorization: `Bearer ${githubToken.value()}`,
-      Accept: "application/vnd.github+json",
-      "X-GitHub-Api-Version": "2022-11-28",
-      "Content-Type": "application/json",
-    },
-    body: body ? JSON.stringify(body) : undefined,
-  });
-  if (response.status === 404 && method === "GET") return null;
-  if (!response.ok) throw new Error(`GitHub settings request failed (${response.status}).`);
-  return response.status === 204 ? null : response.json();
+function getRemoteDeviceCollection(uid) {
+  return getFirestore().collection("remoteDevices").where("ownerUid", "==", uid);
 }
 
-async function readPinVerifier() {
-  const response = await fetch(`https://api.github.com/repos/${githubOwner}/${githubRepository}/contents/${githubPinPath}`, {
-    headers: {
-      Authorization: `Bearer ${githubToken.value()}`,
-      Accept: "application/vnd.github+json",
-      "X-GitHub-Api-Version": "2022-11-28",
-    },
-  });
-  if (response.status === 404) throw new HttpsError("failed-precondition", "The presenter PIN has not been configured yet.");
-  if (!response.ok) throw new Error(`GitHub settings request failed (${response.status}).`);
-  const file = await response.json();
-  const record = JSON.parse(Buffer.from(file.content, "base64").toString("utf8"));
-  if (record.version !== 1 || typeof record.mac !== "string" || record.mac.length > 100) {
-    throw new HttpsError("failed-precondition", "The presenter PIN configuration is invalid.");
+async function deleteRemoteDevices(uid) {
+  const snapshot = await getRemoteDeviceCollection(uid).get();
+  for (let offset = 0; offset < snapshot.docs.length; offset += 400) {
+    const batch = getFirestore().batch();
+    snapshot.docs.slice(offset, offset + 400).forEach((device) => batch.delete(device.ref));
+    await batch.commit();
   }
-  return record.mac;
 }
 
-async function enforcePinRateLimit(uid) {
-  const db = getFirestore();
-  const ref = db.doc(`remotePinAttempts/${uid}`);
-  await db.runTransaction(async (transaction) => {
-    const snapshot = await transaction.get(ref);
-    const blockedUntil = snapshot.data()?.blockedUntil;
-    if (blockedUntil?.toMillis() > Date.now()) {
-      throw new HttpsError("resource-exhausted", "Too many attempts. Try again later.");
-    }
-  });
-  return ref;
-}
-
-async function recordPinAttempt(ref, success) {
-  const db = getFirestore();
-  await db.runTransaction(async (transaction) => {
-    const snapshot = await transaction.get(ref);
-    if (success) {
-      if (snapshot.exists) transaction.delete(ref);
-      return;
-    }
-    const data = snapshot.data() || {};
-    const now = Date.now();
-    const withinWindow = typeof data.windowStartedAt === "number" && now - data.windowStartedAt < 15 * 60 * 1000;
-    const attempts = (withinWindow ? data.attempts || 0 : 0) + 1;
-    transaction.set(ref, {
-      attempts,
-      windowStartedAt: withinWindow ? data.windowStartedAt : now,
-      ...(attempts >= 6 ? { blockedUntil: Timestamp.fromMillis(now + 15 * 60 * 1000) } : {}),
-    });
-  });
-}
-
-exports.saveRemotePin = onCall(
-  { region: "europe-west3", secrets: [githubToken, pinPepper] },
+exports.createRemotePin = onCall(
+  { region: "europe-west3", secrets: [pinPepper] },
   async (request) => {
     const uid = requireTeacher(request);
-    const pin = request.data?.pin;
-    validatePin(pin);
-    try {
-      const existing = await githubRequest("GET");
-      const record = { version: 1, mac: pinMac(pin) };
-      const content = Buffer.from(`${JSON.stringify(record, null, 2)}\n`).toString("base64");
-      await githubRequest("PUT", {
-        message: "Update presenter PIN verifier",
-        content,
-        ...(existing?.sha ? { sha: existing.sha } : {}),
-      });
-      const devices = await getFirestore().collection("remoteDevices").where("ownerUid", "==", uid).get();
-      for (let offset = 0; offset < devices.docs.length; offset += 400) {
-        const batch = getFirestore().batch();
-        devices.docs.slice(offset, offset + 400).forEach((device) => batch.delete(device.ref));
-        await batch.commit();
-      }
-      return { saved: true };
-    } catch (error) {
-      console.error("Could not save presenter PIN verifier.", error?.message || "unknown error");
-      throw new HttpsError("unavailable", "The PIN could not be saved to the repository.");
-    }
+    const pin = String(randomInt(0, 1_000_000)).padStart(6, "0");
+    const db = getFirestore();
+    const now = Date.now();
+    await deleteRemoteDevices(uid);
+    await db.doc(`remotePinAttempts/${uid}`).delete();
+    await db.doc(`remotePinChallenges/${uid}`).set({
+      mac: pinMac(uid, pin).toString("base64url"),
+      createdAt: Timestamp.fromMillis(now),
+      expiresAt: Timestamp.fromMillis(now + pinLifetimeMs),
+    });
+    // The raw PIN is returned once and is never written to persistent storage.
+    return { pin, expiresInSeconds: pinLifetimeMs / 1000 };
   },
 );
 
 exports.verifyRemotePin = onCall(
-  { region: "europe-west3", secrets: [githubToken, pinPepper] },
+  { region: "europe-west3", secrets: [pinPepper] },
   async (request) => {
     const uid = requireTeacher(request);
     const pin = request.data?.pin;
@@ -136,25 +70,76 @@ exports.verifyRemotePin = onCall(
     if (typeof deviceId !== "string" || !/^[a-f0-9-]{36}$/i.test(deviceId)) {
       throw new HttpsError("invalid-argument", "This device could not be identified.");
     }
-    const attemptsRef = await enforcePinRateLimit(uid);
-    try {
-      const expected = Buffer.from(await readPinVerifier(), "base64url");
-      const actual = Buffer.from(pinMac(pin), "base64url");
+
+    const db = getFirestore();
+    const challengeRef = db.doc(`remotePinChallenges/${uid}`);
+    const attemptsRef = db.doc(`remotePinAttempts/${uid}`);
+    const outcome = await db.runTransaction(async (transaction) => {
+      const [challenge, attempts] = await Promise.all([
+        transaction.get(challengeRef),
+        transaction.get(attemptsRef),
+      ]);
+      const blockedUntil = attempts.data()?.blockedUntil;
+      if (blockedUntil?.toMillis() > Date.now()) return { error: "blocked" };
+      const challengeData = challenge.data();
+      if (!challengeData || challengeData.expiresAt?.toMillis() <= Date.now()) return { error: "expired" };
+
+      const expected = Buffer.from(challengeData.mac, "base64url");
+      const actual = pinMac(uid, pin);
       if (expected.length !== actual.length || !timingSafeEqual(expected, actual)) {
-        await recordPinAttempt(attemptsRef, false);
-        throw new HttpsError("permission-denied", "The PIN is incorrect.");
+        const old = attempts.data() || {};
+        const now = Date.now();
+        const sameWindow = typeof old.windowStartedAt === "number" && now - old.windowStartedAt < 15 * 60 * 1000;
+        const count = (sameWindow ? old.count || 0 : 0) + 1;
+        transaction.set(attemptsRef, {
+          count,
+          windowStartedAt: sameWindow ? old.windowStartedAt : now,
+          ...(count >= 6 ? { blockedUntil: Timestamp.fromMillis(now + 15 * 60 * 1000) } : {}),
+        });
+        return { error: count >= 6 ? "blocked" : "incorrect" };
       }
-      await recordPinAttempt(attemptsRef, true);
-      await getFirestore().doc(`remoteDevices/${uid}_${deviceId}`).set({
+
+      transaction.delete(challengeRef);
+      transaction.delete(attemptsRef);
+      transaction.set(db.doc(`remoteDevices/${uid}_${deviceId}`), {
         ownerUid: uid,
         deviceId,
         authorizedAt: FieldValue.serverTimestamp(),
       });
       return { paired: true };
-    } catch (error) {
-      if (error instanceof HttpsError) throw error;
-      console.error("Could not verify presenter PIN.", error?.message || "unknown error");
-      throw new HttpsError("unavailable", "PIN verification is temporarily unavailable.");
+    });
+
+    if (outcome.paired) return outcome;
+    if (outcome.error === "blocked") throw new HttpsError("resource-exhausted", "Too many attempts. Generate a new PIN later.");
+    if (outcome.error === "expired") throw new HttpsError("failed-precondition", "The one-time PIN has expired. Generate a new one.");
+    throw new HttpsError("permission-denied", "The one-time PIN is incorrect.");
+  },
+);
+
+exports.clearRemotePin = onCall(
+  { region: "europe-west3" },
+  async (request) => {
+    const uid = requireTeacher(request);
+    const db = getFirestore();
+    await Promise.all([
+      db.doc(`remotePinChallenges/${uid}`).delete(),
+      db.doc(`remotePinAttempts/${uid}`).delete(),
+      deleteRemoteDevices(uid),
+    ]);
+    return { cleared: true };
+  },
+);
+
+exports.expireRemotePinChallenges = onSchedule(
+  { schedule: "every 5 minutes", timeZone: "Etc/UTC", region: "europe-west3" },
+  async () => {
+    const expired = await getFirestore().collection("remotePinChallenges")
+      .where("expiresAt", "<=", Timestamp.now())
+      .get();
+    for (let offset = 0; offset < expired.docs.length; offset += 400) {
+      const batch = getFirestore().batch();
+      expired.docs.slice(offset, offset + 400).forEach((challenge) => batch.delete(challenge.ref));
+      await batch.commit();
     }
   },
 );

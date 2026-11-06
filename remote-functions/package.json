@@ -1,6 +1,6 @@
 {
   "name": "programovanie-presenter-remote",
-  "description": "Server-side PIN verification and GitHub storage for the presenter remote.",
+  "description": "Ephemeral one-time PIN pairing and presenter remote authorization.",
   "private": true,
   "engines": {
     "node": "20"

@@ -127,6 +127,11 @@ service cloud.firestore {
       }
     }
 
+    match /remotePinChallenges/{challengeKey} {
+      // Temporary PIN verifiers can only be used by trusted Functions code.
+      allow read, write: if false;
+    }
+
     match /remoteDevices/{deviceKey} {
       // Devices are provisioned only by the trusted PIN verifier callable.
       allow read, write: if false;

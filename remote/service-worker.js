@@ -1,4 +1,4 @@
-const CACHE = "lecture-remote-shell-v2";
+const CACHE = "lecture-remote-shell-v3";
 const SHELL = ["./", "./index.html", "./remote.css", "./remote.js", "./manifest.webmanifest", "./icon.svg"];
 
 self.addEventListener("install", (event) => {

@@ -89,7 +89,7 @@
     .remote-pin-settings { width: min(100%, 19rem); margin-top: .4rem; padding-top: .65rem; border-top: 1px solid var(--border); text-align: left; }
     .remote-pin-settings h3 { margin: 0 0 .25rem; font-size: .82rem; }
     .remote-pin-settings p,.remote-pin-settings label { display: block; margin: .25rem 0; color: var(--muted); font-size: .72rem; }
-    .remote-pin-settings input { width: 100%; min-height: 2.5rem; padding: .4rem .6rem; border: 1px solid var(--border); border-radius: .5rem; background: var(--bg); color: var(--text); }
+    .remote-pin-settings output { display: block; min-height: 2.5rem; margin: .4rem 0; padding: .35rem .6rem; border: 1px solid var(--border); border-radius: .5rem; background: var(--bg); color: var(--text); font: 800 1.25rem/1.7 system-ui,sans-serif; letter-spacing: .3em; text-align: center; }
     .remote-pin-settings button { min-height: 2.4rem; padding: .35rem .65rem; border: 1px solid var(--border); border-radius: .5rem; background: var(--surface); color: var(--text); font: 700 .75rem system-ui,sans-serif; cursor: pointer; }
     .remote-pin-settings [role="status"] { min-height: 1.2em; }
     @media (max-width: 600px) { header { padding: 1.5rem 0 3rem; text-align: center; } header p { margin-inline: auto; } .remote-card { position: relative; top: auto; right: auto; width: min(100%, 19rem); margin: .75rem 0 0 auto; padding: .55rem; } }
@@ -109,13 +109,12 @@
       <a class="remote-fallback" href="remote/">Otvoriť ovládač</a>
       <section class="remote-pin-settings" aria-labelledby="pin-settings-title">
         <h3 id="pin-settings-title">Nastavenie PIN-u</h3>
-        <p>PIN sa uloží do repozitára ako chránený overovač. Samotný PIN sa nezobrazuje.</p>
+        <p>Vytvorte jednorazový PIN pre pripojenie telefónu. Zobrazí sa iba po prihlásení a po použití alebo odhlásení sa zneplatní.</p>
         <button id="pin-sign-in" type="button">Prihlásiť učiteľa</button>
-        <form id="pin-settings-form" hidden>
-          <label for="remote-pin">Nový šesťmiestny PIN</label>
-          <input id="remote-pin" type="password" inputmode="numeric" autocomplete="new-password" pattern="[0-9]{6}" maxlength="6" required>
-          <button type="submit">Uložiť PIN</button>
-        </form>
+        <div id="pin-settings-panel" hidden>
+          <button id="create-remote-pin" type="button">Vytvoriť jednorazový PIN</button>
+          <output id="remote-pin" aria-label="Jednorazový PIN" hidden></output>
+        </div>
         <p id="pin-settings-status" role="status" aria-live="polite"></p>
       </section>
     </section>

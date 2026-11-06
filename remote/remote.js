@@ -222,10 +222,24 @@ function firebaseError(error) {
     return "Služba je nedostupná alebo telefón nemá internetové spojenie. Skúste to znova po obnovení siete.";
   }
   if (error?.code === "functions/permission-denied") return "PIN alebo oprávnenie účtu nie je správne.";
-  if (error?.code === "functions/failed-precondition") return "Učiteľ ešte nenastavil PIN ovládača.";
+  if (error?.code === "functions/failed-precondition") return "Jednorazový PIN chýba alebo vypršal. Požiadajte učiteľa o nový.";
+  if (error?.code === "functions/resource-exhausted") return "Príliš veľa pokusov. Učiteľ musí vytvoriť nový PIN.";
   if (error?.code === "permission-denied") return "Firebase odmietol prístup. Skontrolujte prihlásenie a nasadené pravidlá.";
   return error?.message || "Operáciu sa nepodarilo dokončiť.";
 }
+
+authSdk.beforeAuthStateChanged(auth, async (nextUser) => {
+  if (currentUser && (!nextUser || nextUser.uid !== currentUser.uid)) {
+    const oldUid = currentUser.uid;
+    try {
+      const clear = functionsSdk.httpsCallable(functions, "clearRemotePin");
+      await clear();
+    } catch {
+      // The challenge has a short server-side expiry if cleanup cannot reach Firebase.
+    }
+    sessionStorage.removeItem(`lecture-remote.verified.${oldUid}`);
+  }
+});
 
 authButton.addEventListener("click", async () => {
   authButton.disabled = true;
