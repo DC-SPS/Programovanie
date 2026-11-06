@@ -1,15 +1,10 @@
 import { firebaseConfig } from "./firebase-config.js";
 import { renderQrCode } from "./remote-qr.js";
 
+const qrPanel = document.querySelector("#remote-qr-panel");
 const qr = document.querySelector("#home-remote-qr");
-if (qr) {
-  const target = new URL("remote/", document.baseURI).href;
-  renderQrCode(qr, target, 172).catch(() => {
-    qr.textContent = "QR kód sa nepodarilo načítať. Použite odkaz na otvorenie ovládača.";
-    qr.setAttribute("role", "status");
-    qr.setAttribute("aria-label", "QR kód nie je dostupný; použite odkaz na otvorenie ovládača");
-  });
-}
+const qrHeading = document.querySelector("#remote-heading");
+const target = new URL("remote/", document.baseURI).href;
 
 const version = "10.14.1";
 const [appSdk, authSdk, functionsSdk] = await Promise.all([
@@ -21,21 +16,28 @@ const app = appSdk.getApps().length ? appSdk.getApp() : appSdk.initializeApp(fir
 const auth = authSdk.getAuth(app);
 const functions = functionsSdk.getFunctions(app, "europe-west3");
 
-const createButton = document.querySelector("#create-remote-pin");
+const pinForm = document.querySelector("#pin-settings-form");
+const pinInput = document.querySelector("#remote-pin");
+const saveButton = document.querySelector("#save-remote-pin");
 const signInButton = document.querySelector("#pin-sign-in");
 const settingsPanel = document.querySelector("#pin-settings-panel");
-const pinOutput = document.querySelector("#remote-pin");
 const status = document.querySelector("#pin-settings-status");
 let currentUser = null;
-let hidePinTimer = 0;
+let qrExpiresTimer = 0;
 
-function clearDisplayedPin(message = "") {
-  clearTimeout(hidePinTimer);
-  hidePinTimer = 0;
-  pinOutput.value = "";
-  pinOutput.textContent = "";
-  pinOutput.hidden = true;
-  status.textContent = message;
+function hideQr() {
+  clearTimeout(qrExpiresTimer);
+  qrExpiresTimer = 0;
+  qrPanel.hidden = true;
+  qr.replaceChildren();
+  qrHeading.textContent = "Nastavte PIN";
+}
+
+function showQr() {
+  return renderQrCode(qr, target, 172).then(() => {
+    qrPanel.hidden = false;
+    qrHeading.textContent = "Naskenuj QR";
+  });
 }
 
 async function clearServerPin() {
@@ -45,13 +47,15 @@ async function clearServerPin() {
 
 authSdk.beforeAuthStateChanged(auth, async (nextUser) => {
   if (currentUser && (!nextUser || nextUser.uid !== currentUser.uid)) {
-    clearDisplayedPin("Mažem jednorazový PIN a prístup spárovaných zariadení…");
+    hideQr();
+    pinInput.value = "";
+    status.textContent = "Mažem PIN a prístup spárovaných zariadení…";
     try {
       await clearServerPin();
     } catch {
-      // The server-side PIN expires automatically if cleanup cannot reach Firebase.
+      // The challenge expires automatically if server cleanup is temporarily unavailable.
     }
-    clearDisplayedPin();
+    status.textContent = "";
   }
 });
 
@@ -60,8 +64,15 @@ authSdk.onAuthStateChanged(auth, (user) => {
   const authorizedSession = Boolean(user?.emailVerified);
   signInButton.hidden = authorizedSession;
   settingsPanel.hidden = !authorizedSession;
-  if (!authorizedSession) clearDisplayedPin("Prihláste sa učiteľským účtom, aby ste vytvorili PIN.");
-  else status.textContent = "PIN ešte nebol vytvorený.";
+  if (!authorizedSession) {
+    hideQr();
+    pinInput.value = "";
+    status.textContent = "Prihláste sa učiteľským účtom, aby ste nastavili PIN.";
+  } else if (!qrPanel.hidden) {
+    status.textContent = "PIN je uložený. Naskenujte QR a zadajte ho v mobile.";
+  } else {
+    status.textContent = "Zadajte PIN a uložte ho; potom sa zobrazí QR kód.";
+  }
 });
 
 signInButton.addEventListener("click", async () => {
@@ -77,22 +88,28 @@ signInButton.addEventListener("click", async () => {
   }
 });
 
-createButton.addEventListener("click", async () => {
-  createButton.disabled = true;
-  clearDisplayedPin("Vytváram jednorazový PIN…");
+pinForm.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  if (!pinForm.reportValidity()) return;
+  saveButton.disabled = true;
+  hideQr();
+  status.textContent = "Ukladám PIN…";
   try {
-    const createPin = functionsSdk.httpsCallable(functions, "createRemotePin");
-    const { data } = await createPin();
-    pinOutput.value = data.pin;
-    pinOutput.textContent = data.pin;
-    pinOutput.hidden = false;
-    status.textContent = "Zadajte tento PIN v mobile. Platí 10 minút a funguje iba raz.";
-    hidePinTimer = window.setTimeout(() => clearDisplayedPin("PIN vymazaný. Vytvorte nový, ak ho ešte potrebujete."), data.expiresInSeconds * 1000);
+    const savePin = functionsSdk.httpsCallable(functions, "saveRemotePin");
+    const { data } = await savePin({ pin: pinInput.value });
+    pinInput.value = "";
+    await showQr();
+    status.textContent = "PIN je uložený. Naskenujte QR a zadajte ho v mobile; PIN platí 10 minút a použije sa raz.";
+    qrExpiresTimer = window.setTimeout(() => {
+      hideQr();
+      status.textContent = "Platnosť PIN-u skončila. Zadajte ho a uložte znova.";
+    }, data.expiresInSeconds * 1000);
   } catch (error) {
+    hideQr();
     status.textContent = error?.code === "functions/permission-denied"
-      ? "Tento účet nemá oprávnenie vytvoriť PIN."
-      : "PIN sa nepodarilo vytvoriť. Skontrolujte serverové nastavenie alebo skúste znova.";
+      ? "Tento účet nemá oprávnenie ukladať PIN."
+      : "PIN sa nepodarilo uložiť. Skontrolujte serverové nastavenie alebo skúste znova.";
   } finally {
-    createButton.disabled = false;
+    saveButton.disabled = false;
   }
 });

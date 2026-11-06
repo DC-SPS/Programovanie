@@ -231,6 +231,7 @@ function firebaseError(error) {
 authSdk.beforeAuthStateChanged(auth, async (nextUser) => {
   if (currentUser && (!nextUser || nextUser.uid !== currentUser.uid)) {
     const oldUid = currentUser.uid;
+    pinInput.value = "";
     try {
       const clear = functionsSdk.httpsCallable(functions, "clearRemotePin");
       await clear();

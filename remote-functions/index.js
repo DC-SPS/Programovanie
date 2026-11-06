@@ -3,7 +3,7 @@ const { onSchedule } = require("firebase-functions/v2/scheduler");
 const { defineSecret } = require("firebase-functions/params");
 const { initializeApp } = require("firebase-admin/app");
 const { FieldValue, Timestamp, getFirestore } = require("firebase-admin/firestore");
-const { createHmac, randomInt, timingSafeEqual } = require("node:crypto");
+const { createHmac, timingSafeEqual } = require("node:crypto");
 
 const pinPepper = defineSecret("REMOTE_PIN_PEPPER");
 const teacherAccountEmail = "dusan.cabala.sps@gmail.com";
@@ -41,11 +41,12 @@ async function deleteRemoteDevices(uid) {
   }
 }
 
-exports.createRemotePin = onCall(
+exports.saveRemotePin = onCall(
   { region: "europe-west3", secrets: [pinPepper] },
   async (request) => {
     const uid = requireTeacher(request);
-    const pin = String(randomInt(0, 1_000_000)).padStart(6, "0");
+    const pin = request.data?.pin;
+    validatePin(pin);
     const db = getFirestore();
     const now = Date.now();
     await deleteRemoteDevices(uid);
@@ -55,8 +56,8 @@ exports.createRemotePin = onCall(
       createdAt: Timestamp.fromMillis(now),
       expiresAt: Timestamp.fromMillis(now + pinLifetimeMs),
     });
-    // The raw PIN is returned once and is never written to persistent storage.
-    return { pin, expiresInSeconds: pinLifetimeMs / 1000 };
+    // Only a temporary HMAC verifier is persisted; the submitted PIN is never saved.
+    return { saved: true, expiresInSeconds: pinLifetimeMs / 1000 };
   },
 );
 
