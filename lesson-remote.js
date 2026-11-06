@@ -68,7 +68,10 @@ import { firebaseConfig } from "./firebase-config.js";
     teacherMode.addEventListener("click", () => selectMode(false));
   }
 
-  const isActivePage = () => document.visibilityState === "visible" && document.hasFocus();
+  // Keep the session discoverable while the lecture tab remains visible. Losing
+  // window focus (for example, when testing the remote in another window) must
+  // not make the lecture disappear from the mobile client's active-session query.
+  const isActivePage = () => document.visibilityState === "visible";
 
   const publishPresence = async () => {
     if (!session || closing) return;
