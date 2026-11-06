@@ -29,7 +29,7 @@ const commands = {
 };
 const stateLabels = { playing: "Prehráva sa", paused: "Pozastavené", stopped: "Zastavené" };
 const parameters = new URLSearchParams(location.search);
-if (/^\d{6}$/.test(parameters.get("code") || "")) pairInput.value = parameters.get("code");
+const pairingSessionId = parameters.get("session") || "";
 
 let currentUser = null;
 let currentSession = null;
@@ -75,31 +75,25 @@ function showView(view) {
 
 async function pairPage(code) {
   const normalizedCode = String(code || "").trim();
-  if (!/^\d{6}$/.test(normalizedCode)) throw new Error("Zadajte platný šesťmiestny kód.");
+  if (normalizedCode !== "134679") throw new Error("Nesprávny PIN. Zadajte 134679.");
+  if (!/^[A-Za-z0-9_-]{20,80}$/.test(pairingSessionId)) throw new Error("Najprv naskenujte QR kód z tlačidla Ovládač na otvorenej prednáške.");
   const fs = sdk.firestore;
-  const matches = await fs.getDocs(fs.query(
-    fs.collection(db, "remoteSessions"),
-    fs.where("ownerUid", "==", currentUser.uid),
-    fs.where("pairingCode", "==", normalizedCode),
-  ));
-  const sessionDoc = matches.docs
-    .filter((candidate) => {
-      const data = candidate.data();
-      return data.pageActive === true
-        && data.pairedDeviceId == null
-        && data.pairExpiresAt?.toMillis() > Date.now();
-    })
-    .sort((a, b) => b.data().createdAt.toMillis() - a.data().createdAt.toMillis())[0];
-  if (!sessionDoc) throw new Error("Kód sa nenašiel alebo už vypršal. Vytvorte nový na otvorenej prednáške.");
-  const ref = sessionDoc.ref;
+  const ref = fs.doc(db, "remoteSessions", pairingSessionId);
+  const sessionDoc = await fs.getDoc(ref);
+  if (!sessionDoc.exists()) throw new Error("Táto prednáška sa nenašla. Znova naskenujte QR kód z jej otvorenej stránky.");
+  const initial = sessionDoc.data();
+  if (initial.ownerUid !== currentUser.uid) throw new Error("Prihláste sa rovnakým učiteľským účtom ako na počítači.");
+  if (initial.pairingCode !== "134679") throw new Error("Tento QR kód už bol použitý alebo nie je platný. Znova naskenujte QR kód z otvorenej prednášky.");
+  if (initial.pageActive !== true || initial.pairExpiresAt?.toMillis() < Date.now()) throw new Error("Prednáška už nie je aktívna. Znova naskenujte QR kód z otvorenej stránky.");
+  if (initial.pairedDeviceId) throw new Error("Táto prednáška už má pripojený telefón.");
 
   await fs.runTransaction(db, async (transaction) => {
     const fresh = await transaction.get(ref);
     if (!fresh.exists()) throw new Error("Prednášková stránka už nie je dostupná.");
     const data = fresh.data();
-    if (data.ownerUid !== currentUser.uid || data.pairingCode !== normalizedCode) throw new Error("Kód už bol použitý alebo patrí inému účtu.");
-    if (data.pageActive !== true || !data.pairExpiresAt || data.pairExpiresAt.toMillis() < Date.now()) throw new Error("Kód vypršal alebo stránka už nie je otvorená.");
-    if (data.pairedDeviceId) throw new Error("Táto stránka už má pripojený telefón. Vytvorte nový kód na stránke.");
+    if (data.ownerUid !== currentUser.uid || data.pairingCode !== "134679") throw new Error("Tento QR kód už bol použitý alebo nie je platný.");
+    if (data.pageActive !== true || !data.pairExpiresAt || data.pairExpiresAt.toMillis() < Date.now()) throw new Error("Táto relácia už nie je aktívna. Otvorte ovládač na prednáške a naskenujte jeho QR kód.");
+    if (data.pairedDeviceId) throw new Error("Táto prednáška už má pripojený telefón.");
     transaction.update(ref, {
       pairingCode: null,
       pairExpiresAt: null,
@@ -110,7 +104,7 @@ async function pairPage(code) {
 
   currentSession = { id: sessionDoc.id, ref, data: sessionDoc.data() };
   sessionStorage.setItem("lecture-remote.session", sessionDoc.id);
-  parameters.delete("code");
+  parameters.delete("session");
   history.replaceState(null, "", `${location.pathname}${parameters.size ? `?${parameters}` : ""}`);
   await listenToSession(sessionDoc.id);
 }
@@ -268,7 +262,7 @@ sdk.auth.onAuthStateChanged(auth, async (user) => {
   }
   try {
     showNotice("");
-    if (parameters.get("code")) {
+    if (pairingSessionId) {
       showView("pair");
       setConnection("Prihlásené · overte párovací kód", "connected");
       pairInput.focus();

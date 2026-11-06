@@ -95,7 +95,7 @@ service cloud.firestore {
         && request.resource.data.createdAt == request.time
         && request.resource.data.pageHeartbeatAt == request.time
         && request.resource.data.pairExpiresAt > request.time
-        && request.resource.data.pairExpiresAt < request.time + duration.value(3, 'm');
+        && request.resource.data.pairExpiresAt < request.time + duration.value(25, 'h');
 
       // Pairing is one-time and expires quickly. After pairing, only page
       // liveness and playback state may be changed by the page.

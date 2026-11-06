@@ -61,12 +61,11 @@ import { renderQrCode } from "./remote-qr.js";
   modal.setAttribute("role", "dialog");
   modal.setAttribute("aria-modal", "true");
   modal.setAttribute("aria-labelledby", "lesson-remote-title");
-  modal.innerHTML = `<section class="lesson-remote-card"><h2 id="lesson-remote-title">Diaľkový ovládač</h2><p class="lesson-remote-state" role="status" aria-live="polite">Kontrolujem učiteľské prihlásenie…</p><div class="lesson-remote-pairing" hidden><p>Na telefóne naskenuj QR kód alebo zadaj zobrazený jednorazový kód a stlač Spárovať. Kód sa vytvorí iba pre túto otvorenú prednášku, platí dve minúty a po použití prestane platiť.</p><div class="lesson-remote-qr" aria-label="QR kód na spárovanie tejto prednášky"></div><div class="lesson-remote-code"></div><a class="lesson-remote-link" target="_blank" rel="noopener">Otvoriť ovládač v telefóne</a></div><div class="lesson-remote-actions"><button type="button" data-action="pair">Vytvoriť párovací kód</button><button type="button" data-action="close">Zavrieť</button></div></section>`;
+  modal.innerHTML = `<section class="lesson-remote-card"><h2 id="lesson-remote-title">Diaľkový ovládač</h2><p class="lesson-remote-state" role="status" aria-live="polite">Kontrolujem učiteľské prihlásenie…</p><div class="lesson-remote-pairing" hidden><p>Naskenuj QR kód, potom sa na telefóne prihlás učiteľským účtom a zadaj pevný párovací PIN 134679. QR kód určuje túto otvorenú prednášku.</p><div class="lesson-remote-qr" aria-label="QR kód na spárovanie tejto prednášky"></div><a class="lesson-remote-link" target="_blank" rel="noopener">Otvoriť ovládač v telefóne</a></div><div class="lesson-remote-actions"><button type="button" data-action="pair">Obnoviť QR kód</button><button type="button" data-action="close">Zavrieť</button></div></section>`;
   document.body.append(modal);
 
   const message = modal.querySelector(".lesson-remote-state");
   const pairingBox = modal.querySelector(".lesson-remote-pairing");
-  const pairingCode = modal.querySelector(".lesson-remote-code");
   const remoteLink = modal.querySelector(".lesson-remote-link");
   const pairingQr = modal.querySelector(".lesson-remote-qr");
   const pairButton = modal.querySelector('[data-action="pair"]');
@@ -75,13 +74,6 @@ import { renderQrCode } from "./remote-qr.js";
     message.dataset.state = offline ? "offline" : "online";
   };
 
-  const newPairingCode = () => {
-    const range = 1_000_000;
-    const ceiling = 0x1_0000_0000 - (0x1_0000_0000 % range);
-    let value;
-    do { value = crypto.getRandomValues(new Uint32Array(1))[0]; } while (value >= ceiling);
-    return String(value % range).padStart(6, "0");
-  };
   const createPairing = async () => {
     pairButton.disabled = true;
     pairingBox.hidden = true;
@@ -96,7 +88,7 @@ import { renderQrCode } from "./remote-qr.js";
       }
       await closeSession(dbSdk, false);
       const id = crypto.randomUUID();
-      const code = newPairingCode();
+      const code = "134679";
       const now = Date.now();
       const ref = dbSdk.doc(db, "remoteSessions", id);
       currentSession = { id, ref, db, dbSdk, deviceId: null };
@@ -105,7 +97,7 @@ import { renderQrCode } from "./remote-qr.js";
         pageTitle: lessonTitle,
         pagePath,
         pairingCode: code,
-        pairExpiresAt: dbSdk.Timestamp.fromMillis(now + 120_000),
+        pairExpiresAt: dbSdk.Timestamp.fromMillis(now + 24 * 60 * 60 * 1000),
         pairedDeviceId: null,
         pairedAt: null,
         pageActive: true,
@@ -114,8 +106,7 @@ import { renderQrCode } from "./remote-qr.js";
         canReplay: false,
         createdAt: dbSdk.serverTimestamp(),
       });
-      pairingCode.textContent = code;
-      remoteLink.href = `/remote/?code=${encodeURIComponent(code)}`;
+      remoteLink.href = `/remote/?session=${encodeURIComponent(id)}`;
       pairingBox.hidden = false;
       try {
         await renderQrCode(pairingQr, new URL(remoteLink.href, location.href).href, 220);
@@ -126,7 +117,7 @@ import { renderQrCode } from "./remote-qr.js";
       setMessage("Čakám na telefón…");
       stopSessionListener = dbSdk.onSnapshot(ref, (snapshot) => {
         if (!snapshot.exists()) {
-          setMessage("Spojenie so stránkou sa skončilo. Vytvorte nový kód.", true);
+          setMessage("Spojenie so stránkou sa skončilo. Znova otvorte ovládač na tejto prednáške.", true);
           return;
         }
         const data = snapshot.data();
@@ -140,7 +131,7 @@ import { renderQrCode } from "./remote-qr.js";
           setMessage(`Telefón pripojený · ${playbackLabel(data.playbackState)}`);
           listenForCommands(currentSession);
         }
-      }, () => setMessage("Spojenie s Firebase sa prerušilo. Obnovte stránku alebo vytvorte nový kód.", true));
+      }, () => setMessage("Spojenie s Firebase sa prerušilo. Obnovte stránku a otvorte ovládač znova.", true));
       heartbeatTimer = window.setInterval(() => {
         if (currentSession && !closing) {
           dbSdk.updateDoc(ref, { pageActive: true, pageHeartbeatAt: dbSdk.serverTimestamp() }).catch(() => {});
@@ -212,8 +203,11 @@ import { renderQrCode } from "./remote-qr.js";
     if (!currentSession) {
       try {
         const { auth } = await loadFirebase();
-        if (!auth.currentUser) setMessage("Prihláste sa učiteľským účtom a potom vytvorte párovací kód.", true);
-        else setMessage("Vytvorte kód pre túto otvorenú prednášku.");
+        if (!auth.currentUser) setMessage("Prihláste sa učiteľským účtom a potom znovu otvorte ovládač.", true);
+        else {
+          setMessage("Pripravujem QR kód pre túto otvorenú prednášku…");
+          await createPairing();
+        }
       } catch (error) { setMessage(firebaseErrorText(error), true); }
     }
   });

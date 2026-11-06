@@ -30,8 +30,8 @@ Kontrola e-mailu v `firestore.rules` je bezpečnostná hranica. Iný účet mô�
 
 ## Bezpečnostné poznámky
 
-- Diaľkové relácie sú viazané na Firebase UID povoleného učiteľského účtu. Párovací kód platí dve minúty a dá sa použiť iba raz.
-- Párovací kód je náhodný, krátkodobý, jednorazový a viazaný na konkrétnu reláciu. Oprávnenie kontrolujú Firestore pravidlá a overený učiteľský Google účet; kód sa nezobrazuje na hlavnej stránke.
+- Diaľkové relácie sú viazané na Firebase UID povoleného učiteľského účtu. QR relácia platí, kým je stránka aktívna (najviac 24 hodín), a dá sa spárovať iba raz.
+- Mobilný PIN je pevne `134679`. Nie je to bezpečnostný token: väzbu na stránku tvorí náhodný identifikátor v QR kóde a prístup povoľujú iba Firestore pravidlá pre prihlásený učiteľský účet. QR relácia je jednorazová a platí len počas aktívnej otvorenej prednášky; PIN sa nezobrazuje na hlavnej stránke.
 - Pravidlá Firestore obmedzujú reláciu na jej vlastníka a spárovaný telefón. Neprihlásené účty ani iné účty nemôžu čítať relácie alebo zapisovať príkazy.
 - Pri zmene učiteľského účtu aktualizuj povolený e-mail v `firestore.rules`, skontroluj zmenu a nasaď pravidlá. Toto riešenie nepoužíva Firebase custom claim.
 - Staršie funkcie v `functions/index.js` nie sú súčasťou riešenia bez fakturácie. Nenasadzuj ich v pláne Spark.
