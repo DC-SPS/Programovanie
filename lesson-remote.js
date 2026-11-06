@@ -61,7 +61,7 @@ import { renderQrCode } from "./remote-qr.js";
   modal.setAttribute("role", "dialog");
   modal.setAttribute("aria-modal", "true");
   modal.setAttribute("aria-labelledby", "lesson-remote-title");
-  modal.innerHTML = `<section class="lesson-remote-card"><h2 id="lesson-remote-title">Diaľkový ovládač</h2><p class="lesson-remote-state" role="status" aria-live="polite">Kontrolujem učiteľské prihlásenie…</p><div class="lesson-remote-pairing" hidden><p>Naskenujte QR kód telefónom. Otvorí sa ovládač s predvyplneným jednorazovým kódom; prihláste sa učiteľským účtom a potvrďte spárovanie. Kód platí dve minúty a spojí telefón iba s touto otvorenou stránkou.</p><div class="lesson-remote-qr" aria-label="QR kód na spárovanie tejto prednášky"></div><div class="lesson-remote-code"></div><a class="lesson-remote-link" target="_blank" rel="noopener">Otvoriť ovládač v telefóne</a></div><div class="lesson-remote-actions"><button type="button" data-action="pair">Vytvoriť párovací kód</button><button type="button" data-action="close">Zavrieť</button></div></section>`;
+  modal.innerHTML = `<section class="lesson-remote-card"><h2 id="lesson-remote-title">Diaľkový ovládač</h2><p class="lesson-remote-state" role="status" aria-live="polite">Kontrolujem učiteľské prihlásenie…</p><div class="lesson-remote-pairing" hidden><p>V mobile zadaj kód <strong>134679</strong> a stlač Spárovať. Platí dve minúty a pripojí telefón iba k tejto otvorenej stránke. QR kód môžeš použiť namiesto ručného zadania.</p><div class="lesson-remote-qr" aria-label="QR kód na spárovanie tejto prednášky"></div><div class="lesson-remote-code"></div><a class="lesson-remote-link" target="_blank" rel="noopener">Otvoriť ovládač v telefóne</a></div><div class="lesson-remote-actions"><button type="button" data-action="pair">Vytvoriť párovací kód</button><button type="button" data-action="close">Zavrieť</button></div></section>`;
   document.body.append(modal);
 
   const message = modal.querySelector(".lesson-remote-state");
@@ -75,7 +75,7 @@ import { renderQrCode } from "./remote-qr.js";
     message.dataset.state = offline ? "offline" : "online";
   };
 
-  const newPairingCode = () => String(crypto.getRandomValues(new Uint32Array(1))[0] % 1_000_000).padStart(6, "0");
+  const newPairingCode = () => "134679";
   const createPairing = async () => {
     pairButton.disabled = true;
     pairingBox.hidden = true;

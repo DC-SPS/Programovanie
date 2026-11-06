@@ -81,10 +81,16 @@ async function pairPage(code) {
     fs.collection(db, "remoteSessions"),
     fs.where("ownerUid", "==", currentUser.uid),
     fs.where("pairingCode", "==", normalizedCode),
-    fs.limit(2),
   ));
-  if (matches.size !== 1) throw new Error("Kód sa nenašiel. Vytvorte nový na otvorenej prednáške.");
-  const sessionDoc = matches.docs[0];
+  const sessionDoc = matches.docs
+    .filter((candidate) => {
+      const data = candidate.data();
+      return data.pageActive === true
+        && data.pairedDeviceId == null
+        && data.pairExpiresAt?.toMillis() > Date.now();
+    })
+    .sort((a, b) => b.data().createdAt.toMillis() - a.data().createdAt.toMillis())[0];
+  if (!sessionDoc) throw new Error("Kód 134679 sa nenašiel alebo už vypršal. Vytvorte ho znova na otvorenej prednáške.");
   const ref = sessionDoc.ref;
 
   await fs.runTransaction(db, async (transaction) => {
@@ -122,8 +128,11 @@ async function listenToSession(sessionId) {
       return;
     }
     if (!snapshot.exists()) {
+      sessionStorage.removeItem("lecture-remote.session");
+      currentSession = null;
       setConnection("Prednášková stránka sa odpojila", "offline");
-      showNotice("Stránka už nie je dostupná. Otvorte ju a spárujte telefón znova.");
+      showNotice("Stránka už nie je dostupná. Po otvorení prednášky zadajte kód 134679 a spárujte telefón znova.");
+      showView("pair");
       return;
     }
     const data = snapshot.data();
@@ -137,8 +146,13 @@ async function listenToSession(sessionId) {
     $("#playback-state").textContent = stateLabels[data.playbackState] || "Zastavené";
     showNotice("");
     if (data.pageActive !== true) {
+      sessionStorage.removeItem("lecture-remote.session");
+      currentSession = null;
+      stopSession?.();
+      stopSession = null;
+      showView("pair");
       setConnection("Prednášková stránka je zavretá", "offline");
-      showNotice("Táto stránka už nie je aktívna. Príkazy sú vypnuté.");
+      showNotice("Keď otvoríš ďalšiu prednášku, zadaj kód 134679 a spáruj telefón znova.");
       return;
     }
     if (isStale(data.pageHeartbeatAt)) {

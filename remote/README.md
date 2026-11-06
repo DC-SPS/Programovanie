@@ -1,6 +1,6 @@
 # Diaľkový ovládač prednášky
 
-`/remote/` je inštalovateľná webová aplikácia pre telefón. Po učiteľskom Google prihlásení zadajte šesťmiestny kód z tlačidla **Ovládač** na otvorenej prednáške. Kód platí dve minúty a možno ho použiť iba raz. Každé načítanie prednášky vytvorí náhodnú reláciu; ovládač počúva príkazy len v dokumente tejto relácie.
+`/remote/` je inštalovateľná webová aplikácia pre telefón. Po prihlásení overeným učiteľským Google účtom zadajte kód `134679` z tlačidla **Ovládač** na otvorenej prednáške. Kód platí dve minúty a v rámci relácie ho možno použiť iba raz. Každé načítanie prednášky vytvorí náhodnú reláciu; ovládač počúva príkazy len v dokumente tejto relácie.
 
 Prednášková stránka vystavuje tenké rozhranie nad existujúcimi tlačidlami a funkciami čítania. Telefón neposiela text prednášky ani hlasové údaje. Firebase Authentication vyžaduje rovnakú učiteľskú rolu (`teacher` custom claim), ktorú už kontrolujú pravidlá Firestore. Firestore pravidlá obmedzujú relácie a príkazy na učiteľský účet, spárované zariadenie a aktívnu konkrétnu stránku.
 
