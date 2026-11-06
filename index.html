@@ -86,12 +86,6 @@
     .home-remote-qr { width: 132px; height: 132px; padding: 6px; border-radius: .5rem; background: #fff; display: grid; place-items: center; }
     .home-remote-qr canvas, .home-remote-qr img { display: block; max-width: 100%; height: auto; }
     .remote-fallback { text-decoration: none; font-weight: 700; }
-    .remote-pin-settings { width: min(100%, 19rem); margin-top: .4rem; padding-top: .65rem; border-top: 1px solid var(--border); text-align: left; }
-    .remote-pin-settings h3 { margin: 0 0 .25rem; font-size: .82rem; }
-    .remote-pin-settings p,.remote-pin-settings label { display: block; margin: .25rem 0; color: var(--muted); font-size: .72rem; }
-    .remote-pin-settings input { width: 100%; min-height: 2.5rem; margin: .3rem 0; padding: .4rem .6rem; border: 1px solid var(--border); border-radius: .5rem; background: var(--bg); color: var(--text); font: 700 1rem system-ui,sans-serif; letter-spacing: .2em; text-align: center; }
-    .remote-pin-settings button { min-height: 2.4rem; padding: .35rem .65rem; border: 1px solid var(--border); border-radius: .5rem; background: var(--surface); color: var(--text); font: 700 .75rem system-ui,sans-serif; cursor: pointer; }
-    .remote-pin-settings [role="status"] { min-height: 1.2em; }
     @media (max-width: 600px) { header { padding: 1.5rem 0 3rem; text-align: center; } header p { margin-inline: auto; } .remote-card { position: relative; top: auto; right: auto; width: min(100%, 19rem); margin: .75rem 0 0 auto; padding: .55rem; } }
     footer { padding: 1rem 0 2rem; border-top: 1px solid var(--border); color: var(--muted); text-align: center; font-size: .9rem; }
     footer a { color: inherit; }
@@ -102,26 +96,10 @@
   <div class="page">
     <section class="remote-card" aria-labelledby="remote-heading">
       <div class="eyebrow">Mobilný ovládač</div>
-      <h2 id="remote-heading">Nastavte PIN</h2>
-      <p>Naskenujte QR kód telefónom a otvorte ovládač. Prihláste sa učiteľským účtom Firebase, ktorý používate v tomto projekte.</p>
-      <p>Po prihlásení sa ovládač pripojí k aktívnej prednáške otvorenej na počítači.</p>
-      <div id="remote-qr-panel" hidden>
-        <div class="home-remote-qr" id="home-remote-qr" role="img" aria-label="QR kód na otvorenie mobilného ovládača"></div>
-        <a class="remote-fallback" href="remote/">Otvoriť ovládač</a>
-      </div>
-      <section class="remote-pin-settings" aria-labelledby="pin-settings-title">
-        <h3 id="pin-settings-title">Nastavenie PIN-u</h3>
-        <p>Zadajte šesťmiestny PIN. QR kód sa sprístupní až po jeho uložení; po spárovaní alebo odhlásení sa PIN zneplatní.</p>
-        <button id="pin-sign-in" type="button">Prihlásiť učiteľa</button>
-        <div id="pin-settings-panel" hidden>
-          <form id="pin-settings-form">
-            <label for="remote-pin">PIN</label>
-            <input id="remote-pin" type="password" inputmode="numeric" autocomplete="off" pattern="[0-9]{6}" minlength="6" maxlength="6" required>
-            <button id="save-remote-pin" type="submit">Uložiť PIN a vytvoriť QR</button>
-          </form>
-        </div>
-        <p id="pin-settings-status" role="status" aria-live="polite"></p>
-      </section>
+      <h2 id="remote-heading">Naskenuj QR</h2>
+      <p>Naskenujte QR kód, prihláste sa tým istým učiteľským účtom a ovládajte aktuálne otvorenú prednášku.</p>
+      <div class="home-remote-qr" id="home-remote-qr" role="img" aria-label="QR kód na otvorenie mobilného zrkadla prednášky"></div>
+      <a class="remote-fallback" href="remote/">Otvoriť mobilné zrkadlo</a>
     </section>
     <header>
       <div class="eyebrow">Výučbové materiály</div>

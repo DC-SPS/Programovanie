@@ -5,42 +5,22 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="referrer" content="no-referrer">
   <meta name="theme-color" content="#081522">
-  <meta name="description" content="Diaľkový ovládač hlasového čítania otvorenej prednášky.">
+  <meta name="description" content="Mobilné zrkadlo aktívnej prednášky s diaľkovým ovládaním.">
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="icon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="remote.css">
-  <title>Ovládač prednášky</title>
+  <title>Mobilné zrkadlo prednášky</title>
 </head>
 <body>
   <main class="app" id="app">
     <p class="connection" id="connection" data-state="connecting" role="status" aria-live="polite">Pripájam…</p>
     <section id="auth-view" class="card" aria-labelledby="auth-title" hidden>
       <h1 id="auth-title">Prihlásenie učiteľa</h1>
-      <p>Prihláste sa tým istým učiteľským Google účtom ako na stránke kurzu.</p>
+      <p>Prihláste sa tým istým učiteľským Google účtom, ktorý používate na prednáške.</p>
       <button class="primary wide" id="sign-in" type="button">Prihlásiť sa cez Google</button>
     </section>
-    <section id="pair-view" class="card" aria-labelledby="pair-title" hidden>
-      <p class="eyebrow">Režim Prednášajúci</p>
-      <h1 id="pair-title">Pripojiť ovládač</h1>
-      <p>Prihlásili ste sa učiteľským účtom. Zadajte svoj PIN; aplikácia potom nájde aktívnu prednášku otvorenú na počítači.</p>
-      <form id="pair-form">
-        <label for="pair-code">PIN ovládača</label>
-        <input id="pair-code" name="code" type="password" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" maxlength="6" required aria-describedby="pair-help">
-        <small id="pair-help">PIN nastavuje učiteľ na hlavnej stránke. Overenie prebieha bezpečne na serveri.</small>
-        <button class="primary wide" type="submit">Pripojiť</button>
-      </form>
-    </section>
-    <section id="control-view" class="card controls" aria-labelledby="page-title" hidden>
-      <p class="eyebrow">Režim Prednášajúci · aktívna prednáška</p>
-      <h1 id="page-title">Čaká sa na prednášku</h1>
-      <p class="playback" id="playback-state" role="status" aria-live="polite">Zastavené</p>
-      <div class="button-grid">
-        <button class="primary" id="play" type="button" disabled>▶ <span>Prehrať</span></button>
-        <button id="pause-resume" type="button" disabled>Ⅱ <span>Pozastaviť</span></button>
-        <button class="stop" id="stop" type="button" disabled>■ <span>Zastaviť</span></button>
-        <button id="restart-lesson" type="button" disabled>↻ <span>Od začiatku</span></button>
-        <button id="restart-current" type="button" disabled>⟲ <span>Aktuálny odsek</span></button>
-      </div>
+    <section id="control-view" class="mirror-view" hidden aria-label="Zrkadlo aktívnej prednášky">
+      <iframe id="lesson-mirror" title="Aktuálna prednáška a jej ovládací panel" allow="autoplay; fullscreen"></iframe>
     </section>
     <p class="notice" id="notice" role="alert" hidden></p>
   </main>

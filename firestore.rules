@@ -28,7 +28,7 @@ service cloud.firestore {
     function isValidRemoteSession(data) {
       return data.keys().hasOnly([
           'ownerUid', 'pageTitle', 'pagePath', 'pageActive', 'pageHeartbeatAt',
-          'playbackState', 'canReplay', 'canRestartCurrent', 'createdAt'
+          'playbackState', 'canReplay', 'canRestartCurrent', 'displayMode', 'createdAt'
         ])
         && data.ownerUid is string
         && data.pageTitle is string
@@ -41,15 +41,29 @@ service cloud.firestore {
         && data.playbackState in ['stopped', 'playing', 'paused']
         && data.canReplay is bool
         && data.canRestartCurrent is bool
+        && data.displayMode in ['student', 'teacher']
         && data.createdAt is timestamp;
     }
 
-    function isValidRemoteCommand(data, sessionId, deviceId) {
-      return data.keys().hasOnly(['type', 'targetSessionId', 'deviceId', 'createdAt'])
-        && data.type in ['play', 'pauseResume', 'stop', 'restartLesson', 'restartCurrent']
-        && data.targetSessionId == sessionId
-        && data.deviceId == deviceId
-        && data.createdAt == request.time;
+    function isValidRemoteCommand(data, sessionId) {
+      return data.targetSessionId == sessionId
+        && data.createdAt == request.time
+        && (
+          (data.type in ['play', 'pauseResume', 'stop', 'restartLesson', 'restartCurrent']
+            && data.keys().hasOnly(['type', 'targetSessionId', 'createdAt']))
+          || (data.type == 'panelClick'
+            && data.keys().hasOnly(['type', 'targetSessionId', 'createdAt', 'controlIndex'])
+            && data.controlIndex is int
+            && data.controlIndex >= 0
+            && data.controlIndex <= 40)
+          || (data.type == 'panelChange'
+            && data.keys().hasOnly(['type', 'targetSessionId', 'createdAt', 'controlIndex', 'value'])
+            && data.controlIndex is int
+            && data.controlIndex >= 0
+            && data.controlIndex <= 40
+            && data.value is string
+            && data.value.size() <= 200)
+        );
     }
 
     match /users/{userId} {
@@ -67,9 +81,7 @@ service cloud.firestore {
       allow read, write: if false;
     }
 
-    // Teacher-only remote speech control. The PIN verifier is held in a
-    // GitHub file protected by an HMAC pepper in Cloud Functions Secrets.
-    // Devices become authorized only through the callable PIN verifier.
+    // The teacher's existing Firebase account is the remote-control authorization.
     function ownsRemoteSession(sessionId) {
       return isTeacher()
         && exists(/databases/$(database)/documents/remoteSessions/$(sessionId))
@@ -86,11 +98,11 @@ service cloud.firestore {
         && request.resource.data.playbackState == 'stopped'
         && request.resource.data.canReplay == false
         && request.resource.data.canRestartCurrent == false
+        && request.resource.data.displayMode in ['student', 'teacher']
         && request.resource.data.createdAt == request.time
         && request.resource.data.pageHeartbeatAt == request.time;
 
-      // Only the owner page may publish liveness/playback state. Pairing data
-      // and PIN verification are never writable through the public client SDK.
+      // Only the owner page may publish liveness/playback state.
       allow update: if isTeacher()
         && isOwner(resource.data.ownerUid)
         && isValidRemoteSession(request.resource.data)
@@ -102,9 +114,10 @@ service cloud.firestore {
         && request.resource.data.playbackState in ['stopped', 'playing', 'paused']
         && request.resource.data.canReplay is bool
         && request.resource.data.canRestartCurrent is bool
+        && request.resource.data.displayMode in ['student', 'teacher']
         && request.resource.data.pageHeartbeatAt == request.time
         && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
-          'pageActive', 'pageHeartbeatAt', 'playbackState', 'canReplay', 'canRestartCurrent'
+          'pageActive', 'pageHeartbeatAt', 'playbackState', 'canReplay', 'canRestartCurrent', 'displayMode'
         ]);
 
       allow delete: if isTeacher() && resource.data.ownerUid == request.auth.uid;
@@ -114,32 +127,9 @@ service cloud.firestore {
         allow create: if ownsRemoteSession(sessionId)
           && get(/databases/$(database)/documents/remoteSessions/$(sessionId)).data.pageActive == true
           && get(/databases/$(database)/documents/remoteSessions/$(sessionId)).data.pageHeartbeatAt > request.time - duration.value(45, 's')
-          && request.resource.data.deviceId is string
-          && request.resource.data.deviceId.matches('^[A-Fa-f0-9-]{36}$')
-          && exists(/databases/$(database)/documents/remoteDevices/$(request.auth.uid + '_' + request.resource.data.deviceId))
-          && get(/databases/$(database)/documents/remoteDevices/$(request.auth.uid + '_' + request.resource.data.deviceId)).data.ownerUid == request.auth.uid
-          && isValidRemoteCommand(
-            request.resource.data,
-            sessionId,
-            request.resource.data.deviceId
-          );
+          && isValidRemoteCommand(request.resource.data, sessionId);
         allow update, delete: if false;
       }
-    }
-
-    match /remotePinChallenges/{challengeKey} {
-      // Temporary PIN verifiers can only be used by trusted Functions code.
-      allow read, write: if false;
-    }
-
-    match /remoteDevices/{deviceKey} {
-      // Devices are provisioned only by the trusted PIN verifier callable.
-      allow read, write: if false;
-    }
-
-    match /remotePinAttempts/{attemptKey} {
-      // PIN rate limiting is managed by trusted server code only.
-      allow read, write: if false;
     }
 
     match /{document=**} {

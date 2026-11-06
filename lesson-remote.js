@@ -4,6 +4,7 @@ import { firebaseConfig } from "./firebase-config.js";
   const control = window.lessonSpeechRemote;
   const main = document.querySelector("main");
   if (!control || !main) return;
+  if (new URLSearchParams(location.search).get("remoteMirror") === "1") return;
 
   const version = "10.14.1";
   let sdkPromise;
@@ -76,6 +77,7 @@ import { firebaseConfig } from "./firebase-config.js";
       await dbSdk.updateDoc(ref, {
         pageActive: isActivePage(),
         pageHeartbeatAt: dbSdk.serverTimestamp(),
+        displayMode: document.body.classList.contains("teacher") ? "teacher" : "student",
       });
     } catch {
       // The mobile device treats a stale heartbeat as a disconnected page.
@@ -93,6 +95,7 @@ import { firebaseConfig } from "./firebase-config.js";
         canRestartCurrent: Boolean(state.canRestartCurrent),
         pageActive: isActivePage(),
         pageHeartbeatAt: dbSdk.serverTimestamp(),
+        displayMode: document.body.classList.contains("teacher") ? "teacher" : "student",
       });
     } catch {
       // Presence expires automatically if Firestore is unavailable.
@@ -117,7 +120,18 @@ import { firebaseConfig } from "./firebase-config.js";
           restartLesson: control.restartLesson,
           restartCurrent: control.restartCurrent,
         };
-        actions[command.type]?.();
+        if (actions[command.type]) {
+          actions[command.type]();
+        } else if (command.type === "panelClick") {
+          document.querySelector(".lesson-side-panel")?.querySelectorAll("button")[command.controlIndex]?.click();
+        } else if (command.type === "panelChange") {
+          const target = document.querySelector(".lesson-side-panel")?.querySelectorAll("input,select,textarea")[command.controlIndex];
+          if (target) {
+            target.value = command.value;
+            target.dispatchEvent(new Event("input", { bubbles: true }));
+            target.dispatchEvent(new Event("change", { bubbles: true }));
+          }
+        }
       }
       publishPlayback();
     });
@@ -160,6 +174,7 @@ import { firebaseConfig } from "./firebase-config.js";
       playbackState: "stopped",
       canReplay: false,
       canRestartCurrent: false,
+      displayMode: document.body.classList.contains("teacher") ? "teacher" : "student",
       createdAt: dbSdk.serverTimestamp(),
     });
     session = next;
