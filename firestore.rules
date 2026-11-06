@@ -89,7 +89,9 @@ service cloud.firestore {
     }
 
     match /remoteSessions/{sessionId} {
-      allow get, list: if isTeacher() && resource.data.ownerUid == request.auth.uid;
+      allow get: if isTeacher()
+        && (sessionId == request.auth.uid || resource.data.ownerUid == request.auth.uid);
+      allow list: if isTeacher() && resource.data.ownerUid == request.auth.uid;
 
       allow create: if isTeacher()
         && isValidRemoteSession(request.resource.data)
@@ -107,8 +109,8 @@ service cloud.firestore {
         && isOwner(resource.data.ownerUid)
         && isValidRemoteSession(request.resource.data)
         && uidUnchanged()
-        && request.resource.data.pageTitle == resource.data.pageTitle
-        && request.resource.data.pagePath == resource.data.pagePath
+        && request.resource.data.pageTitle is string
+        && request.resource.data.pagePath is string
         && request.resource.data.createdAt == resource.data.createdAt
         && request.resource.data.pageActive is bool
         && request.resource.data.playbackState in ['stopped', 'playing', 'paused']
@@ -117,7 +119,8 @@ service cloud.firestore {
         && request.resource.data.displayMode in ['student', 'teacher']
         && request.resource.data.pageHeartbeatAt == request.time
         && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
-          'pageActive', 'pageHeartbeatAt', 'playbackState', 'canReplay', 'canRestartCurrent', 'displayMode'
+          'pageTitle', 'pagePath', 'pageActive', 'pageHeartbeatAt',
+          'playbackState', 'canReplay', 'canRestartCurrent', 'displayMode'
         ]);
 
       allow delete: if isTeacher() && resource.data.ownerUid == request.auth.uid;
