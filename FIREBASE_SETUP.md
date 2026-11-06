@@ -1,13 +1,13 @@
 # Mobilné zrkadlo prednášky
 
-Mobil sa prihlási existujúcim učiteľským Google účtom. QR kód na hlavnej stránke otvorí mobilné zrkadlo. Zrkadlo nájde aktívnu prednášku rovnakého účtu, zobrazí jej stránku v ráme a presunie pôvodný ovládací panel na začiatok zobrazenia.
+Mobil sa pripája cez QR kód s náhodným súkromným kódom miestnosti. Telefón sa neprihlasuje cez Google. Počítač zapisuje aktuálnu cestu prednášky do Firestore každých 10 sekúnd; mobil ju sleduje a otvorí v ráme. Middleware povoľuje načítať chránenú HTML stránku iba v režime zrkadla, ak Firestore potvrdí platný QR kód, rovnakú cestu a čerstvý heartbeat. Statické súbory (štýly, skripty, obrázky, videá) sú dostupné bez prihlásenia, aby sa mohli načítať v zrkadle.
 
-PIN a Cloud Functions sa nepoužívajú. Firestore Rules obmedzujú čítanie relácií a odosielanie ovládacích príkazov na overený učiteľský účet a jeho vlastnú aktívnu stránku. Príkazy z mobilného panelu sa vykonajú na otvorenej stránke v počítači.
+Prístup ku QR kódu slúži ako prístupový kľúč k zrkadlu. Kódy miestností majú 192 bitov náhodnosti. Firestore pravidlá povoľujú čítať iba konkrétny dokument podľa kódu a nedovoľujú zoznamovať miestnosti. Keďže zrkadlo nepoužíva identitu učiteľa, klient, ktorý pozná QR kód, môže prepísať stav tejto miestnosti; QR preto zdieľajte iba s účastníkmi prednášky.
 
-Ak treba zmeny aktivovať vo Firebase, nasadzujú sa iba Firestore Rules po kontrole:
+Po zmene pravidiel ich treba nasadiť do Firebase:
 
 ```powershell
-firebase deploy --only hosting,firestore:rules --project programovanie-sps
+firebase deploy --only firestore:rules --project programovanie-sps
 ```
 
 Nasadenie pravidiel ani webu z tejto pracovnej kópie nebolo vykonané.

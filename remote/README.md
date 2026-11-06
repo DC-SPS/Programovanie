@@ -1,5 +1,9 @@
 # Mobilné zrkadlo prednášky
 
-Naskenujte QR kód na hlavnej stránke a prihláste sa tým istým učiteľským účtom ako na počítači. Mobil nájde aktívnu prednášku a zobrazí jej stránku. Pôvodný ovládací panel sa umiestni hore; jeho tlačidlá a nastavenia posielajú príkazy na počítač.
+Naskenujte QR kód na hlavnej stránke v tom istom prehliadači, v ktorom je otvorená prednáška. Telefón bez Google prihlásenia zobrazí aktuálnu stránku a po zmene prednášky ju automaticky obnoví.
 
-PIN ani Cloud Functions netreba. Oprávnenie kontrolujú Firebase Authentication a Firestore Rules. V prípade straty siete zrkadlo zobrazí stav odpojenia a po obnovení spojenia sa znovu pripojí.
+QR kód obsahuje súkromný kód miestnosti. Zdieľajte ho iba s účastníkmi. Pravidlá Firestore treba nasadiť po ich zmene:
+
+```powershell
+firebase deploy --only firestore:rules --project programovanie-sps
+```
