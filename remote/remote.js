@@ -97,12 +97,16 @@ if (!/^[a-f0-9]{48}$/.test(sessionId)) {
   showNotice("Otvorte túto stránku cez QR kód z hlavnej stránky kurzu.");
 } else {
   setConnection("Hľadám otvorenú prednášku…");
-  firestore.onSnapshot(firestore.doc(db, "lectureMirrors", sessionId), { includeMetadataChanges: true }, (snapshot) => {
+  const sessionRef = firestore.doc(db, "lectureMirrors", sessionId);
+  let receivedServerSnapshot = false;
+
+  firestore.onSnapshot(sessionRef, { includeMetadataChanges: true }, (snapshot) => {
     if (snapshot.metadata.fromCache) {
       setConnection("Pripájam sa k internetu…");
       showNotice("Overujem, či počítač zverejnil otvorenú prednášku.");
       return;
     }
+    receivedServerSnapshot = true;
     if (!snapshot.exists()) {
       setConnection("Počítač ešte nezverejnil prednášku", "offline");
       showNotice("QR kód musí byť otvorený na tom istom počítači a v tom istom prehliadači ako prednáška. Obnovte prednášku na počítači.");
@@ -112,8 +116,30 @@ if (!/^[a-f0-9]{48}$/.test(sessionId)) {
   }, (error) => {
     console.error("Mobilné zrkadlo: spojenie sa nepodarilo.", error);
     setConnection("Spojenie sa prerušilo", "error");
-    showNotice("Nepodarilo sa pripojiť. Obnovte stránku alebo znovu naskenujte QR kód.");
+    showNotice(error?.code === "permission-denied"
+      ? "Firestore odmietol prístup. Nasaďte aktuálne pravidlá Firestore a obnovte stránku."
+      : `Firestore sa nedá načítať (${error?.code || "neznáma chyba"}). Skontrolujte internetové pripojenie a obnovte stránku.`);
   });
+
+  window.setTimeout(async () => {
+    if (receivedServerSnapshot) return;
+    try {
+      const snapshot = await firestore.getDocFromServer(sessionRef);
+      receivedServerSnapshot = true;
+      if (snapshot.exists()) showPage(snapshot.data());
+      else {
+        setConnection("Prednáška zatiaľ nie je zverejnená", "offline");
+        showNotice("Obnovte kartu prednášky na počítači a potom obnovte mobil.");
+      }
+    } catch (error) {
+      console.error("Mobilné zrkadlo: server neodpovedá na priamu kontrolu.", error);
+      setConnection("Server neodpovedá", "error");
+      showNotice(error?.code === "permission-denied"
+        ? "Firestore odmietol prístup. Nasaďte aktuálne pravidlá Firestore."
+        : `Telefón nedostal odpoveď z Firestore (${error?.code || "neznáma chyba"}). Skontrolujte sieť alebo prístup k Firebase.`);
+    }
+  }, 12_000);
+
   window.setInterval(() => {
     if (currentPage) showPage(currentPage);
   }, 10_000);
