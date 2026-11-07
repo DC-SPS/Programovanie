@@ -386,9 +386,28 @@
     window.lessonSpeechRemote = Object.freeze({
       play: () => playButton.click(),
       pauseResume: () => pauseButton.click(),
+      pause: () => { if (isReading && !isPaused) pauseButton.click(); },
+      resume: () => { if (isReading && isPaused) pauseButton.click(); },
       stop: () => stopButton.click(),
       replay: () => replayButton.click(),
       restartLesson: () => startReading(getSelectedItems()),
+      playSection: (sectionIndex) => {
+        const sectionHeadings = [...main.querySelectorAll("h2")].filter((heading) => !heading.closest(".sources, footer"));
+        const heading = sectionHeadings[sectionIndex];
+        if (!heading) return;
+        const start = narrationItems.findIndex(({ block }) => block === heading);
+        if (start < 0) return;
+        const nextHeading = sectionHeadings[sectionIndex + 1];
+        const end = nextHeading ? narrationItems.findIndex(({ block }) => block === nextHeading) : narrationItems.length;
+        const items = narrationItems.slice(start, end < 0 ? narrationItems.length : end)
+          .filter(({ checkbox, block }) => {
+            const teacherOnly = block.closest(".teacher-note, .note");
+            return checkbox.checked && (!teacherOnly || document.body.classList.contains("teacher"));
+          })
+          .map(({ block }) => ({ block, text: getBlockText(block) }))
+          .filter(({ text }) => text.length > 0);
+        startReading(items);
+      },
       restartCurrent,
       getState: () => ({
         isReading,

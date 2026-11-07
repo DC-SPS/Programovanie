@@ -91,3 +91,18 @@ Pravidlá pre prácu s kódovým štýlom, štruktúrou lekcií a pridávanie no
 ---
 
 *Prajeme vám veľa úspechov pri štúdiu programovania!*
+
+## Synchronizácia prednášok cez Firebase
+
+Prednášky používajú Google Authentication a Realtime Database. Prihlasovanie cez synchronizačný panel je dostupné po otvorení stránky na doméne povolenej vo Firebase. Synchronizácia zdieľa stránku, sekciu, stav prehrávania, režim Žiak/Učiteľ, rýchlosť a hlas. QR kód otvor na druhom zariadení a prihlás sa tým istým účtom.
+
+### Nastavenie Firebase
+
+1. Vytvor projekt vo [Firebase Console](https://console.firebase.google.com/) alebo použi projekt `programovanie-sps`.
+2. V **Authentication → Sign-in method** povoľ poskytovateľa **Google**.
+3. V **Authentication → Settings → Authorized domains** pridaj doménu nasadenia (napr. `programovanie-sps.vercel.app`) a doménu na lokálny vývoj (`localhost`, ak ju Firebase projekt povoľuje).
+4. V **Realtime Database** vytvor databázu v regióne **europe-west1**. Webová URL musí byť `https://programovanie-sps-default-rtdb.europe-west1.firebasedatabase.app`. Ak Firebase pridelí inú URL alebo názov databázy, aktualizuj `databaseURL` v `firebase-config.js` podľa URL zobrazenej v konzole.
+5. Nasaď pravidlá z repozitára: `npx firebase-tools deploy --only database --project programovanie-sps`. Pravidlá povoľujú čítanie a zápis iba prihlásenému vlastníkovi pod `/sessions/{uid}` a `/presence/{uid}`.
+6. Over, že `apiKey`, `authDomain`, `projectId` a `appId` v `firebase-config.js` patria k webovej aplikácii tohto Firebase projektu.
+
+Synchronizácia používa ID zariadenia uložené v `localStorage`; samotný obsah stránok zostáva statický a dostupný podľa existujúcej ochrany nasadenia.
