@@ -20,12 +20,11 @@ import { firebaseConfig } from "./firebase-config.js";
     .lecture-sync-controls button,.lecture-sync-controls select,.lecture-sync-controls a{min-height:44px;padding:.45rem .65rem;border:1px solid #32617e;border-radius:.5rem;background:#12334b;color:#edf6ff;font:600 .82rem system-ui,"Segoe UI",sans-serif}
     .lecture-sync-controls button,.lecture-sync-controls a{cursor:pointer;text-decoration:none}
     .lecture-sync-controls button:disabled{opacity:.55;cursor:not-allowed}
-    .lecture-sync-controls__status{margin:0;color:#bae6fd}.lecture-sync-controls__status[data-state="offline"]{color:#fda4af}
-    .lecture-sync-controls__pair{display:grid;grid-template-columns:1fr 110px;align-items:center;gap:.5rem}.lecture-sync-controls__pair[hidden]{display:none}
-    .lecture-sync-controls__qr{width:110px;height:110px;background:#fff;border-radius:.4rem}
-    .lecture-sync-controls__link{overflow-wrap:anywhere;color:#7dd3fc;font-size:.75rem}
+    .lecture-sync-controls__status{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+    .lecture-sync-controls__pair{display:flex;justify-content:center;align-items:center}.lecture-sync-controls__pair[hidden]{display:none}
+    .lecture-sync-controls__qr{display:block;width:110px;height:110px;background:#fff;border-radius:.4rem}
     @media(max-width:768px){.lesson-side-panel{position:sticky!important;top:0!important;right:auto!important;bottom:auto!important;left:auto!important;z-index:5000!important;width:100%!important;max-height:54vh!important;overflow-y:auto!important;margin:0!important;padding:.4rem!important;border-radius:0 0 .8rem .8rem!important}.lesson-side-panel .narration-controls button,.lesson-side-panel .lecture-sync-controls button,.lesson-side-panel .lecture-sync-controls select{min-height:44px}main,.wrap,.w{min-width:0;max-width:100%;padding-bottom:16px!important;overflow-wrap:anywhere}body{overflow-x:hidden!important}}
-    @media(max-width:420px){.lecture-sync-controls__pair{grid-template-columns:1fr 86px}.lecture-sync-controls__qr{width:86px;height:86px}}
+    @media(max-width:420px){.lecture-sync-controls__qr{width:110px;height:110px}}
     @media print{.lecture-sync-controls{display:none!important}}
   `;
   document.head.append(panelStyle);
@@ -35,7 +34,7 @@ import { firebaseConfig } from "./firebase-config.js";
   ui.innerHTML = `
     <div class="lecture-sync-controls__row">
       <button type="button" data-action="connect">Prihlásiť a zdieľať</button>
-      <span class="lecture-sync-controls__status" data-status data-state="offline" role="status" aria-live="polite">Synchronizácia vypnutá</span>
+      <span class="lecture-sync-controls__status" data-status data-state="offline" role="status" aria-live="polite"></span>
     </div>
     <div class="lecture-sync-controls__row">
       <button type="button" data-action="previous" aria-label="Predošlá sekcia">◀ Predošlá sekcia</button>
@@ -44,20 +43,17 @@ import { firebaseConfig } from "./firebase-config.js";
       <button type="button" data-action="next" aria-label="Ďalšia sekcia">Ďalšia sekcia ▶</button>
     </div>
     <div class="lecture-sync-controls__row">
-      <label>Prehrávať na: <select data-action="target"><option value="this">tomto zariadení</option><option value="other">druhom zariadení</option></select></label>
+      <select data-action="target" aria-label="Prehrávať na"><option value="this">Toto zariadenie</option><option value="other">Druhé zariadenie</option></select>
       <button type="button" data-action="unlock" hidden>Klepni pre povolenie zvuku</button>
     </div>
-    <p class="lecture-sync-controls__status" data-devices>Pripojené zariadenia: 1</p>
-    <div class="lecture-sync-controls__pair" data-pair hidden><div><a class="lecture-sync-controls__link" data-link></a><p>Odkaz otvor na druhom zariadení a prihlás sa rovnakým účtom.</p></div><img class="lecture-sync-controls__qr" data-qr alt="QR kód na pripojenie zariadenia"></div>
+    <div class="lecture-sync-controls__pair" data-pair hidden><img class="lecture-sync-controls__qr" data-qr alt="QR kód na pripojenie zariadenia"></div>
   `;
   section.prepend(ui);
 
   const $ = (selector) => ui.querySelector(selector);
   const status = $(`[data-status]`);
   const pairBox = $(`[data-pair]`);
-  const link = $(`[data-link]`);
   const qr = $(`[data-qr]`);
-  const deviceLabel = $(`[data-devices]`);
   const unlockButton = $(`[data-action="unlock"]`);
   const urlParams = new URLSearchParams(location.search);
   let pendingUid = urlParams.get("lectureSyncUid") || "";
@@ -211,8 +207,6 @@ import { firebaseConfig } from "./firebase-config.js";
     pairUrl.searchParams.set("lectureSyncUid", uid);
     pairUrl.searchParams.delete("remoteMirror");
     pairUrl.searchParams.delete("session");
-    link.href = pairUrl.toString();
-    link.textContent = pairUrl.toString();
     pairBox.hidden = false;
     import("https://cdn.jsdelivr.net/npm/qrcode@1.5.4/+esm").then((module) => {
       const QRCode = module.default;
@@ -233,7 +227,6 @@ import { firebaseConfig } from "./firebase-config.js";
     dbApi.set(presenceRef, { deviceId, page: localState.page, onlineAt: dbApi.serverTimestamp() }).catch(() => {});
     dbApi.onValue(devicesRef, (snapshot) => {
       deviceList = Object.entries(snapshot.val() || {}).map(([id, value]) => ({ deviceId: id, ...value }));
-      deviceLabel.textContent = `Pripojené zariadenia: ${deviceList.length} · ${navigator.onLine ? "online" : "offline"}`;
     }, () => {});
     dbApi.onValue(stateRef, (snapshot) => {
       const remote = snapshot.val();
@@ -311,6 +304,6 @@ import { firebaseConfig } from "./firebase-config.js";
 
   loadAuth().then((auth) => auth.onAuthStateChanged(auth.auth, onSignedIn, () => setStatus("Google prihlásenie sa nepodarilo načítať", "offline")))
     .catch(() => setStatus("Synchronizácia bude dostupná po prihlásení", "offline"));
-  window.addEventListener("online", () => { deviceLabel.textContent = `Pripojené zariadenia: ${deviceList.length} · online`; });
-  window.addEventListener("offline", () => { deviceLabel.textContent = `Pripojené zariadenia: ${deviceList.length} · offline`; });
+  window.addEventListener("online", () => setStatus("Synchronizácia je pripojená", "online"));
+  window.addEventListener("offline", () => setStatus("Synchronizácia je offline", "offline"));
 })();
