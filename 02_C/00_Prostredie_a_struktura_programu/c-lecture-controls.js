@@ -417,6 +417,387 @@
       }),
     });
 
+    const installContinuousReader = () => {
+      const settings = document.createElement("details");
+      settings.className = "narration-settings";
+      const settingsSummary = document.createElement("summary");
+      settingsSummary.textContent = "Nastavenia hlasu";
+      settings.append(settingsSummary);
+      [speedSelect.closest("label"), voiceSelect.closest("label"), volumeSelect.closest("label")].forEach((control) => {
+        if (control) settings.append(control);
+      });
+      const controls = document.querySelector(".narration-controls");
+      controls?.append(settings);
+      controls?.querySelector(".page-language-help")?.setAttribute("hidden", "");
+      document.querySelectorAll(".narration-option").forEach((option) => option.remove());
+      document.querySelectorAll(".narration-target").forEach((block) => block.classList.remove("narration-target"));
+
+      const addPreference = (key, labelText) => {
+        const label = document.createElement("label");
+        label.className = "narration-setting";
+        const input = document.createElement("input");
+        input.type = "checkbox";
+        try { input.checked = window.localStorage.getItem(key) === "true"; } catch (_) { input.checked = false; }
+        input.addEventListener("change", () => {
+          try { window.localStorage.setItem(key, String(input.checked)); } catch (_) { /* The preference still applies on this page. */ }
+          if (key === "lesson-narration.include-code") {
+            if (isReading) startFrom(selectedBlock, selectedChunk);
+            else rebuildBlocks();
+          }
+        });
+        label.append(input, document.createTextNode(labelText));
+        settings.append(label);
+        return input;
+      };
+      const includeCode = addPreference("lesson-narration.include-code", "Čítať aj kód");
+      const nextLecture = addPreference("lesson-narration.next-lecture", "Po konci prejsť na ďalšiu prednášku");
+      const speechStatus = document.createElement("p");
+      speechStatus.className = "narration-continuous-status";
+      speechStatus.setAttribute("role", "status");
+      speechStatus.setAttribute("aria-live", "polite");
+      controls?.append(speechStatus);
+
+      const root = document.querySelector("main") || document.querySelector(".wrap") || document.querySelector(".w");
+      if (!root) return;
+      const speechAvailable = "speechSynthesis" in window && "SpeechSynthesisUtterance" in window;
+      const excludedSelector = ".lesson-side-panel, .lecture-sync-controls, .narration-controls, .global-course-nav, nav, button, script, style, noscript, iframe, video, audio, input, select, textarea, footer, .sources, .mode, [aria-hidden='true'], [hidden]";
+      const containerSelector = ".card, .teacher-note, .note, .teacher-only, [data-teacher-only], .safety-notice, .lesson-guidance, .callout, .notice, .panel, .tip, blockquote";
+      let blocks = [];
+      let selectedBlock = -1;
+      let selectedChunk = 0;
+      let activeBlock = null;
+      let runId = 0;
+      let isReading = false;
+      let isPaused = false;
+      let restartCurrent = false;
+      let utteranceTimer = 0;
+      let currentUtterance = null;
+      let automaticScrollUntil = 0;
+      let rememberedSelection = [];
+
+      const teacherOnlySelector = ".teacher-note, .note, .teacher-only, [data-teacher-only]";
+      const teacherOnly = (element) => Boolean(element.closest(teacherOnlySelector));
+      const hiddenByStyle = (element) => {
+        const hiddenTeacherNote = element.closest(teacherOnlySelector);
+        for (let node = element; node && node !== root.parentElement; node = node.parentElement) {
+          if (node.matches?.(excludedSelector)) return true;
+          if (node === hiddenTeacherNote && !document.body.classList.contains("teacher")) continue;
+          if (window.getComputedStyle(node).display === "none" || window.getComputedStyle(node).visibility === "hidden") return true;
+        }
+        return false;
+      };
+      const collectText = (element) => {
+        const walk = (node, isRoot = false) => {
+          if (node.nodeType === Node.TEXT_NODE) return node.nodeValue || "";
+          if (node.nodeType !== Node.ELEMENT_NODE) return "";
+          const current = node;
+          if ((!isRoot && hiddenByStyle(current)) || current.matches(excludedSelector)) return "";
+          if (!isRoot && current.matches("li") && element.matches("li")) return "";
+          if (current.matches("img")) return current.alt || "";
+          if (current.matches("pre, code") && !includeCode.checked
+            && (current.matches("pre") || window.getComputedStyle(current).display !== "inline")) {
+            return " Nasleduje ukážka kódu. ";
+          }
+          if (current.matches("br")) return ". ";
+          return [...current.childNodes].map((child) => walk(child)).join("");
+        };
+        return walk(element, true).replace(/→/g, ", ").replace(/[ \t]*\n[ \t]*/g, ". ").replace(/\s+/g, " ").trim();
+      };
+      const rebuildBlocks = () => {
+        const candidates = [...root.querySelectorAll("h1,h2,h3,p,li,tr,figcaption,img,pre,code,.card,.teacher-note,.note,.teacher-only,[data-teacher-only],.safety-notice,.lesson-guidance,.callout,.notice,.panel,.tip,blockquote")];
+        blocks = candidates.filter((element) => {
+          if (element.matches("code") && (element.closest("pre") || window.getComputedStyle(element).display === "inline")) return false;
+          if (element.matches("td,th")) return false;
+          if (element.closest(containerSelector) && !element.matches(containerSelector)) return false;
+          if (element.matches(containerSelector) && element.querySelector("tr")) return false;
+          if (teacherOnly(element)) return true;
+          return !hiddenByStyle(element);
+        }).map((element) => {
+          const isCode = element.matches("pre,code");
+          const text = isCode && !includeCode.checked ? "Nasleduje ukážka kódu." : element.matches("tr")
+            ? [...element.querySelectorAll("th,td")].map((cell) => collectText(cell)).filter(Boolean).join(". ")
+            : collectText(element);
+          return { block: element, text, isCode, isTeacherOnly: teacherOnly(element) };
+        }).filter(({ text }) => text.length > 0);
+      };
+      const splitText = (text) => {
+        const sentences = text.match(/[^.!?]+(?:[.!?]+|$)/g) || [text];
+        const chunks = [];
+        sentences.forEach((sentence) => {
+          let rest = sentence.trim();
+          while (rest.length > 190) {
+            let splitAt = rest.lastIndexOf(" ", 190);
+            if (splitAt < 80) splitAt = 190;
+            chunks.push(rest.slice(0, splitAt).trim());
+            rest = rest.slice(splitAt).trim();
+          }
+          if (rest) chunks.push(rest);
+        });
+        return chunks;
+      };
+      const visibleBlock = (item) => !item.isTeacherOnly || document.body.classList.contains("teacher");
+      const sectionHeadings = () => [...root.querySelectorAll("h2")].filter((heading) => !heading.closest(".sources, footer"));
+      const sectionFor = (index) => {
+        let currentSection = 0;
+        const headings = sectionHeadings();
+        for (let i = 0; i < headings.length; i += 1) {
+          const headingIndex = blocks.findIndex((item) => item.block === headings[i]);
+          if (headingIndex > index) break;
+          if (headingIndex >= 0) currentSection = i;
+        }
+        return currentSection;
+      };
+      const announce = (extra = {}) => {
+        const detail = {
+          isReading,
+          isPaused,
+          section: selectedBlock < 0 ? 0 : sectionFor(selectedBlock),
+          sectionCount: sectionHeadings().length,
+          block: selectedBlock < 0 ? 0 : selectedBlock,
+          blockCount: blocks.length,
+          chunk: selectedChunk,
+          ...extra,
+        };
+        window.dispatchEvent(new CustomEvent("lesson-reading-state", { detail }));
+      };
+      const showActiveBlock = (index, shouldScroll = true) => {
+        activeBlock?.classList.remove("speech-bubble");
+        selectedBlock = index;
+        activeBlock = index >= 0 ? blocks[index]?.block || null : null;
+        activeBlock?.classList.add("speech-bubble");
+        if (shouldScroll && activeBlock && Date.now() >= automaticScrollUntil) {
+          activeBlock.scrollIntoView({
+            behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth",
+            block: "center",
+          });
+        }
+      };
+      const getVoice = () => {
+        const selected = availableVoices.find((voice) => voice.voiceURI === voiceSelect.value);
+        if (selected) return selected;
+        const slovak = availableVoices.find((voice) => voice.lang.toLowerCase() === "sk-sk")
+          || availableVoices.find((voice) => voice.lang.toLowerCase().startsWith("sk"));
+        if (slovak) return slovak;
+        if (availableVoices.length) {
+          speechStatus.textContent = "Slovenský hlas nie je dostupný; používa sa najbližší dostupný hlas.";
+          const languagePrefix = (navigator.language || "").toLowerCase().split("-")[0];
+          return availableVoices.find((voice) => voice.lang.toLowerCase().startsWith(languagePrefix)) || availableVoices[0];
+        }
+        speechStatus.textContent = "Slovenský hlas nie je dostupný; používa sa hlas prehliadača.";
+        return null;
+      };
+      const clearKeepAlive = () => {
+        window.clearInterval(utteranceTimer);
+        utteranceTimer = 0;
+      };
+      const keepAlive = () => {
+        clearKeepAlive();
+        if (!/Chrome|Chromium/i.test(navigator.userAgent) || /Edg/i.test(navigator.userAgent)) return;
+        utteranceTimer = window.setInterval(() => {
+          if (isReading && !isPaused && window.speechSynthesis.speaking) {
+            window.speechSynthesis.pause();
+            window.speechSynthesis.resume();
+          }
+        }, 10_000);
+      };
+      const findNextLecture = () => {
+        const links = [...document.querySelectorAll("a[href]")].filter((link) => {
+          const label = link.textContent.trim();
+          return !link.closest("nav, .global-course-nav") && (link.rel === "next" || /^(ďalšia|nasledujúca|pokračovať)\b/i.test(label));
+        });
+        const link = links.find((candidate) => {
+          const url = new URL(candidate.href, location.href);
+          return url.origin === location.origin && url.pathname.endsWith(".html") && url.pathname !== location.pathname;
+        });
+        return link?.href || "";
+      };
+      const finish = (message) => {
+        runId += 1;
+        clearKeepAlive();
+        currentUtterance = null;
+        isReading = false;
+        isPaused = false;
+        restartCurrent = false;
+        selectedChunk = 0;
+        showActiveBlock(-1, false);
+        speechStatus.textContent = message;
+        announce({ block: 0, chunk: 0, completed: message === "Prednáška dočítaná" });
+        if (message === "Prednáška dočítaná" && nextLecture.checked) {
+          const destination = findNextLecture();
+          if (destination) window.setTimeout(() => location.assign(destination), 500);
+        }
+      };
+      const speakChunk = (currentRun) => {
+        if (currentRun !== runId || !isReading || isPaused) return;
+        let item = blocks[selectedBlock];
+        while (item && (!visibleBlock(item) || !item.chunks?.length)) {
+          selectedBlock += 1;
+          selectedChunk = 0;
+          item = blocks[selectedBlock];
+        }
+        if (!item) {
+          finish("Prednáška dočítaná");
+          return;
+        }
+        if (selectedChunk >= item.chunks.length) {
+          selectedBlock += 1;
+          selectedChunk = 0;
+          speakChunk(currentRun);
+          return;
+        }
+        showActiveBlock(selectedBlock);
+        announce();
+        const voice = getVoice();
+        const utterance = new SpeechSynthesisUtterance(item.chunks[selectedChunk]);
+        utterance.lang = voice?.lang || "sk-SK";
+        utterance.rate = Number(speedSelect.value);
+        utterance.volume = Number(volumeSelect.value) / 100;
+        if (voice) utterance.voice = voice;
+        currentUtterance = utterance;
+        utterance.onstart = () => { if (currentRun === runId) keepAlive(); };
+        utterance.onend = () => {
+          if (currentRun !== runId) return;
+          currentUtterance = null;
+          selectedChunk += 1;
+          speakChunk(currentRun);
+        };
+        utterance.onerror = (event) => {
+          if (currentRun !== runId || event.error === "canceled" || event.error === "interrupted") return;
+          currentUtterance = null;
+          if (event.error === "not-allowed" || event.error === "audio-busy") {
+            isPaused = true;
+            speechStatus.textContent = "Klepni pre povolenie zvuku";
+            announce({ needsUnlock: true });
+            return;
+          }
+          speechStatus.textContent = "Úsek sa nepodarilo prečítať; pokračujem ďalej.";
+          selectedChunk += 1;
+          window.setTimeout(() => speakChunk(currentRun), 80);
+        };
+        window.speechSynthesis.speak(utterance);
+      };
+      const startFrom = (blockIndex, chunkIndex = 0) => {
+        if (!speechAvailable) {
+          speechStatus.textContent = "Tento prehliadač nepodporuje hlasové čítanie textu.";
+          return;
+        }
+        rebuildBlocks();
+        if (!blocks.length) {
+          speechStatus.textContent = "Na tejto stránke nie je text na čítanie.";
+          return;
+        }
+        blocks.forEach((item) => { item.chunks = splitText(item.text); });
+        runId += 1;
+        clearKeepAlive();
+        window.speechSynthesis.cancel();
+        isReading = true;
+        isPaused = false;
+        restartCurrent = false;
+        rememberedSelection = blocks.map((_, index) => index);
+        selectedBlock = Math.max(0, Math.min(blocks.length - 1, Number(blockIndex) || 0));
+        selectedChunk = Math.max(0, Number(chunkIndex) || 0);
+        showActiveBlock(selectedBlock);
+        speechStatus.textContent = "Spúšťam čítanie prednášky.";
+        announce();
+        speakChunk(runId);
+      };
+      const pause = () => {
+        if (!isReading || isPaused) return;
+        clearKeepAlive();
+        if (typeof window.speechSynthesis.pause === "function") {
+          window.speechSynthesis.pause();
+        } else {
+          window.speechSynthesis.cancel();
+          restartCurrent = true;
+        }
+        isPaused = true;
+        speechStatus.textContent = "Čítanie je pozastavené.";
+        announce();
+      };
+      const resume = () => {
+        if (!isReading || !isPaused) return;
+        isPaused = false;
+        if (restartCurrent) {
+          restartCurrent = false;
+          speakChunk(runId);
+        } else {
+          window.speechSynthesis.resume();
+          keepAlive();
+        }
+        speechStatus.textContent = "Čítanie pokračuje.";
+        announce();
+      };
+      const stop = () => {
+        runId += 1;
+        clearKeepAlive();
+        window.speechSynthesis.cancel();
+        isReading = false;
+        isPaused = false;
+        currentUtterance = null;
+        speechStatus.textContent = "Čítanie je zastavené.";
+        announce();
+      };
+      const onScrollIntent = (event) => {
+        if (event.type === "keydown" && !["ArrowDown", "ArrowUp", "PageDown", "PageUp", "Home", "End", " "].includes(event.key)) return;
+        if (event.type === "pointermove" && !event.buttons) return;
+        automaticScrollUntil = Date.now() + 5000;
+      };
+      ["wheel", "touchmove", "pointermove", "keydown"].forEach((eventName) => window.addEventListener(eventName, onScrollIntent, { passive: true }));
+      window.addEventListener("pagehide", () => {
+        runId += 1;
+        clearKeepAlive();
+        window.speechSynthesis.cancel();
+      }, { once: true });
+      [playButton, stopButton, pauseButton, replayButton].filter(Boolean).forEach((button) => {
+        button.addEventListener("click", (event) => {
+          event.preventDefault();
+          event.stopImmediatePropagation();
+          if (button === playButton) isPaused ? resume() : startFrom(isReading ? selectedBlock : 0, isReading ? selectedChunk : 0);
+          if (button === pauseButton) isPaused ? resume() : pause();
+          if (button === stopButton) stop();
+          if (button === replayButton) startFrom(0, 0);
+        }, true);
+      });
+      voiceSelect.addEventListener("change", () => {
+        if (isReading && !isPaused) startFrom(selectedBlock, selectedChunk);
+      }, true);
+      speedSelect.addEventListener("change", () => {
+        if (isReading && !isPaused) startFrom(selectedBlock, selectedChunk);
+      }, true);
+      volumeSelect.addEventListener("change", () => {
+        if (isReading && !isPaused) startFrom(selectedBlock, selectedChunk);
+      }, true);
+
+      rebuildBlocks();
+      window.lessonSpeechRemote = Object.freeze({
+        play: () => startFrom(isPaused || isReading ? selectedBlock : 0, isPaused || isReading ? selectedChunk : 0),
+        playFrom: (blockIndex, chunkIndex) => startFrom(blockIndex, chunkIndex),
+        pauseResume: () => isPaused ? resume() : pause(),
+        pause,
+        resume,
+        stop,
+        replay: () => startFrom(0, 0),
+        restartLesson: () => startFrom(0, 0),
+        playSection: (sectionIndex) => {
+          const heading = sectionHeadings()[sectionIndex];
+          const startIndex = blocks.findIndex((item) => item.block === heading);
+          if (startIndex >= 0) startFrom(startIndex, 0);
+        },
+        getSectionStart: (sectionIndex) => {
+          const heading = sectionHeadings()[sectionIndex];
+          return Math.max(0, blocks.findIndex((item) => item.block === heading));
+        },
+        getBlockCount: () => blocks.length,
+        highlightBlock: (blockIndex) => showActiveBlock(Math.max(0, Math.min(blocks.length - 1, Number(blockIndex) || 0))),
+        getState: () => ({ isReading, isPaused, canReplay: rememberedSelection.length > 0 }),
+      });
+      document.addEventListener("click", (event) => {
+        const modeButton = event.target.closest("#student, #teacher, #student-mode, #teacher-mode, #bs, #bt");
+        if (modeButton) window.setTimeout(rebuildBlocks, 0);
+      });
+    };
+    installContinuousReader();
+
     document.addEventListener("DOMContentLoaded", () => {
       const lessonClock = document.querySelector(".lesson-clock");
       const sidePanel = document.querySelector(".lesson-side-panel");
@@ -592,6 +973,10 @@
       bindSlider(workSlider, "work");
       bindSlider(relaxSlider, "relax");
       render();
+      const clockDisclosure = make("details", "lesson-clock-disclosure");
+      const clockSummary = make("summary", "", "Časovače hodiny a Pomodoro");
+      clockDisclosure.append(clockSummary, lessonClock);
+      sidePanel.append(clockDisclosure);
     });
 
     let printSheet = null;

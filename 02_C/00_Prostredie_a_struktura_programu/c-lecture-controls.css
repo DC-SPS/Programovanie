@@ -10,6 +10,19 @@
     .lesson-side-panel .lesson-clock__body{display:block;height:auto;min-height:0;padding:.55rem .65rem}
     .lesson-side-panel .lesson-clock__info,.lesson-side-panel .lesson-clock__controls,.lesson-side-panel .lesson-clock__number,.lesson-side-panel .lesson-clock__title,.lesson-side-panel .lesson-clock__description,.lesson-side-panel .lesson-clock__progress{display:none!important}
     .lesson-side-panel .narration-controls{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));align-items:center;justify-items:stretch;gap:.45rem;padding:.65rem}
+    .lecture-sync-layout .lesson-side-panel .narration-controls>button{display:none!important}
+    .narration-settings{grid-column:1/-1;min-width:0;border-top:1px solid var(--line);padding-top:.25rem}
+    .narration-settings summary{padding:.25rem .1rem;color:var(--mut);font-size:.76rem;font-weight:650;cursor:pointer}
+    .narration-settings[open]{display:grid;gap:.35rem}
+    .lesson-clock-disclosure{margin-top:.25rem;border-top:1px solid var(--line);font-size:.76rem}
+    .lesson-clock-disclosure>summary{padding:.35rem .1rem;color:var(--mut);font-weight:650;cursor:pointer}
+    .lesson-clock-disclosure .lesson-clock{position:static;max-height:none;overflow:visible;margin:0}
+    .narration-settings .narration-speed,.narration-settings .narration-voice,.narration-settings .narration-volume{grid-column:1/-1}
+    .narration-setting{display:flex;align-items:center;gap:.5rem;color:var(--fg);font-size:.76rem}
+    .narration-setting input{width:1rem;height:1rem;accent-color:var(--acc)}
+    .narration-continuous-status{grid-column:1/-1;margin:0;color:var(--mut);font-size:.74rem;line-height:1.35;text-align:center}
+    .narration-continuous-status:empty{display:none}
+    .speech-bubble{outline:2px solid color-mix(in srgb,var(--acc) 52%,transparent);outline-offset:3px;border-radius:4px;background:color-mix(in srgb,var(--acc) 9%,transparent)}
     .lesson-side-panel .narration-controls button{text-align:center}
     .lesson-side-panel .narration-controls .narration-speed{grid-column:1/-1;justify-content:center;gap:.65rem;width:100%;margin:0}
     .lesson-side-panel .narration-controls .narration-speed select{flex:none;min-width:8.5rem;max-width:none}

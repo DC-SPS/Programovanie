@@ -11,20 +11,36 @@ import { firebaseConfig } from "./firebase-config.js";
   const deviceId = getDeviceId();
   const section = document.querySelector(".lesson-side-panel") || document.createElement("aside");
   section.classList.add("lesson-side-panel");
+  document.body.classList.add("lecture-sync-layout");
   section.setAttribute("aria-label", "Ovládanie a synchronizácia prednášky");
   document.body.prepend(section);
   const panelStyle = document.createElement("style");
   panelStyle.textContent = `
-    .lecture-sync-controls{display:grid;gap:.5rem;padding:.65rem;border:1px solid #2b5674;border-radius:.7rem;background:#0b1723;color:#edf6ff;font:13px/1.4 system-ui,"Segoe UI",sans-serif}
-    .lecture-sync-controls__row{display:flex;align-items:center;gap:.4rem;flex-wrap:wrap}
-    .lecture-sync-controls button,.lecture-sync-controls select,.lecture-sync-controls a{min-height:44px;padding:.45rem .65rem;border:1px solid #32617e;border-radius:.5rem;background:#12334b;color:#edf6ff;font:600 .82rem system-ui,"Segoe UI",sans-serif}
-    .lecture-sync-controls button,.lecture-sync-controls a{cursor:pointer;text-decoration:none}
+    body.lecture-sync-layout{display:grid;grid-template-columns:minmax(0,1fr) 300px;align-items:start;column-gap:1rem}
+    body.lecture-sync-layout>.global-course-nav{grid-column:1/-1}
+    body.lecture-sync-layout>main,body.lecture-sync-layout>.wrap,body.lecture-sync-layout>.w{grid-column:1;grid-row:2;width:100%!important;max-width:900px!important;min-width:0;margin:1rem auto 0!important;padding-bottom:1rem!important}
+    .lesson-side-panel{position:sticky!important;grid-column:2;grid-row:2;top:1rem!important;right:auto!important;z-index:5000!important;width:300px!important;max-height:calc(100vh - 2rem)!important;margin:1rem 0 1rem!important;overflow-y:auto!important;overflow-x:hidden!important;padding:.5rem!important;border:1px solid var(--line)!important;border-radius:.8rem!important;background:var(--bg)!important;box-shadow:0 12px 38px #0003!important}
+    .lecture-sync-controls{--ctl-play:#facc15;--ctl-nav:#2563eb;--ctl-session:#c2410c;display:grid;gap:.5rem;padding:.6rem;border:1px solid var(--line);border-radius:.7rem;background:var(--card);color:var(--fg);font:13px/1.4 system-ui,"Segoe UI",sans-serif}
+    .lecture-sync-controls__row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));align-items:stretch;gap:9px;min-width:0}
+    .lecture-sync-controls button,.lecture-sync-controls select{width:100%;min-width:0;min-height:48px;padding:.45rem .55rem;border:2px solid transparent;border-radius:.5rem;background:var(--ctl-session);color:#fff;font:700 .82rem/1.15 system-ui,"Segoe UI",sans-serif;text-align:center;white-space:nowrap;cursor:pointer}
+    .lecture-sync-controls .ctl-play{min-height:56px;background:var(--ctl-play);color:#172033}
+    .lecture-sync-controls .ctl-nav{background:var(--ctl-nav);color:#fff}
+    .lecture-sync-controls .ctl-session{background:var(--ctl-session);color:#fff}
+    .lecture-sync-controls button[aria-pressed="true"]{border-color:currentColor;box-shadow:inset 0 0 0 2px currentColor,0 0 0 2px var(--bg)}
+    .lecture-sync-controls select{appearance:auto}
+    .lecture-sync-controls button:focus-visible,.lecture-sync-controls select:focus-visible{outline:3px solid var(--fg);outline-offset:2px}
     .lecture-sync-controls button:disabled{opacity:.55;cursor:not-allowed}
     .lecture-sync-controls__status{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
-    .lecture-sync-controls__pair{display:flex;justify-content:center;align-items:center}.lecture-sync-controls__pair[hidden]{display:none}
+    .lecture-sync-controls__unlock{grid-column:1/-1}
+    .lecture-sync-controls__progress{display:grid;gap:.22rem;padding:.1rem .15rem;color:var(--fg);font-size:.72rem;text-align:center}
+    .lecture-sync-controls__track{height:3px;overflow:hidden;border-radius:99px;background:var(--line)}
+    .lecture-sync-controls__fill{height:100%;width:0;background:var(--ctl-nav);transition:width .2s linear}
+    .lecture-sync-controls__pair{margin:0;text-align:center}.lecture-sync-controls__pair[hidden]{display:none}
+    .lecture-sync-controls__pair summary{padding:.35rem;color:var(--fg);font-size:.76rem;cursor:pointer}
+    .lecture-sync-controls__qr-wrap{display:flex;justify-content:center;padding:.3rem}
     .lecture-sync-controls__qr{display:block;width:110px;height:110px;background:#fff;border-radius:.4rem}
-    @media(max-width:768px){.lesson-side-panel{position:sticky!important;top:0!important;right:auto!important;bottom:auto!important;left:auto!important;z-index:5000!important;width:100%!important;max-height:54vh!important;overflow-y:auto!important;margin:0!important;padding:.4rem!important;border-radius:0 0 .8rem .8rem!important}.lesson-side-panel .narration-controls button,.lesson-side-panel .lecture-sync-controls button,.lesson-side-panel .lecture-sync-controls select{min-height:44px}main,.wrap,.w{min-width:0;max-width:100%;padding-bottom:16px!important;overflow-wrap:anywhere}body{overflow-x:hidden!important}}
-    @media(max-width:420px){.lecture-sync-controls__qr{width:110px;height:110px}}
+    .lecture-sync-controls__row--play button{min-height:56px}
+    @media(max-width:768px){body.lecture-sync-layout{display:block;overflow-x:hidden}body.lecture-sync-layout>main,body.lecture-sync-layout>.wrap,body.lecture-sync-layout>.w{width:100%!important;max-width:100%!important;margin:0!important}.lesson-side-panel{position:sticky!important;top:env(safe-area-inset-top,0px)!important;right:auto!important;bottom:auto!important;left:auto!important;z-index:5000!important;width:100%!important;max-height:30vh!important;overflow-y:auto!important;margin:0!important;padding:.3rem!important;border-radius:0 0 .65rem .65rem!important;background:var(--bg)!important;box-shadow:0 4px 12px #0003!important}.lesson-side-panel .narration-controls{padding:.3rem!important}.lecture-sync-controls{padding:.4rem;gap:.35rem}.lecture-sync-controls__row{gap:8px}.lecture-sync-controls button,.lecture-sync-controls select{min-height:48px;font-size:.78rem}.lecture-sync-controls__row--play button{min-height:56px}.lecture-sync-controls__pair[open] .lecture-sync-controls__qr{width:96px;height:96px}main,.wrap,.w{min-width:0;max-width:100%;overflow-wrap:anywhere}}
     @media print{.lecture-sync-controls{display:none!important}}
   `;
   document.head.append(panelStyle);
@@ -32,21 +48,22 @@ import { firebaseConfig } from "./firebase-config.js";
   const ui = document.createElement("section");
   ui.className = "lecture-sync-controls";
   ui.innerHTML = `
-    <div class="lecture-sync-controls__row">
-      <button type="button" data-action="connect">Prihlásiť a zdieľať</button>
-      <span class="lecture-sync-controls__status" data-status data-state="offline" role="status" aria-live="polite"></span>
+    <div class="lecture-sync-controls__row lecture-sync-controls__row--play">
+      <button type="button" class="ctl-play" data-action="play" aria-pressed="false">▶ Prehrať</button>
+      <button type="button" class="ctl-play" data-action="pause" aria-pressed="false">⏸ Pauza</button>
     </div>
     <div class="lecture-sync-controls__row">
-      <button type="button" data-action="previous" aria-label="Predošlá sekcia">◀ Predošlá sekcia</button>
-      <button type="button" data-action="play">▶ Prehrať</button>
-      <button type="button" data-action="pause">⏸ Pauza</button>
-      <button type="button" data-action="next" aria-label="Ďalšia sekcia">Ďalšia sekcia ▶</button>
+      <button type="button" class="ctl-nav" data-action="previous" aria-label="Predošlá sekcia">◀ Predošlá sekcia</button>
+      <button type="button" class="ctl-nav" data-action="next" aria-label="Ďalšia sekcia">Ďalšia sekcia ▶</button>
     </div>
     <div class="lecture-sync-controls__row">
-      <select data-action="target" aria-label="Prehrávať na"><option value="this">Toto zariadenie</option><option value="other">Druhé zariadenie</option></select>
-      <button type="button" data-action="unlock" hidden>Klepni pre povolenie zvuku</button>
+      <button type="button" class="ctl-session" data-action="connect">Prihlásiť a zdieľať</button>
+      <select class="ctl-session" data-action="target" aria-label="Hlas hrá na"><option value="this">Toto zariadenie</option><option value="other">Druhé zariadenie</option></select>
     </div>
-    <div class="lecture-sync-controls__pair" data-pair hidden><img class="lecture-sync-controls__qr" data-qr alt="QR kód na pripojenie zariadenia"></div>
+    <div class="lecture-sync-controls__progress" data-progress hidden><span data-progress-label></span><div class="lecture-sync-controls__track" role="progressbar" aria-label="Priebeh prednášky" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div class="lecture-sync-controls__fill"></div></div></div>
+    <button type="button" class="ctl-session lecture-sync-controls__unlock" data-action="unlock" hidden>Klepni pre povolenie zvuku</button>
+    <span class="lecture-sync-controls__status" data-status data-state="offline" role="status" aria-live="polite"></span>
+    <details class="lecture-sync-controls__pair" data-pair hidden><summary>Zobraziť QR kód na pripojenie</summary><div class="lecture-sync-controls__qr-wrap"><img class="lecture-sync-controls__qr" data-qr alt="QR kód na pripojenie zariadenia"></div></details>
   `;
   section.prepend(ui);
 
@@ -55,6 +72,10 @@ import { firebaseConfig } from "./firebase-config.js";
   const pairBox = $(`[data-pair]`);
   const qr = $(`[data-qr]`);
   const unlockButton = $(`[data-action="unlock"]`);
+  const progress = $(`[data-progress]`);
+  const progressLabel = $(`[data-progress-label]`);
+  const progressBar = $(`[role="progressbar"]`);
+  const progressFill = $(`[data-progress] .lecture-sync-controls__fill`);
   const urlParams = new URLSearchParams(location.search);
   let pendingUid = urlParams.get("lectureSyncUid") || "";
   let navigationIntent = urlParams.get("lectureSyncNavigate") === "1";
@@ -62,44 +83,61 @@ import { firebaseConfig } from "./firebase-config.js";
   let dbApi;
   let db;
   let user = null;
-  let localState = { page: decodeURI(location.pathname), section: 0, playing: false, mode: "student", rate: readRate(), voice: readVoice() };
+  let localState = { page: decodeURI(location.pathname), section: 0, block: 0, chunk: 0, playing: false, paused: false, mode: document.body.classList.contains("teacher") ? "teacher" : "student", rate: readRate(), voice: readVoice(), playCommand: 0 };
   let currentRemote = null;
   let deviceList = [];
   let applyRemote = false;
   let speechReady = false;
+  let appliedPlayCommand = null;
 
   const setStatus = (message, state = "offline") => {
     status.textContent = message;
     status.dataset.state = state;
   };
+  const renderReadingState = (detail = {}) => {
+    const playing = Boolean(detail.isReading && !detail.isPaused);
+    const paused = Boolean(detail.isReading && detail.isPaused);
+    $(`[data-action="play"]`).setAttribute("aria-pressed", String(playing));
+    $(`[data-action="pause"]`).setAttribute("aria-pressed", String(paused));
+    $(`[data-action="play"]`).disabled = playing;
+    $(`[data-action="pause"]`).disabled = !playing;
+    unlockButton.hidden = !detail.needsUnlock;
+    if (Number.isInteger(detail.sectionCount) && detail.sectionCount > 0) {
+      const sectionNumber = Math.min(detail.sectionCount, Math.max(1, Number(detail.section || 0) + 1));
+      const percentage = Math.round((Number(detail.block || 0) / Math.max(1, Number(detail.blockCount || 1))) * 100);
+      progress.hidden = false;
+      progressLabel.textContent = `Sekcia ${sectionNumber} z ${detail.sectionCount}`;
+      progressBar.setAttribute("aria-valuenow", String(percentage));
+      progressFill.style.width = `${percentage}%`;
+    }
+  };
+  renderReadingState();
   const changeState = (values) => {
     if (applyRemote) return;
     Object.assign(localState, values);
     publish();
   };
-  const sectionIndex = () => {
-    const active = document.querySelector(".speech-bubble");
-    if (!active) return localState.section;
-    const activeHeading = headings.indexOf(active);
-    if (activeHeading >= 0) return activeHeading;
-    let preceding = -1;
-    headings.forEach((heading, index) => {
-      if (heading.compareDocumentPosition(active) & Node.DOCUMENT_POSITION_FOLLOWING) preceding = index;
-    });
-    return preceding >= 0 ? preceding : localState.section;
-  };
+  const getOtherDevice = () => deviceList.find((device) => device.deviceId !== deviceId);
+  const getPlaybackDevice = () => $(`[data-action="target"]`).value === "this" ? deviceId : (getOtherDevice()?.deviceId || "");
   const selectSection = (index, shouldPlay = true) => {
     const bounded = Math.max(0, Math.min(headings.length - 1, index));
     if (!headings.length) return;
-    localState.section = bounded;
-    headings[bounded].scrollIntoView({ behavior: "smooth", block: "start" });
-    if (shouldPlay && window.lessonSpeechRemote?.playSection) window.lessonSpeechRemote.playSection(bounded);
-    const other = deviceList.find((device) => device.deviceId !== deviceId);
+    speechReady = speechReady || shouldPlay;
+    unlockButton.hidden = true;
+    const blockIndex = window.lessonSpeechRemote?.getSectionStart?.(bounded) ?? 0;
+    const playOnDevice = getPlaybackDevice();
     changeState({
       section: bounded,
+      block: blockIndex,
+      chunk: 0,
       playing: shouldPlay,
-      playOnDevice: $(`[data-action="target"]`).value === "this" ? deviceId : (other?.deviceId || ""),
+      paused: false,
+      playOnDevice,
+      playCommand: shouldPlay ? Number(localState.playCommand || 0) + 1 : Number(localState.playCommand || 0),
     });
+    appliedPlayCommand = localState.playCommand;
+    window.lessonSpeechRemote?.highlightBlock?.(blockIndex);
+    if (shouldPlay && playOnDevice === deviceId && speechReady) window.lessonSpeechRemote?.playFrom?.(blockIndex, 0);
   };
 
   $(`[data-action="connect"]`).addEventListener("click", async () => {
@@ -111,25 +149,60 @@ import { firebaseConfig } from "./firebase-config.js";
       setStatus(authMessage(error), "offline");
     }
   });
-  $(`[data-action="previous"]`).addEventListener("click", () => selectSection(sectionIndex() - 1));
-  $(`[data-action="next"]`).addEventListener("click", () => selectSection(sectionIndex() + 1));
+  $(`[data-action="previous"]`).addEventListener("click", () => selectSection(Number(localState.section || 0) - 1));
+  $(`[data-action="next"]`).addEventListener("click", () => selectSection(Number(localState.section || 0) + 1));
   $(`[data-action="play"]`).addEventListener("click", () => {
     speechReady = true;
     unlockButton.hidden = true;
-    selectSection(sectionIndex(), true);
+    const readerState = window.lessonSpeechRemote?.getState?.();
+    const wasInProgress = Boolean(localState.playing || localState.paused || readerState?.isReading);
+    const wasPaused = Boolean(localState.paused || readerState?.isPaused);
+    const block = wasInProgress ? Number(localState.block || 0) : 0;
+    const section = wasInProgress ? Number(localState.section || 0) : 0;
+    const playOnDevice = getPlaybackDevice();
+    changeState({
+      section, block, chunk: wasInProgress ? Number(localState.chunk || 0) : 0,
+      playing: true, paused: false, playOnDevice, playCommand: Number(localState.playCommand || 0) + 1,
+    });
+    appliedPlayCommand = localState.playCommand;
+    if (playOnDevice === deviceId) {
+      if (wasPaused) window.lessonSpeechRemote?.resume?.();
+      else window.lessonSpeechRemote?.playFrom?.(block, wasInProgress ? Number(localState.chunk || 0) : 0);
+    }
+    else {
+      applyRemote = true;
+      window.lessonSpeechRemote?.pause?.();
+      window.setTimeout(() => { applyRemote = false; }, 0);
+    }
   });
   $(`[data-action="pause"]`).addEventListener("click", () => {
     window.lessonSpeechRemote?.pauseResume?.();
-    changeState({ section: sectionIndex(), playing: false });
+    changeState({ playing: false, paused: true });
   });
   unlockButton.addEventListener("click", () => {
     speechReady = true;
     unlockButton.hidden = true;
-    if (currentRemote?.playing) selectSection(currentRemote.section, true);
+    const state = currentRemote || localState;
+    if ((state.playing || state.paused) && (state.playOnDevice || deviceId) === deviceId) {
+      changeState({ playing: true, paused: false, playOnDevice: deviceId });
+      window.lessonSpeechRemote?.playFrom?.(Number(state.block || 0), Number(state.chunk || 0));
+    }
   });
   $(`[data-action="target"]`).addEventListener("change", (event) => {
-    const other = deviceList.find((device) => device.deviceId !== deviceId);
-    changeState({ playOnDevice: event.target.value === "this" ? deviceId : (other?.deviceId || "") });
+    const playOnDevice = event.target.value === "this" ? deviceId : (getOtherDevice()?.deviceId || "");
+    changeState({
+      playOnDevice,
+      paused: false,
+      playing: Boolean(localState.playing || localState.paused),
+      playCommand: (localState.playing || localState.paused) ? Number(localState.playCommand || 0) + 1 : Number(localState.playCommand || 0),
+    });
+    if ((localState.playing || localState.paused) && playOnDevice === deviceId && speechReady) {
+      window.lessonSpeechRemote?.playFrom?.(Number(localState.block || 0), Number(localState.chunk || 0));
+    } else if (playOnDevice !== deviceId) {
+      applyRemote = true;
+      window.lessonSpeechRemote?.pause?.();
+      window.setTimeout(() => { applyRemote = false; }, 0);
+    }
   });
 
   document.addEventListener("click", (event) => {
@@ -154,15 +227,22 @@ import { firebaseConfig } from "./firebase-config.js";
   });
   window.addEventListener("lesson-reading-state", (event) => {
     if (applyRemote) return;
-    const playing = Boolean(event.detail?.isReading && !event.detail?.isPaused);
-    const other = deviceList.find((device) => device.deviceId !== deviceId);
+    const detail = event.detail || {};
+    renderReadingState(detail);
+    const playing = Boolean(detail.isReading && !detail.isPaused);
+    const section = Number.isInteger(detail.section) ? detail.section : localState.section;
     changeState({
-      section: sectionIndex(),
+      section,
+      block: Number.isInteger(detail.block) ? detail.block : localState.block,
+      chunk: Number.isInteger(detail.chunk) ? detail.chunk : localState.chunk,
       playing,
-      playOnDevice: $(`[data-action="target"]`).value === "this" ? deviceId : (other?.deviceId || ""),
+      paused: Boolean(detail.isReading && detail.isPaused),
+      playOnDevice: getPlaybackDevice(),
     });
   });
-  window.addEventListener("pagehide", () => dbApi?.remove?.(dbApi.ref(db, `presence/${activeUid}/${deviceId}`)));
+  window.addEventListener("pagehide", () => {
+    dbApi?.remove?.(dbApi.ref(db, `presence/${activeUid}/${deviceId}`));
+  });
 
   async function loadAuth() {
     const [appModule, authModule] = await Promise.all([
@@ -208,10 +288,13 @@ import { firebaseConfig } from "./firebase-config.js";
     pairUrl.searchParams.delete("remoteMirror");
     pairUrl.searchParams.delete("session");
     pairBox.hidden = false;
+    pairBox.open = !window.matchMedia("(max-width: 768px)").matches;
     import("https://cdn.jsdelivr.net/npm/qrcode@1.5.4/+esm").then((module) => {
       const QRCode = module.default;
-      QRCode.toDataURL(pairUrl.toString(), { width: 220, margin: 1 }).then((image) => { qr.src = image; }).catch(() => {});
-    }).catch(() => {});
+      QRCode.toDataURL(pairUrl.toString(), { width: 220, margin: 1 })
+        .then((image) => { qr.src = image; })
+        .catch(() => setStatus("QR kód sa nepodarilo vytvoriť.", "offline"));
+    }).catch(() => setStatus("Knižnica QR kódu sa nepodarilo načítať.", "offline"));
   }
 
   function attachSession() {
@@ -223,30 +306,39 @@ import { firebaseConfig } from "./firebase-config.js";
     const stateRef = dbApi.ref(db, `sessions/${activeUid}`);
     const presenceRef = dbApi.ref(db, `presence/${activeUid}/${deviceId}`);
     const devicesRef = dbApi.ref(db, `presence/${activeUid}`);
-    dbApi.onDisconnect(presenceRef).remove().catch(() => {});
-    dbApi.set(presenceRef, { deviceId, page: localState.page, onlineAt: dbApi.serverTimestamp() }).catch(() => {});
+    dbApi.onDisconnect(presenceRef).remove().catch((error) => setStatus(`Odpojenie zariadenia sa nepodarilo nastaviť (${error?.code || "chyba"})`, "offline"));
+    dbApi.set(presenceRef, { deviceId, page: localState.page, onlineAt: dbApi.serverTimestamp() })
+      .catch((error) => setStatus(`Zariadenie sa nepodarilo zaregistrovať (${error?.code || "chyba"})`, "offline"));
     dbApi.onValue(devicesRef, (snapshot) => {
       deviceList = Object.entries(snapshot.val() || {}).map(([id, value]) => ({ deviceId: id, ...value }));
-    }, () => {});
+    }, (error) => setStatus(`Zoznam zariadení sa nepodarilo načítať (${error?.code || "chyba"})`, "offline"));
     dbApi.onValue(stateRef, (snapshot) => {
       const remote = snapshot.val();
       if (!remote) {
         publish();
         return;
       }
+      const initialState = !currentRemote;
       currentRemote = remote;
-      if (remote.updatedBy === deviceId) return;
       if (navigationIntent) {
         navigationIntent = false;
-        localState = { ...remote, page: decodeURI(location.pathname), section: 0, playing: false };
+        localState = {
+          ...remote,
+          page: decodeURI(location.pathname),
+          section: 0,
+          block: 0,
+          chunk: 0,
+          playing: Boolean(remote.playing),
+          playCommand: Number(remote.playCommand || 0) + (remote.playing ? 1 : 0),
+        };
+        appliedPlayCommand = null;
         publish();
         return;
       }
+      if (remote.updatedBy === deviceId && !initialState) return;
       applyState(remote);
     }, (error) => setStatus(`Synchronizácia odmietnutá (${error?.code || "chyba"})`, "offline"));
     setStatus("Synchronizácia je pripojená", "online");
-    if (pendingUid || urlParams.has("lectureSyncUid")) applyState({ ...localState, page: localState.page });
-    else publish();
   }
 
   function publish() {
@@ -256,7 +348,8 @@ import { firebaseConfig } from "./firebase-config.js";
       if (current && Number(current.updatedAt) > payload.updatedAt) return;
       return payload;
     }).catch((error) => setStatus(`Zápis stavu zlyhal (${error?.code || "chyba"})`, "offline"));
-    dbApi.update(dbApi.ref(db, `presence/${activeUid}/${deviceId}`), { page: payload.page, onlineAt: dbApi.serverTimestamp() }).catch(() => {});
+    dbApi.update(dbApi.ref(db, `presence/${activeUid}/${deviceId}`), { page: payload.page, onlineAt: dbApi.serverTimestamp() })
+      .catch((error) => setStatus(`Aktualizácia zariadenia zlyhala (${error?.code || "chyba"})`, "offline"));
   }
 
   function applyState(remote) {
@@ -275,17 +368,38 @@ import { firebaseConfig } from "./firebase-config.js";
     applyRemote = true;
     localState = { ...localState, ...remote };
     document.body.classList.toggle("teacher", remote.mode === "teacher");
-    document.querySelector("#teacher, #teacher-mode, #bt")?.classList.toggle("on", remote.mode === "teacher");
-    document.querySelector("#student, #student-mode, #bs")?.classList.toggle("on", remote.mode !== "teacher");
+    const teacherButton = document.querySelector("#teacher, #teacher-mode, #bt");
+    const studentButton = document.querySelector("#student, #student-mode, #bs");
+    teacherButton?.classList.toggle("on", remote.mode === "teacher");
+    studentButton?.classList.toggle("on", remote.mode !== "teacher");
+    teacherButton?.setAttribute("aria-pressed", String(remote.mode === "teacher"));
+    studentButton?.setAttribute("aria-pressed", String(remote.mode !== "teacher"));
     document.querySelector("#narration-speed") && (document.querySelector("#narration-speed").value = String(remote.rate || 1));
     document.querySelector("#narration-voice") && (document.querySelector("#narration-voice").value = remote.voice || "");
-    $(`[data-action="target"]`).value = remote.playOnDevice === deviceId ? "this" : "other";
-    if (remote.playing && Number.isInteger(remote.section) && remote.playOnDevice === deviceId) {
-      if (speechReady) selectSection(remote.section, true);
-      else unlockButton.hidden = false;
-    } else if (!remote.playing || remote.playOnDevice !== deviceId) {
+    $(`[data-action="target"]`).value = !remote.playOnDevice || remote.playOnDevice === deviceId ? "this" : "other";
+    renderReadingState({
+      isReading: Boolean(remote.playing || remote.paused),
+      isPaused: Boolean(remote.paused),
+      section: Number(remote.section || 0),
+      sectionCount: headings.length,
+      block: Number(remote.block || 0),
+      blockCount: window.lessonSpeechRemote?.getBlockCount?.() || 1,
+    });
+    const blockIndex = Number.isInteger(remote.block) ? remote.block : (window.lessonSpeechRemote?.getSectionStart?.(Number(remote.section || 0)) || 0);
+    window.lessonSpeechRemote?.highlightBlock?.(blockIndex);
+    if ((remote.playing || remote.paused) && (remote.playOnDevice || deviceId) === deviceId) {
+      if (!speechReady) {
+        unlockButton.hidden = false;
+        setStatus("Klepni pre povolenie zvuku", "offline");
+      } else if (remote.paused) {
+        window.lessonSpeechRemote?.pause?.();
+      } else if (appliedPlayCommand !== remote.playCommand) {
+        appliedPlayCommand = remote.playCommand;
+        if (window.lessonSpeechRemote?.getState?.().isPaused) window.lessonSpeechRemote?.resume?.();
+        else window.lessonSpeechRemote?.playFrom?.(blockIndex, Number(remote.chunk || 0));
+      }
+    } else if (window.lessonSpeechRemote?.getState?.().isReading && !window.lessonSpeechRemote.getState().isPaused) {
       window.lessonSpeechRemote?.pause?.();
-      headings[remote.section]?.scrollIntoView({ block: "start" });
     }
     window.setTimeout(() => { applyRemote = false; }, 0);
   }
