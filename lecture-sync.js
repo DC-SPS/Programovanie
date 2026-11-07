@@ -20,7 +20,7 @@ import { firebaseConfig } from "./firebase-config.js";
     body.lecture-sync-layout>.global-course-nav{grid-column:1/-1}
     body.lecture-sync-layout>main,body.lecture-sync-layout>.wrap,body.lecture-sync-layout>.w{grid-column:1;grid-row:2;width:100%!important;max-width:900px!important;min-width:0;margin:1rem auto 0!important;padding-bottom:1rem!important}
     .lesson-side-panel{position:sticky!important;grid-column:2;grid-row:2;top:1rem!important;right:auto!important;z-index:5000!important;width:300px!important;max-height:calc(100vh - 2rem)!important;margin:1rem 0 1rem!important;overflow-y:auto!important;overflow-x:hidden!important;padding:.5rem!important;border:1px solid var(--line)!important;border-radius:.8rem!important;background:var(--bg)!important;box-shadow:0 12px 38px #0003!important}
-    .lecture-sync-controls{--ctl-play:#facc15;--ctl-nav:#2563eb;--ctl-session:#c2410c;display:grid;gap:.5rem;padding:.6rem;border:1px solid var(--line);border-radius:.7rem;background:var(--card);color:var(--fg);font:13px/1.4 system-ui,"Segoe UI",sans-serif}
+    .lecture-sync-controls{--ctl-play:#facc15;--ctl-nav:#2563eb;--ctl-session:#c2410c;container-type:inline-size;display:grid;gap:.5rem;padding:.6rem;border:1px solid var(--line);border-radius:.7rem;background:var(--card);color:var(--fg);font:13px/1.4 system-ui,"Segoe UI",sans-serif}
     .lecture-sync-controls__row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));align-items:stretch;gap:9px;min-width:0}
     .lecture-sync-controls button,.lecture-sync-controls select{width:100%;min-width:0;min-height:48px;padding:.45rem .55rem;border:2px solid transparent;border-radius:.5rem;background:var(--ctl-session);color:#fff;font:700 .82rem/1.15 system-ui,"Segoe UI",sans-serif;text-align:center;white-space:nowrap;cursor:pointer}
     .lecture-sync-controls .ctl-play{min-height:56px;background:var(--ctl-play);color:#172033}
@@ -40,6 +40,7 @@ import { firebaseConfig } from "./firebase-config.js";
     .lecture-sync-controls__qr-wrap{display:flex;justify-content:center;padding:.3rem}
     .lecture-sync-controls__qr{display:block;width:110px;height:110px;background:#fff;border-radius:.4rem}
     .lecture-sync-controls__row--play button{min-height:56px}
+    @container (max-width:280px){.lecture-sync-controls button,.lecture-sync-controls select{padding-inline:.15rem;font-size:.64rem;letter-spacing:-.025em}.lecture-sync-controls .ctl-session[data-action="connect"]{font-size:.58rem}.lecture-sync-controls select{padding-right:.1rem}}
     @media(max-width:768px){body.lecture-sync-layout{display:block;overflow-x:hidden}body.lecture-sync-layout>main,body.lecture-sync-layout>.wrap,body.lecture-sync-layout>.w{width:100%!important;max-width:100%!important;margin:0!important}.lesson-side-panel{position:sticky!important;top:env(safe-area-inset-top,0px)!important;right:auto!important;bottom:auto!important;left:auto!important;z-index:5000!important;width:100%!important;max-height:30vh!important;overflow-y:auto!important;margin:0!important;padding:.3rem!important;border-radius:0 0 .65rem .65rem!important;background:var(--bg)!important;box-shadow:0 4px 12px #0003!important}.lesson-side-panel .narration-controls{padding:.3rem!important}.lecture-sync-controls{padding:.4rem;gap:.35rem}.lecture-sync-controls__row{gap:8px}.lecture-sync-controls button,.lecture-sync-controls select{min-height:48px;font-size:.78rem}.lecture-sync-controls__row--play button{min-height:56px}.lecture-sync-controls__pair[open] .lecture-sync-controls__qr{width:96px;height:96px}main,.wrap,.w{min-width:0;max-width:100%;overflow-wrap:anywhere}}
     @media print{.lecture-sync-controls{display:none!important}}
   `;
@@ -53,12 +54,12 @@ import { firebaseConfig } from "./firebase-config.js";
       <button type="button" class="ctl-play" data-action="pause" aria-pressed="false">⏸ Pauza</button>
     </div>
     <div class="lecture-sync-controls__row">
-      <button type="button" class="ctl-nav" data-action="previous" aria-label="Predošlá sekcia">◀ Predošlá sekcia</button>
-      <button type="button" class="ctl-nav" data-action="next" aria-label="Ďalšia sekcia">Ďalšia sekcia ▶</button>
+      <button type="button" class="ctl-nav" data-action="previous" aria-label="Predošlá sekcia" title="Prejde na začiatok predchádzajúcej sekcie">◀ Predošlá</button>
+      <button type="button" class="ctl-nav" data-action="next" aria-label="Ďalšia sekcia" title="Prejde na začiatok nasledujúcej sekcie">Ďalšia ▶</button>
     </div>
     <div class="lecture-sync-controls__row">
-      <button type="button" class="ctl-session" data-action="connect">Prihlásiť a zdieľať</button>
-      <select class="ctl-session" data-action="target" aria-label="Hlas hrá na"><option value="this">Toto zariadenie</option><option value="other">Druhé zariadenie</option></select>
+      <button type="button" class="ctl-session" data-action="connect" aria-label="Prihlásiť a zdieľať prednášku" title="Prihlási sa a zobrazí QR kód na pripojenie ďalšieho zariadenia">Prihlásiť / zdieľať</button>
+      <select class="ctl-session" data-action="target" aria-label="Hlas hrá na" title="Vyber zariadenie, ktoré bude čítať nahlas. Druhé zariadenie je telefón alebo počítač pripojený cez QR kód."><option value="this">Toto zariadenie</option><option value="other" disabled>Druhé zariadenie</option></select>
     </div>
     <div class="lecture-sync-controls__progress" data-progress hidden><span data-progress-label></span><div class="lecture-sync-controls__track" role="progressbar" aria-label="Priebeh prednášky" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div class="lecture-sync-controls__fill"></div></div></div>
     <button type="button" class="ctl-session lecture-sync-controls__unlock" data-action="unlock" hidden>Klepni pre povolenie zvuku</button>
@@ -118,7 +119,18 @@ import { firebaseConfig } from "./firebase-config.js";
     publish();
   };
   const getOtherDevice = () => deviceList.find((device) => device.deviceId !== deviceId);
-  const getPlaybackDevice = () => $(`[data-action="target"]`).value === "this" ? deviceId : (getOtherDevice()?.deviceId || "");
+  const targetSelect = $(`[data-action="target"]`);
+  const otherTargetOption = targetSelect.querySelector('option[value="other"]');
+  const updateTargetAvailability = () => {
+    otherTargetOption.disabled = !getOtherDevice();
+  };
+  const getPlaybackDevice = () => {
+    const otherDevice = getOtherDevice();
+    if (targetSelect.value === "other" && otherDevice) return otherDevice.deviceId;
+    targetSelect.value = "this";
+    return deviceId;
+  };
+  updateTargetAvailability();
   const selectSection = (index, shouldPlay = true) => {
     const bounded = Math.max(0, Math.min(headings.length - 1, index));
     if (!headings.length) return;
@@ -311,6 +323,7 @@ import { firebaseConfig } from "./firebase-config.js";
       .catch((error) => setStatus(`Zariadenie sa nepodarilo zaregistrovať (${error?.code || "chyba"})`, "offline"));
     dbApi.onValue(devicesRef, (snapshot) => {
       deviceList = Object.entries(snapshot.val() || {}).map(([id, value]) => ({ deviceId: id, ...value }));
+      updateTargetAvailability();
     }, (error) => setStatus(`Zoznam zariadení sa nepodarilo načítať (${error?.code || "chyba"})`, "offline"));
     dbApi.onValue(stateRef, (snapshot) => {
       const remote = snapshot.val();
