@@ -1,0 +1,748 @@
+<!doctype html>
+<html lang="sk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101827">
+  <meta name="description" content="Meranie času, plánovanie činností a práca s časovačmi na rôznych platformách.">
+  <title>4.7 Časovače a časovanie | Výpočtová technika</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f7f8fa;
+      --fg: #1c2330;
+      --card: #fff;
+      --mut: #5b6678;
+      --acc: #1f6feb;
+      --line: #d9dee7;
+      --note: #fff4d6;
+      --good: #18743a;
+      --bad: #b42318;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        color-scheme: dark;
+        --bg: #12161d;
+        --fg: #e6eaf1;
+        --card: #1b212b;
+        --mut: #9aa6b8;
+        --acc: #5aa2ff;
+        --line: #2d3644;
+        --note: #3a3017;
+        --good: #63d58a;
+        --bad: #ff8a80;
+      }
+    }
+    :root[data-theme="light"] {
+      color-scheme: light;
+      --bg: #f7f8fa;
+      --fg: #1c2330;
+      --card: #fff;
+      --mut: #5b6678;
+      --acc: #1f6feb;
+      --line: #d9dee7;
+      --note: #fff4d6;
+      --good: #18743a;
+      --bad: #b42318;
+    }
+    :root[data-theme="dark"] {
+      color-scheme: dark;
+      --bg: #12161d;
+      --fg: #e6eaf1;
+      --card: #1b212b;
+      --mut: #9aa6b8;
+      --acc: #5aa2ff;
+      --line: #2d3644;
+      --note: #3a3017;
+      --good: #63d58a;
+      --bad: #ff8a80;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-padding-top: 1rem; }
+    body { margin: 0; background: var(--bg); color: var(--fg); font: 16px/1.65 system-ui, -apple-system, "Segoe UI", sans-serif; }
+    a { color: var(--acc); }
+    .global-course-nav { display: flex; flex-wrap: wrap; gap: .55rem; align-items: center; width: min(100% - 2rem, 1000px); margin: .75rem auto 0; font: 600 .9rem/1.4 system-ui, -apple-system, "Segoe UI", sans-serif; }
+    .global-course-nav a { display: inline-block; padding: .4rem .7rem; border: 1px solid var(--line); border-radius: .55rem; text-decoration: none; color: inherit; background: var(--card); }
+    .global-course-nav a:hover { text-decoration: underline; }
+    .global-course-nav a:focus-visible, a:focus-visible, button:focus-visible, summary:focus-visible, select:focus-visible, input:focus-visible { outline: 3px solid var(--acc); outline-offset: 3px; }
+    main { width: min(100% - 2rem, 860px); margin: auto; padding: 16px 0 3rem; }
+    main :is(p, li, td, dd, blockquote) { text-align: justify; text-justify: inter-word; }
+    header { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: .6rem; }
+    .crumb, .muted, .caption { color: var(--mut); }
+    h1 { font-size: clamp(1.8rem, 5vw, 2.6rem); line-height: 1.2; margin: .8rem 0; }
+    h2 { margin-top: 2rem; font-size: 1.4rem; }
+    h3 { margin-top: 1.25rem; font-size: 1.1rem; }
+    .lead { font-size: 1.08rem; }
+    .subtitle { color: var(--mut); }
+    .tags { display: flex; flex-wrap: wrap; gap: .45rem; margin: 1rem 0; }
+    .tag { padding: 2px 9px; border: 1px solid var(--line); border-radius: 6px; background: var(--line); font-size: 13px; }
+    .card, .teacher-note, .video-card, .quiz { margin: 14px 0; padding: 14px 17px; border: 1px solid var(--line); border-radius: 12px; background: var(--card); }
+    .teacher-note { display: none; background: var(--note); }
+    body.teacher .teacher-note { display: block; }
+    .teacher-note strong { display: block; margin-bottom: .3rem; }
+    .mode { display: inline-flex; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+    .mode button { padding: 6px 11px; border: 0; background: var(--card); color: var(--fg); font: inherit; cursor: pointer; }
+    .mode button.on { background: var(--acc); color: #fff; }
+    .pdf-export { margin-left: .5rem; padding: .4rem .7rem; border: 1px solid var(--line); border-radius: .55rem; background: var(--card); color: var(--fg); font: 600 .9rem/1.4 system-ui, -apple-system, "Segoe UI", sans-serif; cursor: pointer; }
+    .code-actions { display: flex; flex-wrap: wrap; align-items: center; gap: .55rem; margin: .8rem 0 .35rem; }
+    .copy-btn, .online-editor { display: inline-block; padding: .4rem .7rem; border: 1px solid var(--line); border-radius: .5rem; font: 600 .9rem/1.4 system-ui, -apple-system, "Segoe UI", sans-serif; text-decoration: none; }
+    .copy-btn { background: var(--acc); border-color: var(--acc); color: #fff; cursor: pointer; }
+    .online-editor { background: var(--card); color: var(--fg); }
+    .code-status { min-height: 1.4em; margin: 0 0 .75rem; color: var(--mut); font-size: .85rem; }
+    .lead-card { margin: 14px 0; padding: 14px 17px; border: 1px solid var(--line); border-radius: 12px; background: var(--card); }
+    .safety-notice, .safety-reminder { margin: 1rem 0; padding: 14px 17px; border: 1px solid var(--line); border-left: 5px solid var(--acc); border-radius: 12px; background: var(--note); }
+    .safety-notice strong, .safety-reminder strong { display: block; margin-bottom: .25rem; }
+    .note { background: var(--note); }
+    .scroll { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { padding: .65rem .7rem; border: 1px solid var(--line); text-align: left; vertical-align: top; }
+    th { background: var(--card); }
+    td:first-child { white-space: nowrap; font-weight: 700; }
+    pre { margin: .65rem 0 1rem; padding: 1rem; border-radius: 9px; overflow-x: auto; background: #0f172a; color: #e2e8f0; font: 14px/1.55 ui-monospace, SFMono-Regular, Consolas, monospace; }
+    code { font-family: ui-monospace, SFMono-Regular, Consolas, monospace; }
+    :not(pre) > code { padding: .08rem .28rem; border-radius: 4px; background: color-mix(in srgb, var(--line) 55%, transparent); }
+    .output { border-left: 4px solid var(--good); }
+    .sources { margin-top: 2rem; padding: 1rem 1.1rem; border: 1px solid var(--line); border-radius: 12px; background: var(--card); }
+    .sources h2 { margin-top: 0; }
+    .sources li { margin: .4rem 0; }
+    .glossary-list { display: grid; grid-template-columns: minmax(8rem, .35fr) 1fr; gap: .3rem .8rem; }
+    .glossary-list dt { font-weight: 750; }
+    .glossary-list dd { margin: 0; }
+    footer { margin-top: 2rem; padding-top: 1rem; border-top: 1px solid var(--line); color: var(--mut); font-size: 14px; }
+    .speech-bubble { position: relative; padding: .85rem 1rem !important; border: 2px solid var(--acc) !important; border-radius: 1.2rem !important; background: color-mix(in srgb, var(--acc) 12%, var(--card)) !important; box-shadow: 0 4px 18px color-mix(in srgb, var(--acc) 18%, transparent); }
+    .speech-bubble::after { position: absolute; bottom: -.65rem; left: 1.2rem; width: 1rem; height: 1rem; border-right: 2px solid var(--acc); border-bottom: 2px solid var(--acc); background: color-mix(in srgb, var(--acc) 12%, var(--card)); content: ""; transform: rotate(45deg); }
+    .narration-target { transition: outline-color .16s ease, background-color .16s ease; text-align: justify; text-justify: inter-word; }
+    .narration-target:hover { outline: 2px solid var(--acc); outline-offset: 3px; background-color: color-mix(in srgb, var(--acc) 8%, transparent); cursor: pointer; }
+    @media (max-width: 620px) { main { width: min(100% - 1.2rem, 860px); } td:first-child { white-space: normal; } }
+    @media (max-width: 520px) { .glossary-list { grid-template-columns: 1fr; gap: .1rem; } .glossary-list dd { margin-bottom: .5rem; } }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; } }
+    @media print {
+      .global-course-nav, .mode, .pdf-export, .code-actions, .code-status, .narration-controls, .narration-option, .lesson-side-panel { display: none !important; }
+      body { background: #fff !important; color: #111 !important; color-scheme: light !important; font-size: 11pt; }
+      main { width: auto; max-width: none; margin: 0; padding: 12mm 14mm; }
+      .teacher-note { display: block; }
+      a[href^="http://"], a[href^="https://"] { color: inherit !important; text-decoration: none !important; }
+      a[href^="http://"]::after, a[href^="https://"]::after { content: none !important; }
+      .card, .teacher-note, .sources, .safety-notice, .safety-reminder, pre, table, blockquote { break-inside: avoid; page-break-inside: avoid; }
+      pre { white-space: pre-wrap; overflow: visible; }
+    }
+    @page { size: A4; margin: 0; }
+      .lesson-navigation { display:flex; flex-wrap:wrap; justify-content:space-between; gap:.7rem; margin:2rem 0 1rem; padding:1rem 0; border-top:1px solid var(--line); }
+    .lesson-navigation a { display:inline-block; padding:.45rem .7rem; border:1px solid var(--line); border-radius:.55rem; background:var(--card); text-decoration:none; }
+  </style>
+  <link rel="stylesheet" href="../02_C/00_Prostredie_a_struktura_programu/c-lecture-controls.css">
+  <script src="../theme.js" defer></script>
+  <script src="../lesson-top.js" defer></script>
+</head>
+<body>
+  <nav class="global-course-nav" aria-label="Navigácia kurzov">
+    <a href="index.html">Prehľad predmetu</a>
+    <a href="../index.html">Všetky kurzy</a>
+  </nav>
+  <aside class="lesson-side-panel" aria-label="Ovládanie hodiny a čítania">
+    <section class="narration-controls" aria-label="Čítanie prednášky">
+      <button id="play-reading" type="button" aria-label="Prehrať">▶ Prehrať</button>
+      <button id="stop-reading" type="button" aria-label="Zastaviť čítanie" disabled>■ Zastaviť</button>
+      <button id="pause-reading" type="button" aria-label="Pozastaviť čítanie" disabled>⏸ Pozastaviť</button>
+      <button id="replay-reading" type="button" aria-label="Prehrať vybrané časti znova" disabled>↻ Prehrať znova</button>
+      <label class="narration-speed" for="narration-speed">Rýchlosť čítania
+        <select id="narration-speed" aria-label="Rýchlosť hlasového čítania">
+          <option value="0.25">0,25×</option>
+          <option value="0.5">0,5×</option>
+          <option value="0.75">0,75×</option>
+          <option value="1" selected>1× – normálna</option>
+          <option value="1.25">1,25×</option>
+          <option value="1.5">1,5×</option>
+          <option value="1.75">1,75×</option>
+          <option value="2">2×</option>
+        </select>
+      </label>
+      <p class="page-language-help">Jazyk zmeníte priamo v Google Translate: kliknite na názov cieľového jazyka v hornej lište a vyberte maďarčinu, ukrajinčinu alebo iný jazyk.</p>
+      <label class="narration-voice" for="narration-voice"><span class="narration-voice-label">Hlas</span>
+        <select id="narration-voice" aria-label="Vyberte hlas na čítanie"><option value="">Automaticky – slovenský hlas</option></select>
+      </label>
+      <label class="narration-volume" for="narration-volume">
+        <span class="narration-volume-heading"><span>Hlasitosť čítania</span><output id="narration-volume-value" for="narration-volume">100 %</output></span>
+        <input id="narration-volume" type="range" min="0" max="100" step="5" value="100" aria-label="Hlasitosť hlasového čítania">
+        <span class="narration-volume-help">Upravuje hlasitosť čítania, nie celkovú hlasitosť zariadenia.</span>
+      </label>
+      <div id="reading-status" class="narration-status" role="status" aria-live="polite"></div>
+    </section>
+  </aside>
+  <main>
+    <aside class="safety-notice" aria-label="Začiatok hodiny a kontrola pracoviska">
+      <strong>Začíname kontrolou pracoviska:</strong>
+      Skontrolujte lavicu, stoličku, pridelený počítač a stav príslušenstva. Poškodenie, chýbajúcu časť alebo inú závadu ihneď oznámte vyučujúcemu a stručný súhrn pošlite cez EduPage podľa jeho pokynov. Poškodené, nefunkčné ani nebezpečné zariadenie nepoužívajte.
+    </aside>
+    <header>
+      <span class="crumb"><a href="index.html">Výpočtová technika</a> › Vstupno-výstupný systém › 4.7</span>
+      <div class="mode" role="group" aria-label="Zobrazenie stránky">
+        <button id="student-mode" class="on" type="button" aria-pressed="true">Žiak</button>
+        <button id="teacher-mode" type="button" aria-pressed="false">Učiteľ</button>
+      </div>
+      <button class="pdf-export" type="button" onclick="window.print()">Exportovať do PDF</button>
+    </header>
+    <h1>4.7 Časovače a časovanie</h1>
+    <p class="lead subtitle">Meranie času, plánovanie činností a práca s časovačmi na rôznych platformách.</p>
+    <div class="tags" aria-label="Témy prednášky"><span class="tag">Tematický celok 4</span><span class="tag">Výpočtová technika</span><span class="tag">AVR · Arduino · ESP32 · Raspberry Pi</span><span class="tag">45 minút</span></div>
+    <article class="lesson-content"><p><strong>Predmet:</strong> Výpočtová technika<br />
+<strong>Ročník:</strong> tretí, stredná škola<br />
+<strong>Trvanie:</strong> 45 minút<br />
+<strong>Platformy:</strong> AVR, Arduino, ESP32 a Raspberry Pi<br />
+<strong>Nadväznosť:</strong> Pravidlá práce v ISR a debouncing</p>
+<h2>Ciele hodiny</h2>
+<p>Po hodine má žiak vedieť:</p>
+<ul>
+<li>rozlíšiť blokujúce a neblokujúce časovanie,</li>
+<li>používať <code>millis()</code> na pravidelné vykonávanie úloh,</li>
+<li>vysvetliť princíp hardvérového časovača,</li>
+<li>vysvetliť pojmy delička, pretečenie a porovnávacia zhoda,</li>
+<li>rozlíšiť možnosti časovania mikrokontroléra a programu v Linuxe.</li>
+</ul>
+<h2>Časový plán</h2>
+<table>
+<thead>
+<tr>
+<th>Čas</th>
+<th>Obsah</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0 – 5 min</td>
+<td>Motivácia a základné pojmy</td>
+</tr>
+<tr>
+<td>5 – 11 min</td>
+<td>Blokujúce časovanie</td>
+</tr>
+<tr>
+<td>11 – 23 min</td>
+<td>Neblokujúce časovanie pomocou <code>millis()</code></td>
+</tr>
+<tr>
+<td>23 – 32 min</td>
+<td>Hardvérové časovače a AVR</td>
+</tr>
+<tr>
+<td>32 – 36 min</td>
+<td>ESP32</td>
+</tr>
+<tr>
+<td>36 – 40 min</td>
+<td>Raspberry Pi</td>
+</tr>
+<tr>
+<td>40 – 43 min</td>
+<td>Úloha pre žiakov</td>
+</tr>
+<tr>
+<td>43 – 45 min</td>
+<td>Overenie a zápis</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>1. Prečo zariadenie potrebuje merať čas?</h2>
+<p><strong>Čas: 0 – 5 min</strong></p>
+<p>Mikrokontrolér často musí:</p>
+<ul>
+<li>každú sekundu zmerať teplotu,</li>
+<li>pravidelne aktualizovať displej,</li>
+<li>po určitom čase vypnúť výstup,</li>
+<li>generovať impulzy,</li>
+<li>merať čas medzi dvoma udalosťami.</li>
+</ul>
+<p>Predstavme si zariadenie, ktoré má zároveň:</p>
+<ol>
+<li>blikať LED,</li>
+<li>reagovať na tlačidlo,</li>
+<li>každé dve sekundy odoslať nameranú hodnotu.</li>
+</ol>
+<p>Ak program pri každej úlohe dlho čaká, ostatné činnosti sa oneskorujú.</p>
+<p><strong>Časovanie určuje, kedy sa má činnosť vykonať. Nemusí pritom znamenať zastavenie programu.</strong></p>
+<h3>Dva základné prístupy</h3>
+<table>
+<thead>
+<tr>
+<th>Prístup</th>
+<th>Princíp</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Blokujúce časovanie</td>
+<td>Program na danom mieste čaká</td>
+</tr>
+<tr>
+<td>Neblokujúce časovanie</td>
+<td>Program kontroluje uplynutý čas a medzitým pracuje ďalej</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Otázka pre triedu:</strong><br />
+Ktorý prístup sme použili pri debouncingu bez <code>delay()</code>?</p>
+<p><em>Odpoveď: Neblokujúce časovanie pomocou <code>millis()</code>.</em></p>
+<hr />
+<h2>2. Blokujúce časovanie: <code>delay()</code></h2>
+<p><strong>Čas: 5 – 11 min</strong></p>
+<h3>Príklad pre Arduino Uno</h3>
+<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button></div><pre class="code-sample language-cpp"><code class="language-cpp">void setup() {
+  pinMode(LED_BUILTIN, OUTPUT);
+}
+
+void loop() {
+  digitalWrite(LED_BUILTIN, HIGH);
+  delay(500);
+
+  digitalWrite(LED_BUILTIN, LOW);
+  delay(500);
+}
+</code></pre><p class="code-status" role="status" aria-live="polite"></p>
+<p>LED svieti približne 500 ms a ďalších 500 ms nesvieti.</p>
+<p><strong>Celá perióda blikania je približne 1 sekunda.</strong></p>
+<h3>Čo znamená blokovanie?</h3>
+<p>Počas <code>delay(500)</code> hlavná slučka nepokračuje na ďalší príkaz.</p>
+<p>Na Arduino Uno môžu počas bežného <code>delay()</code> naďalej prebiehať povolené prerušenia. <strong>Blokovanie hlavného programu preto neznamená zastavenie celého hardvéru.</strong></p>
+<h3>Problém s tlačidlom</h3>
+<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button></div><pre class="code-sample language-cpp"><code class="language-cpp">void loop() {
+  digitalWrite(LED_BUILTIN, HIGH);
+  delay(1000);
+
+  digitalWrite(LED_BUILTIN, LOW);
+  delay(1000);
+
+  kontrolujTlacidlo();
+}
+</code></pre><p class="code-status" role="status" aria-live="polite"></p>
+<p>Tlačidlo kontrolujeme iba približne raz za dve sekundy. Krátke stlačenie môžeme prehliadnuť.</p>
+<h3>Kedy je <code>delay()</code> vhodné?</h3>
+<ul>
+<li>pri jednoduchom skúšobnom programe,</li>
+<li>pri krátkej inicializačnej postupnosti, ak čakanie neprekáža,</li>
+<li>keď zariadenie počas čakania nemusí vykonávať ďalšie úlohy v danom vlákne.</li>
+</ul>
+<p><strong>Do bežnej ISR <code>delay()</code> nepatrí.</strong></p>
+<hr />
+<h2>3. Neblokujúce časovanie: <code>millis()</code></h2>
+<p><strong>Čas: 11 – 18 min</strong></p>
+<p>V Arduino frameworku vracia <code>millis()</code> počet milisekúnd od začiatku vykonávania programu.</p>
+<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button></div><pre class="code-sample language-cpp"><code class="language-cpp">unsigned long teraz = millis();
+</code></pre><p class="code-status" role="status" aria-live="polite"></p>
+<h3>Základný princíp</h3>
+<p>Namiesto príkazu „čakaj 500 ms“ používame otázku:</p>
+<blockquote>
+<p>Uplynulo už 500 ms od poslednej činnosti?</p>
+</blockquote>
+<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button></div><pre class="code-sample language-cpp"><code class="language-cpp">if (teraz - predoslyCas &gt;= interval) {
+  predoslyCas = teraz;
+  vykonajCinnost();
+}
+</code></pre><p class="code-status" role="status" aria-live="polite"></p>
+<p>Ak interval ešte neuplynul, program pokračuje ďalej.</p>
+<h3>Blikanie LED bez <code>delay()</code></h3>
+<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button></div><pre class="code-sample language-cpp"><code class="language-cpp">const unsigned long INTERVAL_MS = 500;
+
+unsigned long poslednaZmena = 0;
+bool ledSvieti = false;
+
+void setup() {
+  pinMode(LED_BUILTIN, OUTPUT);
+  digitalWrite(LED_BUILTIN, LOW);
+
+  poslednaZmena = millis();
+}
+
+void loop() {
+  unsigned long teraz = millis();
+
+  if (teraz - poslednaZmena &gt;= INTERVAL_MS) {
+    poslednaZmena = teraz;
+    ledSvieti = !ledSvieti;
+
+    digitalWrite(
+      LED_BUILTIN,
+      ledSvieti ? HIGH : LOW
+    );
+  }
+
+  // Tu môžeme kontrolovať tlačidlo alebo iné vstupy.
+}
+</code></pre><p class="code-status" role="status" aria-live="polite"></p>
+<h3>Ako program pracuje?</h3>
+<ol>
+<li>Načíta aktuálny čas.</li>
+<li>Vypočíta čas od posledného prepnutia.</li>
+<li>Ak uplynulo aspoň 500 ms, prepne LED.</li>
+<li>Pokračuje ďalšími úlohami.</li>
+</ol>
+<p>LED mení stav približne každých 500 ms, takže celá perióda je približne jedna sekunda.</p>
+<h3>Prečo používame odčítanie?</h3>
+<p>Odporúčaný zápis:</p>
+<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button></div><pre class="code-sample language-cpp"><code class="language-cpp">teraz - poslednaZmena &gt;= INTERVAL_MS
+</code></pre><p class="code-status" role="status" aria-live="polite"></p>
+<p>Pri 32-bitovom čase sa hodnota <code>millis()</code> pretočí približne po <strong>49,7 dňa</strong>.</p>
+<p>Odčítanie neznamienkových hodnôt umožňuje správne vyhodnocovať bežné krátke intervaly aj cez toto pretočenie. Program však musí čas kontrolovať dostatočne často; týmto postupom nesledujeme ľubovoľný počet celých pretočení.</p>
+<hr />
+<h2>4. Viac pravidelných úloh</h2>
+<p><strong>Čas: 18 – 23 min</strong></p>
+<h3>Zadanie</h3>
+<p>Arduino Uno má:</p>
+<ul>
+<li>každých 500 ms prepnúť LED,</li>
+<li>každé 2 sekundy vypísať správu.</li>
+</ul>
+<p>Každá úloha dostane vlastnú časovú premennú.</p>
+<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button></div><pre class="code-sample language-cpp"><code class="language-cpp">const unsigned long INTERVAL_LED = 500;
+const unsigned long INTERVAL_VYPIS = 2000;
+
+unsigned long casLed = 0;
+unsigned long casVypis = 0;
+
+bool ledSvieti = false;
+
+void setup() {
+  pinMode(LED_BUILTIN, OUTPUT);
+  digitalWrite(LED_BUILTIN, LOW);
+  Serial.begin(9600);
+
+  unsigned long teraz = millis();
+  casLed = teraz;
+  casVypis = teraz;
+}
+
+void loop() {
+  unsigned long teraz = millis();
+
+  if (teraz - casLed &gt;= INTERVAL_LED) {
+    casLed = teraz;
+
+    ledSvieti = !ledSvieti;
+    digitalWrite(
+      LED_BUILTIN,
+      ledSvieti ? HIGH : LOW
+    );
+  }
+
+  if (teraz - casVypis &gt;= INTERVAL_VYPIS) {
+    casVypis = teraz;
+    Serial.println(&quot;Pravidelna sprava&quot;);
+  }
+}
+</code></pre><p class="code-status" role="status" aria-live="polite"></p>
+<p>Na jednom jadre sa tieto úlohy vykonávajú postupne. Program medzi nimi rýchlo prechádza podľa toho, ktorá má byť vykonaná.</p>
+<h3>Dva spôsoby aktualizácie času</h3>
+<table>
+<thead>
+<tr>
+<th>Zápis</th>
+<th>Správanie</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>cas = teraz;</code></td>
+<td>Ďalší interval počítame od aktuálneho vykonania</td>
+</tr>
+<tr>
+<td><code>cas += interval;</code></td>
+<td>Udržiavame plánované časové body</td>
+</tr>
+</tbody>
+</table>
+<p>Druhý spôsob pomáha obmedziť posúvanie plánovaného rytmu. Pri veľkom oneskorení však musíme rozhodnúť, či zmeškané vykonania dobehneme alebo preskočíme.</p>
+<p><strong>Ani <code>millis()</code> nezaručí včasnú reakciu, ak program zablokujeme dlhou úlohou.</strong></p>
+<hr />
+<h2>5. Hardvérový časovač</h2>
+<p><strong>Čas: 23 – 27 min</strong></p>
+<p>Hardvérový časovač je periféria, ktorá počíta hodinové impulzy nezávisle od vykonávania hlavnej slučky.</p>
+<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button></div><pre class="code-sample language-text"><code class="language-text">Hodinový signál
+      ↓
+Delička
+      ↓
+Počítadlo časovača
+      ↓
+Pretečenie alebo porovnávacia zhoda
+      ↓
+Nastavenie príznaku, prerušenie alebo zmena výstupu
+</code></pre><p class="code-status" role="status" aria-live="polite"></p>
+<h3>Základné pojmy</h3>
+<p><strong>Hodinový signál</strong><br />
+Zdroj impulzov pre časovač.</p>
+<p><strong>Delička – prescaler</strong><br />
+Zníži frekvenciu impulzov privádzaných do počítadla.</p>
+<p><strong>Pretečenie – overflow</strong><br />
+Pri bežnom počítaní nastane, keď počítadlo prekročí svoju najvyššiu hodnotu a vráti sa na začiatok.</p>
+<p><strong>Porovnávacia zhoda – compare match</strong><br />
+Nastane, keď sa hodnota počítadla zhoduje s nastavenou porovnávacou hodnotou.</p>
+<h3>Počet stavov</h3>
+<table>
+<thead>
+<tr>
+<th>Šírka počítadla</th>
+<th>Rozsah</th>
+<th>Počet stavov</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>8 bitov</td>
+<td>0 až 255</td>
+<td>256</td>
+</tr>
+<tr>
+<td>16 bitov</td>
+<td>0 až 65 535</td>
+<td>65 536</td>
+</tr>
+</tbody>
+</table>
+<p>Časovač môže napríklad:</p>
+<ul>
+<li>pravidelne vyvolávať prerušenie,</li>
+<li>generovať PWM,</li>
+<li>merať čas pomocou zachytenia hodnoty počítadla,</li>
+<li>počítať externé impulzy, ak to podporuje.</li>
+</ul>
+<p><strong>Nie každá činnosť časovača potrebuje ISR.</strong> Niektoré výstupy vie hardvér ovládať priamo.</p>
+<hr />
+<h2>6. AVR: výpočet intervalu časovača</h2>
+<p><strong>Čas: 27 – 32 min</strong></p>
+<p>Arduino Uno R3 používa ATmega328P s hodinovou frekvenciou <strong>16 MHz</strong>.</p>
+<p>Má tri časovače:</p>
+<table>
+<thead>
+<tr>
+<th>Časovač</th>
+<th>Šírka</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Timer0</td>
+<td>8 bitov</td>
+</tr>
+<tr>
+<td>Timer1</td>
+<td>16 bitov</td>
+</tr>
+<tr>
+<td>Timer2</td>
+<td>8 bitov</td>
+</tr>
+</tbody>
+</table>
+<p>V bežnom Arduino jadre pre Uno sa Timer0 používa aj na časovú základňu pre <code>millis()</code>, <code>micros()</code> a <code>delay()</code>.</p>
+<p><strong>Zmena nastavenia časovača môže ovplyvniť ďalšie funkcie alebo knižnice, ktoré ho používajú.</strong></p>
+<h3>Príklad: Timer1 v režime CTC</h3>
+<p>V režime CTC sa počítadlo po dosiahnutí nastavenej hornej hodnoty vracia na začiatok.</p>
+<p>Pre jednoduché počítanie od 0 po hodnotu <code>OCR1A</code> platí:</p>
+<p><strong>Vzťah:</strong> <code>T = ((OCR1A + 1) × N) / f</code></p>
+<p>Kde:</p>
+<ul>
+<li>(T) je interval porovnávacích zhôd,</li>
+<li>(N) je delička,</li>
+<li>(f) je frekvencia hodín časovača pred deličkou,</li>
+<li><code>OCR1A</code> je nastavená porovnávacia hodnota.</li>
+</ul>
+<h3>Výpočet intervalu 1 sekunda</h3>
+<p>Zvolíme:</p>
+<ul>
+<li>frekvenciu (f = 16,000,000) Hz,</li>
+<li>deličku (N = 1024).</li>
+</ul>
+<p>Frekvencia počítania bude:</p>
+<p><strong>Frekvencia počítania:</strong> <code>f = 16 000 000 / 1024 = 15 625 Hz</code></p>
+<p>Na jednu sekundu potrebujeme 15 625 krokov.</p>
+<p>Keďže počítame aj hodnotu nula:</p>
+<p><strong>Porovnávacia hodnota:</strong> <code>OCR1A = 15 625 − 1 = 15 624</code></p>
+<p><strong>Výsledok:</strong> Pri tomto nastavení vzniká porovnávacia zhoda nominálne každú sekundu.</p>
+<p>Presnosť reálneho času závisí aj od presnosti hodinového zdroja.</p>
+<h3>Prepojenie s ISR</h3>
+<p>Ak povolíme príslušné prerušenie, ISR sa môže spustiť pri každej zhode:</p>
+<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button></div><pre class="code-sample language-cpp"><code class="language-cpp">ISR(TIMER1_COMPA_vect) {
+  // Krátka obsluha porovnávacej zhody Timer1.
+}
+</code></pre><p class="code-status" role="status" aria-live="polite"></p>
+<p>Ide o ukážku zápisu pre AVR, nie o kompletný program. Časovač aj prerušenie by bolo potrebné najprv nakonfigurovať.</p>
+<hr />
+<h2>7. Časovanie na ESP32</h2>
+<p><strong>Čas: 32 – 36 min</strong></p>
+<p>Pri použití Arduino frameworku môžeme na ESP32 použiť rovnaký princíp s <code>millis()</code>.</p>
+<p>ESP32 poskytuje aj ďalšie možnosti:</p>
+<table>
+<thead>
+<tr>
+<th>Mechanizmus</th>
+<th>Typické použitie</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>millis()</code></td>
+<td>Jednoduché pravidelné úlohy</td>
+</tr>
+<tr>
+<td>Hardvérový časovač</td>
+<td>Časovanie pomocou periférie</td>
+</tr>
+<tr>
+<td><code>esp_timer</code></td>
+<td>Softvérové časové služby s mikrosekundovým rozhraním</td>
+</tr>
+<tr>
+<td>Časovanie úloh FreeRTOS</td>
+<td>Uspávanie a pravidelné vykonávanie úloh</td>
+</tr>
+</tbody>
+</table>
+<p>Konkrétny počet časovačov a ich vlastnosti závisia od variantu ESP32.</p>
+<h3>Je callback vždy ISR?</h3>
+<p>Nie.</p>
+<p>Pri <code>esp_timer</code> sa callbacky bežne vykonávajú v systémovej úlohe. Niektoré konfigurácie podporujú aj obsluhu v kontexte ISR.</p>
+<p><strong>Pravidlá pre obslužnú funkciu vyberáme podľa toho, v akom kontexte sa skutočne vykonáva.</strong></p>
+<h3><code>delay()</code> na ESP32</h3>
+<p>V Arduino frameworku pre ESP32 <code>delay()</code> typicky uspí volajúcu úlohu a umožní beh ďalších úloh.</p>
+<p>Kód za <code>delay()</code> v tej istej úlohe však stále čaká.</p>
+<p><strong>Otázka pre žiakov:</strong><br />
+Ak iné úlohy pokračujú, znamená to, že hlavná slučka už nie je blokovaná?</p>
+<p><em>Odpoveď: Nie. Blokovaná je volajúca úloha, hoci ostatné úlohy môžu pracovať.</em></p>
+<hr />
+<h2>8. Raspberry Pi: časovanie v Pythone</h2>
+<p><strong>Čas: 36 – 40 min</strong></p>
+<p>Raspberry Pi s Linuxom používa operačný systém, ktorý prideľuje procesorový čas viacerým procesom a vláknam.</p>
+<h3>Blokujúce čakanie</h3>
+<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button></div><pre class="code-sample language-python"><code class="language-python">from time import sleep
+
+while True:
+    print(&quot;Pravidelna sprava&quot;)
+    sleep(1)
+</code></pre><p class="code-status" role="status" aria-live="polite"></p>
+<p><code>sleep(1)</code> pozastaví volajúce vlákno. Jeho pokračovanie sa môže oneskoriť podľa zaťaženia systému.</p>
+<p>Navyše interval medzi výpismi zahŕňa aj čas spracovania slučky.</p>
+<h3>Plánovanie pomocou monotónnych hodín</h3>
+<p>Na meranie intervalov používame napríklad <code>time.monotonic()</code>. Tieto hodiny nie sú ovplyvnené bežnou zmenou systémového dátumu a času.</p>
+<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button></div><pre class="code-sample language-python"><code class="language-python">from time import monotonic, sleep
+
+interval = 1.0
+dalsiTermin = monotonic() + interval
+
+while True:
+    teraz = monotonic()
+
+    if teraz &gt;= dalsiTermin:
+        print(&quot;Pravidelna sprava&quot;)
+
+        dalsiTermin += interval
+
+        # Pri veľkom oneskorení preskočíme zmeškané termíny.
+        if dalsiTermin &lt;= teraz:
+            dalsiTermin = teraz + interval
+
+    sleep(0.01)
+</code></pre><p class="code-status" role="status" aria-live="polite"></p>
+<p>Krátky <code>sleep()</code> obmedzuje zbytočné zaťažovanie procesora, ale zároveň pridáva oneskorenie ku kontrole termínu.</p>
+<h3>Obmedzenie Linuxu</h3>
+<p>Bežný Python program na Raspberry Pi s bežným Linuxom <strong>negarantuje presný okamih vykonania</strong>.</p>
+<p>Pre presné krátke impulzy alebo stabilný signál je vhodné použiť podporovanú hardvérovú perifériu alebo samostatný mikrokontrolér.</p>
+<hr />
+<h2>9. Úloha pre žiakov</h2>
+<p><strong>Čas: 40 – 43 min</strong></p>
+<h3>A. Perióda blikania</h3>
+<p>LED každých 250 ms zmení svoj stav.</p>
+<p><strong>Otázka:</strong> Aká je celá perióda blikania a frekvencia?</p>
+<section class="teacher-note"><p><strong>Riešenie:</strong></p>
+<ul>
+<li>svieti 250 ms a nesvieti 250 ms,</li>
+<li>perióda je <strong>500 ms = 0,5 s</strong>,</li>
+<li>frekvencia je <strong>2 Hz</strong>.</li>
+</ul>
+</section><h3>B. Výpočet časovača</h3>
+<p>Časovač má:</p>
+<ul>
+<li>vstupnú frekvenciu 16 MHz,</li>
+<li>deličku 64,</li>
+<li>v režime CTC počíta od 0 po 249.</li>
+</ul>
+<p>Vypočítajte interval porovnávacích zhôd.</p>
+<p><strong>Výpočet:</strong> <code>T = ((249 + 1) × 64) / 16 000 000 = 0,001 s</code></p>
+<p><strong>Výsledok: 1 ms.</strong></p>
+<h3>C. Nájdi problém</h3>
+<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button></div><pre class="code-sample language-cpp"><code class="language-cpp">if (millis() - poslednyCas &gt;= 1000) {
+  Serial.println(&quot;Ubehla sekunda&quot;);
+}
+</code></pre><p class="code-status" role="status" aria-live="polite"></p>
+<p><strong>Otázka:</strong> Čo chýba?</p>
+<p><strong>Odpoveď:</strong> Aktualizácia premennej <code>poslednyCas</code>. Po uplynutí intervalu by sa správa vypisovala pri každom ďalšom priechode slučkou.</p>
+<hr />
+<h2>10. Overenie vedomostí a zápis</h2>
+<p><strong>Čas: 43 – 45 min</strong></p>
+<table>
+<thead>
+<tr>
+<th>Otázka</th>
+<th>Odpoveď</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Čo blokuje <code>delay()</code>?</td>
+<td>Pokračovanie volajúceho programu alebo úlohy.</td>
+</tr>
+<tr>
+<td>Čo vracia <code>millis()</code>?</td>
+<td>Počet milisekúnd od začiatku vykonávania programu, s pretočením rozsahu.</td>
+</tr>
+<tr>
+<td>Na čo slúži delička?</td>
+<td>Znižuje frekvenciu impulzov privádzaných do počítadla.</td>
+</tr>
+<tr>
+<td>Čo je porovnávacia zhoda?</td>
+<td>Zhoda hodnoty počítadla s nastavenou porovnávacou hodnotou.</td>
+</tr>
+<tr>
+<td>Potrebuje časovač vždy ISR?</td>
+<td>Nie.</td>
+</tr>
+<tr>
+<td>Garantuje Python na bežnom Linuxe presné časovanie?</td>
+<td>Nie.</td>
+</tr>
+</tbody>
+</table>
+<h3>Zápis do zošita</h3>
+<blockquote>
+<p><strong>Blokujúce časovanie</strong> pozastaví pokračovanie volajúceho kódu.<br />
+<strong>Neblokujúce časovanie</strong> kontroluje uplynutý čas a umožňuje vykonávať ďalšie úlohy.<br />
+Pri <code>millis()</code> vyhodnocujeme interval pomocou rozdielu neznamienkových časových hodnôt.<br />
+<strong>Hardvérový časovač</strong> počíta hodinové impulzy nezávisle od hlavnej slučky.<br />
+<strong>Delička</strong> znižuje frekvenciu počítania.<br />
+Časovač môže pri pretečení alebo porovnávacej zhode vyvolať prerušenie.<br />
+Presnosť časovania závisí od hodinového zdroja, použitého mechanizmu a oneskorenia spracovania.</p>
+</blockquote>
+<p><strong>Nasledujúca hodina: Watchdog timer — detekcia zaseknutia programu a automatické obnovenie činnosti.</strong></p>
+</article>
+    <nav class="lesson-navigation" aria-label="Prednášky tematického celku 4"><a href="4.6%20Debouncing%20-%20potlacenie%20zakmitov.html">← Predchádzajúca: Debouncing</a><a href="4.8%20Watchdog%20timer.html">Nasledujúca: Watchdog timer →</a></nav>
+    <footer><a href="index.html">Späť na osnovu predmetu</a> · <a href="../index.html">Všetky kurzy</a></footer>
+  </main>
+  <script>
+    document.addEventListener("click", async (event) => {
+      const button = event.target.closest("[data-copy-code]");
+      if (!button) return;
+
+      const codeBlock = button.parentElement.nextElementSibling;
+      const code = codeBlock.querySelector("code");
+      const status = codeBlock.nextElementSibling;
+      try {
+        await navigator.clipboard.writeText(code.innerText);
+        status.textContent = "Kód bol skopírovaný do schránky.";
+      } catch {
+        status.textContent = "Kopírovanie nie je dostupné. Označte kód a skopírujte ho pomocou Ctrl+C.";
+      }
+    });
+  </script>
+  <script src="../02_C/00_Prostredie_a_struktura_programu/c-lecture-controls.js" defer></script>
+  <script type="module" src="../lesson-remote.js"></script>
+</body>
+</html>

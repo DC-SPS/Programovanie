@@ -1,0 +1,676 @@
+<!doctype html>
+<html lang="sk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101827">
+  <meta name="description" content="Automatický dohľad nad chodom zariadenia a obnova po zablokovaní programu.">
+  <title>4.8 Watchdog timer | Výpočtová technika</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f7f8fa;
+      --fg: #1c2330;
+      --card: #fff;
+      --mut: #5b6678;
+      --acc: #1f6feb;
+      --line: #d9dee7;
+      --note: #fff4d6;
+      --good: #18743a;
+      --bad: #b42318;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        color-scheme: dark;
+        --bg: #12161d;
+        --fg: #e6eaf1;
+        --card: #1b212b;
+        --mut: #9aa6b8;
+        --acc: #5aa2ff;
+        --line: #2d3644;
+        --note: #3a3017;
+        --good: #63d58a;
+        --bad: #ff8a80;
+      }
+    }
+    :root[data-theme="light"] {
+      color-scheme: light;
+      --bg: #f7f8fa;
+      --fg: #1c2330;
+      --card: #fff;
+      --mut: #5b6678;
+      --acc: #1f6feb;
+      --line: #d9dee7;
+      --note: #fff4d6;
+      --good: #18743a;
+      --bad: #b42318;
+    }
+    :root[data-theme="dark"] {
+      color-scheme: dark;
+      --bg: #12161d;
+      --fg: #e6eaf1;
+      --card: #1b212b;
+      --mut: #9aa6b8;
+      --acc: #5aa2ff;
+      --line: #2d3644;
+      --note: #3a3017;
+      --good: #63d58a;
+      --bad: #ff8a80;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-padding-top: 1rem; }
+    body { margin: 0; background: var(--bg); color: var(--fg); font: 16px/1.65 system-ui, -apple-system, "Segoe UI", sans-serif; }
+    a { color: var(--acc); }
+    .global-course-nav { display: flex; flex-wrap: wrap; gap: .55rem; align-items: center; width: min(100% - 2rem, 1000px); margin: .75rem auto 0; font: 600 .9rem/1.4 system-ui, -apple-system, "Segoe UI", sans-serif; }
+    .global-course-nav a { display: inline-block; padding: .4rem .7rem; border: 1px solid var(--line); border-radius: .55rem; text-decoration: none; color: inherit; background: var(--card); }
+    .global-course-nav a:hover { text-decoration: underline; }
+    .global-course-nav a:focus-visible, a:focus-visible, button:focus-visible, summary:focus-visible, select:focus-visible, input:focus-visible { outline: 3px solid var(--acc); outline-offset: 3px; }
+    main { width: min(100% - 2rem, 860px); margin: auto; padding: 16px 0 3rem; }
+    main :is(p, li, td, dd, blockquote) { text-align: justify; text-justify: inter-word; }
+    header { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: .6rem; }
+    .crumb, .muted, .caption { color: var(--mut); }
+    h1 { font-size: clamp(1.8rem, 5vw, 2.6rem); line-height: 1.2; margin: .8rem 0; }
+    h2 { margin-top: 2rem; font-size: 1.4rem; }
+    h3 { margin-top: 1.25rem; font-size: 1.1rem; }
+    .lead { font-size: 1.08rem; }
+    .subtitle { color: var(--mut); }
+    .tags { display: flex; flex-wrap: wrap; gap: .45rem; margin: 1rem 0; }
+    .tag { padding: 2px 9px; border: 1px solid var(--line); border-radius: 6px; background: var(--line); font-size: 13px; }
+    .card, .teacher-note, .video-card, .quiz { margin: 14px 0; padding: 14px 17px; border: 1px solid var(--line); border-radius: 12px; background: var(--card); }
+    .teacher-note { display: none; background: var(--note); }
+    body.teacher .teacher-note { display: block; }
+    .teacher-note strong { display: block; margin-bottom: .3rem; }
+    .mode { display: inline-flex; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+    .mode button { padding: 6px 11px; border: 0; background: var(--card); color: var(--fg); font: inherit; cursor: pointer; }
+    .mode button.on { background: var(--acc); color: #fff; }
+    .pdf-export { margin-left: .5rem; padding: .4rem .7rem; border: 1px solid var(--line); border-radius: .55rem; background: var(--card); color: var(--fg); font: 600 .9rem/1.4 system-ui, -apple-system, "Segoe UI", sans-serif; cursor: pointer; }
+    .code-actions { display: flex; flex-wrap: wrap; align-items: center; gap: .55rem; margin: .8rem 0 .35rem; }
+    .copy-btn, .online-editor { display: inline-block; padding: .4rem .7rem; border: 1px solid var(--line); border-radius: .5rem; font: 600 .9rem/1.4 system-ui, -apple-system, "Segoe UI", sans-serif; text-decoration: none; }
+    .copy-btn { background: var(--acc); border-color: var(--acc); color: #fff; cursor: pointer; }
+    .online-editor { background: var(--card); color: var(--fg); }
+    .code-status { min-height: 1.4em; margin: 0 0 .75rem; color: var(--mut); font-size: .85rem; }
+    .lead-card { margin: 14px 0; padding: 14px 17px; border: 1px solid var(--line); border-radius: 12px; background: var(--card); }
+    .safety-notice, .safety-reminder { margin: 1rem 0; padding: 14px 17px; border: 1px solid var(--line); border-left: 5px solid var(--acc); border-radius: 12px; background: var(--note); }
+    .safety-notice strong, .safety-reminder strong { display: block; margin-bottom: .25rem; }
+    .note { background: var(--note); }
+    .scroll { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { padding: .65rem .7rem; border: 1px solid var(--line); text-align: left; vertical-align: top; }
+    th { background: var(--card); }
+    td:first-child { white-space: nowrap; font-weight: 700; }
+    pre { margin: .65rem 0 1rem; padding: 1rem; border-radius: 9px; overflow-x: auto; background: #0f172a; color: #e2e8f0; font: 14px/1.55 ui-monospace, SFMono-Regular, Consolas, monospace; }
+    code { font-family: ui-monospace, SFMono-Regular, Consolas, monospace; }
+    :not(pre) > code { padding: .08rem .28rem; border-radius: 4px; background: color-mix(in srgb, var(--line) 55%, transparent); }
+    .output { border-left: 4px solid var(--good); }
+    .sources { margin-top: 2rem; padding: 1rem 1.1rem; border: 1px solid var(--line); border-radius: 12px; background: var(--card); }
+    .sources h2 { margin-top: 0; }
+    .sources li { margin: .4rem 0; }
+    .glossary-list { display: grid; grid-template-columns: minmax(8rem, .35fr) 1fr; gap: .3rem .8rem; }
+    .glossary-list dt { font-weight: 750; }
+    .glossary-list dd { margin: 0; }
+    footer { margin-top: 2rem; padding-top: 1rem; border-top: 1px solid var(--line); color: var(--mut); font-size: 14px; }
+    .speech-bubble { position: relative; padding: .85rem 1rem !important; border: 2px solid var(--acc) !important; border-radius: 1.2rem !important; background: color-mix(in srgb, var(--acc) 12%, var(--card)) !important; box-shadow: 0 4px 18px color-mix(in srgb, var(--acc) 18%, transparent); }
+    .speech-bubble::after { position: absolute; bottom: -.65rem; left: 1.2rem; width: 1rem; height: 1rem; border-right: 2px solid var(--acc); border-bottom: 2px solid var(--acc); background: color-mix(in srgb, var(--acc) 12%, var(--card)); content: ""; transform: rotate(45deg); }
+    .narration-target { transition: outline-color .16s ease, background-color .16s ease; text-align: justify; text-justify: inter-word; }
+    .narration-target:hover { outline: 2px solid var(--acc); outline-offset: 3px; background-color: color-mix(in srgb, var(--acc) 8%, transparent); cursor: pointer; }
+    @media (max-width: 620px) { main { width: min(100% - 1.2rem, 860px); } td:first-child { white-space: normal; } }
+    @media (max-width: 520px) { .glossary-list { grid-template-columns: 1fr; gap: .1rem; } .glossary-list dd { margin-bottom: .5rem; } }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; } }
+    @media print {
+      .global-course-nav, .mode, .pdf-export, .code-actions, .code-status, .narration-controls, .narration-option, .lesson-side-panel { display: none !important; }
+      body { background: #fff !important; color: #111 !important; color-scheme: light !important; font-size: 11pt; }
+      main { width: auto; max-width: none; margin: 0; padding: 12mm 14mm; }
+      .teacher-note { display: block; }
+      a[href^="http://"], a[href^="https://"] { color: inherit !important; text-decoration: none !important; }
+      a[href^="http://"]::after, a[href^="https://"]::after { content: none !important; }
+      .card, .teacher-note, .sources, .safety-notice, .safety-reminder, pre, table, blockquote { break-inside: avoid; page-break-inside: avoid; }
+      pre { white-space: pre-wrap; overflow: visible; }
+    }
+    @page { size: A4; margin: 0; }
+      .lesson-navigation { display:flex; flex-wrap:wrap; justify-content:space-between; gap:.7rem; margin:2rem 0 1rem; padding:1rem 0; border-top:1px solid var(--line); }
+    .lesson-navigation a { display:inline-block; padding:.45rem .7rem; border:1px solid var(--line); border-radius:.55rem; background:var(--card); text-decoration:none; }
+  </style>
+  <link rel="stylesheet" href="../02_C/00_Prostredie_a_struktura_programu/c-lecture-controls.css">
+  <script src="../theme.js" defer></script>
+  <script src="../lesson-top.js" defer></script>
+</head>
+<body>
+  <nav class="global-course-nav" aria-label="Navigácia kurzov">
+    <a href="index.html">Prehľad predmetu</a>
+    <a href="../index.html">Všetky kurzy</a>
+  </nav>
+  <aside class="lesson-side-panel" aria-label="Ovládanie hodiny a čítania">
+    <section class="narration-controls" aria-label="Čítanie prednášky">
+      <button id="play-reading" type="button" aria-label="Prehrať">▶ Prehrať</button>
+      <button id="stop-reading" type="button" aria-label="Zastaviť čítanie" disabled>■ Zastaviť</button>
+      <button id="pause-reading" type="button" aria-label="Pozastaviť čítanie" disabled>⏸ Pozastaviť</button>
+      <button id="replay-reading" type="button" aria-label="Prehrať vybrané časti znova" disabled>↻ Prehrať znova</button>
+      <label class="narration-speed" for="narration-speed">Rýchlosť čítania
+        <select id="narration-speed" aria-label="Rýchlosť hlasového čítania">
+          <option value="0.25">0,25×</option>
+          <option value="0.5">0,5×</option>
+          <option value="0.75">0,75×</option>
+          <option value="1" selected>1× – normálna</option>
+          <option value="1.25">1,25×</option>
+          <option value="1.5">1,5×</option>
+          <option value="1.75">1,75×</option>
+          <option value="2">2×</option>
+        </select>
+      </label>
+      <p class="page-language-help">Jazyk zmeníte priamo v Google Translate: kliknite na názov cieľového jazyka v hornej lište a vyberte maďarčinu, ukrajinčinu alebo iný jazyk.</p>
+      <label class="narration-voice" for="narration-voice"><span class="narration-voice-label">Hlas</span>
+        <select id="narration-voice" aria-label="Vyberte hlas na čítanie"><option value="">Automaticky – slovenský hlas</option></select>
+      </label>
+      <label class="narration-volume" for="narration-volume">
+        <span class="narration-volume-heading"><span>Hlasitosť čítania</span><output id="narration-volume-value" for="narration-volume">100 %</output></span>
+        <input id="narration-volume" type="range" min="0" max="100" step="5" value="100" aria-label="Hlasitosť hlasového čítania">
+        <span class="narration-volume-help">Upravuje hlasitosť čítania, nie celkovú hlasitosť zariadenia.</span>
+      </label>
+      <div id="reading-status" class="narration-status" role="status" aria-live="polite"></div>
+    </section>
+  </aside>
+  <main>
+    <aside class="safety-notice" aria-label="Začiatok hodiny a kontrola pracoviska">
+      <strong>Začíname kontrolou pracoviska:</strong>
+      Skontrolujte lavicu, stoličku, pridelený počítač a stav príslušenstva. Poškodenie, chýbajúcu časť alebo inú závadu ihneď oznámte vyučujúcemu a stručný súhrn pošlite cez EduPage podľa jeho pokynov. Poškodené, nefunkčné ani nebezpečné zariadenie nepoužívajte.
+    </aside>
+    <header>
+      <span class="crumb"><a href="index.html">Výpočtová technika</a> › Vstupno-výstupný systém › 4.8</span>
+      <div class="mode" role="group" aria-label="Zobrazenie stránky">
+        <button id="student-mode" class="on" type="button" aria-pressed="true">Žiak</button>
+        <button id="teacher-mode" type="button" aria-pressed="false">Učiteľ</button>
+      </div>
+      <button class="pdf-export" type="button" onclick="window.print()">Exportovať do PDF</button>
+    </header>
+    <h1>4.8 Watchdog timer</h1>
+    <p class="lead subtitle">Automatický dohľad nad chodom zariadenia a obnova po zablokovaní programu.</p>
+    <div class="tags" aria-label="Témy prednášky"><span class="tag">Tematický celok 4</span><span class="tag">Výpočtová technika</span><span class="tag">AVR · Arduino · ESP32 · Raspberry Pi</span><span class="tag">45 minút</span></div>
+    <article class="lesson-content"><p><strong>Predmet:</strong> Výpočtová technika<br />
+<strong>Ročník:</strong> tretí, stredná škola<br />
+<strong>Trvanie:</strong> 45 minút<br />
+<strong>Platformy:</strong> AVR, Arduino, ESP32 a Raspberry Pi<br />
+<strong>Nadväznosť:</strong> Časovače a časovanie</p>
+<h2>Ciele hodiny</h2>
+<p>Po hodine má žiak vedieť:</p>
+<ul>
+<li>vysvetliť účel watchdog časovača,</li>
+<li>opísať princíp pravidelného potvrdzovania činnosti programu,</li>
+<li>rozpoznať správne a nesprávne umiestnenie obsluhy watchdogu,</li>
+<li>vysvetliť rozdiel medzi resetom a odstránením chyby,</li>
+<li>porovnať watchdog na mikrokontroléri a počítači s Linuxom.</li>
+</ul>
+<h2>Časový plán</h2>
+<table>
+<thead>
+<tr>
+<th>Čas</th>
+<th>Obsah</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0 – 5 min</td>
+<td>Motivácia: čo ak sa program zasekne?</td>
+</tr>
+<tr>
+<td>5 – 12 min</td>
+<td>Princíp watchdogu</td>
+</tr>
+<tr>
+<td>12 – 19 min</td>
+<td>Pravidlá používania</td>
+</tr>
+<tr>
+<td>19 – 29 min</td>
+<td>AVR a Arduino: praktická ukážka</td>
+</tr>
+<tr>
+<td>29 – 35 min</td>
+<td>ESP32</td>
+</tr>
+<tr>
+<td>35 – 39 min</td>
+<td>Raspberry Pi</td>
+</tr>
+<tr>
+<td>39 – 43 min</td>
+<td>Úlohy a diagnostika</td>
+</tr>
+<tr>
+<td>43 – 45 min</td>
+<td>Overenie a zápis</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>1. Čo ak sa program zasekne?</h2>
+<p><strong>Čas: 0 – 5 min</strong></p>
+<p>Predstavme si zariadenie, ktoré meria teplotu v skleníku a ovláda ventilátor.</p>
+<p>Program sa dostane do nekonečného čakania:</p>
+<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button></div><pre class="code-sample language-cpp"><code class="language-cpp">while (!senzorPripraveny()) {
+  // Čakanie bez časového limitu.
+}
+</code></pre><p class="code-status" role="status" aria-live="polite"></p>
+<p>Ak snímač pre poruchu nikdy neohlási pripravenosť:</p>
+<ul>
+<li>program nepokračuje,</li>
+<li>nové meranie sa nevykoná,</li>
+<li>riadenie ventilátora sa neaktualizuje.</li>
+</ul>
+<p>Pri zariadení nemusí byť človek, ktorý stlačí reset.</p>
+<p><strong>Watchdog timer umožňuje obnoviť činnosť zariadenia, keď program prestane správne postupovať.</strong></p>
+<h3>Otázka pre triedu</h3>
+<p>Aké zariadenia by mali vedieť obnoviť svoju činnosť bez zásahu človeka?</p>
+<p><em>Možné odpovede: meteorologická stanica, zavlažovanie, sieťový prvok, vzdialený snímač alebo domáca automatizácia.</em></p>
+<hr />
+<h2>2. Princíp watchdog časovača</h2>
+<p><strong>Čas: 5 – 12 min</strong></p>
+<p><strong>Watchdog timer, skrátene WDT, je dohľadový časovač.</strong></p>
+<p>Program musí pred uplynutím nastaveného intervalu pravidelne potvrdiť, že pracuje správne.</p>
+<p>Táto operácia sa označuje ako:</p>
+<ul>
+<li>obnovenie watchdogu,</li>
+<li>obsluha watchdogu,</li>
+<li>„kŕmenie“ watchdogu,</li>
+<li><em>feed</em>, <em>kick</em> alebo <em>refresh</em>.</li>
+</ul>
+<h3>Normálna činnosť</h3>
+<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button></div><pre class="code-sample language-text"><code class="language-text">Spustenie watchdogu
+        ↓
+Program vykoná potrebné úlohy
+        ↓
+Potvrdí správny priebeh
+        ↓
+Časový interval sa začne odznova
+        ↓
+Program pokračuje
+</code></pre><p class="code-status" role="status" aria-live="polite"></p>
+<h3>Zaseknutie programu</h3>
+<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button></div><pre class="code-sample language-text"><code class="language-text">Program sa zasekne
+        ↓
+Nepotvrdí činnosť
+        ↓
+Uplynie časový limit
+        ↓
+Watchdog vyvolá nastavenú reakciu
+</code></pre><p class="code-status" role="status" aria-live="polite"></p>
+<p>Typickou reakciou je <strong>reset zariadenia</strong>. Niektoré watchdog mechanizmy umožňujú aj prerušenie, diagnostický výpis alebo inú reakciu.</p>
+<h3>Príklad s intervalom dve sekundy</h3>
+<p>Program potvrdzuje činnosť približne každých 100 ms.</p>
+<p>Ak sa zasekne, potvrdenia prestanú prichádzať. Približne dve sekundy po poslednom potvrdení watchdog zasiahne.</p>
+<p>Časový limit má určitú toleranciu podľa použitého hardvéru.</p>
+<h3>Dôležité rozlíšenie</h3>
+<p><strong>Watchdog neopravuje chybu programu. Resetuje alebo inak obnoví systém, ktorý prestal správne pracovať.</strong></p>
+<p>Ak sa po každom štarte zopakuje rovnaká chyba, zariadenie môže skončiť v opakovanom resetovaní.</p>
+<hr />
+<h2>3. Pravidlá správneho používania</h2>
+<p><strong>Čas: 12 – 19 min</strong></p>
+<h3>Pravidlo 1: Potvrdzujeme vykonanie práce</h3>
+<p>Potvrdenie má znamenať:</p>
+<blockquote>
+<p>Dôležité úlohy prebehli a program môže pokračovať.</p>
+</blockquote>
+<p>Vhodný princíp:</p>
+<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button></div><pre class="code-sample language-cpp"><code class="language-cpp">nacitajVstupy();
+aktualizujRiadenie();
+nastavVystupy();
+
+obnovWatchdog();
+</code></pre><p class="code-status" role="status" aria-live="polite"></p>
+<p>Samotné potvrdenie však ešte neoveruje správnosť výsledkov. Program musí podľa potreby kontrolovať aj platnosť údajov a stav zariadenia.</p>
+<h3>Pravidlo 2: Watchdog neobsluhujeme bezpodmienečne z ISR</h3>
+<p>Nevhodný princíp:</p>
+<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button></div><pre class="code-sample language-cpp"><code class="language-cpp">ISR(TIMER1_COMPA_vect) {
+  obnovWatchdog();
+}
+</code></pre><p class="code-status" role="status" aria-live="polite"></p>
+<p>Hlavný program sa môže zaseknúť, ale časovačové prerušenie ďalej obnovuje watchdog.</p>
+<p><strong>Watchdog potom nedokáže odhaliť zastavenie hlavného programu.</strong></p>
+<p>Podobný problém vznikne, keď watchdog obnovuje samostatná úloha bez kontroly ostatných dôležitých úloh.</p>
+<h3>Pravidlo 3: Zvolíme primeraný časový limit</h3>
+<table>
+<thead>
+<tr>
+<th>Príliš krátky limit</th>
+<th>Príliš dlhý limit</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Resetuje aj správne fungujúci program</td>
+<td>Poruchu odhalí neskoro</td>
+</tr>
+<tr>
+<td>Nezohľadní legitímne dlhšie spracovanie</td>
+<td>Zariadenie zostane dlho bez riadenia</td>
+</tr>
+</tbody>
+</table>
+<p>Limit vyberáme podľa najdlhšieho očakávaného správneho priebehu a požadovaného času reakcie na poruchu.</p>
+<p>Dlhú operáciu je často lepšie rozdeliť na menšie kroky, medzi ktorými vieme overiť postup.</p>
+<h3>Pravidlo 4: Aj čakanie má mať časový limit</h3>
+<p>Najprv sa snažíme zabrániť nekonečnému čakaniu:</p>
+<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button></div><pre class="code-sample language-cpp"><code class="language-cpp">unsigned long zaciatok = millis();
+
+while (!senzorPripraveny()) {
+  if (millis() - zaciatok &gt;= 200) {
+    // Ohlásenie chyby a ukončenie čakania.
+    break;
+  }
+}
+</code></pre><p class="code-status" role="status" aria-live="polite"></p>
+<p><strong>Timeout operácie a watchdog sa dopĺňajú.</strong> Timeout rieši konkrétne čakanie, watchdog dohliada na postup systému.</p>
+<h3>Pravidlo 5: Po resete nastavíme bezpečný stav</h3>
+<p>Program musí pri štarte vhodne inicializovať výstupy a overiť stav zariadenia.</p>
+<p>Počas resetu nemusia GPIO udržiavať predchádzajúcu úroveň. Pri riadení motora alebo ohrievača preto bezpečný stav nesmie závisieť iba od programu.</p>
+<hr />
+<h2>4. AVR a Arduino: praktická ukážka</h2>
+<p><strong>Čas: 19 – 29 min</strong></p>
+<h3>Watchdog na ATmega328P</h3>
+<p>Klasické Arduino Uno R3 používa mikrokontrolér ATmega328P.</p>
+<p>Jeho watchdog využíva samostatný interný oscilátor, takže jeho počítanie nie je závislé od vykonávania hlavnej slučky.</p>
+<p>Knižnica AVR poskytuje:</p>
+<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button></div><pre class="code-sample language-cpp"><code class="language-cpp">#include &lt;avr/wdt.h&gt;
+</code></pre><p class="code-status" role="status" aria-live="polite"></p>
+<table>
+<thead>
+<tr>
+<th>Funkcia alebo konštanta</th>
+<th>Význam</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>wdt_enable(...)</code></td>
+<td>Zapnutie watchdogu a nastavenie intervalu</td>
+</tr>
+<tr>
+<td><code>wdt_reset()</code></td>
+<td>Obnovenie watchdogu</td>
+</tr>
+<tr>
+<td><code>wdt_disable()</code></td>
+<td>Vypnutie watchdogu, ak to konfigurácia umožňuje</td>
+</tr>
+<tr>
+<td><code>WDTO_2S</code></td>
+<td>Nominálny interval približne dve sekundy</td>
+</tr>
+</tbody>
+</table>
+<p><strong><code>wdt_reset()</code> neresetuje mikrokontrolér. Obnoví odpočítavanie watchdogu.</strong></p>
+<h3>Zadanie</h3>
+<ul>
+<li>LED pravidelne bliká.</li>
+<li>Hlavný program priebežne obnovuje watchdog.</li>
+<li>Stlačením tlačidla zámerne vyvoláme zaseknutie.</li>
+<li>Watchdog následne resetuje dosku.</li>
+</ul>
+<h3>Zapojenie</h3>
+<ul>
+<li>Tlačidlo medzi <strong>D2 a GND</strong>.</li>
+<li>Použijeme zabudovanú LED.</li>
+<li>Externé záťaže počas ukážky nepripájame.</li>
+</ul>
+<h3>Program pre Arduino Uno R3</h3>
+<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button></div><pre class="code-sample language-cpp"><code class="language-cpp">#include &lt;avr/wdt.h&gt;
+
+const byte TLACIDLO = 2;
+
+unsigned long poslednePrepnutie = 0;
+bool ledSvieti = false;
+
+void setup() {
+  // Bežná inicializácia pre Uno s aktuálnym bootloaderom.
+  MCUSR = 0;
+  wdt_disable();
+
+  pinMode(TLACIDLO, INPUT_PULLUP);
+  pinMode(LED_BUILTIN, OUTPUT);
+  digitalWrite(LED_BUILTIN, LOW);
+
+  Serial.begin(9600);
+  Serial.println(&quot;Start programu&quot;);
+
+  poslednePrepnutie = millis();
+
+  wdt_enable(WDTO_2S);
+}
+
+void loop() {
+  unsigned long teraz = millis();
+
+  if (teraz - poslednePrepnutie &gt;= 250) {
+    poslednePrepnutie = teraz;
+    ledSvieti = !ledSvieti;
+
+    digitalWrite(
+      LED_BUILTIN,
+      ledSvieti ? HIGH : LOW
+    );
+  }
+
+  if (digitalRead(TLACIDLO) == LOW) {
+    Serial.println(&quot;Simulovane zaseknutie&quot;);
+
+    while (true) {
+      // Watchdog tu zámerne neobnovujeme.
+    }
+  }
+
+  // Program úspešne prešiel kontrolovanou časťou slučky.
+  wdt_reset();
+}
+</code></pre><p class="code-status" role="status" aria-live="polite"></p>
+<h3>Očakávaný priebeh</h3>
+<ol>
+<li>Po zapnutí sa vypíše <code>Start programu</code>.</li>
+<li>LED mení stav približne každých 250 ms.</li>
+<li>Po stlačení tlačidla program uviazne v nekonečnej slučke.</li>
+<li>Watchdog sa prestane obnovovať.</li>
+<li>Približne po dvoch sekundách od posledného obnovenia nastane reset.</li>
+<li>Program sa spustí znova.</li>
+</ol>
+<p><strong>Ak tlačidlo zostane stlačené, program sa po štarte opäť zasekne.</strong> Pre ukážku ho krátko stlačíme a uvoľníme.</p>
+<h3>Poznámka k bootloaderu</h3>
+<p>Ukážka predpokladá Uno R3 s aktuálnym bootloaderom, napríklad Optiboot. Niektoré staršie bootloadery môžu po watchdog resete skončiť v resetovacej slučke.</p>
+<p>Pri vlastnom AVR programe môže byť potrebné vypnúť zostávajúci watchdog už vo veľmi skorej inicializácii, ešte pred <code>setup()</code>. Riadky v <code>setup()</code> nenahrádzajú správne správanie bootloadera.</p>
+<h3>Otázka pre žiakov</h3>
+<p>Prečo watchdog zasiahne, aj keď v nekonečnej slučke zostávajú prerušenia povolené?</p>
+<p><em>Odpoveď: Watchdog počíta nezávisle a žiadna časť programu ho počas zaseknutia neobnovuje.</em></p>
+<hr />
+<h2>5. Watchdog na ESP32</h2>
+<p><strong>Čas: 29 – 35 min</strong></p>
+<p>ESP32 má viac dohľadových mechanizmov. Dva dôležité sú:</p>
+<table>
+<thead>
+<tr>
+<th>Mechanizmus</th>
+<th>Čo sleduje</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Interrupt Watchdog</td>
+<td>Či nie je príliš dlho blokované vykonávanie potrebných prerušení</td>
+</tr>
+<tr>
+<td>Task Watchdog</td>
+<td>Či sledované úlohy alebo registrovaní používatelia potvrdzujú činnosť včas</td>
+</tr>
+</tbody>
+</table>
+<p>Konkrétne nastavenie a reakcia závisia od ESP-IDF, Arduino jadra a konfigurácie.</p>
+<h3>Interrupt Watchdog</h3>
+<p>Pomáha odhaliť napríklad:</p>
+<ul>
+<li>príliš dlhú ISR,</li>
+<li>príliš dlhú kritickú sekciu,</li>
+<li>dlhé zakázanie prerušení.</li>
+</ul>
+<p>Tým nadväzuje na pravidlo z predchádzajúcej hodiny:</p>
+<p><strong>ISR aj kritická sekcia majú byť krátke.</strong></p>
+<h3>Task Watchdog</h3>
+<p>Sleduje prihlásené úlohy alebo iné registrované body dohľadu.</p>
+<p>Typický postup:</p>
+<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button></div><pre class="code-sample language-text"><code class="language-text">Inicializácia alebo konfigurácia watchdogu
+                  ↓
+Prihlásenie sledovanej úlohy
+                  ↓
+Vykonanie práce
+                  ↓
+Potvrdenie činnosti
+</code></pre><p class="code-status" role="status" aria-live="polite"></p>
+<p>Medzi používané funkcie ESP-IDF patria:</p>
+<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button></div><pre class="code-sample language-cpp"><code class="language-cpp">esp_task_wdt_add(NULL);
+esp_task_wdt_reset();
+</code></pre><p class="code-status" role="status" aria-live="polite"></p>
+<p>Prvá môže prihlásiť aktuálnu úlohu, druhá potvrdzuje jej činnosť. <strong>Nejde o kompletný program</strong> — watchdog musí byť správne inicializovaný a treba kontrolovať návratové hodnoty.</p>
+<p>Podoba inicializačného API sa medzi verziami menila, preto kompletný kód prispôsobujeme nainštalovanej verzii ESP-IDF alebo Arduino jadra.</p>
+<h3>Dôležitý príklad</h3>
+<p>Úloha pravidelne vykonáva:</p>
+<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button></div><pre class="code-sample language-cpp"><code class="language-cpp">esp_task_wdt_reset();
+</code></pre><p class="code-status" role="status" aria-live="polite"></p>
+<p>Zároveň však úplne ignoruje poruchu snímača.</p>
+<p><strong>Zachytí watchdog chybnú teplotu?</strong></p>
+<p>Nie automaticky. Watchdog vidí včasné potvrdenia. Kontrolu zmysluplnosti teploty musí zabezpečiť program.</p>
+<hr />
+<h2>6. Raspberry Pi a Linux</h2>
+<p><strong>Čas: 35 – 39 min</strong></p>
+<p>Na Raspberry Pi s Linuxom rozlišujeme dohľad nad:</p>
+<ol>
+<li>konkrétnou aplikáciou,</li>
+<li>celým systémom.</li>
+</ol>
+<h3>Dohľad nad aplikáciou</h3>
+<p>Správca služieb <code>systemd</code> môže aplikáciu znovu spustiť, keď skončí chybou.</p>
+<p>Samotné nastavenie automatického reštartu však nemusí odhaliť proces, ktorý stále existuje, ale zasekol sa.</p>
+<p>Na sledovanie takého prípadu môže aplikácia posielať pravidelné oznámenia služby watchdogu <code>systemd</code>. Musí na to byť pripravená a správne nakonfigurovaná.</p>
+<h3>Hardvérový watchdog</h3>
+<p>Podporovaný hardvérový watchdog môže resetovať celý počítač, ak nedostáva potrebné potvrdenia.</p>
+<p>Linux ho môže sprístupniť napríklad cez:</p>
+<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button></div><pre class="code-sample language-text"><code class="language-text">/dev/watchdog
+/dev/watchdog0
+</code></pre><p class="code-status" role="status" aria-live="polite"></p>
+<p>Dostupnosť závisí od modelu, ovládača a nastavenia systému.</p>
+<p>Obsluhu môže zabezpečovať systémová služba alebo <code>systemd</code>.</p>
+<h3>Porovnanie</h3>
+<table>
+<thead>
+<tr>
+<th>Druh dohľadu</th>
+<th>Typická reakcia</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Dohľad nad aplikáciou</td>
+<td>Reštart konkrétnej služby</td>
+</tr>
+<tr>
+<td>Hardvérový watchdog systému</td>
+<td>Reset celého počítača</td>
+</tr>
+</tbody>
+</table>
+<p>Na dnešnej hodine zostávame pri vysvetlení princípu. Aktivovanie hardvérového watchdogu je konfiguračný zásah, ktorý môže pri chybe vyvolať reštart počítača.</p>
+<p><strong>Raspberry Pi Pico je mikrokontrolérová platforma a má odlišné možnosti a rozhrania než Raspberry Pi s Linuxom.</strong></p>
+<hr />
+<h2>7. Úlohy pre žiakov</h2>
+<p><strong>Čas: 39 – 43 min</strong></p>
+<h3>A. Zachytí watchdog zaseknutie?</h3>
+<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button></div><pre class="code-sample language-cpp"><code class="language-cpp">void loop() {
+  while (!prisliData()) {
+    wdt_reset();
+  }
+
+  spracujData();
+}
+</code></pre><p class="code-status" role="status" aria-live="polite"></p>
+<p><strong>Otázka:</strong> Čo sa stane, ak údaje nikdy neprídu?</p>
+<p><strong>Odpoveď:</strong> Program zostane čakať a stále obnovuje watchdog. Watchdog preto toto zaseknutie neodhalí.</p>
+<p><strong>Vhodná úprava:</strong> Zaviesť časový limit prijímania a po jeho prekročení vykonať definovanú reakciu na chybu.</p>
+<h3>B. Vyberte časový limit</h3>
+<p>Zdravý program dokončí kontrolovaný cyklus najneskôr za 300 ms. Uvažujeme intervaly:</p>
+<ul>
+<li>100 ms,</li>
+<li>1 sekunda,</li>
+<li>30 sekúnd.</li>
+</ul>
+<p><strong>Ktorý je z ponuky najvhodnejší?</strong></p>
+<p><em>Odpoveď: Jedna sekunda, ak poskytuje dostatočnú rezervu a vyhovuje požadovanému času reakcie. Sto milisekúnd je menej než dĺžka zdravého cyklu, tridsať sekúnd môže znamenať zbytočne neskoré odhalenie.</em></p>
+<h3>C. Opakované resety</h3>
+<p>Zariadenie sa po každom štarte pokúsi načítať snímač. Pri jeho poruche sa zasekne a watchdog ho resetuje.</p>
+<p><strong>Otázka:</strong> Odstránil watchdog príčinu poruchy?</p>
+<p><strong>Odpoveď:</strong> Nie. Po štarte treba rozpoznať chybu, použiť časový limit a prejsť napríklad do definovaného chybového režimu.</p>
+<hr />
+<h2>8. Overenie vedomostí a zápis</h2>
+<p><strong>Čas: 43 – 45 min</strong></p>
+<table>
+<thead>
+<tr>
+<th>Otázka</th>
+<th>Odpoveď</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Na čo slúži watchdog?</td>
+<td>Na dohľad nad postupom programu a vyvolanie reakcie pri chýbajúcom potvrdení.</td>
+</tr>
+<tr>
+<td>Čo znamená obnovenie watchdogu?</td>
+<td>Potvrdenie činnosti pred uplynutím limitu.</td>
+</tr>
+<tr>
+<td>Opravuje watchdog chybu programu?</td>
+<td>Nie.</td>
+</tr>
+<tr>
+<td>Prečo ho neobnovujeme bezpodmienečne z časovačovej ISR?</td>
+<td>ISR môže pokračovať aj pri zaseknutom hlavnom programe.</td>
+</tr>
+<tr>
+<td>Čo spôsobí príliš krátky limit?</td>
+<td>Nežiaduce zásahy aj pri správnej činnosti.</td>
+</tr>
+<tr>
+<td>Čo musíme riešiť po resete?</td>
+<td>Inicializáciu, stav zariadenia a príčinu poruchy.</td>
+</tr>
+</tbody>
+</table>
+<h3>Zápis do zošita</h3>
+<blockquote>
+<p><strong>Watchdog timer je dohľadový časovač.</strong><br />
+Program musí v stanovenom intervale potvrdzovať správny postup.<br />
+Ak potvrdenie nepríde, watchdog vyvolá nastavenú reakciu, často reset.<br />
+Potvrdenie má nadväzovať na vykonanie dôležitých úloh.<br />
+Watchdog neopravuje príčinu chyby a nenahrádza časové limity jednotlivých operácií.<br />
+Po resete musí zariadenie prejsť do definovaného stavu.</p>
+</blockquote>
+<p><strong>Nasledujúca hodina: GPIO — všeobecné digitálne vstupy a výstupy, logické úrovne a základné zapojenia.</strong></p>
+</article>
+    <nav class="lesson-navigation" aria-label="Prednášky tematického celku 4"><a href="4.7%20Casovace%20a%20casovanie.html">← Predchádzajúca: Časovače a časovanie</a></nav>
+    <footer><a href="index.html">Späť na osnovu predmetu</a> · <a href="../index.html">Všetky kurzy</a></footer>
+  </main>
+  <script>
+    document.addEventListener("click", async (event) => {
+      const button = event.target.closest("[data-copy-code]");
+      if (!button) return;
+
+      const codeBlock = button.parentElement.nextElementSibling;
+      const code = codeBlock.querySelector("code");
+      const status = codeBlock.nextElementSibling;
+      try {
+        await navigator.clipboard.writeText(code.innerText);
+        status.textContent = "Kód bol skopírovaný do schránky.";
+      } catch {
+        status.textContent = "Kopírovanie nie je dostupné. Označte kód a skopírujte ho pomocou Ctrl+C.";
+      }
+    });
+  </script>
+  <script src="../02_C/00_Prostredie_a_struktura_programu/c-lecture-controls.js" defer></script>
+  <script type="module" src="../lesson-remote.js"></script>
+</body>
+</html>

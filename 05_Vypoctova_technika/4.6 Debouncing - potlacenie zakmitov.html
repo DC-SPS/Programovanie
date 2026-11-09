@@ -1,0 +1,713 @@
+<!doctype html>
+<html lang="sk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101827">
+  <meta name="description" content="Prečo tlačidlo pri stlačení vytvára viac prechodov a ako ich spoľahlivo filtrovať.">
+  <title>4.6 Debouncing – potlačenie zákmitov kontaktov | Výpočtová technika</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f7f8fa;
+      --fg: #1c2330;
+      --card: #fff;
+      --mut: #5b6678;
+      --acc: #1f6feb;
+      --line: #d9dee7;
+      --note: #fff4d6;
+      --good: #18743a;
+      --bad: #b42318;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        color-scheme: dark;
+        --bg: #12161d;
+        --fg: #e6eaf1;
+        --card: #1b212b;
+        --mut: #9aa6b8;
+        --acc: #5aa2ff;
+        --line: #2d3644;
+        --note: #3a3017;
+        --good: #63d58a;
+        --bad: #ff8a80;
+      }
+    }
+    :root[data-theme="light"] {
+      color-scheme: light;
+      --bg: #f7f8fa;
+      --fg: #1c2330;
+      --card: #fff;
+      --mut: #5b6678;
+      --acc: #1f6feb;
+      --line: #d9dee7;
+      --note: #fff4d6;
+      --good: #18743a;
+      --bad: #b42318;
+    }
+    :root[data-theme="dark"] {
+      color-scheme: dark;
+      --bg: #12161d;
+      --fg: #e6eaf1;
+      --card: #1b212b;
+      --mut: #9aa6b8;
+      --acc: #5aa2ff;
+      --line: #2d3644;
+      --note: #3a3017;
+      --good: #63d58a;
+      --bad: #ff8a80;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-padding-top: 1rem; }
+    body { margin: 0; background: var(--bg); color: var(--fg); font: 16px/1.65 system-ui, -apple-system, "Segoe UI", sans-serif; }
+    a { color: var(--acc); }
+    .global-course-nav { display: flex; flex-wrap: wrap; gap: .55rem; align-items: center; width: min(100% - 2rem, 1000px); margin: .75rem auto 0; font: 600 .9rem/1.4 system-ui, -apple-system, "Segoe UI", sans-serif; }
+    .global-course-nav a { display: inline-block; padding: .4rem .7rem; border: 1px solid var(--line); border-radius: .55rem; text-decoration: none; color: inherit; background: var(--card); }
+    .global-course-nav a:hover { text-decoration: underline; }
+    .global-course-nav a:focus-visible, a:focus-visible, button:focus-visible, summary:focus-visible, select:focus-visible, input:focus-visible { outline: 3px solid var(--acc); outline-offset: 3px; }
+    main { width: min(100% - 2rem, 860px); margin: auto; padding: 16px 0 3rem; }
+    main :is(p, li, td, dd, blockquote) { text-align: justify; text-justify: inter-word; }
+    header { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: .6rem; }
+    .crumb, .muted, .caption { color: var(--mut); }
+    h1 { font-size: clamp(1.8rem, 5vw, 2.6rem); line-height: 1.2; margin: .8rem 0; }
+    h2 { margin-top: 2rem; font-size: 1.4rem; }
+    h3 { margin-top: 1.25rem; font-size: 1.1rem; }
+    .lead { font-size: 1.08rem; }
+    .subtitle { color: var(--mut); }
+    .tags { display: flex; flex-wrap: wrap; gap: .45rem; margin: 1rem 0; }
+    .tag { padding: 2px 9px; border: 1px solid var(--line); border-radius: 6px; background: var(--line); font-size: 13px; }
+    .card, .teacher-note, .video-card, .quiz { margin: 14px 0; padding: 14px 17px; border: 1px solid var(--line); border-radius: 12px; background: var(--card); }
+    .teacher-note { display: none; background: var(--note); }
+    body.teacher .teacher-note { display: block; }
+    .teacher-note strong { display: block; margin-bottom: .3rem; }
+    .mode { display: inline-flex; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+    .mode button { padding: 6px 11px; border: 0; background: var(--card); color: var(--fg); font: inherit; cursor: pointer; }
+    .mode button.on { background: var(--acc); color: #fff; }
+    .pdf-export { margin-left: .5rem; padding: .4rem .7rem; border: 1px solid var(--line); border-radius: .55rem; background: var(--card); color: var(--fg); font: 600 .9rem/1.4 system-ui, -apple-system, "Segoe UI", sans-serif; cursor: pointer; }
+    .code-actions { display: flex; flex-wrap: wrap; align-items: center; gap: .55rem; margin: .8rem 0 .35rem; }
+    .copy-btn, .online-editor { display: inline-block; padding: .4rem .7rem; border: 1px solid var(--line); border-radius: .5rem; font: 600 .9rem/1.4 system-ui, -apple-system, "Segoe UI", sans-serif; text-decoration: none; }
+    .copy-btn { background: var(--acc); border-color: var(--acc); color: #fff; cursor: pointer; }
+    .online-editor { background: var(--card); color: var(--fg); }
+    .code-status { min-height: 1.4em; margin: 0 0 .75rem; color: var(--mut); font-size: .85rem; }
+    .lead-card { margin: 14px 0; padding: 14px 17px; border: 1px solid var(--line); border-radius: 12px; background: var(--card); }
+    .safety-notice, .safety-reminder { margin: 1rem 0; padding: 14px 17px; border: 1px solid var(--line); border-left: 5px solid var(--acc); border-radius: 12px; background: var(--note); }
+    .safety-notice strong, .safety-reminder strong { display: block; margin-bottom: .25rem; }
+    .note { background: var(--note); }
+    .scroll { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { padding: .65rem .7rem; border: 1px solid var(--line); text-align: left; vertical-align: top; }
+    th { background: var(--card); }
+    td:first-child { white-space: nowrap; font-weight: 700; }
+    pre { margin: .65rem 0 1rem; padding: 1rem; border-radius: 9px; overflow-x: auto; background: #0f172a; color: #e2e8f0; font: 14px/1.55 ui-monospace, SFMono-Regular, Consolas, monospace; }
+    code { font-family: ui-monospace, SFMono-Regular, Consolas, monospace; }
+    :not(pre) > code { padding: .08rem .28rem; border-radius: 4px; background: color-mix(in srgb, var(--line) 55%, transparent); }
+    .output { border-left: 4px solid var(--good); }
+    .sources { margin-top: 2rem; padding: 1rem 1.1rem; border: 1px solid var(--line); border-radius: 12px; background: var(--card); }
+    .sources h2 { margin-top: 0; }
+    .sources li { margin: .4rem 0; }
+    .glossary-list { display: grid; grid-template-columns: minmax(8rem, .35fr) 1fr; gap: .3rem .8rem; }
+    .glossary-list dt { font-weight: 750; }
+    .glossary-list dd { margin: 0; }
+    footer { margin-top: 2rem; padding-top: 1rem; border-top: 1px solid var(--line); color: var(--mut); font-size: 14px; }
+    .speech-bubble { position: relative; padding: .85rem 1rem !important; border: 2px solid var(--acc) !important; border-radius: 1.2rem !important; background: color-mix(in srgb, var(--acc) 12%, var(--card)) !important; box-shadow: 0 4px 18px color-mix(in srgb, var(--acc) 18%, transparent); }
+    .speech-bubble::after { position: absolute; bottom: -.65rem; left: 1.2rem; width: 1rem; height: 1rem; border-right: 2px solid var(--acc); border-bottom: 2px solid var(--acc); background: color-mix(in srgb, var(--acc) 12%, var(--card)); content: ""; transform: rotate(45deg); }
+    .narration-target { transition: outline-color .16s ease, background-color .16s ease; text-align: justify; text-justify: inter-word; }
+    .narration-target:hover { outline: 2px solid var(--acc); outline-offset: 3px; background-color: color-mix(in srgb, var(--acc) 8%, transparent); cursor: pointer; }
+    @media (max-width: 620px) { main { width: min(100% - 1.2rem, 860px); } td:first-child { white-space: normal; } }
+    @media (max-width: 520px) { .glossary-list { grid-template-columns: 1fr; gap: .1rem; } .glossary-list dd { margin-bottom: .5rem; } }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; } }
+    @media print {
+      .global-course-nav, .mode, .pdf-export, .code-actions, .code-status, .narration-controls, .narration-option, .lesson-side-panel { display: none !important; }
+      body { background: #fff !important; color: #111 !important; color-scheme: light !important; font-size: 11pt; }
+      main { width: auto; max-width: none; margin: 0; padding: 12mm 14mm; }
+      .teacher-note { display: block; }
+      a[href^="http://"], a[href^="https://"] { color: inherit !important; text-decoration: none !important; }
+      a[href^="http://"]::after, a[href^="https://"]::after { content: none !important; }
+      .card, .teacher-note, .sources, .safety-notice, .safety-reminder, pre, table, blockquote { break-inside: avoid; page-break-inside: avoid; }
+      pre { white-space: pre-wrap; overflow: visible; }
+    }
+    @page { size: A4; margin: 0; }
+      .lesson-navigation { display:flex; flex-wrap:wrap; justify-content:space-between; gap:.7rem; margin:2rem 0 1rem; padding:1rem 0; border-top:1px solid var(--line); }
+    .lesson-navigation a { display:inline-block; padding:.45rem .7rem; border:1px solid var(--line); border-radius:.55rem; background:var(--card); text-decoration:none; }
+  </style>
+  <link rel="stylesheet" href="../02_C/00_Prostredie_a_struktura_programu/c-lecture-controls.css">
+  <script src="../theme.js" defer></script>
+  <script src="../lesson-top.js" defer></script>
+</head>
+<body>
+  <nav class="global-course-nav" aria-label="Navigácia kurzov">
+    <a href="index.html">Prehľad predmetu</a>
+    <a href="../index.html">Všetky kurzy</a>
+  </nav>
+  <aside class="lesson-side-panel" aria-label="Ovládanie hodiny a čítania">
+    <section class="narration-controls" aria-label="Čítanie prednášky">
+      <button id="play-reading" type="button" aria-label="Prehrať">▶ Prehrať</button>
+      <button id="stop-reading" type="button" aria-label="Zastaviť čítanie" disabled>■ Zastaviť</button>
+      <button id="pause-reading" type="button" aria-label="Pozastaviť čítanie" disabled>⏸ Pozastaviť</button>
+      <button id="replay-reading" type="button" aria-label="Prehrať vybrané časti znova" disabled>↻ Prehrať znova</button>
+      <label class="narration-speed" for="narration-speed">Rýchlosť čítania
+        <select id="narration-speed" aria-label="Rýchlosť hlasového čítania">
+          <option value="0.25">0,25×</option>
+          <option value="0.5">0,5×</option>
+          <option value="0.75">0,75×</option>
+          <option value="1" selected>1× – normálna</option>
+          <option value="1.25">1,25×</option>
+          <option value="1.5">1,5×</option>
+          <option value="1.75">1,75×</option>
+          <option value="2">2×</option>
+        </select>
+      </label>
+      <p class="page-language-help">Jazyk zmeníte priamo v Google Translate: kliknite na názov cieľového jazyka v hornej lište a vyberte maďarčinu, ukrajinčinu alebo iný jazyk.</p>
+      <label class="narration-voice" for="narration-voice"><span class="narration-voice-label">Hlas</span>
+        <select id="narration-voice" aria-label="Vyberte hlas na čítanie"><option value="">Automaticky – slovenský hlas</option></select>
+      </label>
+      <label class="narration-volume" for="narration-volume">
+        <span class="narration-volume-heading"><span>Hlasitosť čítania</span><output id="narration-volume-value" for="narration-volume">100 %</output></span>
+        <input id="narration-volume" type="range" min="0" max="100" step="5" value="100" aria-label="Hlasitosť hlasového čítania">
+        <span class="narration-volume-help">Upravuje hlasitosť čítania, nie celkovú hlasitosť zariadenia.</span>
+      </label>
+      <div id="reading-status" class="narration-status" role="status" aria-live="polite"></div>
+    </section>
+  </aside>
+  <main>
+    <aside class="safety-notice" aria-label="Začiatok hodiny a kontrola pracoviska">
+      <strong>Začíname kontrolou pracoviska:</strong>
+      Skontrolujte lavicu, stoličku, pridelený počítač a stav príslušenstva. Poškodenie, chýbajúcu časť alebo inú závadu ihneď oznámte vyučujúcemu a stručný súhrn pošlite cez EduPage podľa jeho pokynov. Poškodené, nefunkčné ani nebezpečné zariadenie nepoužívajte.
+    </aside>
+    <header>
+      <span class="crumb"><a href="index.html">Výpočtová technika</a> › Vstupno-výstupný systém › 4.6</span>
+      <div class="mode" role="group" aria-label="Zobrazenie stránky">
+        <button id="student-mode" class="on" type="button" aria-pressed="true">Žiak</button>
+        <button id="teacher-mode" type="button" aria-pressed="false">Učiteľ</button>
+      </div>
+      <button class="pdf-export" type="button" onclick="window.print()">Exportovať do PDF</button>
+    </header>
+    <h1>4.6 Debouncing – potlačenie zákmitov kontaktov</h1>
+    <p class="lead subtitle">Prečo tlačidlo pri stlačení vytvára viac prechodov a ako ich spoľahlivo filtrovať.</p>
+    <div class="tags" aria-label="Témy prednášky"><span class="tag">Tematický celok 4</span><span class="tag">Výpočtová technika</span><span class="tag">AVR · Arduino · ESP32 · Raspberry Pi</span><span class="tag">45 minút</span></div>
+    <article class="lesson-content"><p><strong>Predmet:</strong> Výpočtová technika<br />
+<strong>Ročník:</strong> tretí, stredná škola<br />
+<strong>Trvanie:</strong> 45 minút<br />
+<strong>Platformy:</strong> AVR, Arduino, ESP32 a Raspberry Pi<br />
+<strong>Nadväznosť:</strong> Prerušenia a ISR, pravidlá práce v ISR</p>
+<h2>Ciele hodiny</h2>
+<p>Po hodine má žiak vedieť:</p>
+<ul>
+<li>vysvetliť vznik zákmitov mechanického kontaktu,</li>
+<li>opísať ich vplyv na polling aj prerušenia,</li>
+<li>rozlíšiť hardvérové a softvérové potlačenie zákmitov,</li>
+<li>pochopiť princíp potvrdenia stabilného stavu,</li>
+<li>použiť jednoduchý debounce bez blokujúceho čakania.</li>
+</ul>
+<h2>Časový plán</h2>
+<table>
+<thead>
+<tr>
+<th>Čas</th>
+<th>Obsah</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0 – 5 min</td>
+<td>Motivácia: jedno stlačenie, viac udalostí</td>
+</tr>
+<tr>
+<td>5 – 12 min</td>
+<td>Vznik zákmitov a ich dôsledky</td>
+</tr>
+<tr>
+<td>12 – 18 min</td>
+<td>Spôsoby potlačenia zákmitov</td>
+</tr>
+<tr>
+<td>18 – 30 min</td>
+<td>Arduino a AVR: praktický program</td>
+</tr>
+<tr>
+<td>30 – 35 min</td>
+<td>ESP32 a prerušenia</td>
+</tr>
+<tr>
+<td>35 – 39 min</td>
+<td>Raspberry Pi</td>
+</tr>
+<tr>
+<td>39 – 43 min</td>
+<td>Úloha pre žiakov</td>
+</tr>
+<tr>
+<td>43 – 45 min</td>
+<td>Overenie a zápis</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>1. Jedno stlačenie, viac udalostí</h2>
+<p><strong>Čas: 0 – 5 min</strong></p>
+<p>Predstavme si počítadlo stlačení tlačidla:</p>
+<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button></div><pre class="code-sample language-cpp"><code class="language-cpp">if (nastaloStlacenie) {
+  pocet++;
+}
+</code></pre><p class="code-status" role="status" aria-live="polite"></p>
+<p>Tlačidlo stlačíme raz, ale počítadlo sa zvýši napríklad o tri.</p>
+<p><strong>Otázka pre triedu:</strong><br />
+Je príčinou vždy chyba programu?</p>
+<p>Nie. Príčinou môže byť samotné mechanické tlačidlo.</p>
+<p>Pri spojení kontaktov nevznikne vždy jedna čistá zmena signálu. Kontakty sa môžu niekoľkokrát krátko spojiť a rozpojiť.</p>
+<p>Tento jav označujeme ako <strong>zákmit kontaktov</strong>.</p>
+<p><strong>Debouncing je potlačenie zákmitov tak, aby program rozpoznal jednu zamýšľanú zmenu stavu.</strong></p>
+<hr />
+<h2>2. Prečo vznikajú zákmity?</h2>
+<p><strong>Čas: 5 – 12 min</strong></p>
+<h3>Mechanická príčina</h3>
+<p>Tlačidlo obsahuje pohyblivé kontakty. Pri stlačení do seba narazia a môžu sa krátko odraziť.</p>
+<p>Podobný jav môže vzniknúť aj pri uvoľnení tlačidla.</p>
+<h3>Ideálny signál</h3>
+<p>Pri zapojení s <code>INPUT_PULLUP</code>:</p>
+<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button></div><pre class="code-sample language-text"><code class="language-text">HIGH ──────────┐
+              │
+LOW           └────────────────
+              stlačenie
+</code></pre><p class="code-status" role="status" aria-live="polite"></p>
+<h3>Reálny signál so zákmitmi</h3>
+<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button></div><pre class="code-sample language-text"><code class="language-text">HIGH ──────────┐ ┌─┐ ┌─┐
+              │ │ │ │ │
+LOW           └─┘ └─┘ └─────────
+              oblasť zákmitov
+</code></pre><p class="code-status" role="status" aria-live="polite"></p>
+<p>Procesor je dostatočne rýchly na to, aby jednotlivé zmeny zachytil.</p>
+<p>Trvanie zákmitov závisí od typu a stavu kontaktu. Často ide o jednotky až desiatky milisekúnd. Vhodný čas filtrovania preto vyberáme podľa použitého tlačidla a požadovanej reakcie.</p>
+<h3>Dôsledky</h3>
+<table>
+<thead>
+<tr>
+<th>Použitie tlačidla</th>
+<th>Možný problém</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Počítadlo stlačení</td>
+<td>Jedno stlačenie zvýši počet viackrát</td>
+</tr>
+<tr>
+<td>Prepínanie LED</td>
+<td>LED sa viackrát prepne a skončí v nečakanom stave</td>
+</tr>
+<tr>
+<td>Pohyb v menu</td>
+<td>Kurzor preskočí viac položiek</td>
+</tr>
+<tr>
+<td>Externé prerušenie</td>
+<td>Jedno stlačenie vyvolá viac ISR</td>
+</tr>
+</tbody>
+</table>
+<h3>Dve rozdielne príčiny opakovania</h3>
+<p>Opakované spracovanie nemusí spôsobovať iba zákmit.</p>
+<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button></div><pre class="code-sample language-cpp"><code class="language-cpp">if (digitalRead(TLACIDLO) == LOW) {
+  pocet++;
+}
+</code></pre><p class="code-status" role="status" aria-live="polite"></p>
+<p>Tento kód zvyšuje počítadlo pri každom priechode slučkou počas držania tlačidla, aj keby bol signál dokonale čistý.</p>
+<p>Potrebujeme preto vyriešiť dve veci:</p>
+<ol>
+<li><strong>Potlačiť zákmity.</strong></li>
+<li><strong>Rozpoznať nové stlačenie namiesto samotného držania tlačidla.</strong></li>
+</ol>
+<hr />
+<h2>3. Ako potlačiť zákmity?</h2>
+<p><strong>Čas: 12 – 18 min</strong></p>
+<h3>A. Hardvérové riešenie</h3>
+<p>Používame napríklad:</p>
+<ul>
+<li>RC filter,</li>
+<li>Schmittov klopný obvod,</li>
+<li>špecializovaný obvod na potlačenie zákmitov.</li>
+</ul>
+<p><strong>RC filter</strong> využíva rezistor a kondenzátor na vyhladenie krátkych zmien napätia.</p>
+<p><strong>Schmittov vstup</strong> má odlišný prah pre prepnutie nahor a nadol. Pomáha previesť pomaly sa meniace alebo rušené napätie na stabilný digitálny stav.</p>
+<p>Konkrétne zapojenie a hodnoty súčiastok treba prispôsobiť vstupu mikrokontroléra. Samotný kondenzátor pripojený bez premysleného zapojenia nie je univerzálne riešenie.</p>
+<h3>B. Softvérové riešenie: potvrdenie stabilného stavu</h3>
+<p>Program prijme nový stav až vtedy, keď sa vstup určitý čas nezmení.</p>
+<p>Príklad:</p>
+<ol>
+<li>Program zaznamená zmenu vstupu.</li>
+<li>Zapamätá si čas tejto zmeny.</li>
+<li>Každá ďalšia zmena začne čakanie odznova.</li>
+<li>Ak stav vydrží napríklad <strong>30 ms</strong>, program ho prijme.</li>
+</ol>
+<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button></div><pre class="code-sample language-text"><code class="language-text">Zmena vstupu
+     ↓
+Zapamätaj čas
+     ↓
+Mení sa vstup?
+  áno → začni čas merať odznova
+  nie → po uplynutí intervalu prijmi stav
+</code></pre><p class="code-status" role="status" aria-live="polite"></p>
+<h3>C. Softvérové riešenie: blokovanie ďalších udalostí</h3>
+<p>Po prijatí udalosti program určitý čas ignoruje ďalšie udalosti.</p>
+<p>Je to jednoduché, ale <strong>neoveruje stabilitu vstupu</strong>. Môže napríklad prijať prvý rušivý impulz ako platné stlačenie.</p>
+<h3>Prečo nepoužiť iba <code>delay()</code>?</h3>
+<p>Blokujúce čakanie môže byť použiteľné v jednoduchej ukážke, ale počas neho hlavná slučka nevykonáva ostatné úlohy.</p>
+<p>Na dnešnej hodine preto použijeme <strong>neblokujúce časovanie pomocou <code>millis()</code></strong>.</p>
+<hr />
+<h2>4. Arduino a AVR: jedno prepnutie LED na jedno stlačenie</h2>
+<p><strong>Čas: 18 – 30 min</strong></p>
+<h3>Zadanie</h3>
+<p>Každé nové stlačenie tlačidla prepne zabudovanú LED:</p>
+<ul>
+<li>prvé stlačenie ju zapne,</li>
+<li>druhé ju vypne,</li>
+<li>držanie tlačidla ju neprepína opakovane.</li>
+</ul>
+<p>Nový stav tlačidla prijmeme až po <strong>30 ms bez zmeny načítanej hodnoty</strong>.</p>
+<h3>Zapojenie pre Arduino Uno R3</h3>
+<ul>
+<li>Tlačidlo medzi <strong>D2 a GND</strong>.</li>
+<li>Použijeme <code>INPUT_PULLUP</code>.</li>
+<li>LED je zabudovaná na doske.</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>Stav tlačidla</th>
+<th>Hodnota</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Uvoľnené</td>
+<td><code>HIGH</code></td>
+</tr>
+<tr>
+<td>Stlačené</td>
+<td><code>LOW</code></td>
+</tr>
+</tbody>
+</table>
+<h3>Program</h3>
+<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button></div><pre class="code-sample language-cpp"><code class="language-cpp">const byte TLACIDLO = 2;
+const unsigned long DEBOUNCE_MS = 30;
+
+int posledneCitanie;
+int stabilnyStav;
+
+unsigned long casPoslednejZmeny = 0;
+bool ledSvieti = false;
+
+void setup() {
+  pinMode(TLACIDLO, INPUT_PULLUP);
+  pinMode(LED_BUILTIN, OUTPUT);
+
+  digitalWrite(LED_BUILTIN, LOW);
+
+  posledneCitanie = digitalRead(TLACIDLO);
+  stabilnyStav = posledneCitanie;
+
+  casPoslednejZmeny = millis();
+}
+
+void loop() {
+  unsigned long teraz = millis();
+  int citanie = digitalRead(TLACIDLO);
+
+  // Každá zachytená zmena začne interval odznova.
+  if (citanie != posledneCitanie) {
+    posledneCitanie = citanie;
+    casPoslednejZmeny = teraz;
+  }
+
+  // Nový stav prijmeme až po uplynutí intervalu.
+  if (teraz - casPoslednejZmeny &gt;= DEBOUNCE_MS) {
+    if (citanie != stabilnyStav) {
+      stabilnyStav = citanie;
+
+      // Reagujeme iba na nové stlačenie.
+      if (stabilnyStav == LOW) {
+        ledSvieti = !ledSvieti;
+
+        digitalWrite(
+          LED_BUILTIN,
+          ledSvieti ? HIGH : LOW
+        );
+      }
+    }
+  }
+
+  // Tu môžu prebiehať ďalšie krátke úlohy.
+}
+</code></pre><p class="code-status" role="status" aria-live="polite"></p>
+<h3>Vysvetlenie premenných</h3>
+<table>
+<thead>
+<tr>
+<th>Premenná</th>
+<th>Význam</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>citanie</code></td>
+<td>Aktuálne načítaná hodnota vstupu</td>
+</tr>
+<tr>
+<td><code>posledneCitanie</code></td>
+<td>Posledná pozorovaná hodnota</td>
+</tr>
+<tr>
+<td><code>stabilnyStav</code></td>
+<td>Už potvrdený stav tlačidla</td>
+</tr>
+<tr>
+<td><code>casPoslednejZmeny</code></td>
+<td>Čas poslednej zachytenej zmeny</td>
+</tr>
+<tr>
+<td><code>ledSvieti</code></td>
+<td>Aktuálny požadovaný stav LED</td>
+</tr>
+</tbody>
+</table>
+<h3>Krok 1: Zistíme zmenu</h3>
+<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button></div><pre class="code-sample language-cpp"><code class="language-cpp">if (citanie != posledneCitanie) {
+  posledneCitanie = citanie;
+  casPoslednejZmeny = teraz;
+}
+</code></pre><p class="code-status" role="status" aria-live="polite"></p>
+<p>Pri každej zachytenej zmene začneme interval stability merať odznova.</p>
+<h3>Krok 2: Počkáme bez zastavenia programu</h3>
+<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button></div><pre class="code-sample language-cpp"><code class="language-cpp">if (teraz - casPoslednejZmeny &gt;= DEBOUNCE_MS)
+</code></pre><p class="code-status" role="status" aria-live="polite"></p>
+<p>Program nečaká na jednom mieste. Opakovane prechádza cez <code>loop()</code> a kontroluje uplynutý čas.</p>
+<p>Odčítanie časov v type <code>unsigned long</code> umožňuje správne vyhodnocovanie krátkych intervalov aj pri pretočení hodnoty <code>millis()</code>.</p>
+<h3>Krok 3: Prijmeme nový stabilný stav</h3>
+<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button></div><pre class="code-sample language-cpp"><code class="language-cpp">if (citanie != stabilnyStav) {
+  stabilnyStav = citanie;
+}
+</code></pre><p class="code-status" role="status" aria-live="polite"></p>
+<p>Ak sa potvrdený stav nemení, nová udalosť nevznikne.</p>
+<h3>Krok 4: Reagujeme iba na stlačenie</h3>
+<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button></div><pre class="code-sample language-cpp"><code class="language-cpp">if (stabilnyStav == LOW) {
+  ledSvieti = !ledSvieti;
+}
+</code></pre><p class="code-status" role="status" aria-live="polite"></p>
+<p>Uvoľnenie tlačidla sa tiež potvrdí, ale LED neprepne.</p>
+<h3>Čo sa stane pri držaní tlačidla?</h3>
+<p>LED sa prepne iba raz. Ďalšie prepnutie vyžaduje potvrdené uvoľnenie a nové potvrdené stlačenie.</p>
+<p>Ak je tlačidlo stlačené už pri zapnutí dosky, tento program ho prijme ako počiatočný stav. Samotné zapnutie preto LED neprepne.</p>
+<h3>Obmedzenie</h3>
+<p>Program musí vstup kontrolovať dostatočne často. Dlhé blokovanie hlavnej slučky môže spôsobiť prehliadnutie zmien.</p>
+<hr />
+<h2>5. ESP32 a debouncing pri prerušení</h2>
+<p><strong>Čas: 30 – 35 min</strong></p>
+<h3>Potrebujeme na tlačidlo prerušenie?</h3>
+<p>Pri bežnom ľudskom ovládaní často postačuje rýchly polling s neblokujúcim debouncingom.</p>
+<p>Algoritmus z predchádzajúcej ukážky môžeme použiť aj na ESP32. Treba zvoliť vhodné GPIO a upraviť zapojenie LED podľa dosky.</p>
+<p>Napríklad na klasickej doske ESP32 s dostupným <strong>GPIO27</strong> môžeme tlačidlo pripojiť medzi GPIO27 a GND.</p>
+<p><strong>GPIO ESP32 používajú logiku 3,3 V. Dostupnosť a vlastnosti pinov overíme podľa konkrétnej dosky.</strong></p>
+<h3>Čo ak používame prerušenie?</h3>
+<p>Prerušenie môže zachytiť aj jednotlivé zákmity.</p>
+<p>Nevhodné riešenie:</p>
+<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button></div><pre class="code-sample language-cpp"><code class="language-cpp">void ARDUINO_ISR_ATTR priStlaceni() {
+  delay(30);
+}
+</code></pre><p class="code-status" role="status" aria-live="polite"></p>
+<p><strong>Čakanie v ISR zákmit správnym spôsobom nerieši a porušuje pravidlo krátkej obsluhy.</strong></p>
+<p>Vhodný postup:</p>
+<ol>
+<li>ISR krátko oznámi, že sa vstup zmenil.</li>
+<li>Hlavný program alebo úloha začne sledovať stav.</li>
+<li>Ďalšie spracovanie potvrdí stabilný stav mimo ISR.</li>
+</ol>
+<p>Oznámenie medzi ISR a hlavným programom musí byť bezpečne synchronizované, ako sme ukázali v predchádzajúcej hodine.</p>
+<h3>Dôležitý detail</h3>
+<p>Pri metóde potvrdenia stability nestačí zistiť iba prvú zostupnú hranu a o 30 ms vstup raz prečítať.</p>
+<p>Takéto riešenie overí stav <strong>v jednom neskoršom okamihu</strong>, ale nedokazuje, že bol celý interval stabilný.</p>
+<p>Pre skutočné potvrdenie stability musíme sledovať aj ďalšie zmeny, napríklad pollingom mimo ISR alebo vhodným mechanizmom zaznamenávania oboch hrán.</p>
+<hr />
+<h2>6. Raspberry Pi: parameter <code>bounce_time</code></h2>
+<p><strong>Čas: 35 – 39 min</strong></p>
+<p>Na Raspberry Pi s Linuxom môžeme použiť Python a knižnicu <code>gpiozero</code>.</p>
+<h3>Zapojenie</h3>
+<ul>
+<li>Tlačidlo medzi <strong>GPIO17 a GND</strong>.</li>
+<li>GPIO17 je na bežnom 40-pinovom konektore fyzický pin <strong>11</strong>.</li>
+<li>Číslovanie v programe je BCM GPIO.</li>
+</ul>
+<h3>Program</h3>
+<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button></div><pre class="code-sample language-python"><code class="language-python">from gpiozero import Button
+from signal import pause
+
+pocet = 0
+
+def pri_stlaceni():
+    global pocet
+    pocet += 1
+    print(f&quot;Pocet stlaceni: {pocet}&quot;)
+
+tlacidlo = Button(
+    17,
+    pull_up=True,
+    bounce_time=0.05
+)
+
+tlacidlo.when_pressed = pri_stlaceni
+
+try:
+    pause()
+finally:
+    tlacidlo.close()
+</code></pre><p class="code-status" role="status" aria-live="polite"></p>
+<h3>Vysvetlenie</h3>
+<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button></div><pre class="code-sample language-python"><code class="language-python">bounce_time=0.05
+</code></pre><p class="code-status" role="status" aria-live="polite"></p>
+<p>Hodnota je uvedená v <strong>sekundách</strong>:</p>
+<p><strong>0,05 s = 50 ms</strong></p>
+<p>Parameter zapína potlačenie zákmitov poskytované knižnicou a použitým GPIO backendom. Dokumentované správanie spočíva v ignorovaní ďalších zmien počas nastaveného intervalu po zmene.</p>
+<p><strong>Nejde automaticky o rovnaký algoritmus potvrdenia stability, aký sme naprogramovali na Arduine.</strong></p>
+<h3>Výber intervalu</h3>
+<ul>
+<li>Príliš krátky interval nemusí potlačiť všetky zákmity.</li>
+<li>Príliš dlhý interval môže potlačiť aj rýchle platné ovládanie.</li>
+<li>Výsledok treba overiť na konkrétnom tlačidle.</li>
+</ul>
+<p>Python callback je používateľská funkcia spúšťaná cez knižnicu, nie mikrokontrolérová ISR.</p>
+<p><strong>GPIO Raspberry Pi používajú logiku 3,3 V a nesmú dostať priamo 5 V.</strong></p>
+<hr />
+<h2>7. Úloha pre žiakov</h2>
+<p><strong>Čas: 39 – 43 min</strong></p>
+<h3>A. Vyhodnoť priebeh</h3>
+<p>Používame potvrdenie stability s intervalom <strong>30 ms</strong>. Počiatočný potvrdený stav je <code>HIGH</code>.</p>
+<p>Predpokladajme, že program zachytí všetky uvedené zmeny.</p>
+<table>
+<thead>
+<tr>
+<th>Čas</th>
+<th>Nový stav vstupu</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>100 ms</td>
+<td><code>LOW</code></td>
+</tr>
+<tr>
+<td>103 ms</td>
+<td><code>HIGH</code></td>
+</tr>
+<tr>
+<td>107 ms</td>
+<td><code>LOW</code></td>
+</tr>
+<tr>
+<td>110 ms</td>
+<td><code>HIGH</code></td>
+</tr>
+<tr>
+<td>114 ms</td>
+<td><code>LOW</code></td>
+</tr>
+<tr>
+<td>Ďalej</td>
+<td>Zostáva <code>LOW</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Otázky:</strong></p>
+<ol>
+<li>Kedy nastala posledná zmena?</li>
+<li>Kedy môže program najskôr potvrdiť stlačenie?</li>
+<li>Koľkokrát má prepnúť LED?</li>
+</ol>
+<section class="teacher-note"><p><strong>Odpovede:</strong></p>
+<ol>
+<li>V čase 114 ms.</li>
+<li>Pri prvej kontrole v čase <strong>144 ms alebo neskôr</strong>, ak sa vstup nezmení.</li>
+<li>Raz.</li>
+</ol>
+</section><h3>B. Nájdi problém</h3>
+<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button></div><pre class="code-sample language-cpp"><code class="language-cpp">if (digitalRead(TLACIDLO) == LOW) {
+  pocet++;
+  delay(30);
+}
+</code></pre><p class="code-status" role="status" aria-live="polite"></p>
+<p><strong>Otázka:</strong> Zabezpečuje tento program jedno zvýšenie počítadla na jedno stlačenie?</p>
+<p><strong>Odpoveď:</strong> Nie. Pri dlhšom držaní tlačidla bude počítadlo opakovane zvyšovať. Nerozpoznáva nové stlačenie a blokuje hlavnú slučku.</p>
+<h3>C. Upravte program</h3>
+<p>Upravte ukážku pre Arduino tak, aby namiesto prepínania LED vypísala poradové číslo potvrdeného stlačenia.</p>
+<p><em>Pokyn: počítadlo zvýš v mieste, kde program prijme nový stabilný stav <code>LOW</code>.</em></p>
+<hr />
+<h2>8. Overenie vedomostí a zápis</h2>
+<p><strong>Čas: 43 – 45 min</strong></p>
+<h3>Rýchle otázky</h3>
+<table>
+<thead>
+<tr>
+<th>Otázka</th>
+<th>Odpoveď</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Čo spôsobuje zákmity?</td>
+<td>Mechanické odrazy kontaktov pri zmene stavu.</td>
+</tr>
+<tr>
+<td>Vznikajú iba pri stlačení?</td>
+<td>Nie, môžu vzniknúť aj pri uvoľnení.</td>
+</tr>
+<tr>
+<td>Odstráni ich <code>INPUT_PULLUP</code>?</td>
+<td>Nie, zabezpečuje definovanú úroveň rozpojeného vstupu.</td>
+</tr>
+<tr>
+<td>Odstráni ich použitie prerušenia?</td>
+<td>Nie, prerušenie môže zachytiť viac hrán.</td>
+</tr>
+<tr>
+<td>Čo znamená potvrdenie stability?</td>
+<td>Prijatie nového stavu až po stanovenom čase bez zachytenej zmeny.</td>
+</tr>
+<tr>
+<td>Patrí <code>delay()</code> na potlačenie zákmitov do ISR?</td>
+<td>Nie.</td>
+</tr>
+</tbody>
+</table>
+<h3>Zápis do zošita</h3>
+<blockquote>
+<p><strong>Zákmity kontaktov</strong> sú krátke opakované zmeny signálu pri stlačení alebo uvoľnení mechanického tlačidla.<br />
+<strong>Debouncing</strong> potláča zákmity, aby zariadenie správne rozpoznalo zamýšľanú zmenu.<br />
+Hardvérové riešenia využívajú napríklad RC filter a Schmittov obvod.<br />
+Softvérové riešenie môže prijať nový stav až po intervale stability.<br />
+Potlačenie zákmitov a rozpoznanie nového stlačenia sú dve odlišné úlohy.<br />
+Pri neblokujúcom riešení môže hlavný program počas filtrovania vykonávať ďalšie činnosti.</p>
+</blockquote>
+<p><strong>Nasledujúca hodina: Časovače a časovanie — <code>delay()</code>, <code>millis()</code>, hardvérové časovače a pravidelné úlohy.</strong></p>
+</article>
+    <nav class="lesson-navigation" aria-label="Prednášky tematického celku 4"><a href="4.5%20Pravidla%20prace%20v%20ISR.html">← Predchádzajúca: Pravidlá práce v ISR</a><a href="4.7%20Casovace%20a%20casovanie.html">Nasledujúca: Časovače a časovanie →</a></nav>
+    <footer><a href="index.html">Späť na osnovu predmetu</a> · <a href="../index.html">Všetky kurzy</a></footer>
+  </main>
+  <script>
+    document.addEventListener("click", async (event) => {
+      const button = event.target.closest("[data-copy-code]");
+      if (!button) return;
+
+      const codeBlock = button.parentElement.nextElementSibling;
+      const code = codeBlock.querySelector("code");
+      const status = codeBlock.nextElementSibling;
+      try {
+        await navigator.clipboard.writeText(code.innerText);
+        status.textContent = "Kód bol skopírovaný do schránky.";
+      } catch {
+        status.textContent = "Kopírovanie nie je dostupné. Označte kód a skopírujte ho pomocou Ctrl+C.";
+      }
+    });
+  </script>
+  <script src="../02_C/00_Prostredie_a_struktura_programu/c-lecture-controls.js" defer></script>
+  <script type="module" src="../lesson-remote.js"></script>
+</body>
+</html>

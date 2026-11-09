@@ -1,0 +1,690 @@
+<!doctype html>
+<html lang="sk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101827">
+  <meta name="description" content="Bezpečné obsluhy prerušení, zdieľané údaje a odovzdanie práce hlavnej slučke.">
+  <title>4.5 Pravidlá práce v ISR | Výpočtová technika</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f7f8fa;
+      --fg: #1c2330;
+      --card: #fff;
+      --mut: #5b6678;
+      --acc: #1f6feb;
+      --line: #d9dee7;
+      --note: #fff4d6;
+      --good: #18743a;
+      --bad: #b42318;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        color-scheme: dark;
+        --bg: #12161d;
+        --fg: #e6eaf1;
+        --card: #1b212b;
+        --mut: #9aa6b8;
+        --acc: #5aa2ff;
+        --line: #2d3644;
+        --note: #3a3017;
+        --good: #63d58a;
+        --bad: #ff8a80;
+      }
+    }
+    :root[data-theme="light"] {
+      color-scheme: light;
+      --bg: #f7f8fa;
+      --fg: #1c2330;
+      --card: #fff;
+      --mut: #5b6678;
+      --acc: #1f6feb;
+      --line: #d9dee7;
+      --note: #fff4d6;
+      --good: #18743a;
+      --bad: #b42318;
+    }
+    :root[data-theme="dark"] {
+      color-scheme: dark;
+      --bg: #12161d;
+      --fg: #e6eaf1;
+      --card: #1b212b;
+      --mut: #9aa6b8;
+      --acc: #5aa2ff;
+      --line: #2d3644;
+      --note: #3a3017;
+      --good: #63d58a;
+      --bad: #ff8a80;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-padding-top: 1rem; }
+    body { margin: 0; background: var(--bg); color: var(--fg); font: 16px/1.65 system-ui, -apple-system, "Segoe UI", sans-serif; }
+    a { color: var(--acc); }
+    .global-course-nav { display: flex; flex-wrap: wrap; gap: .55rem; align-items: center; width: min(100% - 2rem, 1000px); margin: .75rem auto 0; font: 600 .9rem/1.4 system-ui, -apple-system, "Segoe UI", sans-serif; }
+    .global-course-nav a { display: inline-block; padding: .4rem .7rem; border: 1px solid var(--line); border-radius: .55rem; text-decoration: none; color: inherit; background: var(--card); }
+    .global-course-nav a:hover { text-decoration: underline; }
+    .global-course-nav a:focus-visible, a:focus-visible, button:focus-visible, summary:focus-visible, select:focus-visible, input:focus-visible { outline: 3px solid var(--acc); outline-offset: 3px; }
+    main { width: min(100% - 2rem, 860px); margin: auto; padding: 16px 0 3rem; }
+    main :is(p, li, td, dd, blockquote) { text-align: justify; text-justify: inter-word; }
+    header { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: .6rem; }
+    .crumb, .muted, .caption { color: var(--mut); }
+    h1 { font-size: clamp(1.8rem, 5vw, 2.6rem); line-height: 1.2; margin: .8rem 0; }
+    h2 { margin-top: 2rem; font-size: 1.4rem; }
+    h3 { margin-top: 1.25rem; font-size: 1.1rem; }
+    .lead { font-size: 1.08rem; }
+    .subtitle { color: var(--mut); }
+    .tags { display: flex; flex-wrap: wrap; gap: .45rem; margin: 1rem 0; }
+    .tag { padding: 2px 9px; border: 1px solid var(--line); border-radius: 6px; background: var(--line); font-size: 13px; }
+    .card, .teacher-note, .video-card, .quiz { margin: 14px 0; padding: 14px 17px; border: 1px solid var(--line); border-radius: 12px; background: var(--card); }
+    .teacher-note { display: none; background: var(--note); }
+    body.teacher .teacher-note { display: block; }
+    .teacher-note strong { display: block; margin-bottom: .3rem; }
+    .mode { display: inline-flex; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+    .mode button { padding: 6px 11px; border: 0; background: var(--card); color: var(--fg); font: inherit; cursor: pointer; }
+    .mode button.on { background: var(--acc); color: #fff; }
+    .pdf-export { margin-left: .5rem; padding: .4rem .7rem; border: 1px solid var(--line); border-radius: .55rem; background: var(--card); color: var(--fg); font: 600 .9rem/1.4 system-ui, -apple-system, "Segoe UI", sans-serif; cursor: pointer; }
+    .code-actions { display: flex; flex-wrap: wrap; align-items: center; gap: .55rem; margin: .8rem 0 .35rem; }
+    .copy-btn, .online-editor { display: inline-block; padding: .4rem .7rem; border: 1px solid var(--line); border-radius: .5rem; font: 600 .9rem/1.4 system-ui, -apple-system, "Segoe UI", sans-serif; text-decoration: none; }
+    .copy-btn { background: var(--acc); border-color: var(--acc); color: #fff; cursor: pointer; }
+    .online-editor { background: var(--card); color: var(--fg); }
+    .code-status { min-height: 1.4em; margin: 0 0 .75rem; color: var(--mut); font-size: .85rem; }
+    .lead-card { margin: 14px 0; padding: 14px 17px; border: 1px solid var(--line); border-radius: 12px; background: var(--card); }
+    .safety-notice, .safety-reminder { margin: 1rem 0; padding: 14px 17px; border: 1px solid var(--line); border-left: 5px solid var(--acc); border-radius: 12px; background: var(--note); }
+    .safety-notice strong, .safety-reminder strong { display: block; margin-bottom: .25rem; }
+    .note { background: var(--note); }
+    .scroll { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { padding: .65rem .7rem; border: 1px solid var(--line); text-align: left; vertical-align: top; }
+    th { background: var(--card); }
+    td:first-child { white-space: nowrap; font-weight: 700; }
+    pre { margin: .65rem 0 1rem; padding: 1rem; border-radius: 9px; overflow-x: auto; background: #0f172a; color: #e2e8f0; font: 14px/1.55 ui-monospace, SFMono-Regular, Consolas, monospace; }
+    code { font-family: ui-monospace, SFMono-Regular, Consolas, monospace; }
+    :not(pre) > code { padding: .08rem .28rem; border-radius: 4px; background: color-mix(in srgb, var(--line) 55%, transparent); }
+    .output { border-left: 4px solid var(--good); }
+    .sources { margin-top: 2rem; padding: 1rem 1.1rem; border: 1px solid var(--line); border-radius: 12px; background: var(--card); }
+    .sources h2 { margin-top: 0; }
+    .sources li { margin: .4rem 0; }
+    .glossary-list { display: grid; grid-template-columns: minmax(8rem, .35fr) 1fr; gap: .3rem .8rem; }
+    .glossary-list dt { font-weight: 750; }
+    .glossary-list dd { margin: 0; }
+    footer { margin-top: 2rem; padding-top: 1rem; border-top: 1px solid var(--line); color: var(--mut); font-size: 14px; }
+    .speech-bubble { position: relative; padding: .85rem 1rem !important; border: 2px solid var(--acc) !important; border-radius: 1.2rem !important; background: color-mix(in srgb, var(--acc) 12%, var(--card)) !important; box-shadow: 0 4px 18px color-mix(in srgb, var(--acc) 18%, transparent); }
+    .speech-bubble::after { position: absolute; bottom: -.65rem; left: 1.2rem; width: 1rem; height: 1rem; border-right: 2px solid var(--acc); border-bottom: 2px solid var(--acc); background: color-mix(in srgb, var(--acc) 12%, var(--card)); content: ""; transform: rotate(45deg); }
+    .narration-target { transition: outline-color .16s ease, background-color .16s ease; text-align: justify; text-justify: inter-word; }
+    .narration-target:hover { outline: 2px solid var(--acc); outline-offset: 3px; background-color: color-mix(in srgb, var(--acc) 8%, transparent); cursor: pointer; }
+    @media (max-width: 620px) { main { width: min(100% - 1.2rem, 860px); } td:first-child { white-space: normal; } }
+    @media (max-width: 520px) { .glossary-list { grid-template-columns: 1fr; gap: .1rem; } .glossary-list dd { margin-bottom: .5rem; } }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; } }
+    @media print {
+      .global-course-nav, .mode, .pdf-export, .code-actions, .code-status, .narration-controls, .narration-option, .lesson-side-panel { display: none !important; }
+      body { background: #fff !important; color: #111 !important; color-scheme: light !important; font-size: 11pt; }
+      main { width: auto; max-width: none; margin: 0; padding: 12mm 14mm; }
+      .teacher-note { display: block; }
+      a[href^="http://"], a[href^="https://"] { color: inherit !important; text-decoration: none !important; }
+      a[href^="http://"]::after, a[href^="https://"]::after { content: none !important; }
+      .card, .teacher-note, .sources, .safety-notice, .safety-reminder, pre, table, blockquote { break-inside: avoid; page-break-inside: avoid; }
+      pre { white-space: pre-wrap; overflow: visible; }
+    }
+    @page { size: A4; margin: 0; }
+      .lesson-navigation { display:flex; flex-wrap:wrap; justify-content:space-between; gap:.7rem; margin:2rem 0 1rem; padding:1rem 0; border-top:1px solid var(--line); }
+    .lesson-navigation a { display:inline-block; padding:.45rem .7rem; border:1px solid var(--line); border-radius:.55rem; background:var(--card); text-decoration:none; }
+  </style>
+  <link rel="stylesheet" href="../02_C/00_Prostredie_a_struktura_programu/c-lecture-controls.css">
+  <script src="../theme.js" defer></script>
+  <script src="../lesson-top.js" defer></script>
+</head>
+<body>
+  <nav class="global-course-nav" aria-label="Navigácia kurzov">
+    <a href="index.html">Prehľad predmetu</a>
+    <a href="../index.html">Všetky kurzy</a>
+  </nav>
+  <aside class="lesson-side-panel" aria-label="Ovládanie hodiny a čítania">
+    <section class="narration-controls" aria-label="Čítanie prednášky">
+      <button id="play-reading" type="button" aria-label="Prehrať">▶ Prehrať</button>
+      <button id="stop-reading" type="button" aria-label="Zastaviť čítanie" disabled>■ Zastaviť</button>
+      <button id="pause-reading" type="button" aria-label="Pozastaviť čítanie" disabled>⏸ Pozastaviť</button>
+      <button id="replay-reading" type="button" aria-label="Prehrať vybrané časti znova" disabled>↻ Prehrať znova</button>
+      <label class="narration-speed" for="narration-speed">Rýchlosť čítania
+        <select id="narration-speed" aria-label="Rýchlosť hlasového čítania">
+          <option value="0.25">0,25×</option>
+          <option value="0.5">0,5×</option>
+          <option value="0.75">0,75×</option>
+          <option value="1" selected>1× – normálna</option>
+          <option value="1.25">1,25×</option>
+          <option value="1.5">1,5×</option>
+          <option value="1.75">1,75×</option>
+          <option value="2">2×</option>
+        </select>
+      </label>
+      <p class="page-language-help">Jazyk zmeníte priamo v Google Translate: kliknite na názov cieľového jazyka v hornej lište a vyberte maďarčinu, ukrajinčinu alebo iný jazyk.</p>
+      <label class="narration-voice" for="narration-voice"><span class="narration-voice-label">Hlas</span>
+        <select id="narration-voice" aria-label="Vyberte hlas na čítanie"><option value="">Automaticky – slovenský hlas</option></select>
+      </label>
+      <label class="narration-volume" for="narration-volume">
+        <span class="narration-volume-heading"><span>Hlasitosť čítania</span><output id="narration-volume-value" for="narration-volume">100 %</output></span>
+        <input id="narration-volume" type="range" min="0" max="100" step="5" value="100" aria-label="Hlasitosť hlasového čítania">
+        <span class="narration-volume-help">Upravuje hlasitosť čítania, nie celkovú hlasitosť zariadenia.</span>
+      </label>
+      <div id="reading-status" class="narration-status" role="status" aria-live="polite"></div>
+    </section>
+  </aside>
+  <main>
+    <aside class="safety-notice" aria-label="Začiatok hodiny a kontrola pracoviska">
+      <strong>Začíname kontrolou pracoviska:</strong>
+      Skontrolujte lavicu, stoličku, pridelený počítač a stav príslušenstva. Poškodenie, chýbajúcu časť alebo inú závadu ihneď oznámte vyučujúcemu a stručný súhrn pošlite cez EduPage podľa jeho pokynov. Poškodené, nefunkčné ani nebezpečné zariadenie nepoužívajte.
+    </aside>
+    <header>
+      <span class="crumb"><a href="index.html">Výpočtová technika</a> › Vstupno-výstupný systém › 4.5</span>
+      <div class="mode" role="group" aria-label="Zobrazenie stránky">
+        <button id="student-mode" class="on" type="button" aria-pressed="true">Žiak</button>
+        <button id="teacher-mode" type="button" aria-pressed="false">Učiteľ</button>
+      </div>
+      <button class="pdf-export" type="button" onclick="window.print()">Exportovať do PDF</button>
+    </header>
+    <h1>4.5 Pravidlá práce v ISR</h1>
+    <p class="lead subtitle">Bezpečné obsluhy prerušení, zdieľané údaje a odovzdanie práce hlavnej slučke.</p>
+    <div class="tags" aria-label="Témy prednášky"><span class="tag">Tematický celok 4</span><span class="tag">Výpočtová technika</span><span class="tag">AVR · Arduino · ESP32 · Raspberry Pi</span><span class="tag">45 minút</span></div>
+    <article class="lesson-content"><p><strong>Predmet:</strong> Výpočtová technika<br />
+<strong>Ročník:</strong> tretí, stredná škola<br />
+<strong>Trvanie:</strong> 45 minút<br />
+<strong>Platformy:</strong> AVR, Arduino, ESP32 a Raspberry Pi<br />
+<strong>Nadväznosť:</strong> Prerušenia a ISR</p>
+<h2>Ciele hodiny</h2>
+<p>Po hodine má žiak vedieť:</p>
+<ul>
+<li>vysvetliť, prečo má byť ISR krátka,</li>
+<li>rozpoznať nevhodné operácie v ISR,</li>
+<li>vysvetliť význam <code>volatile</code> a jeho obmedzenia,</li>
+<li>rozpoznať problém pri zdieľaní údajov,</li>
+<li>bezpečne odovzdať jednoduchú udalosť z ISR do hlavného programu.</li>
+</ul>
+<h2>Časový plán</h2>
+<table>
+<thead>
+<tr>
+<th>Čas</th>
+<th>Obsah</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0 – 5 min</td>
+<td>Opakovanie a motivácia</td>
+</tr>
+<tr>
+<td>5 – 13 min</td>
+<td>Základné pravidlá práce v ISR</td>
+</tr>
+<tr>
+<td>13 – 20 min</td>
+<td>Zdieľané údaje a <code>volatile</code></td>
+</tr>
+<tr>
+<td>20 – 30 min</td>
+<td>Arduino a AVR: bezpečné prevzatie udalosti</td>
+</tr>
+<tr>
+<td>30 – 35 min</td>
+<td>ESP32 a synchronizácia</td>
+</tr>
+<tr>
+<td>35 – 39 min</td>
+<td>Raspberry Pi a callbacky</td>
+</tr>
+<tr>
+<td>39 – 43 min</td>
+<td>Úloha: nájdi a oprav chyby</td>
+</tr>
+<tr>
+<td>43 – 45 min</td>
+<td>Overenie a zápis</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>1. Opakovanie: Čo sa deje počas ISR?</h2>
+<p><strong>Čas: 0 – 5 min</strong></p>
+<p><strong>ISR je obslužná rutina prerušenia.</strong> Procesor ju vykonáva pri obsluhe príslušnej požiadavky.</p>
+<p>Na jednojadrovom AVR je počas ISR hlavný program pozastavený. Pri bežnej obsluhe sú zároveň globálne prerušenia zakázané, takže ďalšie ISR čakajú.</p>
+<h3>Motivačný príklad</h3>
+<p>Mikrokontrolér:</p>
+<ul>
+<li>prijíma údaje cez sériovú linku,</li>
+<li>počíta impulzy,</li>
+<li>ovláda displej.</li>
+</ul>
+<p>Po stlačení tlačidla spustí ISR, ktorá čaká jednu sekundu.</p>
+<p><strong>Otázka pre žiakov:</strong><br />
+Čo môže počas tejto sekundy prestať správne fungovať?</p>
+<p><em>Očakávané odpovede: hlavný program, spracovanie komunikácie, časovanie alebo počítanie impulzov.</em></p>
+<p>Hardvér môže niektoré udalosti dočasne zaznamenať, ale jeho pamäť je obmedzená. Opakované udalosti sa môžu zlúčiť do jednej požiadavky alebo sa môžu stratiť údaje.</p>
+<p><strong>Základná myšlienka hodiny: ISR udalosť rýchlo zachytí a rozsiahlejšiu prácu odovzdá ďalej.</strong></p>
+<hr />
+<h2>2. Základné pravidlá práce v ISR</h2>
+<p><strong>Čas: 5 – 13 min</strong></p>
+<h3>Pravidlo 1: ISR má byť krátka a predvídateľná</h3>
+<p>Vhodné činnosti:</p>
+<ul>
+<li>nastaviť príznak,</li>
+<li>zvýšiť počítadlo,</li>
+<li>prevziať údaj z periférie, ak to jej obsluha vyžaduje,</li>
+<li>vykonať krátku, nevyhnutnú reakciu.</li>
+</ul>
+<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button></div><pre class="code-sample language-cpp"><code class="language-cpp">void priImpulze() {
+  pocetImpulzov++;
+}
+</code></pre><p class="code-status" role="status" aria-live="polite"></p>
+<p>Nevhodné činnosti:</p>
+<ul>
+<li>dlhé výpočty,</li>
+<li>čakanie na používateľa,</li>
+<li>rozsiahle spracovanie údajov,</li>
+<li>dlhé alebo časovo nepredvídateľné slučky.</li>
+</ul>
+<p>Krátka ISR zmenšuje oneskorenie hlavného programu aj ďalších obslúh.</p>
+<h3>Pravidlo 2: V ISR nečakáme pomocou <code>delay()</code></h3>
+<p>Nevhodný príklad:</p>
+<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button></div><pre class="code-sample language-cpp"><code class="language-cpp">void priStlaceni() {
+  delay(500);
+}
+</code></pre><p class="code-status" role="status" aria-live="polite"></p>
+<p>Na klasickom Arduino Uno sa časovanie <code>delay()</code> opiera o mechanizmy, ktoré počas bežnej ISR nefungujú ako v hlavnom programe. Funkcia preto nemusí správne dokončiť čakanie.</p>
+<p>Aj aktívne čakanie by zbytočne zadržiavalo procesor v ISR.</p>
+<p><strong>Ak treba niečo vykonať neskôr, ISR zaznamená požiadavku a časovanie zabezpečí hlavný program.</strong></p>
+<h3>Pravidlo 3: Výpisy a komunikáciu presunieme mimo ISR</h3>
+<p>Nevhodný príklad:</p>
+<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button></div><pre class="code-sample language-cpp"><code class="language-cpp">void priStlaceni() {
+  Serial.println(&quot;Tlacidlo bolo stlacene&quot;);
+}
+</code></pre><p class="code-status" role="status" aria-live="polite"></p>
+<p>Sériový výpis používa vyrovnávaciu pamäť a jeho správanie závisí od platformy. V ISR môže výrazne zdržiavať alebo viesť k zablokovaniu.</p>
+<p>Podobne do bežnej ISR nepatrí:</p>
+<ul>
+<li>posielanie HTTP požiadavky,</li>
+<li>pripájanie k Wi-Fi,</li>
+<li>zápis do súboru,</li>
+<li>aktualizácia celého displeja.</li>
+</ul>
+<p>Používame iba funkcie, pri ktorých platforma výslovne povoľuje volanie z ISR.</p>
+<h3>Pravidlo 4: Vyhýbame sa dynamickému prideľovaniu pamäte</h3>
+<p>V ISR nevytvárame rozsiahle objekty ani texty pomocou operácií ako:</p>
+<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button></div><pre class="code-sample language-cpp"><code class="language-cpp">String sprava = &quot;Nova udalost&quot;;
+</code></pre><p class="code-status" role="status" aria-live="polite"></p>
+<p>Dynamické prideľovanie pamäte môže používať zámky a mať nepredvídateľný čas vykonania.</p>
+<h3>Prehľad</h3>
+<table>
+<thead>
+<tr>
+<th>Činnosť</th>
+<th>Vhodnosť v ISR</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Nastavenie príznaku</td>
+<td>Bežne vhodné</td>
+</tr>
+<tr>
+<td>Zvýšenie počítadla</td>
+<td>Bežne vhodné; treba riešiť jeho čítanie mimo ISR</td>
+</tr>
+<tr>
+<td>Krátka nevyhnutná práca s perifériou</td>
+<td>Podľa dokumentácie</td>
+</tr>
+<tr>
+<td><code>delay()</code></td>
+<td>Nevhodné</td>
+</tr>
+<tr>
+<td>Bežný sériový výpis</td>
+<td>Presunúť mimo ISR</td>
+</tr>
+<tr>
+<td>Sieťová komunikácia</td>
+<td>Presunúť mimo ISR</td>
+</tr>
+<tr>
+<td>Zápis do súboru</td>
+<td>Presunúť mimo ISR</td>
+</tr>
+<tr>
+<td>Dlhé výpočty</td>
+<td>Presunúť mimo ISR</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>3. Zdieľané údaje a význam <code>volatile</code></h2>
+<p><strong>Čas: 13 – 20 min</strong></p>
+<p>ISR potrebuje hlavnému programu oznámiť, že nastala udalosť. Použijeme spoločnú premennú:</p>
+<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button></div><pre class="code-sample language-cpp"><code class="language-cpp">volatile bool udalost = false;
+
+void priStlaceni() {
+  udalost = true;
+}
+</code></pre><p class="code-status" role="status" aria-live="polite"></p>
+<h3>Čo znamená <code>volatile</code>?</h3>
+<p><code>volatile</code> upozorňuje prekladač, že premenná sa môže meniť spôsobom, ktorý z bežného toku programu nevidí — napríklad v ISR.</p>
+<p>Pri príslušných prístupoch preto musí zabezpečiť skutočné čítanie alebo zápis a nemôže sa spoliehať iba na skôr zapamätanú hodnotu.</p>
+<h3>Čo <code>volatile</code> nezabezpečuje?</h3>
+<p><strong><code>volatile</code> nezaručuje atómovosť ani vzájomné vylúčenie.</strong></p>
+<p>Nezabezpečí, aby:</p>
+<ul>
+<li>viac krokov prebehlo ako jeden nedeliteľný celok,</li>
+<li>dve vykonávania súčasne nemenili spoločné údaje,</li>
+<li>sa automaticky vyriešila synchronizácia medzi jadrami ESP32.</li>
+</ul>
+<h3>Atómová operácia</h3>
+<p><strong>Atómová operácia je z pohľadu ostatných vykonávaní nedeliteľná.</strong></p>
+<p>ATmega328P je 8-bitový mikrokontrolér. Bežné načítanie 16-bitovej premennej vyžaduje viac krokov.</p>
+<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button></div><pre class="code-sample language-cpp"><code class="language-cpp">volatile uint16_t pocet = 0;
+</code></pre><p class="code-status" role="status" aria-live="polite"></p>
+<p>Ak ISR zmení premennú medzi načítaním jej jednotlivých bajtov, hlavný program môže dostať nesprávne zloženú hodnotu.</p>
+<h3>Strata udalosti aj pri <code>bool</code></h3>
+<p>Problematický kód:</p>
+<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button></div><pre class="code-sample language-cpp"><code class="language-cpp">if (udalost) {
+  spracujUdalost();
+  udalost = false;
+}
+</code></pre><p class="code-status" role="status" aria-live="polite"></p>
+<p>Možný priebeh:</p>
+<ol>
+<li>Hlavný program zistí <code>true</code>.</li>
+<li>Spustí spracovanie.</li>
+<li>Príde ďalšie prerušenie a nastaví <code>true</code>.</li>
+<li>Hlavný program dokončí spracovanie a zapíše <code>false</code>.</li>
+<li>Nová udalosť sa stratí.</li>
+</ol>
+<p>Riešením je <strong>bezpečne prevziať a vymazať príznak ešte pred spracovaním</strong>.</p>
+<hr />
+<h2>4. AVR a Arduino: bezpečné prevzatie udalosti</h2>
+<p><strong>Čas: 20 – 27 min</strong></p>
+<h3>Zadanie</h3>
+<p>Po stlačení tlačidla Arduino Uno vypíše správu. ISR iba nastaví príznak a výpis vykoná hlavný program.</p>
+<h3>Zapojenie</h3>
+<ul>
+<li>Tlačidlo medzi <strong>D2 a GND</strong>.</li>
+<li>Vstup použije <code>INPUT_PULLUP</code>.</li>
+<li>Stlačenie vyvolá hranu <code>FALLING</code>.</li>
+</ul>
+<h3>Program pre Arduino Uno R3</h3>
+<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button></div><pre class="code-sample language-cpp"><code class="language-cpp">#include &lt;util/atomic.h&gt;
+
+const byte TLACIDLO = 2;
+volatile bool udalost = false;
+
+void priStlaceni() {
+  udalost = true;
+}
+
+void setup() {
+  Serial.begin(9600);
+  pinMode(TLACIDLO, INPUT_PULLUP);
+
+  attachInterrupt(
+    digitalPinToInterrupt(TLACIDLO),
+    priStlaceni,
+    FALLING
+  );
+}
+
+void loop() {
+  bool spracovat;
+
+  ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
+    spracovat = udalost;
+    udalost = false;
+  }
+
+  if (spracovat) {
+    Serial.println(&quot;Bola zachytena udalost.&quot;);
+  }
+}
+</code></pre><p class="code-status" role="status" aria-live="polite"></p>
+<h3>Ako funguje chránený blok?</h3>
+<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button></div><pre class="code-sample language-cpp"><code class="language-cpp">ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
+  spracovat = udalost;
+  udalost = false;
+}
+</code></pre><p class="code-status" role="status" aria-live="polite"></p>
+<p>Na AVR počas týchto dvoch operácií dočasne zakáže prerušenia. ISR preto nemôže vstúpiť medzi prevzatie a vymazanie príznaku.</p>
+<p>Po skončení obnoví predchádzajúci stav povolenia prerušení.</p>
+<p><strong>Tento mechanizmus je určený pre AVR; nejde o univerzálny kód pre všetky dosky Arduino.</strong></p>
+<h3>Čo ak udalosť príde počas výpisu?</h3>
+<p>ISR nastaví príznak znova. Hlavný program ho prevezme pri ďalšom priechode slučkou.</p>
+<p>Výpis je mimo chráneného bloku, preto nepredlžuje čas zákazu prerušení.</p>
+<h3>Obmedzenie príznaku</h3>
+<p>Ak pred prevzatím príznaku príde viac udalostí, výsledkom bude stále iba hodnota <code>true</code>.</p>
+<p>Príznak teda znamená:</p>
+<blockquote>
+<p>Nastala aspoň jedna udalosť.</p>
+</blockquote>
+<p><strong>Neznamená počet udalostí.</strong> Navyše mechanické tlačidlo môže vytvoriť viac udalostí v dôsledku zákmitov. Ich potlačeniu sa bude venovať nasledujúca hodina.</p>
+<hr />
+<h2>5. Keď potrebujeme počítať impulzy</h2>
+<p><strong>Čas: 27 – 30 min</strong></p>
+<p>Pri snímači otáčok môžeme potrebovať počet zachytených impulzov.</p>
+<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button></div><pre class="code-sample language-cpp"><code class="language-cpp">#include &lt;util/atomic.h&gt;
+
+volatile uint16_t pocetImpulzov = 0;
+
+void priImpulze() {
+  pocetImpulzov++;
+}
+</code></pre><p class="code-status" role="status" aria-live="polite"></p>
+<p>Hlavný program bezpečne prevezme počet a vynuluje počítadlo:</p>
+<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button></div><pre class="code-sample language-cpp"><code class="language-cpp">uint16_t prevzatyPocet;
+
+ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
+  prevzatyPocet = pocetImpulzov;
+  pocetImpulzov = 0;
+}
+
+// Spracovanie prebehne až mimo chráneného bloku.
+</code></pre><p class="code-status" role="status" aria-live="polite"></p>
+<h3>Prečo chránime oba kroky?</h3>
+<p>Potrebujeme zabrániť:</p>
+<ul>
+<li>načítaniu neúplnej 16-bitovej hodnoty,</li>
+<li>strate zvýšenia počítadla medzi prevzatím a vynulovaním.</li>
+</ul>
+<p>Ani počítadlo nezaručuje zachytenie ľubovoľne rýchlych impulzov. Procesor musí stíhať obsluhu a premenná nesmie pretiecť. Pre vysoké frekvencie môže byť vhodnejšie hardvérové počítadlo.</p>
+<hr />
+<h2>6. ESP32: kritická sekcia</h2>
+<p><strong>Čas: 30 – 35 min</strong></p>
+<p>Niektoré varianty ESP32 majú viac procesorových jadier. Samotné zakázanie prerušení na jednom jadre nezastaví druhé jadro.</p>
+<p>Na ochranu spoločných údajov preto použijeme mechanizmus kritickej sekcie poskytovaný platformou.</p>
+<h3>Ukážka pre Arduino framework na ESP32</h3>
+<p>Príklad predpokladá dosku s dostupným <strong>GPIO27</strong>. Tlačidlo je pripojené medzi GPIO27 a GND.</p>
+<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button></div><pre class="code-sample language-cpp"><code class="language-cpp">const int TLACIDLO = 27;
+
+portMUX_TYPE zamok = portMUX_INITIALIZER_UNLOCKED;
+volatile bool udalost = false;
+
+void ARDUINO_ISR_ATTR priStlaceni() {
+  portENTER_CRITICAL_ISR(&amp;zamok);
+  udalost = true;
+  portEXIT_CRITICAL_ISR(&amp;zamok);
+}
+
+void setup() {
+  Serial.begin(115200);
+  pinMode(TLACIDLO, INPUT_PULLUP);
+
+  attachInterrupt(
+    digitalPinToInterrupt(TLACIDLO),
+    priStlaceni,
+    FALLING
+  );
+}
+
+void loop() {
+  bool spracovat;
+
+  portENTER_CRITICAL(&amp;zamok);
+  spracovat = udalost;
+  udalost = false;
+  portEXIT_CRITICAL(&amp;zamok);
+
+  if (spracovat) {
+    Serial.println(&quot;Bola zachytena udalost.&quot;);
+  }
+}
+</code></pre><p class="code-status" role="status" aria-live="polite"></p>
+<h3>Čo si zapamätať?</h3>
+<ul>
+<li>ISR aj hlavný program používajú <strong>rovnaký zámok</strong>.</li>
+<li>Vo vnútri chránenej časti je iba krátky prístup k údajom.</li>
+<li>Výpis zostáva mimo kritickej sekcie.</li>
+<li>ISR používa variant funkcií s príponou <code>_ISR</code>.</li>
+</ul>
+<p>Vo väčších aplikáciách sa udalosti odovzdávajú aj cez <strong>fronty alebo notifikácie FreeRTOS</strong>. Z ISR sa pritom používajú funkcie určené na tento účel, často označené <code>FromISR</code>.</p>
+<p><strong>GPIO ESP32 používajú logiku 3,3 V.</strong></p>
+<hr />
+<h2>7. Raspberry Pi: pravidlá pre callback</h2>
+<p><strong>Čas: 35 – 39 min</strong></p>
+<p>Na Raspberry Pi s Linuxom nie je Python callback knižnice <code>gpiozero</code> priamou hardvérovou ISR.</p>
+<p>Aj callback však potrebuje rozumnú organizáciu práce. Ak v ňom vykonávame dlhú operáciu, môžeme zdržiavať spracovanie ďalších udalostí.</p>
+<h3>Odovzdanie udalosti pomocou <code>Event</code></h3>
+<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button></div><pre class="code-sample language-python"><code class="language-python">from gpiozero import Button
+from threading import Event
+
+udalost = Event()
+
+def pri_stlaceni():
+    udalost.set()
+
+tlacidlo = Button(
+    17,
+    pull_up=True,
+    bounce_time=0.05
+)
+
+tlacidlo.when_pressed = pri_stlaceni
+
+try:
+    while True:
+        udalost.wait()
+        udalost.clear()
+
+        print(&quot;Spracuvam udalost v hlavnom programe.&quot;)
+
+finally:
+    tlacidlo.close()
+</code></pre><p class="code-status" role="status" aria-live="polite"></p>
+<h3>Vysvetlenie</h3>
+<ul>
+<li>Callback iba nastaví objekt <code>Event</code>.</li>
+<li><code>wait()</code> čaká bez neustálej kontroly v slučke.</li>
+<li>Hlavný program vykoná spracovanie.</li>
+<li><code>Event</code> je mechanizmus vhodný na signalizáciu medzi vláknami.</li>
+</ul>
+<p>Podobne ako príznak <code>bool</code>, aj <code>Event</code> môže viac oznámení zlúčiť do jedného. <strong>Nie je počítadlom ani frontou.</strong> Ak potrebujeme uchovať jednotlivé položky udalostí, použijeme napríklad <code>queue.Queue</code>.</p>
+<p><strong>Rozdiel oproti AVR:</strong> <code>print()</code> môže byť v Python callbacku dovolený, ale v mikrokontrolérovej ISR sa riadime oveľa prísnejšími obmedzeniami.</p>
+<hr />
+<h2>8. Úloha: Nájdi a oprav chyby</h2>
+<p><strong>Čas: 39 – 43 min</strong></p>
+<p>Nasledujúca funkcia má na Arduino Uno obsluhovať stlačenie tlačidla:</p>
+<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button></div><pre class="code-sample language-cpp"><code class="language-cpp">void priStlaceni() {
+  Serial.println(&quot;Stlacene&quot;);
+
+  delay(1000);
+
+  while (digitalRead(2) == LOW) {
+    // Cakanie na uvolnenie tlacidla.
+  }
+}
+</code></pre><p class="code-status" role="status" aria-live="polite"></p>
+<h3>Otázky</h3>
+<ol>
+<li>Ktoré operácie sú nevhodné?</li>
+<li>Čo sa stane, ak používateľ drží tlačidlo dlho?</li>
+<li>Ako by mala ISR vyzerať?</li>
+<li>Kde vykonáme výpis a prípadné časovanie?</li>
+</ol>
+<section class="teacher-note"><h3>Riešenie pre učiteľa</h3>
+<p>Nevhodné sú:</p>
+<ul>
+<li>sériový výpis v ISR,</li>
+<li><code>delay(1000)</code>,</li>
+<li>čakanie na uvoľnenie tlačidla v slučke.</li>
+</ul>
+<p>Dlhé držanie tlačidla môže udržiavať procesor v ISR. Na Uno navyše nemožno očakávať správne fungovanie uvedeného <code>delay()</code>.</p>
+<p>Opravená ISR:</p>
+<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button></div><pre class="code-sample language-cpp"><code class="language-cpp">volatile bool udalost = false;
+
+void priStlaceni() {
+  udalost = true;
+}
+</code></pre><p class="code-status" role="status" aria-live="polite"></p>
+<p>Hlavný program bezpečne prevezme príznak a vykoná výpis. Čakanie na uvoľnenie alebo časovanie rieši mimo ISR, ideálne bez blokovania ostatných činností.</p>
+<hr />
+</section><h2>9. Overenie vedomostí a zápis</h2>
+<p><strong>Čas: 43 – 45 min</strong></p>
+<h3>Rýchle otázky</h3>
+<table>
+<thead>
+<tr>
+<th>Otázka</th>
+<th>Odpoveď</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Prečo má byť ISR krátka?</td>
+<td>Aby čo najmenej zdržiavala hlavný program a ďalšie obsluhy.</td>
+</tr>
+<tr>
+<td>Zaručuje <code>volatile</code> atómovosť?</td>
+<td>Nie.</td>
+</tr>
+<tr>
+<td>Môže príznak <code>bool</code> spočítať päť udalostí?</td>
+<td>Nie, zaznamená iba to, že nastala aspoň jedna.</td>
+</tr>
+<tr>
+<td>Kam patrí bežný sériový výpis?</td>
+<td>Do hlavného programu alebo vhodnej úlohy.</td>
+</tr>
+<tr>
+<td>Má byť kritická sekcia dlhá?</td>
+<td>Nie, má chrániť iba nevyhnutné krátke operácie.</td>
+</tr>
+</tbody>
+</table>
+<h3>Zápis do zošita</h3>
+<blockquote>
+<p><strong>ISR má byť krátka a predvídateľná.</strong><br />
+Dlhé výpočty, čakanie a bežnú komunikáciu vykonávame mimo ISR.<br />
+ISR môže nastaviť príznak alebo zvýšiť počítadlo.<br />
+<code>volatile</code> upozorňuje prekladač na možné zmeny premennej, ale nezabezpečuje atómovosť ani synchronizáciu.<br />
+Spoločné údaje podľa potreby chránime krátkou kritickou sekciou.<br />
+Príznak zaznamenáva výskyt udalosti; počítadlo zaznamenáva počet obslúžených udalostí.</p>
+</blockquote>
+<p><strong>Nasledujúca hodina: Debouncing — zákmity mechanických kontaktov a ich hardvérové a softvérové potlačenie.</strong></p>
+</article>
+    <nav class="lesson-navigation" aria-label="Prednášky tematického celku 4"><a href="4.4%20Prerusenia%20a%20ISR.html">← Predchádzajúca: Prerušenia a ISR</a><a href="4.6%20Debouncing%20-%20potlacenie%20zakmitov.html">Nasledujúca: Debouncing →</a></nav>
+    <footer><a href="index.html">Späť na osnovu predmetu</a> · <a href="../index.html">Všetky kurzy</a></footer>
+  </main>
+  <script>
+    document.addEventListener("click", async (event) => {
+      const button = event.target.closest("[data-copy-code]");
+      if (!button) return;
+
+      const codeBlock = button.parentElement.nextElementSibling;
+      const code = codeBlock.querySelector("code");
+      const status = codeBlock.nextElementSibling;
+      try {
+        await navigator.clipboard.writeText(code.innerText);
+        status.textContent = "Kód bol skopírovaný do schránky.";
+      } catch {
+        status.textContent = "Kopírovanie nie je dostupné. Označte kód a skopírujte ho pomocou Ctrl+C.";
+      }
+    });
+  </script>
+  <script src="../02_C/00_Prostredie_a_struktura_programu/c-lecture-controls.js" defer></script>
+  <script type="module" src="../lesson-remote.js"></script>
+</body>
+</html>

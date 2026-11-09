@@ -1,0 +1,810 @@
+<!doctype html>
+<html lang="sk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101827">
+  <meta name="description" content="Ako správne nastaviť vstupné a výstupné piny a bezpečne ich pripojiť k obvodom.">
+  <title>4.2 Konfigurácia vstupov a výstupov | Výpočtová technika</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f7f8fa;
+      --fg: #1c2330;
+      --card: #fff;
+      --mut: #5b6678;
+      --acc: #1f6feb;
+      --line: #d9dee7;
+      --note: #fff4d6;
+      --good: #18743a;
+      --bad: #b42318;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        color-scheme: dark;
+        --bg: #12161d;
+        --fg: #e6eaf1;
+        --card: #1b212b;
+        --mut: #9aa6b8;
+        --acc: #5aa2ff;
+        --line: #2d3644;
+        --note: #3a3017;
+        --good: #63d58a;
+        --bad: #ff8a80;
+      }
+    }
+    :root[data-theme="light"] {
+      color-scheme: light;
+      --bg: #f7f8fa;
+      --fg: #1c2330;
+      --card: #fff;
+      --mut: #5b6678;
+      --acc: #1f6feb;
+      --line: #d9dee7;
+      --note: #fff4d6;
+      --good: #18743a;
+      --bad: #b42318;
+    }
+    :root[data-theme="dark"] {
+      color-scheme: dark;
+      --bg: #12161d;
+      --fg: #e6eaf1;
+      --card: #1b212b;
+      --mut: #9aa6b8;
+      --acc: #5aa2ff;
+      --line: #2d3644;
+      --note: #3a3017;
+      --good: #63d58a;
+      --bad: #ff8a80;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-padding-top: 1rem; }
+    body { margin: 0; background: var(--bg); color: var(--fg); font: 16px/1.65 system-ui, -apple-system, "Segoe UI", sans-serif; }
+    a { color: var(--acc); }
+    .global-course-nav { display: flex; flex-wrap: wrap; gap: .55rem; align-items: center; width: min(100% - 2rem, 1000px); margin: .75rem auto 0; font: 600 .9rem/1.4 system-ui, -apple-system, "Segoe UI", sans-serif; }
+    .global-course-nav a { display: inline-block; padding: .4rem .7rem; border: 1px solid var(--line); border-radius: .55rem; text-decoration: none; color: inherit; background: var(--card); }
+    .global-course-nav a:hover { text-decoration: underline; }
+    .global-course-nav a:focus-visible, a:focus-visible, button:focus-visible, summary:focus-visible, select:focus-visible, input:focus-visible { outline: 3px solid var(--acc); outline-offset: 3px; }
+    main { width: min(100% - 2rem, 860px); margin: auto; padding: 16px 0 3rem; }
+    main :is(p, li, td, dd, blockquote) { text-align: justify; text-justify: inter-word; }
+    header { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: .6rem; }
+    .crumb, .muted, .caption { color: var(--mut); }
+    h1 { font-size: clamp(1.8rem, 5vw, 2.6rem); line-height: 1.2; margin: .8rem 0; }
+    h2 { margin-top: 2rem; font-size: 1.4rem; }
+    h3 { margin-top: 1.25rem; font-size: 1.1rem; }
+    .lead { font-size: 1.08rem; }
+    .subtitle { color: var(--mut); }
+    .tags { display: flex; flex-wrap: wrap; gap: .45rem; margin: 1rem 0; }
+    .tag { padding: 2px 9px; border: 1px solid var(--line); border-radius: 6px; background: var(--line); font-size: 13px; }
+    .card, .teacher-note, .video-card, .quiz { margin: 14px 0; padding: 14px 17px; border: 1px solid var(--line); border-radius: 12px; background: var(--card); }
+    .teacher-note { display: none; background: var(--note); }
+    body.teacher .teacher-note { display: block; }
+    .teacher-note strong { display: block; margin-bottom: .3rem; }
+    .mode { display: inline-flex; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+    .mode button { padding: 6px 11px; border: 0; background: var(--card); color: var(--fg); font: inherit; cursor: pointer; }
+    .mode button.on { background: var(--acc); color: #fff; }
+    .pdf-export { margin-left: .5rem; padding: .4rem .7rem; border: 1px solid var(--line); border-radius: .55rem; background: var(--card); color: var(--fg); font: 600 .9rem/1.4 system-ui, -apple-system, "Segoe UI", sans-serif; cursor: pointer; }
+    .code-actions { display: flex; flex-wrap: wrap; align-items: center; gap: .55rem; margin: .8rem 0 .35rem; }
+    .copy-btn, .online-editor { display: inline-block; padding: .4rem .7rem; border: 1px solid var(--line); border-radius: .5rem; font: 600 .9rem/1.4 system-ui, -apple-system, "Segoe UI", sans-serif; text-decoration: none; }
+    .copy-btn { background: var(--acc); border-color: var(--acc); color: #fff; cursor: pointer; }
+    .online-editor { background: var(--card); color: var(--fg); }
+    .code-status { min-height: 1.4em; margin: 0 0 .75rem; color: var(--mut); font-size: .85rem; }
+    .lead-card { margin: 14px 0; padding: 14px 17px; border: 1px solid var(--line); border-radius: 12px; background: var(--card); }
+    .safety-notice, .safety-reminder { margin: 1rem 0; padding: 14px 17px; border: 1px solid var(--line); border-left: 5px solid var(--acc); border-radius: 12px; background: var(--note); }
+    .safety-notice strong, .safety-reminder strong { display: block; margin-bottom: .25rem; }
+    .note { background: var(--note); }
+    .scroll { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { padding: .65rem .7rem; border: 1px solid var(--line); text-align: left; vertical-align: top; }
+    th { background: var(--card); }
+    td:first-child { white-space: nowrap; font-weight: 700; }
+    pre { margin: .65rem 0 1rem; padding: 1rem; border-radius: 9px; overflow-x: auto; background: #0f172a; color: #e2e8f0; font: 14px/1.55 ui-monospace, SFMono-Regular, Consolas, monospace; }
+    code { font-family: ui-monospace, SFMono-Regular, Consolas, monospace; }
+    :not(pre) > code { padding: .08rem .28rem; border-radius: 4px; background: color-mix(in srgb, var(--line) 55%, transparent); }
+    .output { border-left: 4px solid var(--good); }
+    .sources { margin-top: 2rem; padding: 1rem 1.1rem; border: 1px solid var(--line); border-radius: 12px; background: var(--card); }
+    .sources h2 { margin-top: 0; }
+    .sources li { margin: .4rem 0; }
+    .glossary-list { display: grid; grid-template-columns: minmax(8rem, .35fr) 1fr; gap: .3rem .8rem; }
+    .glossary-list dt { font-weight: 750; }
+    .glossary-list dd { margin: 0; }
+    footer { margin-top: 2rem; padding-top: 1rem; border-top: 1px solid var(--line); color: var(--mut); font-size: 14px; }
+    .speech-bubble { position: relative; padding: .85rem 1rem !important; border: 2px solid var(--acc) !important; border-radius: 1.2rem !important; background: color-mix(in srgb, var(--acc) 12%, var(--card)) !important; box-shadow: 0 4px 18px color-mix(in srgb, var(--acc) 18%, transparent); }
+    .speech-bubble::after { position: absolute; bottom: -.65rem; left: 1.2rem; width: 1rem; height: 1rem; border-right: 2px solid var(--acc); border-bottom: 2px solid var(--acc); background: color-mix(in srgb, var(--acc) 12%, var(--card)); content: ""; transform: rotate(45deg); }
+    .narration-target { transition: outline-color .16s ease, background-color .16s ease; text-align: justify; text-justify: inter-word; }
+    .narration-target:hover { outline: 2px solid var(--acc); outline-offset: 3px; background-color: color-mix(in srgb, var(--acc) 8%, transparent); cursor: pointer; }
+    @media (max-width: 620px) { main { width: min(100% - 1.2rem, 860px); } td:first-child { white-space: normal; } }
+    @media (max-width: 520px) { .glossary-list { grid-template-columns: 1fr; gap: .1rem; } .glossary-list dd { margin-bottom: .5rem; } }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; } }
+    @media print {
+      .global-course-nav, .mode, .pdf-export, .code-actions, .code-status, .narration-controls, .narration-option, .lesson-side-panel { display: none !important; }
+      body { background: #fff !important; color: #111 !important; color-scheme: light !important; font-size: 11pt; }
+      main { width: auto; max-width: none; margin: 0; padding: 12mm 14mm; }
+      .teacher-note { display: block; }
+      a[href^="http://"], a[href^="https://"] { color: inherit !important; text-decoration: none !important; }
+      a[href^="http://"]::after, a[href^="https://"]::after { content: none !important; }
+      .card, .teacher-note, .sources, .safety-notice, .safety-reminder, pre, table, blockquote { break-inside: avoid; page-break-inside: avoid; }
+      pre { white-space: pre-wrap; overflow: visible; }
+    }
+    @page { size: A4; margin: 0; }
+      .lesson-navigation { display:flex; flex-wrap:wrap; justify-content:space-between; gap:.7rem; margin:2rem 0 1rem; padding:1rem 0; border-top:1px solid var(--line); }
+    .lesson-navigation a { display:inline-block; padding:.45rem .7rem; border:1px solid var(--line); border-radius:.55rem; background:var(--card); text-decoration:none; }
+  </style>
+  <link rel="stylesheet" href="../02_C/00_Prostredie_a_struktura_programu/c-lecture-controls.css">
+  <script src="../theme.js" defer></script>
+  <script src="../lesson-top.js" defer></script>
+</head>
+<body>
+  <nav class="global-course-nav" aria-label="Navigácia kurzov">
+    <a href="index.html">Prehľad predmetu</a>
+    <a href="../index.html">Všetky kurzy</a>
+  </nav>
+  <aside class="lesson-side-panel" aria-label="Ovládanie hodiny a čítania">
+    <section class="narration-controls" aria-label="Čítanie prednášky">
+      <button id="play-reading" type="button" aria-label="Prehrať">▶ Prehrať</button>
+      <button id="stop-reading" type="button" aria-label="Zastaviť čítanie" disabled>■ Zastaviť</button>
+      <button id="pause-reading" type="button" aria-label="Pozastaviť čítanie" disabled>⏸ Pozastaviť</button>
+      <button id="replay-reading" type="button" aria-label="Prehrať vybrané časti znova" disabled>↻ Prehrať znova</button>
+      <label class="narration-speed" for="narration-speed">Rýchlosť čítania
+        <select id="narration-speed" aria-label="Rýchlosť hlasového čítania">
+          <option value="0.25">0,25×</option>
+          <option value="0.5">0,5×</option>
+          <option value="0.75">0,75×</option>
+          <option value="1" selected>1× – normálna</option>
+          <option value="1.25">1,25×</option>
+          <option value="1.5">1,5×</option>
+          <option value="1.75">1,75×</option>
+          <option value="2">2×</option>
+        </select>
+      </label>
+      <p class="page-language-help">Jazyk zmeníte priamo v Google Translate: kliknite na názov cieľového jazyka v hornej lište a vyberte maďarčinu, ukrajinčinu alebo iný jazyk.</p>
+      <label class="narration-voice" for="narration-voice"><span class="narration-voice-label">Hlas</span>
+        <select id="narration-voice" aria-label="Vyberte hlas na čítanie"><option value="">Automaticky – slovenský hlas</option></select>
+      </label>
+      <label class="narration-volume" for="narration-volume">
+        <span class="narration-volume-heading"><span>Hlasitosť čítania</span><output id="narration-volume-value" for="narration-volume">100 %</output></span>
+        <input id="narration-volume" type="range" min="0" max="100" step="5" value="100" aria-label="Hlasitosť hlasového čítania">
+        <span class="narration-volume-help">Upravuje hlasitosť čítania, nie celkovú hlasitosť zariadenia.</span>
+      </label>
+      <div id="reading-status" class="narration-status" role="status" aria-live="polite"></div>
+    </section>
+  </aside>
+  <main>
+    <aside class="safety-notice" aria-label="Začiatok hodiny a kontrola pracoviska">
+      <strong>Začíname kontrolou pracoviska:</strong>
+      Skontrolujte lavicu, stoličku, pridelený počítač a stav príslušenstva. Poškodenie, chýbajúcu časť alebo inú závadu ihneď oznámte vyučujúcemu a stručný súhrn pošlite cez EduPage podľa jeho pokynov. Poškodené, nefunkčné ani nebezpečné zariadenie nepoužívajte.
+    </aside>
+    <header>
+      <span class="crumb"><a href="index.html">Výpočtová technika</a> › Vstupno-výstupný systém › 4.2</span>
+      <div class="mode" role="group" aria-label="Zobrazenie stránky">
+        <button id="student-mode" class="on" type="button" aria-pressed="true">Žiak</button>
+        <button id="teacher-mode" type="button" aria-pressed="false">Učiteľ</button>
+      </div>
+      <button class="pdf-export" type="button" onclick="window.print()">Exportovať do PDF</button>
+    </header>
+    <h1>4.2 Konfigurácia vstupov a výstupov</h1>
+    <p class="lead subtitle">Ako správne nastaviť vstupné a výstupné piny a bezpečne ich pripojiť k obvodom.</p>
+    <div class="tags" aria-label="Témy prednášky"><span class="tag">Tematický celok 4</span><span class="tag">Výpočtová technika</span><span class="tag">AVR · Arduino · ESP32 · Raspberry Pi</span><span class="tag">45 minút</span></div>
+    <article class="lesson-content"><p><strong>Predmet:</strong> Výpočtová technika<br />
+<strong>Ročník:</strong> tretí, stredná škola<br />
+<strong>Trvanie:</strong> 45 minút<br />
+<strong>Platformy:</strong> AVR, Arduino, ESP32 a Raspberry Pi<br />
+<strong>Nadväznosť:</strong> GPIO – všeobecné digitálne vstupy a výstupy</p>
+<h2>Ciele hodiny</h2>
+<p>Po hodine má žiak vedieť:</p>
+<ul>
+<li>vybrať vhodný režim digitálneho pinu,</li>
+<li>rozlíšiť vstup, vstup s pull-up/pull-down a výstup,</li>
+<li>vysvetliť rozdiel medzi push-pull a open-drain,</li>
+<li>použiť základné konfiguračné funkcie Arduino a <code>gpiozero</code>,</li>
+<li>vysvetliť význam registrov <code>DDRx</code>, <code>PORTx</code> a <code>PINx</code> na AVR,</li>
+<li>nastaviť definovaný počiatočný stav výstupu.</li>
+</ul>
+<h2>Časový plán</h2>
+<table>
+<thead>
+<tr>
+<th>Čas</th>
+<th>Obsah</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0 – 5 min</td>
+<td>Opakovanie GPIO a motivácia</td>
+</tr>
+<tr>
+<td>5 – 13 min</td>
+<td>Konfigurácia vstupov</td>
+</tr>
+<tr>
+<td>13 – 20 min</td>
+<td>Konfigurácia výstupov</td>
+</tr>
+<tr>
+<td>20 – 29 min</td>
+<td>AVR: registre a praktická ukážka</td>
+</tr>
+<tr>
+<td>29 – 35 min</td>
+<td>ESP32</td>
+</tr>
+<tr>
+<td>35 – 39 min</td>
+<td>Raspberry Pi</td>
+</tr>
+<tr>
+<td>39 – 43 min</td>
+<td>Úlohy pre žiakov</td>
+</tr>
+<tr>
+<td>43 – 45 min</td>
+<td>Overenie a zápis</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>1. Prečo musíme pin nakonfigurovať?</h2>
+<p><strong>Čas: 0 – 5 min</strong></p>
+<p>Jeden pin môže podľa možností čipu slúžiť ako:</p>
+<ul>
+<li>digitálny vstup,</li>
+<li>digitálny výstup,</li>
+<li>analógový vstup,</li>
+<li>súčasť komunikačného rozhrania,</li>
+<li>výstup časovača.</li>
+</ul>
+<p><strong>Konfigurácia určuje, ako sa má pin elektricky a funkčne správať.</strong></p>
+<h3>Príklad</h3>
+<p>Tlačidlo potrebuje vstup:</p>
+<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button></div><pre class="code-sample language-cpp"><code class="language-cpp">pinMode(2, INPUT_PULLUP);
+</code></pre><p class="code-status" role="status" aria-live="polite"></p>
+<p>LED potrebuje výstup:</p>
+<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button></div><pre class="code-sample language-cpp"><code class="language-cpp">pinMode(8, OUTPUT);
+</code></pre><p class="code-status" role="status" aria-live="polite"></p>
+<h3>Otázka pre triedu</h3>
+<p>Čo hrozí, ak pin pripojený tlačidlom na GND omylom nastavíme ako výstup <code>HIGH</code> a tlačidlo stlačíme?</p>
+<p><em>Odpoveď: Vznikne nežiaduci veľký prúd medzi výstupom a GND. Môže dôjsť k poškodeniu.</em></p>
+<p>Preto pred zapnutím kontrolujeme <strong>program aj zapojenie</strong>.</p>
+<hr />
+<h2>2. Konfigurácia digitálnych vstupov</h2>
+<p><strong>Čas: 5 – 13 min</strong></p>
+<h3>A. Vstup bez vnútorného rezistora</h3>
+<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button></div><pre class="code-sample language-cpp"><code class="language-cpp">pinMode(2, INPUT);
+</code></pre><p class="code-status" role="status" aria-live="polite"></p>
+<p>Pin zisťuje stav vonkajšieho signálu. Má vysokú vstupnú impedanciu — od zdroja signálu odoberá iba malý prúd.</p>
+<p>Vhodné použitie:</p>
+<ul>
+<li>výstup digitálneho snímača, ktorý vytvára definované úrovne,</li>
+<li>tlačidlo s externým pull-up alebo pull-down rezistorom.</li>
+</ul>
+<p><strong>Nepripojený vstup nemá zaručenú hodnotu.</strong></p>
+<h3>B. Vstup s pull-up</h3>
+<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button></div><pre class="code-sample language-cpp"><code class="language-cpp">pinMode(2, INPUT_PULLUP);
+</code></pre><p class="code-status" role="status" aria-live="polite"></p>
+<p>Vnútorný rezistor udržiava rozpojený vstup v logickej jednotke.</p>
+<p>Tlačidlo pripojíme medzi pin a GND:</p>
+<table>
+<thead>
+<tr>
+<th>Stav tlačidla</th>
+<th>Načítaná hodnota</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Uvoľnené</td>
+<td><code>HIGH</code></td>
+</tr>
+<tr>
+<td>Stlačené</td>
+<td><code>LOW</code></td>
+</tr>
+</tbody>
+</table>
+<p>Použitie v programe:</p>
+<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button></div><pre class="code-sample language-cpp"><code class="language-cpp">bool stlacene = digitalRead(2) == LOW;
+</code></pre><p class="code-status" role="status" aria-live="polite"></p>
+<h3>C. Vstup s pull-down</h3>
+<p>Vnútorný rezistor udržiava rozpojený vstup v logickej nule.</p>
+<p>Na podporovaných doskách, napríklad pri vhodnom GPIO ESP32:</p>
+<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button></div><pre class="code-sample language-cpp"><code class="language-cpp">pinMode(27, INPUT_PULLDOWN);
+</code></pre><p class="code-status" role="status" aria-live="polite"></p>
+<p>Tlačidlo pripojíme medzi vstup a <strong>3,3 V</strong>:</p>
+<table>
+<thead>
+<tr>
+<th>Stav tlačidla</th>
+<th>Načítaná hodnota</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Uvoľnené</td>
+<td><code>LOW</code></td>
+</tr>
+<tr>
+<td>Stlačené</td>
+<td><code>HIGH</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Arduino Uno R3 s ATmega328P nemá bežný vnútorný pull-down na GPIO.</strong> V prípade potreby použijeme externý rezistor.</p>
+<h3>Ako vybrať režim?</h3>
+<table>
+<thead>
+<tr>
+<th>Pripojenie</th>
+<th>Vhodný vstupný režim</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Tlačidlo medzi pinom a GND</td>
+<td>Vstup s pull-up</td>
+</tr>
+<tr>
+<td>Tlačidlo medzi pinom a napájaním logiky</td>
+<td>Vstup s pull-down</td>
+</tr>
+<tr>
+<td>Snímač s aktívnym digitálnym výstupom</td>
+<td>Spravidla vstup bez pull rezistora</td>
+</tr>
+<tr>
+<td>Výstup typu open-drain</td>
+<td>Vstup s vhodným pull-up</td>
+</tr>
+</tbody>
+</table>
+<p>Pull rezistor vyberáme podľa celého zapojenia. Vnútorný rezistor je pomerne slabý a nemusí postačovať napríklad pri dlhom vedení alebo požadovanej rýchlosti signálu.</p>
+<hr />
+<h2>3. Konfigurácia digitálnych výstupov</h2>
+<p><strong>Čas: 13 – 20 min</strong></p>
+<h3>A. Push-pull</h3>
+<p>Bežný digitálny výstup mikrokontroléra býva typu <strong>push-pull</strong>.</p>
+<p>Dokáže aktívne:</p>
+<ul>
+<li>vytvoriť vysokú úroveň,</li>
+<li>vytvoriť nízku úroveň.</li>
+</ul>
+<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button></div><pre class="code-sample language-cpp"><code class="language-cpp">pinMode(8, OUTPUT);
+digitalWrite(8, HIGH);
+</code></pre><p class="code-status" role="status" aria-live="polite"></p>
+<p>Použitie:</p>
+<ul>
+<li>LED cez rezistor,</li>
+<li>riadiaci vstup ďalšieho obvodu,</li>
+<li>vstup tranzistorového alebo motorového ovládača.</li>
+</ul>
+<p><strong>Dva push-pull výstupy priamo nespájame, ak by mohli nastaviť opačné úrovne.</strong></p>
+<h3>B. Open-drain</h3>
+<p>Výstup typu <strong>open-drain</strong> dokáže:</p>
+<ul>
+<li>aktívne stiahnuť vodič na <code>LOW</code>,</li>
+<li>alebo ho uvoľniť do stavu vysokej impedancie.</li>
+</ul>
+<p>Vysokú úroveň vytvára pull-up rezistor.</p>
+<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button></div><pre class="code-sample language-text"><code class="language-text">Napájanie logiky
+      │
+   pull-up
+      │
+      ├──────── signál
+      │
+  open-drain výstup
+      │
+     GND
+</code></pre><p class="code-status" role="status" aria-live="polite"></p>
+<table>
+<thead>
+<tr>
+<th>Nastavenie výstupu</th>
+<th>Elektrické správanie</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>LOW</code></td>
+<td>Výstup sťahuje vodič na GND</td>
+</tr>
+<tr>
+<td>Uvoľnenie</td>
+<td>Výstup vodič aktívne nenapája; úroveň určuje pull-up</td>
+</tr>
+</tbody>
+</table>
+<p>Použitie:</p>
+<ul>
+<li>zbernica I²C,</li>
+<li>spoločné signalizačné vedenia,</li>
+<li>niektoré výstupy snímačov.</li>
+</ul>
+<p>Viac vhodných open-drain výstupov môže zdieľať jeden vodič. Ak aspoň jeden stiahne vodič na zem, výsledkom je <code>LOW</code>.</p>
+<p><strong>Open-drain automaticky nezaručuje toleranciu vyššieho napätia.</strong> Pull-up musí byť pripojený na napätie prípustné pre všetky pripojené piny.</p>
+<h3>C. Počiatočný stav výstupu</h3>
+<p>Pred aktiváciou výstupu nastavíme požadovanú počiatočnú hodnotu spôsobom odporúčaným pre danú platformu.</p>
+<p>Na Arduino Uno:</p>
+<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button></div><pre class="code-sample language-cpp"><code class="language-cpp">digitalWrite(8, LOW);
+pinMode(8, OUTPUT);
+</code></pre><p class="code-status" role="status" aria-live="polite"></p>
+<p>Tým pripravíme nízku výstupnú hodnotu pred zapnutím výstupného budiča.</p>
+<p>To však nezabezpečuje stav pinu počas celého štartu či resetu. Ak má byť riadená záťaž spoľahlivo vypnutá už pred spustením programu, môže byť potrebný externý rezistor alebo ďalší hardvér.</p>
+<hr />
+<h2>4. AVR: registre vstupov a výstupov</h2>
+<p><strong>Čas: 20 – 25 min</strong></p>
+<p>Na ATmega328P sú GPIO usporiadané do portov. Pre port B používame napríklad:</p>
+<ul>
+<li><code>DDRB</code>,</li>
+<li><code>PORTB</code>,</li>
+<li><code>PINB</code>.</li>
+</ul>
+<p>Písmeno <code>x</code> v všeobecnom zápise <code>DDRx</code> označuje konkrétny port.</p>
+<h3>Význam registrov</h3>
+<table>
+<thead>
+<tr>
+<th>Register</th>
+<th>Úloha</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>DDRx</code></td>
+<td>Určuje smer pinov</td>
+</tr>
+<tr>
+<td><code>PORTx</code></td>
+<td>Nastavuje výstupnú hodnotu alebo ovláda pull-up</td>
+</tr>
+<tr>
+<td><code>PINx</code></td>
+<td>Pri čítaní poskytuje logické stavy pinov</td>
+</tr>
+</tbody>
+</table>
+<h3>Register smeru <code>DDRx</code></h3>
+<p>Každý bit zodpovedá jednému pinu:</p>
+<ul>
+<li><code>0</code> → vstup,</li>
+<li><code>1</code> → výstup.</li>
+</ul>
+<h3>Register <code>PORTx</code></h3>
+<p>Jeho význam závisí od smeru pinu:</p>
+<table>
+<thead>
+<tr>
+<th><code>DDRx</code> bit</th>
+<th><code>PORTx</code> bit</th>
+<th>Bežný význam</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td>0</td>
+<td>Vstup bez vnútorného pull-up</td>
+</tr>
+<tr>
+<td>0</td>
+<td>1</td>
+<td>Vstup s pull-up, ak nie je globálne zakázaný</td>
+</tr>
+<tr>
+<td>1</td>
+<td>0</td>
+<td>Výstup <code>LOW</code></td>
+</tr>
+<tr>
+<td>1</td>
+<td>1</td>
+<td>Výstup <code>HIGH</code></td>
+</tr>
+</tbody>
+</table>
+<p>Tabuľka predpokladá bežné GPIO použitie. Alternatívne funkcie periférií môžu správanie pinu ovplyvniť.</p>
+<h3>Bitové operácie</h3>
+<p>Nastavenie bitu:</p>
+<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button></div><pre class="code-sample language-cpp"><code class="language-cpp">DDRB |= (1 &lt;&lt; DDB0);
+</code></pre><p class="code-status" role="status" aria-live="polite"></p>
+<p>Vynulovanie bitu:</p>
+<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button></div><pre class="code-sample language-cpp"><code class="language-cpp">DDRB &amp;= ~(1 &lt;&lt; DDB0);
+</code></pre><p class="code-status" role="status" aria-live="polite"></p>
+<p>Testovanie bitu:</p>
+<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button></div><pre class="code-sample language-cpp"><code class="language-cpp">bool vysokaUroven = (PINB &amp; (1 &lt;&lt; PINB0)) != 0;
+</code></pre><p class="code-status" role="status" aria-live="polite"></p>
+<p>Použitím masky meníme alebo čítame konkrétny bit.</p>
+<p><strong>Pozor:</strong> Na ATmega328P má zápis jednotky do bitu registra <code>PINx</code> špeciálny význam — prepína príslušný bit <code>PORTx</code>. Pri čítaní vstupov preto do <code>PINx</code> nezapisujeme.</p>
+<hr />
+<h2>5. Arduino Uno: rovnaká úloha cez registre</h2>
+<p><strong>Čas: 25 – 29 min</strong></p>
+<h3>Zadanie</h3>
+<ul>
+<li>Tlačidlo medzi <strong>D2 a GND</strong>.</li>
+<li>LED cez <strong>rezistor 680 Ω</strong> medzi D8 a GND.</li>
+<li>LED svieti počas držania tlačidla.</li>
+</ul>
+<p>Mapovanie na Arduino Uno R3:</p>
+<table>
+<thead>
+<tr>
+<th>Pin dosky</th>
+<th>Port a bit</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>D2</td>
+<td>PD2</td>
+</tr>
+<tr>
+<td>D8</td>
+<td>PB0</td>
+</tr>
+</tbody>
+</table>
+<h3>Program</h3>
+<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button></div><pre class="code-sample language-cpp"><code class="language-cpp">void setup() {
+  // PD2: vstup s pull-up.
+  DDRD &amp;= ~(1 &lt;&lt; DDD2);
+  PORTD |= (1 &lt;&lt; PORTD2);
+
+  // PB0: najprv pripraviť LOW, potom zapnúť výstup.
+  PORTB &amp;= ~(1 &lt;&lt; PORTB0);
+  DDRB |= (1 &lt;&lt; DDB0);
+}
+
+void loop() {
+  bool stlacene = (PIND &amp; (1 &lt;&lt; PIND2)) == 0;
+
+  if (stlacene) {
+    PORTB |= (1 &lt;&lt; PORTB0);
+  } else {
+    PORTB &amp;= ~(1 &lt;&lt; PORTB0);
+  }
+}
+</code></pre><p class="code-status" role="status" aria-live="polite"></p>
+<h3>Porovnanie zápisov</h3>
+<table>
+<thead>
+<tr>
+<th>Arduino API</th>
+<th>Priamy prístup na Uno R3</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>pinMode(2, INPUT_PULLUP)</code></td>
+<td>Nastavenie bitov <code>DDRD</code> a <code>PORTD</code></td>
+</tr>
+<tr>
+<td><code>digitalRead(2)</code></td>
+<td>Čítanie bitu <code>PIND2</code></td>
+</tr>
+<tr>
+<td><code>digitalWrite(8, HIGH)</code></td>
+<td>Nastavenie bitu <code>PORTB0</code></td>
+</tr>
+</tbody>
+</table>
+<p>Priamy prístup umožňuje detailné riadenie hardvéru, ale viaže program na konkrétny mikrokontrolér a mapovanie dosky.</p>
+<p><strong>Tento registerový program nemožno priamo preniesť na ESP32 alebo Raspberry Pi.</strong></p>
+<p>Ak rovnaký register mení aj ISR, musíme navyše posúdiť bezpečnosť spoločných operácií.</p>
+<hr />
+<h2>6. Konfigurácia GPIO na ESP32</h2>
+<p><strong>Čas: 29 – 35 min</strong></p>
+<p>V Arduino frameworku môžeme používať:</p>
+<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button></div><pre class="code-sample language-cpp"><code class="language-cpp">pinMode(pin, INPUT);
+pinMode(pin, INPUT_PULLUP);
+pinMode(pin, INPUT_PULLDOWN);
+pinMode(pin, OUTPUT);
+</code></pre><p class="code-status" role="status" aria-live="polite"></p>
+<p>Na podporovaných pinech je dostupný aj open-drain:</p>
+<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button></div><pre class="code-sample language-cpp"><code class="language-cpp">pinMode(pin, OUTPUT_OPEN_DRAIN);
+</code></pre><p class="code-status" role="status" aria-live="polite"></p>
+<h3>Príklad vstupu s pull-down</h3>
+<p>Pre klasickú vývojovú dosku ESP32 s dostupným GPIO27:</p>
+<ul>
+<li>externý rezistor približne 10 kΩ medzi GPIO27 a GND,</li>
+<li>tlačidlo medzi GPIO27 a 3,3 V.</li>
+</ul>
+<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button></div><pre class="code-sample language-cpp"><code class="language-cpp">const int TLACIDLO = 27;
+
+void setup() {
+  Serial.begin(115200);
+  pinMode(TLACIDLO, INPUT);
+}
+
+void loop() {
+  bool stlacene = digitalRead(TLACIDLO) == HIGH;
+
+  if (stlacene) {
+    Serial.println(&quot;Tlacidlo je stlacene&quot;);
+  }
+
+  delay(100);
+}
+</code></pre><p class="code-status" role="status" aria-live="polite"></p>
+<p>Externý rezistor tu zabezpečuje pull-down. Na vhodnom GPIO môžeme namiesto neho použiť vnútorný rezistor:</p>
+<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button></div><pre class="code-sample language-cpp"><code class="language-cpp">pinMode(TLACIDLO, INPUT_PULLDOWN);
+</code></pre><p class="code-status" role="status" aria-live="polite"></p>
+<p>Program vypisuje stav opakovane počas držania tlačidla; nejde o počítanie samostatných stlačení.</p>
+<h3>Open-drain na ESP32</h3>
+<p>Pri nakonfigurovanom open-drain výstupe:</p>
+<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button></div><pre class="code-sample language-cpp"><code class="language-cpp">digitalWrite(pin, LOW);   // Aktívne stiahnutie na zem.
+digitalWrite(pin, HIGH);  // Uvoľnenie výstupu.
+</code></pre><p class="code-status" role="status" aria-live="polite"></p>
+<p>Pre vysokú úroveň potrebujeme vhodný pull-up.</p>
+<h3>Obmedzenia pinov</h3>
+<p>Pri pôvodnom ESP32 napríklad GPIO34 až GPIO39:</p>
+<ul>
+<li>slúžia iba ako vstupy,</li>
+<li>nemajú vnútorný pull-up ani pull-down.</li>
+</ul>
+<p>Iné varianty ESP32 majú odlišné rozloženie a obmedzenia. Niektoré piny sú navyše spojené s pamäťou alebo ovplyvňujú štart zariadenia.</p>
+<p><strong>Konfiguráciu vždy overujeme podľa konkrétneho čipu aj dosky. GPIO ESP32 používajú logiku 3,3 V.</strong></p>
+<hr />
+<h2>7. Raspberry Pi: konfigurácia v <code>gpiozero</code></h2>
+<p><strong>Čas: 35 – 39 min</strong></p>
+<p>Na Raspberry Pi s Linuxom nastavujeme GPIO prostredníctvom knižnice a ovládača.</p>
+<h3>Vstup s pull-up</h3>
+<p>Tlačidlo medzi <strong>GPIO17 a GND</strong>:</p>
+<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button></div><pre class="code-sample language-python"><code class="language-python">from gpiozero import Button
+
+tlacidlo = Button(17, pull_up=True)
+</code></pre><p class="code-status" role="status" aria-live="polite"></p>
+<p>Knižnica interpretuje stlačenie ako aktívny stav, hoci fyzická úroveň vstupu je nízka.</p>
+<h3>Vstup s pull-down</h3>
+<p>Tlačidlo medzi <strong>GPIO17 a 3,3 V</strong>:</p>
+<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button></div><pre class="code-sample language-python"><code class="language-python">tlacidlo = Button(17, pull_up=False)
+</code></pre><p class="code-status" role="status" aria-live="polite"></p>
+<h3>Výstup s počiatočným stavom</h3>
+<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button></div><pre class="code-sample language-python"><code class="language-python">from gpiozero import LED
+
+led = LED(
+    27,
+    active_high=True,
+    initial_value=False
+)
+</code></pre><p class="code-status" role="status" aria-live="polite"></p>
+<ul>
+<li><code>active_high=True</code>: LED je logicky zapnutá pri vysokej úrovni.</li>
+<li><code>initial_value=False</code>: po inicializácii má byť vypnutá.</li>
+</ul>
+<h3>Zariadenie aktívne v nule</h3>
+<p>Pre riadiaci vstup, ktorý sa aktivuje nízkou úrovňou:</p>
+<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button></div><pre class="code-sample language-python"><code class="language-python">from gpiozero import DigitalOutputDevice
+
+vystup = DigitalOutputDevice(
+    27,
+    active_high=False,
+    initial_value=False
+)
+</code></pre><p class="code-status" role="status" aria-live="polite"></p>
+<p>Potom:</p>
+<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button></div><pre class="code-sample language-python"><code class="language-python">vystup.on()   # Fyzicky LOW.
+vystup.off()  # Fyzicky HIGH.
+</code></pre><p class="code-status" role="status" aria-live="polite"></p>
+<p><strong><code>active_high=False</code> nemení výstup na open-drain.</strong> Iba obracia vzťah medzi logickým stavom zariadenia a fyzickou úrovňou.</p>
+<p>Používame číslovanie <strong>BCM GPIO</strong> a rešpektujeme logiku <strong>3,3 V</strong>.</p>
+<hr />
+<h2>8. Úlohy pre žiakov</h2>
+<p><strong>Čas: 39 – 43 min</strong></p>
+<h3>A. Vyberte konfiguráciu</h3>
+<table>
+<thead>
+<tr>
+<th>Situácia</th>
+<th>Vhodná konfigurácia</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Tlačidlo medzi pinom a GND</td>
+<td>Vstup s pull-up</td>
+</tr>
+<tr>
+<td>Tlačidlo medzi pinom a napájaním logiky</td>
+<td>Vstup s pull-down</td>
+</tr>
+<tr>
+<td>LED cez rezistor</td>
+<td>Bežný výstup</td>
+</tr>
+<tr>
+<td>Spoločný vodič, ktorý majú zariadenia iba sťahovať na nulu</td>
+<td>Open-drain s vhodným pull-up</td>
+</tr>
+</tbody>
+</table>
+<h3>B. Vyhodnoť AVR registre</h3>
+<p>Pre jeden pin platí:</p>
+<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button></div><pre class="code-sample language-text"><code class="language-text">DDRx bit = 0
+PORTx bit = 1
+</code></pre><p class="code-status" role="status" aria-live="polite"></p>
+<p><strong>Otázka:</strong> Aký je režim?</p>
+<p><strong>Odpoveď:</strong> Vstup s pull-up, ak nie je pull-up globálne zakázaný a pin nie je ovládaný inou funkciou.</p>
+<h3>C. Nájdi chybu</h3>
+<p>Žiak na Arduino Uno R3 zapojil tlačidlo medzi D2 a GND:</p>
+<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button></div><pre class="code-sample language-cpp"><code class="language-cpp">void setup() {
+  pinMode(2, INPUT);
+}
+</code></pre><p class="code-status" role="status" aria-live="polite"></p>
+<p><strong>Otázka:</strong> Prečo môže pri uvoľnenom tlačidle čítať náhodné hodnoty?</p>
+<p><strong>Odpoveď:</strong> Chýba definovanie úrovne. Vstup je po rozpojení plávajúci.</p>
+<p>Oprava pri tomto zapojení:</p>
+<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button></div><pre class="code-sample language-cpp"><code class="language-cpp">pinMode(2, INPUT_PULLUP);
+</code></pre><p class="code-status" role="status" aria-live="polite"></p>
+<h3>D. Rozlíš pojmy</h3>
+<p>Znamená „aktívny v nule“ to isté ako „open-drain“?</p>
+<p><strong>Odpoveď:</strong> Nie. Aktívny v nule opisuje význam signálu. Open-drain opisuje elektrickú konštrukciu výstupu.</p>
+<hr />
+<h2>9. Overenie vedomostí a zápis</h2>
+<p><strong>Čas: 43 – 45 min</strong></p>
+<table>
+<thead>
+<tr>
+<th>Otázka</th>
+<th>Odpoveď</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Čo určuje konfigurácia GPIO?</td>
+<td>Smer, elektrický režim a podľa čipu aj funkciu pinu.</td>
+</tr>
+<tr>
+<td>Čím sa líši pull-up od pull-down?</td>
+<td>Pull-up smeruje rozpojený vstup k vysokej úrovni, pull-down k nízkej.</td>
+</tr>
+<tr>
+<td>Dokáže open-drain aktívne vytvoriť <code>HIGH</code>?</td>
+<td>Nie, vodič uvoľní a vysokú úroveň vytvára pull-up.</td>
+</tr>
+<tr>
+<td>Na čo slúži <code>DDRx</code> na AVR?</td>
+<td>Na nastavenie smeru pinov.</td>
+</tr>
+<tr>
+<td>Odkiaľ čítame stav AVR portu?</td>
+<td>Z registra <code>PINx</code>.</td>
+</tr>
+<tr>
+<td>Mení obrátená logika výstup na open-drain?</td>
+<td>Nie.</td>
+</tr>
+</tbody>
+</table>
+<h3>Zápis do zošita</h3>
+<blockquote>
+<p>GPIO konfigurujeme podľa zapojenia a požadovanej funkcie.<br />
+Vstup môže byť bez vnútorného rezistora, s pull-up alebo s pull-down.<br />
+<strong>Push-pull</strong> aktívne vytvára nízku aj vysokú úroveň.<br />
+<strong>Open-drain</strong> aktívne vytvára nízku úroveň a pre vysokú potrebuje pull-up.<br />
+Na AVR register <code>DDRx</code> určuje smer, <code>PORTx</code> výstupnú hodnotu alebo pull-up a <code>PINx</code> umožňuje čítať stav pinov.<br />
+Pri inicializácii volíme definovaný počiatočný stav a rešpektujeme elektrické obmedzenia konkrétnej dosky.</p>
+</blockquote>
+<p>Tým máme pripravených všetkých <strong>osem 45-minútových hodín</strong> celku <strong>Vstupno-výstupný systém, prerušenia a časovanie</strong>.</p>
+</article>
+    <nav class="lesson-navigation" aria-label="Prednášky tematického celku 4"><a href="4.1%20GPIO%20-%20digitalne%20vstupy%20a%20vystupy.html">← Predchádzajúca: GPIO – digitálne vstupy a výstupy</a><a href="4.3%20Polling%20a%20udalostne%20riadenie.html">Nasledujúca: Polling a udalostné riadenie →</a></nav>
+    <footer><a href="index.html">Späť na osnovu predmetu</a> · <a href="../index.html">Všetky kurzy</a></footer>
+  </main>
+  <script>
+    document.addEventListener("click", async (event) => {
+      const button = event.target.closest("[data-copy-code]");
+      if (!button) return;
+
+      const codeBlock = button.parentElement.nextElementSibling;
+      const code = codeBlock.querySelector("code");
+      const status = codeBlock.nextElementSibling;
+      try {
+        await navigator.clipboard.writeText(code.innerText);
+        status.textContent = "Kód bol skopírovaný do schránky.";
+      } catch {
+        status.textContent = "Kopírovanie nie je dostupné. Označte kód a skopírujte ho pomocou Ctrl+C.";
+      }
+    });
+  </script>
+  <script src="../02_C/00_Prostredie_a_struktura_programu/c-lecture-controls.js" defer></script>
+  <script type="module" src="../lesson-remote.js"></script>
+</body>
+</html>

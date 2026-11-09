@@ -1,0 +1,748 @@
+<!doctype html>
+<html lang="sk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101827">
+  <meta name="description" content="Základné digitálne vstupy a výstupy mikrokontrolérov a jednodeskových počítačov.">
+  <title>4.1 GPIO – všeobecné digitálne vstupy a výstupy | Výpočtová technika</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f7f8fa;
+      --fg: #1c2330;
+      --card: #fff;
+      --mut: #5b6678;
+      --acc: #1f6feb;
+      --line: #d9dee7;
+      --note: #fff4d6;
+      --good: #18743a;
+      --bad: #b42318;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        color-scheme: dark;
+        --bg: #12161d;
+        --fg: #e6eaf1;
+        --card: #1b212b;
+        --mut: #9aa6b8;
+        --acc: #5aa2ff;
+        --line: #2d3644;
+        --note: #3a3017;
+        --good: #63d58a;
+        --bad: #ff8a80;
+      }
+    }
+    :root[data-theme="light"] {
+      color-scheme: light;
+      --bg: #f7f8fa;
+      --fg: #1c2330;
+      --card: #fff;
+      --mut: #5b6678;
+      --acc: #1f6feb;
+      --line: #d9dee7;
+      --note: #fff4d6;
+      --good: #18743a;
+      --bad: #b42318;
+    }
+    :root[data-theme="dark"] {
+      color-scheme: dark;
+      --bg: #12161d;
+      --fg: #e6eaf1;
+      --card: #1b212b;
+      --mut: #9aa6b8;
+      --acc: #5aa2ff;
+      --line: #2d3644;
+      --note: #3a3017;
+      --good: #63d58a;
+      --bad: #ff8a80;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-padding-top: 1rem; }
+    body { margin: 0; background: var(--bg); color: var(--fg); font: 16px/1.65 system-ui, -apple-system, "Segoe UI", sans-serif; }
+    a { color: var(--acc); }
+    .global-course-nav { display: flex; flex-wrap: wrap; gap: .55rem; align-items: center; width: min(100% - 2rem, 1000px); margin: .75rem auto 0; font: 600 .9rem/1.4 system-ui, -apple-system, "Segoe UI", sans-serif; }
+    .global-course-nav a { display: inline-block; padding: .4rem .7rem; border: 1px solid var(--line); border-radius: .55rem; text-decoration: none; color: inherit; background: var(--card); }
+    .global-course-nav a:hover { text-decoration: underline; }
+    .global-course-nav a:focus-visible, a:focus-visible, button:focus-visible, summary:focus-visible, select:focus-visible, input:focus-visible { outline: 3px solid var(--acc); outline-offset: 3px; }
+    main { width: min(100% - 2rem, 860px); margin: auto; padding: 16px 0 3rem; }
+    main :is(p, li, td, dd, blockquote) { text-align: justify; text-justify: inter-word; }
+    header { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: .6rem; }
+    .crumb, .muted, .caption { color: var(--mut); }
+    h1 { font-size: clamp(1.8rem, 5vw, 2.6rem); line-height: 1.2; margin: .8rem 0; }
+    h2 { margin-top: 2rem; font-size: 1.4rem; }
+    h3 { margin-top: 1.25rem; font-size: 1.1rem; }
+    .lead { font-size: 1.08rem; }
+    .subtitle { color: var(--mut); }
+    .tags { display: flex; flex-wrap: wrap; gap: .45rem; margin: 1rem 0; }
+    .tag { padding: 2px 9px; border: 1px solid var(--line); border-radius: 6px; background: var(--line); font-size: 13px; }
+    .card, .teacher-note, .video-card, .quiz { margin: 14px 0; padding: 14px 17px; border: 1px solid var(--line); border-radius: 12px; background: var(--card); }
+    .teacher-note { display: none; background: var(--note); }
+    body.teacher .teacher-note { display: block; }
+    .teacher-note strong { display: block; margin-bottom: .3rem; }
+    .mode { display: inline-flex; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+    .mode button { padding: 6px 11px; border: 0; background: var(--card); color: var(--fg); font: inherit; cursor: pointer; }
+    .mode button.on { background: var(--acc); color: #fff; }
+    .pdf-export { margin-left: .5rem; padding: .4rem .7rem; border: 1px solid var(--line); border-radius: .55rem; background: var(--card); color: var(--fg); font: 600 .9rem/1.4 system-ui, -apple-system, "Segoe UI", sans-serif; cursor: pointer; }
+    .code-actions { display: flex; flex-wrap: wrap; align-items: center; gap: .55rem; margin: .8rem 0 .35rem; }
+    .copy-btn, .online-editor { display: inline-block; padding: .4rem .7rem; border: 1px solid var(--line); border-radius: .5rem; font: 600 .9rem/1.4 system-ui, -apple-system, "Segoe UI", sans-serif; text-decoration: none; }
+    .copy-btn { background: var(--acc); border-color: var(--acc); color: #fff; cursor: pointer; }
+    .online-editor { background: var(--card); color: var(--fg); }
+    .code-status { min-height: 1.4em; margin: 0 0 .75rem; color: var(--mut); font-size: .85rem; }
+    .lead-card { margin: 14px 0; padding: 14px 17px; border: 1px solid var(--line); border-radius: 12px; background: var(--card); }
+    .safety-notice, .safety-reminder { margin: 1rem 0; padding: 14px 17px; border: 1px solid var(--line); border-left: 5px solid var(--acc); border-radius: 12px; background: var(--note); }
+    .safety-notice strong, .safety-reminder strong { display: block; margin-bottom: .25rem; }
+    .note { background: var(--note); }
+    .scroll { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { padding: .65rem .7rem; border: 1px solid var(--line); text-align: left; vertical-align: top; }
+    th { background: var(--card); }
+    td:first-child { white-space: nowrap; font-weight: 700; }
+    pre { margin: .65rem 0 1rem; padding: 1rem; border-radius: 9px; overflow-x: auto; background: #0f172a; color: #e2e8f0; font: 14px/1.55 ui-monospace, SFMono-Regular, Consolas, monospace; }
+    code { font-family: ui-monospace, SFMono-Regular, Consolas, monospace; }
+    :not(pre) > code { padding: .08rem .28rem; border-radius: 4px; background: color-mix(in srgb, var(--line) 55%, transparent); }
+    .output { border-left: 4px solid var(--good); }
+    .sources { margin-top: 2rem; padding: 1rem 1.1rem; border: 1px solid var(--line); border-radius: 12px; background: var(--card); }
+    .sources h2 { margin-top: 0; }
+    .sources li { margin: .4rem 0; }
+    .glossary-list { display: grid; grid-template-columns: minmax(8rem, .35fr) 1fr; gap: .3rem .8rem; }
+    .glossary-list dt { font-weight: 750; }
+    .glossary-list dd { margin: 0; }
+    footer { margin-top: 2rem; padding-top: 1rem; border-top: 1px solid var(--line); color: var(--mut); font-size: 14px; }
+    .speech-bubble { position: relative; padding: .85rem 1rem !important; border: 2px solid var(--acc) !important; border-radius: 1.2rem !important; background: color-mix(in srgb, var(--acc) 12%, var(--card)) !important; box-shadow: 0 4px 18px color-mix(in srgb, var(--acc) 18%, transparent); }
+    .speech-bubble::after { position: absolute; bottom: -.65rem; left: 1.2rem; width: 1rem; height: 1rem; border-right: 2px solid var(--acc); border-bottom: 2px solid var(--acc); background: color-mix(in srgb, var(--acc) 12%, var(--card)); content: ""; transform: rotate(45deg); }
+    .narration-target { transition: outline-color .16s ease, background-color .16s ease; text-align: justify; text-justify: inter-word; }
+    .narration-target:hover { outline: 2px solid var(--acc); outline-offset: 3px; background-color: color-mix(in srgb, var(--acc) 8%, transparent); cursor: pointer; }
+    @media (max-width: 620px) { main { width: min(100% - 1.2rem, 860px); } td:first-child { white-space: normal; } }
+    @media (max-width: 520px) { .glossary-list { grid-template-columns: 1fr; gap: .1rem; } .glossary-list dd { margin-bottom: .5rem; } }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; } }
+    @media print {
+      .global-course-nav, .mode, .pdf-export, .code-actions, .code-status, .narration-controls, .narration-option, .lesson-side-panel { display: none !important; }
+      body { background: #fff !important; color: #111 !important; color-scheme: light !important; font-size: 11pt; }
+      main { width: auto; max-width: none; margin: 0; padding: 12mm 14mm; }
+      .teacher-note { display: block; }
+      a[href^="http://"], a[href^="https://"] { color: inherit !important; text-decoration: none !important; }
+      a[href^="http://"]::after, a[href^="https://"]::after { content: none !important; }
+      .card, .teacher-note, .sources, .safety-notice, .safety-reminder, pre, table, blockquote { break-inside: avoid; page-break-inside: avoid; }
+      pre { white-space: pre-wrap; overflow: visible; }
+    }
+    @page { size: A4; margin: 0; }
+      .lesson-navigation { display:flex; flex-wrap:wrap; justify-content:space-between; gap:.7rem; margin:2rem 0 1rem; padding:1rem 0; border-top:1px solid var(--line); }
+    .lesson-navigation a { display:inline-block; padding:.45rem .7rem; border:1px solid var(--line); border-radius:.55rem; background:var(--card); text-decoration:none; }
+  </style>
+  <link rel="stylesheet" href="../02_C/00_Prostredie_a_struktura_programu/c-lecture-controls.css">
+  <script src="../theme.js" defer></script>
+  <script src="../lesson-top.js" defer></script>
+</head>
+<body>
+  <nav class="global-course-nav" aria-label="Navigácia kurzov">
+    <a href="index.html">Prehľad predmetu</a>
+    <a href="../index.html">Všetky kurzy</a>
+  </nav>
+  <aside class="lesson-side-panel" aria-label="Ovládanie hodiny a čítania">
+    <section class="narration-controls" aria-label="Čítanie prednášky">
+      <button id="play-reading" type="button" aria-label="Prehrať">▶ Prehrať</button>
+      <button id="stop-reading" type="button" aria-label="Zastaviť čítanie" disabled>■ Zastaviť</button>
+      <button id="pause-reading" type="button" aria-label="Pozastaviť čítanie" disabled>⏸ Pozastaviť</button>
+      <button id="replay-reading" type="button" aria-label="Prehrať vybrané časti znova" disabled>↻ Prehrať znova</button>
+      <label class="narration-speed" for="narration-speed">Rýchlosť čítania
+        <select id="narration-speed" aria-label="Rýchlosť hlasového čítania">
+          <option value="0.25">0,25×</option>
+          <option value="0.5">0,5×</option>
+          <option value="0.75">0,75×</option>
+          <option value="1" selected>1× – normálna</option>
+          <option value="1.25">1,25×</option>
+          <option value="1.5">1,5×</option>
+          <option value="1.75">1,75×</option>
+          <option value="2">2×</option>
+        </select>
+      </label>
+      <p class="page-language-help">Jazyk zmeníte priamo v Google Translate: kliknite na názov cieľového jazyka v hornej lište a vyberte maďarčinu, ukrajinčinu alebo iný jazyk.</p>
+      <label class="narration-voice" for="narration-voice"><span class="narration-voice-label">Hlas</span>
+        <select id="narration-voice" aria-label="Vyberte hlas na čítanie"><option value="">Automaticky – slovenský hlas</option></select>
+      </label>
+      <label class="narration-volume" for="narration-volume">
+        <span class="narration-volume-heading"><span>Hlasitosť čítania</span><output id="narration-volume-value" for="narration-volume">100 %</output></span>
+        <input id="narration-volume" type="range" min="0" max="100" step="5" value="100" aria-label="Hlasitosť hlasového čítania">
+        <span class="narration-volume-help">Upravuje hlasitosť čítania, nie celkovú hlasitosť zariadenia.</span>
+      </label>
+      <div id="reading-status" class="narration-status" role="status" aria-live="polite"></div>
+    </section>
+  </aside>
+  <main>
+    <aside class="safety-notice" aria-label="Začiatok hodiny a kontrola pracoviska">
+      <strong>Začíname kontrolou pracoviska:</strong>
+      Skontrolujte lavicu, stoličku, pridelený počítač a stav príslušenstva. Poškodenie, chýbajúcu časť alebo inú závadu ihneď oznámte vyučujúcemu a stručný súhrn pošlite cez EduPage podľa jeho pokynov. Poškodené, nefunkčné ani nebezpečné zariadenie nepoužívajte.
+    </aside>
+    <header>
+      <span class="crumb"><a href="index.html">Výpočtová technika</a> › Vstupno-výstupný systém › 4.1</span>
+      <div class="mode" role="group" aria-label="Zobrazenie stránky">
+        <button id="student-mode" class="on" type="button" aria-pressed="true">Žiak</button>
+        <button id="teacher-mode" type="button" aria-pressed="false">Učiteľ</button>
+      </div>
+      <button class="pdf-export" type="button" onclick="window.print()">Exportovať do PDF</button>
+    </header>
+    <h1>4.1 GPIO – všeobecné digitálne vstupy a výstupy</h1>
+    <p class="lead subtitle">Základné digitálne vstupy a výstupy mikrokontrolérov a jednodeskových počítačov.</p>
+    <div class="tags" aria-label="Témy prednášky"><span class="tag">Tematický celok 4</span><span class="tag">Výpočtová technika</span><span class="tag">AVR · Arduino · ESP32 · Raspberry Pi</span><span class="tag">45 minút</span></div>
+    <article class="lesson-content"><p><strong>Predmet:</strong> Výpočtová technika<br />
+<strong>Ročník:</strong> tretí, stredná škola<br />
+<strong>Trvanie:</strong> 45 minút<br />
+<strong>Platformy:</strong> AVR, Arduino, ESP32 a Raspberry Pi</p>
+<p>Vraciame sa k úvodným témam celku. Táto hodina vysvetľuje princíp GPIO a zapájanie. Nasledujúca hodina sa podrobnejšie venuje <strong>konfigurácii vstupov a výstupov</strong>.</p>
+<h2>Ciele hodiny</h2>
+<p>Po hodine má žiak vedieť:</p>
+<ul>
+<li>vysvetliť skratku GPIO,</li>
+<li>rozlíšiť digitálny vstup a výstup,</li>
+<li>vysvetliť logické úrovne <code>HIGH</code> a <code>LOW</code>,</li>
+<li>rozpoznať plávajúci vstup,</li>
+<li>opísať zapojenie tlačidla a LED,</li>
+<li>rozlíšiť napäťové úrovne jednotlivých platforiem.</li>
+</ul>
+<h2>Časový plán</h2>
+<table>
+<thead>
+<tr>
+<th>Čas</th>
+<th>Obsah</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0 – 5 min</td>
+<td>Na čo slúžia GPIO</td>
+</tr>
+<tr>
+<td>5 – 12 min</td>
+<td>Digitálny vstup, výstup a logické úrovne</td>
+</tr>
+<tr>
+<td>12 – 19 min</td>
+<td>Tlačidlo, plávajúci vstup a rezistory</td>
+</tr>
+<tr>
+<td>19 – 29 min</td>
+<td>LED a praktická ukážka Arduino</td>
+</tr>
+<tr>
+<td>29 – 35 min</td>
+<td>AVR, ESP32 a Raspberry Pi</td>
+</tr>
+<tr>
+<td>35 – 40 min</td>
+<td>Elektrické pravidlá zapájania</td>
+</tr>
+<tr>
+<td>40 – 43 min</td>
+<td>Úlohy pre žiakov</td>
+</tr>
+<tr>
+<td>43 – 45 min</td>
+<td>Overenie a zápis</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>1. Na čo slúžia GPIO?</h2>
+<p><strong>Čas: 0 – 5 min</strong></p>
+<p>Procesor vykonáva program, ale zariadenie potrebuje komunikovať aj s okolím:</p>
+<ul>
+<li>načítať tlačidlo,</li>
+<li>zistiť stav snímača,</li>
+<li>rozsvietiť LED,</li>
+<li>odovzdať riadiaci signál ďalšiemu obvodu.</li>
+</ul>
+<p>Na tieto účely slúžia okrem iného <strong>GPIO</strong>.</p>
+<p><strong>GPIO – General-Purpose Input/Output – znamená univerzálny vstupno-výstupný pin.</strong></p>
+<p>Program môže vhodný pin nastaviť ako:</p>
+<ul>
+<li><strong>vstup</strong> – zisťuje stav privedeného signálu,</li>
+<li><strong>výstup</strong> – vytvára signál pre iný obvod.</li>
+</ul>
+<h3>Príklady</h3>
+<table>
+<thead>
+<tr>
+<th>Pripojený prvok</th>
+<th>Úloha GPIO</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Tlačidlo</td>
+<td>Vstup</td>
+</tr>
+<tr>
+<td>Digitálny snímač pohybu</td>
+<td>Vstup</td>
+</tr>
+<tr>
+<td>LED cez rezistor</td>
+<td>Výstup</td>
+</tr>
+<tr>
+<td>Riadiaci vstup motorového ovládača</td>
+<td>Výstup</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Otázka pre triedu:</strong><br />
+Je GPIO pripojené k tlačidlu vstup alebo výstup?</p>
+<p><em>Odpoveď: Vstup, pretože program zisťuje stav tlačidla.</em></p>
+<hr />
+<h2>2. Digitálny vstup a výstup</h2>
+<p><strong>Čas: 5 – 12 min</strong></p>
+<h3>Digitálny vstup</h3>
+<p>Digitálny vstup vyhodnocuje napätie ako jeden z dvoch logických stavov:</p>
+<ul>
+<li><code>LOW</code> – logická nula,</li>
+<li><code>HIGH</code> – logická jednotka.</li>
+</ul>
+<p>Nie je to automaticky meranie presnej hodnoty napätia.</p>
+<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button></div><pre class="code-sample language-cpp"><code class="language-cpp">int stav = digitalRead(2);
+</code></pre><p class="code-status" role="status" aria-live="polite"></p>
+<p>Výsledkom je <code>LOW</code> alebo <code>HIGH</code>.</p>
+<h3>Digitálny výstup</h3>
+<p>Digitálny výstup nastavuje nízku alebo vysokú úroveň:</p>
+<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button></div><pre class="code-sample language-cpp"><code class="language-cpp">digitalWrite(8, HIGH);
+</code></pre><p class="code-status" role="status" aria-live="polite"></p>
+<p>Výstupné napätie závisí od platformy a pripojenej záťaže.</p>
+<h3>Logická úroveň nie je univerzálne napätie</h3>
+<table>
+<thead>
+<tr>
+<th>Platforma</th>
+<th>Bežná logika GPIO</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Arduino Uno R3 s ATmega328P</td>
+<td>5 V</td>
+</tr>
+<tr>
+<td>Bežné vývojové dosky ESP32</td>
+<td>3,3 V</td>
+</tr>
+<tr>
+<td>Raspberry Pi s Linuxom</td>
+<td>3,3 V</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Nie všetky dosky Arduino používajú 5 V.</strong> Existujú aj dosky s logikou 3,3 V.</p>
+<h3>Vstupné prahy</h3>
+<p>Digitálny vstup má určené rozsahy napätí, ktoré spoľahlivo rozpozná ako nulu alebo jednotku.</p>
+<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button></div><pre class="code-sample language-text"><code class="language-text">Nízke napätie          Medzioblasť           Vysoké napätie
+spoľahlivé LOW       stav nie je zaručený    spoľahlivé HIGH
+</code></pre><p class="code-status" role="status" aria-live="polite"></p>
+<p>Presné hranice nájdeme v dokumentácii konkrétneho čipu.</p>
+<p><strong>Napätie medzi zaručenými rozsahmi nemá spoľahlivo definovaný digitálny význam.</strong></p>
+<h3>Dôležité rozlíšenie</h3>
+<p><code>HIGH</code> neznamená vždy „zariadenie zapnuté“.</p>
+<p>Niektoré obvody majú vstup <strong>aktívny v nule</strong>: aktivujú sa pri <code>LOW</code>. Rozhoduje zapojenie a dokumentácia zariadenia.</p>
+<hr />
+<h2>3. Tlačidlo a plávajúci vstup</h2>
+<p><strong>Čas: 12 – 19 min</strong></p>
+<h3>Čo je plávajúci vstup?</h3>
+<p>Ak vstup nie je pripojený k definovanej úrovni, jeho napätie môže ovplyvňovať rušenie alebo dotyk.</p>
+<p>Program potom môže čítať striedavo <code>HIGH</code> a <code>LOW</code>, hoci tlačidlo nikto nestláča.</p>
+<p>Takýto vstup označujeme ako <strong>plávajúci</strong>.</p>
+<h3>Pull-up rezistor</h3>
+<p>Pull-up rezistor pripája vstup cez odpor ku kladnému napájaniu.</p>
+<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button></div><pre class="code-sample language-text"><code class="language-text">Napájanie logiky
+      │
+   rezistor
+      │
+      ├──────── GPIO vstup
+      │
+   tlačidlo
+      │
+     GND
+</code></pre><p class="code-status" role="status" aria-live="polite"></p>
+<table>
+<thead>
+<tr>
+<th>Tlačidlo</th>
+<th>Stav vstupu</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Uvoľnené</td>
+<td><code>HIGH</code></td>
+</tr>
+<tr>
+<td>Stlačené</td>
+<td><code>LOW</code></td>
+</tr>
+</tbody>
+</table>
+<p>Rezistor zabezpečuje definovaný stav pri rozpojenom tlačidle a obmedzuje prúd po jeho stlačení.</p>
+<h3>Vnútorný pull-up</h3>
+<p>Mnohé mikrokontroléry majú pull-up rezistor zabudovaný.</p>
+<p>Na Arduino Uno ho zapneme:</p>
+<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button></div><pre class="code-sample language-cpp"><code class="language-cpp">pinMode(2, INPUT_PULLUP);
+</code></pre><p class="code-status" role="status" aria-live="polite"></p>
+<p>Tlačidlo potom pripojíme medzi D2 a GND.</p>
+<h3>Pull-down rezistor</h3>
+<p>Pull-down pripája vstup cez odpor k GND. Tlačidlo ho po stlačení spojí s napájaním logiky.</p>
+<table>
+<thead>
+<tr>
+<th>Tlačidlo</th>
+<th>Stav vstupu</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Uvoľnené</td>
+<td><code>LOW</code></td>
+</tr>
+<tr>
+<td>Stlačené</td>
+<td><code>HIGH</code></td>
+</tr>
+</tbody>
+</table>
+<p>Dostupnosť vnútorného pull-down rezistora závisí od čipu a pinu. <strong>ATmega328P na Arduino Uno R3 nemá bežný vnútorný pull-down pre GPIO.</strong></p>
+<h3>Súvis s debouncingom</h3>
+<p>Pull-up alebo pull-down rieši <strong>definovanú úroveň rozpojeného vstupu</strong>.</p>
+<p><strong>Neodstraňuje mechanické zákmity tlačidla.</strong></p>
+<hr />
+<h2>4. LED na digitálnom výstupe</h2>
+<p><strong>Čas: 19 – 23 min</strong></p>
+<p>LED má dva vývody:</p>
+<ul>
+<li><strong>anódu</strong>,</li>
+<li><strong>katódu</strong>.</li>
+</ul>
+<p>Pri bežnom zapojení ju rozsvietime prúdom od anódy ku katóde.</p>
+<h3>Zapojenie</h3>
+<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button></div><pre class="code-sample language-text"><code class="language-text">GPIO výstup ── rezistor ── anóda LED
+                              │
+                          katóda LED
+                              │
+                             GND
+</code></pre><p class="code-status" role="status" aria-live="polite"></p>
+<p><strong>LED pripájame so sériovým rezistorom na obmedzenie prúdu.</strong> Rezistor môže byť v sériovej vetve aj za LED.</p>
+<h3>Orientačný výpočet</h3>
+<p>Pre Arduino Uno s výstupom približne 5 V a červenú LED s úbytkom približne 2 V chceme prúd približne 5 mA:</p>
+<p><strong>Vzťah:</strong> <code>R = (U_výstup − U_LED) / I</code></p>
+<p><strong>Dosadenie:</strong> <code>R = (5 − 2) / 0,005 = 600 Ω</code></p>
+<p>Zvolíme napríklad <strong>680 Ω</strong>:</p>
+<p><strong>Približný prúd:</strong> <code>I ≈ (5 − 2) / 680 ≈ 4,4 mA</code></p>
+<p>Ide o približný výpočet. Skutočný prúd závisí od LED a výstupného napätia pri zaťažení.</p>
+<h3>Čo GPIO nedokáže?</h3>
+<p>GPIO je signálový vývod s obmedzeným prúdom.</p>
+<p>Motor, cievku relé alebo výkonový ohrievač <strong>nepripájame priamo na GPIO</strong>. Použijeme vhodný tranzistor alebo ovládač; pri indukčnej záťaži aj príslušnú ochranu.</p>
+<hr />
+<h2>5. Arduino Uno: tlačidlo ovláda LED</h2>
+<p><strong>Čas: 23 – 29 min</strong></p>
+<h3>Zadanie</h3>
+<p>LED má svietiť počas držania tlačidla.</p>
+<h3>Zapojenie</h3>
+<ul>
+<li>Tlačidlo medzi <strong>D2 a GND</strong>.</li>
+<li>Externá LED: <strong>D8 → rezistor 680 Ω → anóda LED</strong>.</li>
+<li>Katóda LED na <strong>GND</strong>.</li>
+</ul>
+<p>Zapojenie zostavujeme pri odpojenom napájaní.</p>
+<h3>Program</h3>
+<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button></div><pre class="code-sample language-cpp"><code class="language-cpp">const byte TLACIDLO = 2;
+const byte LED = 8;
+
+void setup() {
+  pinMode(TLACIDLO, INPUT_PULLUP);
+
+  digitalWrite(LED, LOW);
+  pinMode(LED, OUTPUT);
+}
+
+void loop() {
+  bool stlacene = digitalRead(TLACIDLO) == LOW;
+
+  digitalWrite(
+    LED,
+    stlacene ? HIGH : LOW
+  );
+}
+</code></pre><p class="code-status" role="status" aria-live="polite"></p>
+<h3>Vysvetlenie</h3>
+<p><strong>1. Nastavenie vstupu</strong></p>
+<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button></div><pre class="code-sample language-cpp"><code class="language-cpp">pinMode(TLACIDLO, INPUT_PULLUP);
+</code></pre><p class="code-status" role="status" aria-live="polite"></p>
+<p>Vstup používa vnútorný pull-up.</p>
+<p><strong>2. Nastavenie výstupu</strong></p>
+<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button></div><pre class="code-sample language-cpp"><code class="language-cpp">digitalWrite(LED, LOW);
+pinMode(LED, OUTPUT);
+</code></pre><p class="code-status" role="status" aria-live="polite"></p>
+<p>Na Uno tým najprv pripravíme nízku výstupnú hodnotu a potom zapneme výstupný režim.</p>
+<p><strong>3. Načítanie tlačidla</strong></p>
+<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button></div><pre class="code-sample language-cpp"><code class="language-cpp">bool stlacene = digitalRead(TLACIDLO) == LOW;
+</code></pre><p class="code-status" role="status" aria-live="polite"></p>
+<p>Stlačené tlačidlo spojí vstup so zemou, preto čítame <code>LOW</code>.</p>
+<p><strong>4. Ovládanie LED</strong></p>
+<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button></div><pre class="code-sample language-cpp"><code class="language-cpp">digitalWrite(LED, stlacene ? HIGH : LOW);
+</code></pre><p class="code-status" role="status" aria-live="polite"></p>
+<p>LED svieti, keď je tlačidlo stlačené.</p>
+<h3>Súvis s predchádzajúcimi hodinami</h3>
+<ul>
+<li>Program používa <strong>polling</strong>.</li>
+<li>Nepotrebuje prerušenie.</li>
+<li>Nepočíta jednotlivé stlačenia.</li>
+<li>Pri počítaní alebo prepínaní stavu by sme doplnili rozpoznanie hrany a debouncing.</li>
+</ul>
+<hr />
+<h2>6. GPIO na AVR, ESP32 a Raspberry Pi</h2>
+<p><strong>Čas: 29 – 35 min</strong></p>
+<h3>AVR: porty a piny</h3>
+<p>ATmega328P zoskupuje GPIO do portov označených napríklad:</p>
+<ul>
+<li><code>PORTB</code>,</li>
+<li><code>PORTC</code>,</li>
+<li><code>PORTD</code>.</li>
+</ul>
+<p>Arduino označenia D2 alebo D8 sú označenia na doske. Nie sú totožné s číslami fyzických vývodov čipu.</p>
+<p>Na Arduino Uno R3 napríklad:</p>
+<table>
+<thead>
+<tr>
+<th>Označenie dosky</th>
+<th>Pin mikrokontroléra</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>D2</td>
+<td>PD2</td>
+</tr>
+<tr>
+<td>D8</td>
+<td>PB0</td>
+</tr>
+</tbody>
+</table>
+<p>V Arduino frameworku túto mapu obsluhujú funkcie ako <code>pinMode()</code> a <code>digitalWrite()</code>.</p>
+<p>Podrobnejšiu konfiguráciu registrov si ukážeme v nasledujúcej hodine.</p>
+<h3>ESP32</h3>
+<p>Na ESP32 môžeme v Arduino frameworku používať rovnaké základné funkcie:</p>
+<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button></div><pre class="code-sample language-cpp"><code class="language-cpp">pinMode(27, INPUT_PULLUP);
+int stav = digitalRead(27);
+</code></pre><p class="code-status" role="status" aria-live="polite"></p>
+<p>Príklad predpokladá dosku, na ktorej je GPIO27 dostupný a vhodný na daný účel.</p>
+<p>Pri ESP32 treba kontrolovať:</p>
+<ul>
+<li>či je pin vstupný aj výstupný,</li>
+<li>či má vnútorný pull-up alebo pull-down,</li>
+<li>či nie je použitý pre pamäť alebo inú funkciu,</li>
+<li>či jeho stav neovplyvňuje štart čipu.</li>
+</ul>
+<p><strong>Vlastnosti pinov sa líšia medzi variantmi ESP32.</strong></p>
+<h3>Raspberry Pi</h3>
+<p>Na Raspberry Pi s Linuxom použijeme napríklad Python a <code>gpiozero</code>.</p>
+<p>Zapojenie:</p>
+<ul>
+<li>tlačidlo medzi <strong>GPIO17 a GND</strong>,</li>
+<li>LED cez <strong>rezistor 680 Ω</strong> medzi GPIO27 a GND.</li>
+</ul>
+<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button></div><pre class="code-sample language-python"><code class="language-python">from gpiozero import Button, LED
+from signal import pause
+
+tlacidlo = Button(17, pull_up=True)
+led = LED(27)
+
+tlacidlo.when_pressed = led.on
+tlacidlo.when_released = led.off
+
+try:
+    led.value = tlacidlo.is_pressed
+    pause()
+finally:
+    tlacidlo.close()
+    led.close()
+</code></pre><p class="code-status" role="status" aria-live="polite"></p>
+<p>Knižnica používa označenie <strong>BCM GPIO</strong>:</p>
+<table>
+<thead>
+<tr>
+<th>Signál</th>
+<th>Fyzický pin bežného 40-pinového konektora</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GPIO17</td>
+<td>11</td>
+</tr>
+<tr>
+<td>GPIO27</td>
+<td>13</td>
+</tr>
+<tr>
+<td>GND</td>
+<td>Napríklad 6</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Fyzický pin 17 nie je GPIO17.</strong> Na bežnom 40-pinovom konektore je fyzický pin 17 napájanie 3,3 V.</p>
+<hr />
+<h2>7. Elektrické pravidlá zapájania</h2>
+<p><strong>Čas: 35 – 40 min</strong></p>
+<h3>1. Overíme napäťovú kompatibilitu</h3>
+<p><strong>Na GPIO ESP32 ani Raspberry Pi nepripájame priamo 5 V.</strong></p>
+<p>Pri spojení zariadení s rozdielnou logikou použijeme vhodný prevod úrovní. Pre jednosmerný pomalší signál môže byť za určitých podmienok vhodný odporový delič; nejde však o univerzálne riešenie všetkých rozhraní.</p>
+<p>Aj pripojenie signálu 3,3 V na vstup 5 V zariadenia treba overiť podľa jeho vstupných prahov.</p>
+<h3>2. Zabezpečíme spoločnú zem</h3>
+<p>Pri bežnom priamom spojení neizolovaných zariadení musia mať signály spoločnú napäťovú referenciu — spravidla spojené GND.</p>
+<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button></div><pre class="code-sample language-text"><code class="language-text">Zariadenie A                  Zariadenie B
+výstup ─── vhodné rozhranie ─── vstup
+GND ─────────────────────────── GND
+</code></pre><p class="code-status" role="status" aria-live="polite"></p>
+<h3>3. Rešpektujeme prúdové limity</h3>
+<p>Kontrolujeme:</p>
+<ul>
+<li>limit jedného pinu,</li>
+<li>súhrnný limit skupiny pinov,</li>
+<li>limit celého čipu.</li>
+</ul>
+<p><strong>Absolútne maximum z dokumentácie nie je odporúčaná pracovná hodnota.</strong></p>
+<h3>4. Nespájame proti sebe dva výstupy</h3>
+<p>Ak jeden výstup nastaví <code>HIGH</code> a druhý <code>LOW</code>, môže tiecť veľký prúd.</p>
+<p>Rovnako nepripájame výstup nastavený na <code>HIGH</code> priamo na GND.</p>
+<h3>5. Rozlišujeme napájacie a signálové piny</h3>
+<p>Pin označený <code>5V</code>, <code>3V3</code> alebo <code>GND</code> nie je bežný programovateľný GPIO.</p>
+<h3>6. Počítame so stavom pri štarte</h3>
+<p>Po resete nemusia byť piny okamžite nastavené tak, ako požaduje aplikácia.</p>
+<p>Pri riadení výkonového obvodu môže byť potrebný externý rezistor, ktorý zabezpečí definovaný neaktívny stav ešte pred spustením programu.</p>
+<hr />
+<h2>8. Úlohy pre žiakov</h2>
+<p><strong>Čas: 40 – 43 min</strong></p>
+<h3>A. Urči smer</h3>
+<table>
+<thead>
+<tr>
+<th>Situácia</th>
+<th>Vstup alebo výstup?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Čítanie tlačidla</td>
+<td>Vstup</td>
+</tr>
+<tr>
+<td>Rozsvietenie LED</td>
+<td>Výstup</td>
+</tr>
+<tr>
+<td>Zistenie signálu zo snímača pohybu</td>
+<td>Vstup</td>
+</tr>
+<tr>
+<td>Riadenie tranzistora ventilátora</td>
+<td>Výstup</td>
+</tr>
+</tbody>
+</table>
+<h3>B. Vyhodnoť zapojenie</h3>
+<p>Tlačidlo je medzi GPIO s <code>INPUT_PULLUP</code> a GND.</p>
+<ol>
+<li>
+<p>Akú hodnotu čítame po uvoľnení?<br />
+<strong><code>HIGH</code>.</strong></p>
+</li>
+<li>
+<p>Akú hodnotu čítame po stlačení?<br />
+<strong><code>LOW</code>.</strong></p>
+</li>
+<li>
+<p>Odstraňuje pull-up zákmit?<br />
+<strong>Nie.</strong></p>
+</li>
+</ol>
+<h3>C. Nájdi chyby</h3>
+<p>Žiak navrhol tieto zapojenia:</p>
+<ul>
+<li>LED bez sériového rezistora,</li>
+<li>výstup 5 V senzora priamo na GPIO Raspberry Pi,</li>
+<li>motor priamo medzi GPIO a GND.</li>
+</ul>
+<section class="teacher-note"><p><strong>Riešenie:</strong></p>
+<ul>
+<li>LED potrebuje vhodné obmedzenie prúdu.</li>
+<li>Signál senzora potrebuje vhodný prevod úrovne.</li>
+<li>Motor potrebuje výkonový ovládač a príslušné ochranné prvky.</li>
+</ul>
+</section><hr />
+<h2>9. Overenie vedomostí a zápis</h2>
+<p><strong>Čas: 43 – 45 min</strong></p>
+<table>
+<thead>
+<tr>
+<th>Otázka</th>
+<th>Odpoveď</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Čo znamená GPIO?</td>
+<td>Univerzálny vstupno-výstupný pin.</td>
+</tr>
+<tr>
+<td>Meria digitálny vstup presné napätie?</td>
+<td>Nie, vyhodnocuje logickú úroveň.</td>
+</tr>
+<tr>
+<td>Čo je plávajúci vstup?</td>
+<td>Vstup bez definovanej úrovne, citlivý na rušenie.</td>
+</tr>
+<tr>
+<td>Na čo slúži pull-up?</td>
+<td>Udržiava rozpojený vstup vo vysokej úrovni.</td>
+</tr>
+<tr>
+<td>Je <code>HIGH</code> vždy 5 V?</td>
+<td>Nie, závisí od platformy.</td>
+</tr>
+<tr>
+<td>Môžeme motor napájať priamo z GPIO?</td>
+<td>Nie.</td>
+</tr>
+</tbody>
+</table>
+<h3>Zápis do zošita</h3>
+<blockquote>
+<p><strong>GPIO</strong> je univerzálny digitálny vstup alebo výstup.<br />
+Vstup zisťuje logický stav, výstup vytvára logický signál.<br />
+Hodnoty <code>HIGH</code> a <code>LOW</code> zodpovedajú napäťovým rozsahom podľa konkrétneho čipu.<br />
+Plávajúcemu vstupu zabezpečíme definovanú úroveň pomocou pull-up alebo pull-down rezistora.<br />
+LED pripájame so sériovým rezistorom. Výkonové záťaže riadime cez vhodný ovládač.<br />
+Pri zapájaní kontrolujeme napätie, prúdové limity, číslovanie pinov a spoločnú zem.</p>
+</blockquote>
+<p><strong>Nasledujúca hodina: 4.2 Konfigurácia vstupov a výstupov — vstupné a výstupné režimy, pull-up/pull-down, push-pull, open-drain a registre AVR.</strong></p>
+</article>
+    <nav class="lesson-navigation" aria-label="Prednášky tematického celku 4"><a href="4.2%20Konfiguracia%20vstupov%20a%20vystupov.html">Nasledujúca: Konfigurácia vstupov a výstupov →</a></nav>
+    <footer><a href="index.html">Späť na osnovu predmetu</a> · <a href="../index.html">Všetky kurzy</a></footer>
+  </main>
+  <script>
+    document.addEventListener("click", async (event) => {
+      const button = event.target.closest("[data-copy-code]");
+      if (!button) return;
+
+      const codeBlock = button.parentElement.nextElementSibling;
+      const code = codeBlock.querySelector("code");
+      const status = codeBlock.nextElementSibling;
+      try {
+        await navigator.clipboard.writeText(code.innerText);
+        status.textContent = "Kód bol skopírovaný do schránky.";
+      } catch {
+        status.textContent = "Kopírovanie nie je dostupné. Označte kód a skopírujte ho pomocou Ctrl+C.";
+      }
+    });
+  </script>
+  <script src="../02_C/00_Prostredie_a_struktura_programu/c-lecture-controls.js" defer></script>
+  <script type="module" src="../lesson-remote.js"></script>
+</body>
+</html>
