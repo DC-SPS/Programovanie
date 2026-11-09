@@ -6,6 +6,8 @@
   <meta name="theme-color" content="#101827">
   <meta name="description" content="Prednáška o pollingu a udalostnom riadení v embedded systémoch: princípy, rozdiely, príklady a výber prístupu.">
   <title>4.3 Polling a udalostné riadenie | Výpočtová technika</title>
+  <link rel="stylesheet" href="../02_C/00_Prostredie_a_struktura_programu/c-lecture-controls.css">
+  <link rel="stylesheet" href="../lesson-export.css">
   <style>
     :root {
       color-scheme: light;
@@ -77,9 +79,21 @@
     .glossary-list { display: grid; grid-template-columns: minmax(8rem, .35fr) 1fr; gap: .3rem .8rem; }
     .glossary-list dt { font-weight: 750; }
     .glossary-list dd { margin: 0; }
+    .lecture-actions { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: .5rem; }
+    .pdf-export { padding: .4rem .7rem; border: 1px solid var(--border); border-radius: .55rem; background: var(--surface); color: inherit; font: 600 .9rem/1.4 system-ui, sans-serif; cursor: pointer; }
+    body:not(.teacher) .teacher-note { display: none; }
     @media (max-width: 620px) { main { width: min(100% - 1.2rem, 860px); } }
     @media (max-width: 520px) { .glossary-list { grid-template-columns: 1fr; gap: .1rem; } .glossary-list dd { margin-bottom: .5rem; } }
     @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; } }
+    @media print {
+      .global-course-nav, .lesson-side-panel, .mode, .pdf-export { display: none !important; }
+      body { background: #fff !important; color: #111 !important; font-size: 11pt; }
+      main { width: auto; max-width: none; margin: 0; padding: 10mm 12mm; }
+      .card, .note, .safety-notice, pre, table { break-inside: avoid; }
+      .teacher-note { display: block !important; }
+      a { color: inherit; text-decoration: none; }
+      pre { white-space: pre-wrap; overflow: visible; }
+    }
   </style>
   <script src="../lesson-top.js" defer></script>
 </head>
@@ -89,16 +103,52 @@
     <a href="../index.html">Všetky kurzy</a>
     <a href="../nastavenia.html">Nastavenia vzhľadu</a>
   </nav>
+  <aside class="lesson-side-panel" aria-label="Ovládanie hodiny a čítania">
+    <section class="narration-controls" aria-label="Čítanie prednášky">
+      <button id="play-reading" type="button" aria-label="Prehrať">▶ Prehrať</button>
+      <button id="stop-reading" type="button" aria-label="Zastaviť čítanie" disabled>■ Zastaviť</button>
+      <button id="pause-reading" type="button" aria-label="Pozastaviť čítanie" disabled>⏸ Pozastaviť</button>
+      <button id="replay-reading" type="button" aria-label="Prehrať vybrané časti znova" disabled>↻ Prehrať znova</button>
+      <label class="narration-speed" for="narration-speed">Rýchlosť čítania
+        <select id="narration-speed" aria-label="Rýchlosť hlasového čítania">
+          <option value="0.25">0,25×</option>
+          <option value="0.5">0,5×</option>
+          <option value="0.75">0,75×</option>
+          <option value="1" selected>1× – normálna</option>
+          <option value="1.25">1,25×</option>
+          <option value="1.5">1,5×</option>
+          <option value="1.75">1,75×</option>
+          <option value="2">2×</option>
+        </select>
+      </label>
+      <label class="narration-voice" for="narration-voice"><span class="narration-voice-label">Hlas</span>
+        <select id="narration-voice" aria-label="Vyberte hlas na čítanie"><option value="">Automaticky – slovenský hlas</option></select>
+      </label>
+      <label class="narration-volume" for="narration-volume">
+        <span class="narration-volume-heading"><span>Hlasitosť čítania</span><output id="narration-volume-value" for="narration-volume">100 %</output></span>
+        <input id="narration-volume" type="range" min="0" max="100" step="5" value="100" aria-label="Hlasitosť hlasového čítania">
+        <span class="narration-volume-help">Upravuje hlasitosť čítania, nie celkovú hlasitosť zariadenia.</span>
+      </label>
+      <div id="reading-status" class="narration-status" role="status" aria-live="polite"></div>
+    </section>
+  </aside>
   <main>
     <header>
-      <div>
+      <div class="lecture-actions">
         <p class="crumb"><a href="index.html">Výpočtová technika</a> · Vstupno-výstupný systém, prerušenia a časovanie</p>
         <h1>4.3 Polling a udalostné riadenie</h1>
         <p class="subtitle">Dva spôsoby, ako zariadenie zistí, že sa zmenil vstup alebo nastal čas vykonať úlohu.</p>
       </div>
+      <div>
+        <div class="mode" role="group" aria-label="Zobrazenie stránky">
+          <button id="student-mode" class="on" type="button" aria-pressed="true">Žiak</button>
+          <button id="teacher-mode" type="button" aria-pressed="false">Učiteľ</button>
+        </div>
+        <button class="pdf-export" type="button" onclick="window.print()">Exportovať do PDF</button>
+      </div>
     </header>
     <div class="tags" aria-label="Témy prednášky">
-      <span class="tag">Polling</span><span class="tag">Udalosť</span><span class="tag">Odozva</span><span class="tag">Embedded systém</span>
+      <span class="tag">3. ročník SPŠ</span><span class="tag">Polling</span><span class="tag">Udalosť</span><span class="tag">Odozva</span><span class="tag">Embedded systém</span>
     </div>
     <div class="safety-notice" role="note">
       <strong>Bezpečnosť pri práci s elektronikou</strong>
@@ -111,11 +161,13 @@
         <table class="timeline">
           <thead><tr><th>Čas</th><th>Činnosť</th><th>Výsledok</th></tr></thead>
           <tbody>
-            <tr><td>0–5 min</td><td>Motivačná otázka: ako zariadenie zistí stlačenie tlačidla?</td><td>Žiak opíše aspoň jeden možný spôsob zistenia zmeny vstupu.</td></tr>
-            <tr><td>5–15 min</td><td>Polling: opakované čítanie a vyhodnocovanie vstupu</td><td>Žiak vysvetlí princíp a význam intervalu kontroly.</td></tr>
-            <tr><td>15–25 min</td><td>Udalostné riadenie: reakcia na oznámenú zmenu</td><td>Žiak rozlíši udalosť od nepretržitého zisťovania stavu.</td></tr>
-            <tr><td>25–37 min</td><td>Porovnanie a návrh riadenia tlačidla a snímača</td><td>Žiak vyberie prístup pre jednoduché zadanie a zdôvodní výber.</td></tr>
-            <tr><td>37–45 min</td><td>Kontrolné otázky a záver</td><td>Žiak pomenuje výhody, obmedzenia a jeden hybridný návrh.</td></tr>
+            <tr><td>0–5 min</td><td>Motivácia a základné pojmy</td><td>Žiak vysvetlí, ako môže zariadenie zistiť stlačenie tlačidla.</td></tr>
+            <tr><td>5–12 min</td><td>Polling a príklad s Arduino</td><td>Žiak opíše opakované čítanie vstupu, interval kontroly a zapojenie INPUT_PULLUP.</td></tr>
+            <tr><td>12–20 min</td><td>Udalosti, prerušenia a AVR</td><td>Žiak odlíši udalosť od prerušenia a vysvetlí úlohu krátkej ISR.</td></tr>
+            <tr><td>20–28 min</td><td>Ukážky pre Arduino Uno a ESP32</td><td>Žiak rozpozná zachytenie hrany a bezpečnostné obmedzenia GPIO.</td></tr>
+            <tr><td>28–34 min</td><td>Raspberry Pi a Python</td><td>Žiak porovná polling a callback v knižnici gpiozero.</td></tr>
+            <tr><td>34–40 min</td><td>Zákmity, porovnanie a krátka úloha</td><td>Žiak vyberie vhodný prístup a zohľadní zákmity aj požadovanú odozvu.</td></tr>
+            <tr><td>40–45 min</td><td>Overenie vedomostí a zhrnutie</td><td>Žiak správne vysvetlí základné pojmy a uvedie vhodné použitie.</td></tr>
           </tbody>
         </table>
       </div>
@@ -126,13 +178,18 @@
     <ul>
       <li>vysvetliť polling ako opakované zisťovanie stavu vstupu alebo periférie;</li>
       <li>opísať udalostné riadenie ako spracovanie oznámenia o zmene alebo dokončení činnosti;</li>
+      <li>rozlíšiť udalosť, prerušenie a obslužnú rutinu ISR;</li>
       <li>porovnať oba prístupy z hľadiska odozvy, využitia času procesora a rizika prehliadnutia krátkej zmeny;</li>
+      <li>vysvetliť základné zapojenie tlačidla s <code>INPUT_PULLUP</code> a rozpoznať zostupnú hranu pri stlačení;</li>
+      <li>rozlíšiť bežné Raspberry Pi od Raspberry Pi Pico a uviesť jeden príklad pre AVR, ESP32 alebo Linuxový počítač Raspberry Pi;</li>
       <li>navrhnúť vhodný spôsob obsluhy tlačidla alebo snímača a uviesť dôvod svojho výberu.</li>
     </ul>
 
     <h2>1. Motivácia: tlačidlo, ktoré zariadenie ešte nevidelo</h2>
     <p>Predstavte si riadiacu jednotku, ktorá má po stlačení tlačidla zapnúť kontrolku. Program musí najprv zistiť, že sa vstup zmenil. Môže sa naň pravidelne pozerať, alebo môže dostať oznámenie, keď zmena nastane.</p>
+    <p><strong>Príklad z bežného života:</strong> pri pollingu každých pár sekúnd kontrolujete, či niekto stojí pri dverách. Pri udalostnom riadení sa venujete inej činnosti a zareagujete, keď zazvoní zvonček.</p>
     <div class="note"><strong>Otázka na úvod:</strong> Ak program skontroluje tlačidlo raz za sekundu, čo sa stane, keď ho používateľ stlačí iba na desatinu sekundy?</div>
+    <p><strong>Očakávaná odpoveď:</strong> Program môže stlačenie zistiť neskoro alebo ho úplne prehliadnuť, pretože stav sa zmenil medzi dvoma kontrolami.</p>
     <p>Polling a udalostné riadenie sú dva bežné organizačné prístupy k vstupom. Nie sú to konkrétne typy snímačov a nie vždy ide o voľbu „iba jedno alebo iba druhé“: systém môže kombinovať oba spôsoby.</p>
 
     <h2>2. Teoretický výklad</h2>
@@ -181,6 +238,7 @@ hlavný_program:
           <tr><td>Riziko krátkej zmeny</td><td>Krátka zmena medzi kontrolami môže uniknúť.</td><td>Udalosť sa môže zachytiť, ak ju podporuje zdroj a správne ju nakonfigurujeme.</td></tr>
           <tr><td>Zložitosť návrhu</td><td>Často jednoduchý začiatok, no mnohé vstupy predlžujú cyklus.</td><td>Vyžaduje návrh obsluhy, poradia, frontov alebo synchronizácie podľa platformy.</td></tr>
           <tr><td>Typické použitie</td><td>Pravidelné meranie alebo jednoduchá úloha, kde postačuje daná odozva.</td><td>Nepravidelné zmeny, správy alebo dokončenie operácie, ktoré netreba stále zisťovať.</td></tr>
+          <tr><td>Spotreba energie</td><td>Závisí od toho, čo procesor robí medzi kontrolami; aktívne čakanie môže spotrebu zvýšiť.</td><td>Udalosť môže zariadenie prebudiť zo spánku, ale samotné prerušenie automaticky úsporu nezaručuje.</td></tr>
         </tbody>
       </table>
     </div>
@@ -203,7 +261,151 @@ hlavný_program:
     <h3>Príklad 3 – reakcia na izbovú teplotu</h3>
     <p>Ak sa teplota mení pomaly a regulátor ju má vyhodnocovať napríklad v pravidelných intervaloch, polling môže byť postačujúci. Ak treba reagovať na asynchrónnu správu alebo rýchlu zmenu stavu, vhodnejšie môže byť udalostné oznámenie. Pred návrhom treba určiť, ako rýchlo musí systém reagovať a čo sa stane pri oneskorení.</p>
 
-    <h2>4. Samostatná práca</h2>
+    <h2>4. Arduino Uno: ovládanie LED pollingom</h2>
+    <p>Na Arduino Uno R3 pripojte tlačidlo medzi pin <code>D2</code> a <code>GND</code>. Vstup nastavíme na <code>INPUT_PULLUP</code>, ktorý zapne vnútorný pull-up rezistor. Uvoľnené tlačidlo sa preto číta ako <code>HIGH</code> a stlačené ako <code>LOW</code>. LED použije vývod <code>LED_BUILTIN</code>.</p>
+    <div class="scroll">
+      <table>
+        <thead><tr><th>Stav tlačidla</th><th>Hodnota vstupu</th><th>Činnosť programu</th></tr></thead>
+        <tbody>
+          <tr><td>Uvoľnené</td><td><code>HIGH</code></td><td>LED nesvieti</td></tr>
+          <tr><td>Stlačené</td><td><code>LOW</code></td><td>LED svieti</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <pre class="code-sample language-cpp"><code>const byte BUTTON_PIN = 2;
+bool previousPressed = false;
+
+void setup() {
+    pinMode(BUTTON_PIN, INPUT_PULLUP);
+    pinMode(LED_BUILTIN, OUTPUT);
+}
+
+void loop() {
+    const bool pressed = digitalRead(BUTTON_PIN) == LOW;
+
+    if (pressed != previousPressed) {
+        digitalWrite(LED_BUILTIN, pressed ? HIGH : LOW);
+        previousPressed = pressed;
+    }
+}</code></pre>
+    <p>Funkcia <code>loop()</code> sa opakuje a pri každom priechode číta aktuálny stav. Premenná <code>previousPressed</code> umožňuje rozpoznať zmenu, aby program vyhodnotil stlačenie a uvoľnenie iba pri prechode do nového stavu. Ukážka zámerne neobsahuje <code>delay()</code>; blokujúce čakanie by odložilo ďalšie kontroly a iné úlohy.</p>
+    <p><strong>Otázka:</strong> Čo by sa zmenilo, keby program čakal pomocou <code>delay(1000)</code>? Krátke stlačenie by mohlo prebehnúť medzi dvoma kontrolami a program by ho nemusel zaznamenať.</p>
+
+    <h2>5. Udalosti, prerušenia a mikrokontrolér AVR</h2>
+    <p>Pri udalostnom riadení program zareaguje na oznámenú skutočnosť: napríklad stlačenie tlačidla, prijatie údajov, uplynutie času alebo zmenu stavu vstupu. Funkcia zaregistrovaná pre udalosť sa nazýva <strong>obslužná funkcia</strong> alebo <em>callback</em>. Udalosti môže doručovať hardvér, operačný systém, knižnica či front správ.</p>
+    <p><strong>Prerušenie</strong> je jeden z mechanizmov, ktorým hardvér alebo časovač upozorní procesor. Procesor dočasne pozastaví bežnú postupnosť, vykoná obslužnú rutinu prerušenia (<strong>ISR</strong>, <em>Interrupt Service Routine</em>) a potom pokračuje. Udalosť je širší pojem než prerušenie: nie každá udalosť je prerušenie.</p>
+    <p>Klasické Arduino Uno R3 používa mikrokontrolér ATmega328P z rodiny AVR. Arduino je však platforma dosiek, knižníc a nástrojov; nie každá doska Arduino používa AVR. Pri funkcii <code>attachInterrupt()</code> overte, ktoré piny podporuje konkrétna doska. Na Uno R3 sú bežnými externými interrupt pinmi D2 a D3.</p>
+    <div class="scroll">
+      <table>
+        <thead><tr><th>Režim</th><th>Zachytená zmena</th><th>Príklad s pull-up tlačidlom</th></tr></thead>
+        <tbody>
+          <tr><td><code>RISING</code></td><td>Prechod z <code>LOW</code> na <code>HIGH</code></td><td>Uvoľnenie tlačidla</td></tr>
+          <tr><td><code>FALLING</code></td><td>Prechod z <code>HIGH</code> na <code>LOW</code></td><td>Stlačenie tlačidla</td></tr>
+          <tr><td><code>CHANGE</code></td><td>Ľubovoľný prechod úrovne</td><td>Stlačenie aj uvoľnenie</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p><strong>Pravidlo pre ISR:</strong> urobte ju čo najkratšiu. Typicky iba zaznamená, že udalosť nastala; rozsiahle výpočty, dlhé čakanie a bežný výpis cez <code>Serial</code> patria do hlavného programu.</p>
+
+    <h2>6. Arduino Uno: zaznamenanie stlačenia prerušením</h2>
+    <p>Zapojenie tlačidla medzi D2 a GND zostáva rovnaké. Obslužná funkcia iba nastaví príznak; hlavná slučka ho prevezme a vykoná zmenu LED.</p>
+    <pre class="code-sample language-cpp"><code>const byte BUTTON_PIN = 2;
+volatile bool buttonEvent = false;
+bool ledOn = false;
+
+void onButtonPress() {
+    buttonEvent = true;
+}
+
+void setup() {
+    pinMode(BUTTON_PIN, INPUT_PULLUP);
+    pinMode(LED_BUILTIN, OUTPUT);
+    attachInterrupt(digitalPinToInterrupt(BUTTON_PIN), onButtonPress, FALLING);
+}
+
+void loop() {
+    noInterrupts();
+    const bool eventCaptured = buttonEvent;
+    buttonEvent = false;
+    interrupts();
+
+    if (eventCaptured) {
+        ledOn = !ledOn;
+        digitalWrite(LED_BUILTIN, ledOn ? HIGH : LOW);
+    }
+
+    // Ostatné úlohy programu môžu pokračovať aj bez čakania na tlačidlo.
+}</code></pre>
+    <ul>
+      <li><code>attachInterrupt()</code> priradí vstupu obslužnú funkciu a režim hrany.</li>
+      <li><code>volatile</code> upozorňuje prekladač, že hodnotu môže meniť aj ISR; samo osebe však nezabezpečuje bezpečnú synchronizáciu.</li>
+      <li>Krátke zakázanie prerušení chráni spoločné prevzatie a vynulovanie príznaku v tomto jednoduchom príklade.</li>
+      <li>Jeden bool príznak znamená „nastala aspoň jedna udalosť“; viac rýchlych udalostí sa ním nemusí dať spočítať. Na počítanie impulzov treba vhodne chránené počítadlo alebo front.</li>
+    </ul>
+
+    <h2>7. ESP32: rovnaký princíp, odlišné vlastnosti dosky</h2>
+    <p>ESP32 je rodina mikrokontrolérov; podľa konkrétneho variantu a dosky môže ponúkať napríklad Wi-Fi, Bluetooth a viac procesorových jadier. V Arduino frameworku sa používa podobný spôsob registrácie prerušenia, no dostupné GPIO a obmedzenia sa líšia podľa modelu.</p>
+    <pre class="code-sample language-cpp"><code>const int BUTTON_PIN = 27; // Iba ak GPIO27 je dostupný na danej doske.
+void ARDUINO_ISR_ATTR onButtonPress();
+
+void setup() {
+    pinMode(BUTTON_PIN, INPUT_PULLUP);
+    attachInterrupt(digitalPinToInterrupt(BUTTON_PIN), onButtonPress, FALLING);
+}</code></pre>
+    <p>Ukážka zobrazuje registráciu obsluhy; definícia <code>onButtonPress()</code> musí byť doplnená podľa bezpečného spôsobu odovzdania udalosti hlavnej úlohe. Pri zložitejších aplikáciách ESP32 sa používajú napríklad fronty FreeRTOS alebo kritická sekcia. Nepredpokladajte, že samotné <code>volatile</code> chráni zdieľané údaje medzi jadrami.</p>
+    <div class="card">
+      <strong>Elektrická bezpečnosť:</strong> GPIO ESP32 pracujú s logikou 3,3 V a nie sú určené na priame pripojenie 5 V. Pred zapojením skontrolujte dokumentáciu konkrétnej dosky aj dostupnosť vybraného pinu.
+    </div>
+
+    <h2>8. Raspberry Pi: polling a udalosti v Pythone</h2>
+    <p>Bežné Raspberry Pi (napríklad Pi 4 alebo Pi 5) je jednodoskový počítač s operačným systémom Linux. <strong>Raspberry Pi Pico</strong> je naopak doska s mikrokontrolérom, teda odlišná platforma. Na bežnom Raspberry Pi možno na vstupy použiť Python a knižnicu <code>gpiozero</code>.</p>
+    <p>V nasledujúcich príkladoch je tlačidlo pripojené medzi <code>GPIO17</code> (označenie BCM) a GND. Na štandardnom 40-pinovom konektore je GPIO17 fyzický pin 11; knižnica používa označenie BCM, nie fyzické číslo kontaktu.</p>
+    <h3>Polling</h3>
+    <pre class="code-sample language-python"><code>from gpiozero import Button
+from time import sleep
+
+button = Button(17, pull_up=True)
+
+while True:
+    if button.is_pressed:
+        print("Tlacidlo je stlacene")
+    sleep(0.1)</code></pre>
+    <p>Program kontroluje stav približne každých 100 ms. Kým tlačidlo držíme, správa sa môže vypísať opakovane. Čakanie <code>sleep()</code> obmedzí zbytočné kontrolovanie, ale zároveň ovplyvní najkratšiu zmenu, ktorú program stihne zachytiť.</p>
+    <h3>Udalostné riadenie</h3>
+    <pre class="code-sample language-python"><code>from gpiozero import Button
+from signal import pause
+
+def on_press():
+    print("Tlacidlo bolo stlacene")
+
+button = Button(17, pull_up=True, bounce_time=0.05)
+button.when_pressed = on_press
+pause()</code></pre>
+    <ul>
+      <li><code>when_pressed</code> zaregistruje funkciu, ktorú knižnica zavolá pri stlačení.</li>
+      <li><code>bounce_time=0.05</code> nastaví časové potlačenie zákmitov kontaktu.</li>
+      <li><code>pause()</code> ponechá proces bežať, aby mohol reagovať na udalosť.</li>
+    </ul>
+    <p>Callback v bežnom Linuxe nie je to isté ako krátka hardvérová ISR na AVR. Odozvu ovplyvňuje knižnica a plánovanie operačného systému; bežný Linux negarantuje vykonanie callbacku v presnom čase. GPIO Raspberry Pi používajú logiku 3,3 V a nesmú dostať priamo 5 V.</p>
+
+    <h2>9. Zákmity tlačidla a výber riešenia</h2>
+    <p>Mechanické kontakty tlačidla môžu pri jednom stlačení krátko poskakovať a vytvoriť viac rýchlych zmien. Tento jav sa nazýva <strong>zákmit kontaktov</strong>. Jedno stlačenie potom môže program vyhodnotiť ako viac udalostí – pri pollingu aj pri prerušení.</p>
+    <p>Možné riešenia sú softvérové časové filtrovanie, potvrdenie stabilného stavu alebo vhodný hardvérový filter. Voľba závisí od tlačidla a požiadaviek systému; príznak prerušenia sám osebe zákmit neodstráni.</p>
+    <div class="scroll">
+      <table>
+        <thead><tr><th>Situácia</th><th>Možný prístup</th><th>Dôvod</th></tr></thead>
+        <tbody>
+          <tr><td>Meranie izbovej teploty každých 10 sekúnd</td><td>Pravidelný polling</td><td>Meranie je pravidelné a pomalá odozva postačuje.</td></tr>
+          <tr><td>Počítanie krátkych impulzov zo snímača otáčok</td><td>Prerušenie alebo hardvérové počítadlo</td><td>Pomalý polling môže impulz medzi kontrolami prehliadnuť.</td></tr>
+          <tr><td>Reakcia na kliknutie v grafickej aplikácii</td><td>Udalostné riadenie</td><td>Aplikácia spracuje kliknutie doručené systémom alebo knižnicou.</td></tr>
+          <tr><td>Jednoduché ovládanie LED tlačidlom</td><td>Polling alebo udalosť</td><td>Rozhoduje požadovaná odozva a zložitosť programu.</td></tr>
+          <tr><td>Zariadenie na batériu čakajúce na tlačidlo</td><td>Spánok a povolené prebudenie udalosťou</td><td>Úspora vzniká, ak procesor medzi udalosťami skutočne prejde do nízkoenergetického režimu.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p><strong>Doplňujúca otázka:</strong> Prečo môže byť nevhodné kontrolovať krátke impulzy iba raz za sekundu? <strong>Odpoveď:</strong> Impulz môže vzniknúť a zaniknúť medzi dvoma kontrolami.</p>
+
+    <h2>10. Samostatná práca</h2>
     <div class="card">
       <h3>Úloha A – povinná: vyberte spôsob obsluhy</h3>
       <p>Pre každú situáciu navrhnite polling, udalostné riadenie alebo ich kombináciu. Ku každej voľbe napíšte jednu vetu zdôvodnenia.</p>
@@ -224,35 +426,47 @@ hlavný_program:
       <p>Navrhnite systém, v ktorom udalosť oznámi príchod správy a hlavný program ju spracuje. Čo by sa malo stať, ak príde ďalšia správa skôr, než sa spracuje prvá?</p>
     </div>
 
-    <h2>5. Opakovanie a overenie vedomostí</h2>
+    <h2>11. Opakovanie a overenie vedomostí</h2>
     <ol>
       <li>Čo robí program pri pollingu?</li>
       <li>Prečo môže krátka zmena vstupu pri pomalom pollingu uniknúť?</li>
-      <li>Čo znamená udalostné riadenie?</li>
-      <li>Prečo udalosť, prerušenie a ISR nie sú rovnaký pojem?</li>
+      <li>Akú hodnotu číta Arduino s <code>INPUT_PULLUP</code>, keď je tlačidlo medzi vstupom a GND stlačené?</li>
+      <li>Čo znamená režim <code>FALLING</code> a prečo ho použijeme pri tomto zapojení?</li>
+      <li>Prečo jedno stlačenie tlačidla môže vyvolať viac zmien alebo udalostí?</li>
+      <li>V čom sa líši callback v Linuxe od hardvérovej ISR na AVR?</li>
       <li>Uveďte jeden dôvod, pre ktorý môže byť vhodný hybridný návrh.</li>
     </ol>
-    <p><strong>Očakávané odpovede:</strong> Pri pollingu program opakovane zisťuje stav; krátka zmena medzi dvoma kontrolami sa nemusí objaviť pri žiadnom čítaní; pri udalostnom riadení program spracúva oznámenie o zmene alebo dokončení; udalosť je oznámenie, prerušenie je jeden spôsob upozornenia procesora a ISR je obslužná rutina prerušenia; hybrid môže kombinovať pravidelné meranie s oznámeniami pre nepravidelné alebo časovo citlivé zmeny.</p>
+    <div class="note teacher-note"><strong>Odpovede pre vyučujúceho:</strong> Polling opakovane zisťuje stav; krátky impulz môže medzi kontrolami uniknúť; pri stlačení je vstup <code>LOW</code>; <code>FALLING</code> je prechod z <code>HIGH</code> na <code>LOW</code>; mechanické zákmity môžu vytvoriť viac zmien; callback v Linuxe spravuje knižnica a plánovač OS, kým ISR obsluhuje hardvérové prerušenie; hybrid môže kombinovať pravidelné merania s oznámeniami pre nepravidelné zmeny.</div>
 
     <h3>Záverečná aktivita</h3>
+    <blockquote><p><strong>Zápis do zošita:</strong> Polling je opakovaná kontrola stavu vstupu. Udalostné riadenie spúšťa činnosť ako reakciu na oznámenú udalosť. Prerušenie je jeden zo spôsobov zachytenia udalosti; ISR má byť krátka a ďalšie spracovanie sa často vykonáva v hlavnom programe. Pri výbere zohľadňujeme odozvu, krátke impulzy, energiu a zložitosť systému.</p></blockquote>
     <p>Dokončite vetu: „Polling zvolím, keď …; udalostné riadenie zvolím, keď …“ Doplňte aspoň jednu podmienku týkajúcu sa požadovanej odozvy.</p>
+    <p><strong>Úloha na samostatnú prácu:</strong> Nakreslite priebeh programu s pollingom a s prerušením. Ku každému uveďte jeden vhodný príklad použitia.</p>
 
     <section class="sources" aria-labelledby="sources-heading">
       <h2 id="sources-heading">Odporúčané zdroje</h2>
       <ul>
         <li><a href="https://docs.arduino.cc/language-reference/en/functions/external-interrupts/attachInterrupt/" target="_blank" rel="noopener noreferrer">Arduino Language Reference: attachInterrupt()</a> – príklad hardvérového prerušenia; dostupné režimy a piny závisia od dosky.</li>
+        <li><a href="https://docs.arduino.cc/hardware/uno-rev3/" target="_blank" rel="noopener noreferrer">Arduino Uno Rev3</a> – oficiálne informácie o doske a jej mikrokontroléri.</li>
+        <li><a href="https://docs.espressif.com/projects/arduino-esp32/en/latest/api/gpio.html" target="_blank" rel="noopener noreferrer">Arduino-ESP32 GPIO API</a> – práca s pinmi a prerušeniami na ESP32.</li>
+        <li><a href="https://gpiozero.readthedocs.io/en/stable/api_input.html" target="_blank" rel="noopener noreferrer">gpiozero: Input devices</a> – trieda <code>Button</code>, polling a callbacky v Pythone.</li>
         <li><a href="https://learn.microsoft.com/en-us/windows/win32/winmsg/about-messages-and-message-queues" target="_blank" rel="noopener noreferrer">Microsoft Learn: About Messages and Message Queues</a> – udalostné spracovanie správ a front správ v aplikáciách Windows.</li>
         <li><a href="https://docs.arduino.cc/language-reference/" target="_blank" rel="noopener noreferrer">Arduino Language Reference</a> – referenčný prehľad funkcií vstupov, výstupov a periférií.</li>
       </ul>
       <p><strong>Poznámka k samoštúdiu:</strong> Prerušenia a obsluha udalostí sa líšia podľa dosky a knižnice. Pred použitím konkrétneho API overte dokumentáciu pre danú platformu; ukážky v tejto lekcii sú pseudokód, nie program pripravený na kompiláciu.</p>
     </section>
 
-    <h2>Poznámky a povinné vedomosti</h2>
+    <h2>Poznámky a povinné vedomosti, ktoré si zapamätať z hodiny</h2>
     <ul>
       <li>Polling znamená opakované zisťovanie stavu vstupu alebo periférie.</li>
       <li>Interval pollingu ovplyvňuje čas, kedy program zmenu zaznamená; krátky impulz môže medzi kontrolami uniknúť.</li>
-      <li>Udalostné riadenie spracúva oznámenie o zmene, správe alebo dokončení operácie.</li>
+      <li>Udalostné riadenie spracúva oznámenie o zmene, správe alebo dokončení operácie; obslužná funkcia sa označuje aj ako callback.</li>
       <li>Prerušenie je jeden možný mechanizmus doručenia udalosti; ISR je rutina, ktorá prerušenie obsluhuje.</li>
+      <li>Pri tlačidle zapojenom medzi vstup s <code>INPUT_PULLUP</code> a GND sa stlačenie prejaví ako <code>LOW</code>; na Uno R3 použijeme pre stlačenie režim <code>FALLING</code>.</li>
+      <li>ISR má byť krátka; <code>volatile</code> samo osebe nie je synchronizačný mechanizmus ani ochrana pred súbehom.</li>
+      <li>GPIO na ESP32 a bežnom Raspberry Pi používajú 3,3 V logiku; 5 V sa na ne nepripája priamo.</li>
+      <li>Bežné Raspberry Pi s Linuxom nie je to isté zariadenie ako Raspberry Pi Pico s mikrokontrolérom.</li>
+      <li>Mechanické zákmity môžu vytvárať viac prechodov a vyžadujú vhodné filtrovanie.</li>
       <li>Polling a udalostné riadenie možno v jednom systéme kombinovať.</li>
       <li>Voľbu zdôvodňujeme požadovanou odozvou, schopnosťami hardvéru a následkami zmeškanej zmeny.</li>
     </ul>
@@ -267,12 +481,18 @@ hlavný_program:
         <dt>Odozva</dt><dd>Čas od zmeny alebo požiadavky po začiatok či dokončenie príslušnej reakcie systému.</dd>
         <dt>Hybridný prístup</dt><dd>Návrh, ktorý kombinuje pravidelné kontroly a spracovanie udalostí podľa potrieb systému.</dd>
         <dt>Debouncing</dt><dd>Potlačenie viacerých rýchlych zmien, ktoré môže spôsobiť mechanické tlačidlo pri jednom stlačení alebo uvoľnení.</dd>
+        <dt>Callback</dt><dd>Obslužná funkcia zaregistrovaná tak, aby ju knižnica alebo systém zavolali pri udalosti.</dd>
+        <dt>AVR</dt><dd>Rodina mikrokontrolérov; napríklad Arduino Uno R3 používa ATmega328P z rodiny AVR.</dd>
+        <dt>GPIO</dt><dd>Všeobecný digitálny vstupno-výstupný pin mikrokontroléra alebo počítača.</dd>
+        <dt>BCM</dt><dd>Označenie číslovania pinov podľa radiča GPIO; na Raspberry Pi sa líši od fyzického čísla kontaktu konektora.</dd>
+        <dt>Raspberry Pi Pico</dt><dd>Vývojová doska s mikrokontrolérom; nie je to bežný Linuxový počítač Raspberry Pi.</dd>
       </dl>
     </section>
     <footer>
       <p>Materiály predmetu Výpočtová technika · <a href="index.html">Osnova predmetu</a> · <a href="../index.html">Všetky kurzy</a></p>
     </footer>
   </main>
+  <script src="../02_C/00_Prostredie_a_struktura_programu/c-lecture-controls.js" defer></script>
   <script type="module" src="../lesson-remote.js"></script>
 </body>
 </html>
