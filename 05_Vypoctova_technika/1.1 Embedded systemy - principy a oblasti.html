@@ -1,0 +1,263 @@
+<!doctype html>
+<html lang="sk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101827">
+  <meta name="description" content="Embedded systémy, ich princípy a oblasti použitia: mikrokontrolér, mikroprocesor, SBC a príklady.">
+  <title>1.1 Embedded systémy – princípy a oblasti | Výpočtová technika</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f7f8fa;
+      --surface: #fff;
+      --text: #1c2330;
+      --muted: #5b6678;
+      --accent: #1f6feb;
+      --border: #d9dee7;
+      --note: #fff4d6;
+      --green: #18743a;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme]) {
+        color-scheme: dark;
+        --bg: #12161d;
+        --text: #e6eaf1;
+        --surface: #1b212b;
+        --muted: #9aa6b8;
+        --accent: #5aa2ff;
+        --border: #2d3644;
+        --note: #3a3017;
+        --green: #63d58a;
+      }
+    }
+    :root[data-theme="light"] { color-scheme: light; }
+    :root[data-theme="dark"] {
+      color-scheme: dark;
+      --bg: #12161d;
+      --text: #e6eaf1;
+      --surface: #1b212b;
+      --muted: #9aa6b8;
+      --accent: #5aa2ff;
+      --border: #2d3644;
+      --note: #3a3017;
+      --green: #63d58a;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--bg); color: var(--text); font: 16px/1.65 system-ui, -apple-system, "Segoe UI", sans-serif; }
+    a { color: var(--accent); }
+    .global-course-nav { display: flex; flex-wrap: wrap; gap: .55rem; align-items: center; width: min(100% - 2rem, 1000px); margin: .75rem auto 0; font: 600 .9rem/1.4 system-ui, -apple-system, "Segoe UI", sans-serif; }
+    .global-course-nav a { display: inline-block; padding: .4rem .7rem; border: 1px solid var(--border); border-radius: .55rem; text-decoration: none; color: inherit; background: var(--surface); }
+    .global-course-nav a:hover { text-decoration: underline; }
+    .global-course-nav a:focus-visible, a:focus-visible, button:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+    main { width: min(100% - 2rem, 860px); margin: auto; padding: 1rem 0 3rem; }
+    main :is(p, li, td, dd, blockquote) { text-align: justify; text-justify: inter-word; }
+    header { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: .6rem; }
+    .crumb, .muted, .caption { color: var(--muted); }
+    h1 { font-size: clamp(1.8rem, 5vw, 2.6rem); line-height: 1.2; margin: .8rem 0; }
+    h2 { margin-top: 2rem; font-size: 1.4rem; }
+    h3 { margin-top: 1.4rem; font-size: 1.1rem; }
+    .subtitle { color: var(--muted); }
+    .tags { display: flex; flex-wrap: wrap; gap: .45rem; margin: 1rem 0; }
+    .tag { padding: 2px 9px; border: 1px solid var(--border); border-radius: 999px; background: var(--surface); font-size: 13px; }
+    .card, .note { margin: 1rem 0; padding: 1rem 1.1rem; border: 1px solid var(--border); border-radius: 12px; background: var(--surface); }
+    .note { background: var(--note); }
+    .safety-notice { margin: 1rem 0; padding: 14px 17px; border: 1px solid var(--border); border-left: 5px solid var(--accent); border-radius: 12px; background: var(--note); }
+    .safety-notice strong { display: block; margin-bottom: .25rem; }
+    .flow { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: .55rem; align-items: stretch; margin: 1rem 0; }
+    .flow-step { display: grid; place-items: center; min-height: 88px; padding: .7rem; border: 1px solid var(--border); border-radius: 10px; background: var(--surface); text-align: center; }
+    .flow-step strong { display: block; color: var(--accent); }
+    .scroll { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { padding: .65rem .7rem; border: 1px solid var(--border); text-align: left; vertical-align: top; }
+    th { background: var(--surface); }
+    pre { margin: .65rem 0 1rem; padding: 1rem; border-radius: 9px; overflow-x: auto; background: #0f172a; color: #e2e8f0; font: 14px/1.55 ui-monospace, SFMono-Regular, Consolas, monospace; }
+    code { font-family: ui-monospace, SFMono-Regular, Consolas, monospace; }
+    :not(pre) > code { padding: .08rem .28rem; border-radius: 4px; background: color-mix(in srgb, var(--border) 55%, transparent); }
+    .output { border-left: 4px solid var(--green); }
+    .sources, footer { margin-top: 2rem; padding-top: 1rem; border-top: 1px solid var(--border); }
+    footer { color: var(--muted); font-size: 14px; }
+    .glossary-list { display: grid; grid-template-columns: minmax(8rem, .35fr) 1fr; gap: .3rem .8rem; }
+    .glossary-list dt { font-weight: 750; }
+    .glossary-list dd { margin: 0; }
+    @media (max-width: 620px) {
+      main { width: min(100% - 1.2rem, 860px); }
+      .flow { grid-template-columns: 1fr; }
+      .flow-step { min-height: 56px; }
+    }
+    @media (max-width: 520px) {
+      .glossary-list { grid-template-columns: 1fr; gap: .1rem; }
+      .glossary-list dd { margin-bottom: .5rem; }
+    }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; } }
+  </style>
+  <script src="../lesson-top.js" defer></script>
+</head>
+<body>
+  <nav class="global-course-nav" aria-label="Navigácia kurzov">
+    <a href="index.html">Výpočtová technika – osnova</a>
+    <a href="../index.html">Všetky kurzy</a>
+    <a href="../nastavenia.html">Nastavenia vzhľadu</a>
+  </nav>
+  <main>
+    <header>
+      <div>
+        <p class="crumb"><a href="index.html">Výpočtová technika</a> · Tematický celok 1</p>
+        <h1>1.1 Embedded systémy – princípy a oblasti</h1>
+        <p class="subtitle">Ako malé výpočtové zariadenia vnímajú okolie a riadia konkrétne funkcie.</p>
+      </div>
+    </header>
+    <div class="tags" aria-label="Témy prednášky">
+      <span class="tag">Mikroprocesor</span><span class="tag">Mikrokontrolér</span><span class="tag">Embedded systém</span><span class="tag">SBC</span>
+    </div>
+    <div class="safety-notice" role="note">
+      <strong>Bezpečnosť pri práci s elektronikou</strong>
+      Zariadenie pripájajte a odpájajte podľa pokynov vyučujúceho. Pred manipuláciou s vodičmi vypnite napájanie; nepoužívajte poškodené káble ani neznáme napájacie zdroje.
+    </div>
+
+    <section aria-labelledby="plan-hodiny">
+      <h2 id="plan-hodiny">Časový plán hodiny</h2>
+      <div class="scroll">
+        <table class="timeline">
+          <thead><tr><th>Čas</th><th>Činnosť</th><th>Výsledok</th></tr></thead>
+          <tbody>
+            <tr><td>0–5 min</td><td>Motivačná otázka a príklady zariadení</td><td>Žiak pomenuje aspoň jedno zariadenie, ktoré počíta a riadi funkciu.</td></tr>
+            <tr><td>5–15 min</td><td>Pojmy: mikroprocesor, mikrokontrolér, embedded systém a SBC</td><td>Žiak rozlíši ich úlohu a mieru integrácie.</td></tr>
+            <tr><td>15–25 min</td><td>Stavebné časti a cesta informácie</td><td>Žiak vysvetlí vstup, spracovanie a výstup na príklade.</td></tr>
+            <tr><td>25–37 min</td><td>Skupinová klasifikácia a návrh jednoduchého systému</td><td>Žiak vyberie vhodnú platformu pre zadanú úlohu a zdôvodní výber.</td></tr>
+            <tr><td>37–45 min</td><td>Kontrolné otázky a záver</td><td>Žiak zhrnie rozdiel medzi MCU a SBC a odovzdá výstup aktivity.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <h2>Ciele vyučovacej hodiny</h2>
+    <p>Po absolvovaní hodiny žiak dokáže:</p>
+    <ul>
+      <li>vysvetliť, čo znamená, že je systém embedded, a uviesť aspoň dva príklady jeho použitia;</li>
+      <li>rozlíšiť mikroprocesor, mikrokontrolér a jednodeskový počítač (SBC) podľa ich typickej úlohy a zloženia;</li>
+      <li>opísať jednoduchý tok informácie od snímača cez spracovanie po akčný člen alebo inú odozvu;</li>
+      <li>navrhnúť základný výber zariadenia pre konkrétnu úlohu a zdôvodniť ho aspoň dvoma požiadavkami.</li>
+    </ul>
+
+    <h2>1. Motivácia: zariadenie, ktoré reaguje na svet</h2>
+    <p>Keď sa otvorí automatická garážová brána, riadiaca elektronika prijme informáciu zo snímača, vyhodnotí podmienky a ovláda motor. Podobný princíp nájdeme v termostate, digitálnom merači, práčke aj v riadiacej jednotke vozidla.</p>
+    <div class="note"><strong>Otázka na úvod:</strong> Čo musí zariadenie zistiť a aký výstup musí vytvoriť, aby vedelo bezpečne reagovať na stlačenie tlačidla alebo zmenu teploty?</div>
+    <p>V mnohých takýchto zariadeniach je počítačová časť zabudovaná do výrobku a venuje sa obmedzenému súboru úloh. Práve preto sa pri návrhu zaujímame nielen o program, ale aj o snímače, výstupy, napájanie a prostredie, v ktorom má zariadenie pracovať.</p>
+
+    <h2>2. Teoretický výklad</h2>
+    <h3>Čo je embedded systém</h3>
+    <p><strong>Embedded systém</strong> (vstavaný systém) je výpočtový systém, ktorý je súčasťou väčšieho zariadenia alebo produktu a plní v ňom konkrétnu úlohu. Môže merať, rozhodovať, zobrazovať stav alebo ovládať inú časť zariadenia. Nie je to synonymum pre „malý počítač“: podstatná je jeho účelová úloha a väzba na zariadenie, ktoré riadi alebo dopĺňa.</p>
+    <p>Embedded systém môže byť jednoduchý aj zložitý. Niektoré riešenia pracujú priamo s mikrokontrolérom, iné používajú výkonnejšiu platformu a operačný systém. Výber závisí od požiadaviek na výpočty, spotrebu, cenu, rozhrania, odozvu a údržbu.</p>
+
+    <h3>Mikroprocesor a mikrokontrolér</h3>
+    <p><strong>Mikroprocesor</strong> je procesor realizovaný ako integrovaný obvod. Typická mikroprocesorová platforma používa ďalšie čipy alebo komponenty na pamäť a vstupno-výstupné funkcie. Konkrétne usporiadanie závisí od platformy.</p>
+    <p><strong>Mikrokontrolér (MCU)</strong> je integrovaný obvod určený na riadenie zariadení. Zvyčajne spája procesorové jadro s pamäťou a perifériami, napríklad časovačmi alebo vstupno-výstupnými pinmi. Mnohé mikrokontroléry vedia vykonávať program bez samostatného všeobecného operačného systému; presné možnosti sa líšia podľa typu.</p>
+    <div class="card">
+      <strong>Praktická pomôcka:</strong>
+      <ul>
+        <li>Ak hovoríme o samotnej jednotke, ktorá vykonáva inštrukcie, myslíme na procesor.</li>
+        <li>Ak je jadro spolu s pamäťou a perifériami integrované do riadiaceho čipu, často ide o MCU.</li>
+        <li>Pri konkrétnom zariadení vždy overte jeho dokumentáciu; pomenovanie samo neprezradí všetky jeho súčasti.</li>
+      </ul>
+    </div>
+
+    <h3>Jednodeskový počítač (SBC)</h3>
+    <p><strong>SBC</strong> (<em>single-board computer</em>) je počítač zostavený na jednej doske plošných spojov. Zvyčajne obsahuje procesor, pamäť a rozhrania potrebné na spustenie všeobecného operačného systému, ako je napríklad Linux. Jednodeskové počítače sa často používajú pri výučbe, prototypovaní a projektoch, ktoré potrebujú sieťové služby alebo viac výpočtových zdrojov.</p>
+    <p>SBC a MCU nie sú zameniteľné označenia. MCU býva vhodný na priamu a úspornú obsluhu periférií; SBC zasa môže byť výhodný, keď je potrebný operačný systém, súborový systém alebo bohatšie sieťové aplikácie. Sú to všeobecné charakteristiky, nie pravidlá bez výnimiek.</p>
+
+    <h3>Vstup, spracovanie a výstup</h3>
+    <p>Mnohé embedded aplikácie možno na úvod opísať tromi krokmi:</p>
+    <div class="flow" aria-label="Vstup, spracovanie a výstup">
+      <div class="flow-step"><span><strong>1 · Vstup</strong>Snímač alebo tlačidlo</span></div>
+      <div class="flow-step"><span><strong>2 · Spracovanie</strong>Program a rozhodnutie</span></div>
+      <div class="flow-step"><span><strong>3 · Výstup</strong>LED, motor alebo správa</span></div>
+      <div class="flow-step"><span><strong>4 · Spätná väzba</strong>Nové meranie alebo stav</span></div>
+    </div>
+    <p>Príklad: regulátor teploty odčíta hodnotu zo snímača, porovná ju s nastaveným cieľom a podľa výsledku zapne alebo vypne vykurovanie. Skutočný návrh musí počítať aj s chybou merania, poruchami, bezpečným stavom a požiadavkami zariadenia.</p>
+
+    <h3>Ako vyberať platformu</h3>
+    <p>Pred výberom platformy si ujasnite, čo má zariadenie robiť. Všímajte si napríklad počet a typ snímačov, potrebné výstupy, napájanie, požiadavky na rýchlosť odozvy, komunikáciu, prostredie, cenu a možnosť aktualizácie či servisu. Konkrétnu dosku nevyberajte iba podľa toho, že je populárna alebo výkonná.</p>
+
+    <h2>3. Názorné príklady</h2>
+    <h3>Príklad 1 – automatické nočné svetlo</h3>
+    <p><strong>Úloha:</strong> Svetlo sa má rozsvietiť, keď je v miestnosti tma a niekto stlačí tlačidlo.</p>
+    <ul>
+      <li><strong>Vstupy:</strong> svetelný snímač a tlačidlo.</li>
+      <li><strong>Spracovanie:</strong> program vyhodnotí nameranú úroveň a stav tlačidla.</li>
+      <li><strong>Výstup:</strong> LED alebo iný vhodne navrhnutý svetelný prvok.</li>
+      <li><strong>Požiadavky:</strong> bezpečné napájanie, predvídateľná odozva a vhodná ochrana výstupu.</li>
+    </ul>
+    <p>Na jednoduchý prototyp môže stačiť MCU. Ak projekt potrebuje zaznamenávať dáta do súborov a posielať ich cez sieť, môže byť praktické zvážiť aj SBC. Výber treba podložiť konkrétnymi požiadavkami.</p>
+
+    <h3>Príklad 2 – zber údajov zo snímača</h3>
+    <p>Zariadenie, ktoré iba pravidelne odčíta teplotu a zobrazí ju na displeji, má iné požiadavky než systém, ktorý zbiera dáta z viacerých miest, ukladá ich a sprístupňuje cez webové rozhranie. Prvý prípad môže vyriešiť MCU; druhý môže potrebovať SBC alebo viacero spolupracujúcich zariadení.</p>
+
+    <h2>4. Samostatná práca</h2>
+    <div class="card">
+      <h3>Úloha A – povinná: rozpoznajte systém</h3>
+      <p>Vyberte si jedno zariadenie z domácnosti alebo školy, ktoré meria alebo riadi nejakú funkciu. Zapíšte jeho účel, dva možné vstupy a jeden výstup. Potom rozhodnite, či je vhodnejšie uvažovať o MCU, SBC alebo o inom type riešenia a svoju voľbu zdôvodnite.</p>
+      <p><strong>Kritérium úspechu:</strong> odpoveď pomenúva konkrétny vstup, spracovanie a výstup a obsahuje aspoň dva dôvody výberu platformy.</p>
+    </div>
+    <div class="card">
+      <h3>Úloha B – skupinová: návrh jednoduchej signalizácie</h3>
+      <p>Navrhnite zariadenie, ktoré sleduje otvorenie dverí a upozorní používateľa. Nakreslite blokovú schému: snímač, výpočtová jednotka, výstup a napájanie. K schéme doplňte jednu možnú poruchu a vysvetlite, ako by ste ju bezpečne zistili.</p>
+    </div>
+    <div class="card">
+      <h3>Úloha C – rozšírenie</h3>
+      <p>Zmeňte zadanie tak, aby zariadenie ukladalo záznamy a sprístupňovalo ich cez sieť. Ktoré požiadavky pribudli? Vysvetlite, či by ste naďalej zvolili MCU, SBC alebo kombináciu oboch.</p>
+    </div>
+
+    <h2>5. Opakovanie a overenie vedomostí</h2>
+    <ol>
+      <li>Čo odlišuje embedded systém od počítača používaného na rôzne všeobecné úlohy?</li>
+      <li>Aký je typický rozdiel medzi mikroprocesorom a mikrokontrolérom?</li>
+      <li>Čo znamená skratka SBC a kedy môže byť takáto platforma vhodná?</li>
+      <li>Pomenujte vstup, spracovanie a výstup pri regulácii teploty.</li>
+      <li>Prečo treba pri výbere platformy poznať požiadavky projektu?</li>
+    </ol>
+    <p><strong>Očakávané odpovede:</strong> Embedded systém plní konkrétnu úlohu ako súčasť zariadenia; mikroprocesor označuje procesorový obvod, kým MCU zvyčajne integruje procesorové jadro, pamäť a periférie; SBC je jednodeskový počítač, ktorý sa môže hodiť pri potrebe operačného systému a bohatších služieb; teplotný snímač je vstup, program rozhoduje a vykurovanie je riadený výstup; požiadavky určujú potrebné rozhrania, výkon, spotrebu, cenu a ďalšie vlastnosti.</p>
+
+    <h3>Záverečná aktivita</h3>
+    <p>Na lístok pri odchode napíšte jednu vetu, ktorá vysvetľuje rozdiel medzi MCU a SBC, a jeden príklad embedded systému z praxe.</p>
+
+    <section class="sources" aria-labelledby="sources-heading">
+      <h2 id="sources-heading">Odporúčané zdroje</h2>
+      <ul>
+        <li><a href="https://www.arm.com/glossary/microcontroller" target="_blank" rel="noopener noreferrer">Arm: Microcontroller</a> – stručné vysvetlenie mikrokontroléra.</li>
+        <li><a href="https://www.st.com/en/microcontrollers-microprocessors.html" target="_blank" rel="noopener noreferrer">STMicroelectronics: Microcontrollers and microprocessors</a> – produktové kategórie a technické materiály výrobcu.</li>
+        <li><a href="https://www.raspberrypi.com/documentation/" target="_blank" rel="noopener noreferrer">Raspberry Pi Documentation</a> – dokumentácia k jednodeskovým počítačom Raspberry Pi.</li>
+        <li><a href="https://www.raspberrypi.com/products/raspberry-pi-pico/" target="_blank" rel="noopener noreferrer">Raspberry Pi Pico</a> – príklad mikrokontrolérovej dosky; nejde o SBC.</li>
+      </ul>
+      <p><strong>Poznámka k samoštúdiu:</strong> Pri porovnávaní konkrétnych dosiek čítajte ich oficiálnu dokumentáciu. Rovnaké názvy kategórií nemusia znamenať rovnaké parametre ani možnosti.</p>
+    </section>
+
+    <h2>Poznámky a povinné vedomosti</h2>
+    <ul>
+      <li>Embedded systém je súčasť zariadenia alebo produktu a plní v ňom konkrétnu úlohu.</li>
+      <li>Mikrokontrolér (MCU) zvyčajne integruje procesorové jadro, pamäť a periférie na jednom čipe.</li>
+      <li>SBC je jednodeskový počítač, ktorý môže poskytovať prostredie na spustenie všeobecného operačného systému.</li>
+      <li>Vstup, spracovanie a výstup tvoria užitočný základný model pri rozbore riadiacej úlohy.</li>
+      <li>Platformu vyberáme podľa potrieb aplikácie; MCU a SBC sa nedajú označiť za univerzálne lepšiu možnosť.</li>
+      <li>Pri práci s reálnym hardvérom dodržiavame pokyny, správne napájanie a bezpečný postup zapájania.</li>
+    </ul>
+    <section class="card" aria-labelledby="glossary-heading">
+      <h2 id="glossary-heading">Register pojmov a skratiek</h2>
+      <dl class="glossary-list">
+        <dt>Embedded systém</dt><dd>Výpočtový systém zabudovaný do zariadenia alebo produktu, ktorý v ňom plní konkrétnu úlohu.</dd>
+        <dt>Mikroprocesor</dt><dd>Procesorový integrovaný obvod; jeho platforma môže vyžadovať samostatnú pamäť alebo ďalšie komponenty.</dd>
+        <dt>Mikrokontrolér (MCU)</dt><dd>Riadiaci integrovaný obvod, ktorý zvyčajne kombinuje procesorové jadro, pamäť a periférie.</dd>
+        <dt>SBC</dt><dd><em>Single-board computer</em>, jednodeskový počítač s komponentmi potrebnými na všeobecné výpočtové úlohy.</dd>
+        <dt>Periféria</dt><dd>Časť systému, ktorá umožňuje spracúvať alebo vymieňať údaje s okolím, napríklad časovač, komunikačné rozhranie alebo GPIO.</dd>
+        <dt>Snímač</dt><dd>Prvok, ktorý poskytuje systému informáciu o fyzikálnej veličine alebo stave.</dd>
+        <dt>Akčný člen</dt><dd>Prvok, ktorým systém mení stav zariadenia alebo prostredia, napríklad motor alebo ventil.</dd>
+        <dt>GPIO</dt><dd><em>General-purpose input/output</em>, univerzálne digitálne vstupno-výstupné piny.</dd>
+      </dl>
+    </section>
+    <footer>
+      <p>Materiály predmetu Výpočtová technika · <a href="index.html">Osnova predmetu</a> · <a href="../index.html">Všetky kurzy</a></p>
+    </footer>
+  </main>
+  <script type="module" src="../lesson-remote.js"></script>
+</body>
+</html>

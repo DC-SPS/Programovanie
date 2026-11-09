@@ -64,4 +64,27 @@ Rozhranie prispôsob telefónu: veľké dobre ovládateľné tlačidlá, jasné 
 Najprv preskúmaj štruktúru projektu a over, či súčasná webová stránka a jej hlasové čítanie umožňujú bezpečnú komunikáciu s mobilnou aplikáciou. Potom navrhni a implementuj kompletné riešenie vrátane potrebných zmien na stránke, mobilnej aplikácie, Firebase autentifikácie a bezpečnostných pravidiel. Zachovaj existujúce ovládanie prednášok.
 Nezverejňuj aplikáciu ani nemeň produkčné Firebase pravidlá bez výslovného schválenia. Pred dokončením over prihlásenie, spárovanie so stránkou, všetky štyri ovládacie príkazy, obnovu spojenia a odmietnutie príkazov z neprihláseného alebo nespárovaného zariadenia. Uveď, čo si implementoval, ako sa telefón páruje so stránkou a aké kontroly si vykonal.
 
-6. Prompt:
+6. Prompt: Nový predmet Výpočtová technika a prvá prednáška
+
+V projekte Programovanie vytvor nový predmet „Výpočtová technika“ podľa vizuálneho a obsahového vzoru kurzu Python a podľa štruktúry prednášky 4.2 v kurze C. Pred začatím si prezri oba vzory priamo v zdrojových súboroch. Prednášku 4.2 použi ako vzor štruktúry a prvkov lekcie, nie ako zdroj jej odborného obsahu.
+
+Do prehľadu nových kurzov pridaj odkaz na predmet Výpočtová technika. Vytvor prehľad predmetu s hierarchiou tematických celkov a tém podľa priloženej osnovy:
+
+1. Tematický celok „Úvod do mikroprocesorových a embedded systémov“: Embedded systémy – princípy a oblasti; Vývojové prostredia a nástroje; Architektúry MCU a SBC; STM32 a ARM Cortex-M; Jednodoskové počítače a Raspberry Pi.
+2. Architektúra mikrokontroléra: Von Neumannova a Harvardova architektúra; Architektúra MCU, CPU, ALU, registre; Inštrukčný cyklus mikrokontroléra; Architektonické prístupy (RISC, CISC a ARM).
+3. Pamäťový systém a dátová reprezentácia: Binárna sústava; Hexadecimálna sústava, bity a bajty; Dátové typy a veľkosť dát; Bitové operácie; Druhy pamätí (Flash, SRAM, EEPROM); Memory map a adresovanie; Zásobník a ukazovatele.
+4. Vstupno-výstupný systém, prerušenia a časovanie: GPIO; Konfigurácia vstupov a výstupov; Polling a udalostné riadenie; Prerušenia a ISR; Pravidlá práce v ISR; Debouncing; Časovače a časovanie; Watchdog timer.
+5. Analógové a výkonové periférie: Analógové a digitálne signály; ADC – princíp činnosti; Vzorkovanie a kvantovanie; DAC – princíp a použitie; PWM – princíp činnosti; Filtrácia, kalibrácia a presnosť merania.
+6. Komunikačné rozhrania a protokoly: Sériová a paralelná komunikácia; UART; I²C; SPI; RS-232 a RS-485; Modbus RTU; USB a ďalšie rozhrania; Komunikačné protokoly – rámce a kontrola chýb.
+7. Embedded a reálne operačné systémy: Reálne a embedded OS; Operačný systém v embedded systémoch; Multitasking; Scheduler; Synchronizácia úloh; RTOS – princíp a použitie.
+8. Jednodoskové počítače a ich operačný systém: SBC – jednodeskové počítače; MCU verzus SBC; Linux v embedded systémoch; Súborový systém; Procesy a služby; SSH a vzdialená správa; GPIO v Linuxe.
+9. GPIO v Linuxe: IoT architektúra; TCP/IP a IP komunikácia; Wi-Fi; Bluetooth/BLE; HTTP a REST API; MQTT; IoT broker a komunikácia zariadení; Spracovanie a ukladanie dát; Bezpečnosť IoT zariadení.
+10. Návrh a realizácia embedded systému: Analýza zadania; Návrh architektúry systému; Testovanie a diagnostika; Dokumentácia embedded systému; Integrácia, vyhodnotenie a obhajoba.
+
+Priprav a zapíš prvú prednášku k téme „Embedded systémy – princípy a oblasti“ v tematickom celku „Úvod do mikroprocesorových a embedded systémov“. Použi priložený odkaz na zdieľaný ChatGPT rozhovor ako vecný zdroj: https://chatgpt.com/s/cx_6af1d7597a548191b4e10265db19c6bb. Ak odkaz nie je dostupný, nepredstieraj, že si jeho obsah prečítal; vychádzaj z osnovy a uveď túto hranicu v závere.
+
+Prednáška má byť zrozumiteľná pre stredoškolákov a obsahovať merateľné ciele, časový plán hodiny, motiváciu, výklad kľúčových pojmov, príklady z praxe, aktivitu alebo úlohy pre žiakov, kontrolné otázky s odpoveďami, zhrnutie, odporúčané dôveryhodné zdroje a register pojmov. Rozlišuj mikrokontrolér, mikroprocesor, embedded systém a SBC; nevymýšľaj parametre konkrétnych zariadení. Nezahŕňaj zatiaľ úplný výklad tém z ďalších celkov.
+
+Zachovaj responzívnosť, prístupnosť, prepínanie témy, globálnu navigáciu a existujúce čítanie prednášok. Odkazy na ešte nevytvorené prednášky nesmú predstierať, že stránky existujú; ostatné témy zobraz ako osnovu bez nefunkčných odkazov. Odkaz na prvú prednášku musí fungovať.
+
+Uprav príslušné README a prehľad predmetov. Pred dokončením over odkazy, správnosť všetkých tém oproti osnove, syntaktickú validitu HTML/JavaScriptu, načítanie zdieľaných súborov a zobraziteľnosť lokálnej prednášky. Nemeň nesúvisiace predmety ani existujúce prednášky. Na záver stručne uveď vytvorené súbory a vykonané kontroly.
