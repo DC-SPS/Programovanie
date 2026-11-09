@@ -31,19 +31,6 @@ Prehľad tematických celkov a dostupných materiálov je na stránke
 - [5.5 PWM – princíp činnosti](./5.5%20PWM%20-%20princip%20cinnosti.html)
 - [5.6 Filtrácia, kalibrácia a presnosť merania](./5.6%20Filtracia%20kalibracia%20a%20presnost%20merania.html)
 
-## Tematický celok 7 – Embedded a reálne operačné systémy
-
-- [7.1 Reálne a embedded OS](./7.1%20Realne%20a%20embedded%20OS.html)
-- [7.2 Operačný systém v embedded systémoch](./7.2%20Operacny%20system%20v%20embedded%20systemoch.html)
-- [7.3 Multitasking](./7.3%20Multitasking.html)
-- [7.4 Scheduler – plánovač úloh](./7.4%20Scheduler%20-%20planovac%20uloh.html)
-- [7.5 Synchronizácia úloh](./7.5%20Synchronizacia%20uloh.html)
-- [7.6 RTOS – princíp a použitie](./7.6%20RTOS%20-%20princip%20a%20pouzitie.html)
-
-Ostatné témy z 65-bodovej osnovy sú zatiaľ vedené ako plán učiva. Prednášky
-
-tematických celkov 3, 4, 5 a 6 sú určené na 45 minút.
-
 ## Tematický celok 6 – Komunikačné rozhrania a protokoly
 
 - [6.1 Sériová a paralelná komunikácia](./6.1%20Seriova%20a%20paralelna%20komunikacia.html)
@@ -55,5 +42,23 @@ tematických celkov 3, 4, 5 a 6 sú určené na 45 minút.
 - [6.7 USB a ďalšie rozhrania](./6.7%20USB%20a%20dalsie%20rozhrania.html)
 - [6.8 Komunikačné protokoly – rámce a adresovanie](./6.8%20Komunikacne%20protokoly%20-%20ramce%20a%20adresovanie.html)
 
+## Tematický celok 7 – Embedded a reálne operačné systémy
 
-tematick?ch celkov 3, 4, 5, 6 a 7 s? ur?en? na 45 min?t.
+- [7.1 Reálne a embedded OS](./7.1%20Realne%20a%20embedded%20OS.html)
+- [7.2 Operačný systém v embedded systémoch](./7.2%20Operacny%20system%20v%20embedded%20systemoch.html)
+- [7.3 Multitasking](./7.3%20Multitasking.html)
+- [7.4 Scheduler – plánovač úloh](./7.4%20Scheduler%20-%20planovac%20uloh.html)
+- [7.5 Synchronizácia úloh](./7.5%20Synchronizacia%20uloh.html)
+- [7.6 RTOS – princíp a použitie](./7.6%20RTOS%20-%20princip%20a%20pouzitie.html)
+
+Predn&#225;&#353;ky tematick&#253;ch celkov 3, 4, 5, 6, 7 a 8 s&#250; ur&#269;en&#233; na 45 min&#250;t.
+
+## Tematick&#253; celok 8 &#8211; Jednodoskov&#233; po&#269;&#237;ta&#269;e a ich opera&#269;n&#253; syst&#233;m
+
+- [8.1 SBC – jednodoskové počítače](./8.1%20SBC%20jednodoskove%20pocitace.html)
+- [8.2 MCU verzus SBC](./8.2%20MCU%20verzus%20SBC.html)
+- [8.3 Linux v embedded systémoch](./8.3%20Linux%20v%20embedded%20systemoch.html)
+- [8.4 Súborový systém](./8.4%20Suborovy%20system.html)
+- [8.5 Procesy a služby](./8.5%20Procesy%20a%20sluzby.html)
+- [8.6 SSH a vzdialená správa](./8.6%20SSH%20a%20vzdialena%20sprava.html)
+- [8.7 GPIO v Linuxe](./8.7%20GPIO%20v%20Linuxe.html)
