@@ -24,6 +24,12 @@ Prehľad tematických celkov a dostupných materiálov je na stránke
 - [4.6 Debouncing – potlačenie zákmitov kontaktov](./4.6%20Debouncing%20-%20potlacenie%20zakmitov.html)
 - [4.7 Časovače a časovanie](./4.7%20Casovace%20a%20casovanie.html)
 - [4.8 Watchdog timer](./4.8%20Watchdog%20timer.html)
+- [5.1 Analógový a digitálny signál](./5.1%20Analogovy%20a%20digitalny%20signal.html)
+- [5.2 ADC – princíp činnosti](./5.2%20ADC%20-%20princip%20cinnosti.html)
+- [5.3 Vzorkovanie a kvantovanie](./5.3%20Vzorkovanie%20a%20kvantovanie.html)
+- [5.4 DAC – princíp a použitie](./5.4%20DAC%20-%20princip%20a%20pouzitie.html)
+- [5.5 PWM – princíp činnosti](./5.5%20PWM%20-%20princip%20cinnosti.html)
+- [5.6 Filtrácia, kalibrácia a presnosť merania](./5.6%20Filtracia%20kalibracia%20a%20presnost%20merania.html)
 
 Ostatné témy z 65-bodovej osnovy sú zatiaľ vedené ako plán učiva. Prednášky
-tematických celkov 3 a 4 sú určené na 45 minút.
+tematických celkov 3, 4 a 5 sú určené na 45 minút.
