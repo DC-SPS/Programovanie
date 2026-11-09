@@ -87,7 +87,8 @@
     .code-actions { display: flex; flex-wrap: wrap; align-items: center; gap: .55rem; margin: .8rem 0 .35rem; }
     .copy-btn, .online-editor { display: inline-block; padding: .4rem .7rem; border: 1px solid var(--line); border-radius: .5rem; font: 600 .9rem/1.4 system-ui, -apple-system, "Segoe UI", sans-serif; text-decoration: none; }
     .copy-btn { background: var(--acc); border-color: var(--acc); color: #fff; cursor: pointer; }
-    .online-editor { background: var(--card); color: var(--fg); }
+    .online-editor { background: var(--card); color: var(--fg); }}
+    .simulator-note { flex-basis: 100%; margin-top: -.25rem; color: var(--mut); font-size: .85rem; }
     .code-status { min-height: 1.4em; margin: 0 0 .75rem; color: var(--mut); font-size: .85rem; }
     .lead-card { margin: 14px 0; padding: 14px 17px; border: 1px solid var(--line); border-radius: 12px; background: var(--card); }
     .safety-notice, .safety-reminder { margin: 1rem 0; padding: 14px 17px; border: 1px solid var(--line); border-left: 5px solid var(--acc); border-radius: 12px; background: var(--note); }
@@ -287,7 +288,8 @@ Ktorý prístup sme použili pri debouncingu bez <code>delay()</code>?</p>
 <h2>2. Blokujúce časovanie: <code>delay()</code></h2>
 <p><strong>Čas: 5 – 11 min</strong></p>
 <h3>Príklad pre Arduino Uno</h3>
-<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button></div><pre class="code-sample language-cpp"><code class="language-cpp">void setup() {
+<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button>
+      <a class="online-editor" href="https://wokwi.com/projects/new/arduino-uno" target="_blank" rel="noopener noreferrer" title="Nový projekt Wokwi. Skopírujte ukážku do editora; úryvok vložte do úplného programu.">Otvoriť simulátor Arduino Uno</a></div><pre class="code-sample language-cpp"><code class="language-cpp">void setup() {
   pinMode(LED_BUILTIN, OUTPUT);
 }
 
@@ -305,7 +307,8 @@ void loop() {
 <p>Počas <code>delay(500)</code> hlavná slučka nepokračuje na ďalší príkaz.</p>
 <p>Na Arduino Uno môžu počas bežného <code>delay()</code> naďalej prebiehať povolené prerušenia. <strong>Blokovanie hlavného programu preto neznamená zastavenie celého hardvéru.</strong></p>
 <h3>Problém s tlačidlom</h3>
-<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button></div><pre class="code-sample language-cpp"><code class="language-cpp">void loop() {
+<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button>
+      <a class="online-editor" href="https://wokwi.com/projects/new/arduino-uno" target="_blank" rel="noopener noreferrer" title="Nový projekt Wokwi. Skopírujte ukážku do editora; úryvok vložte do úplného programu.">Otvoriť simulátor Arduino Uno</a></div><pre class="code-sample language-cpp"><code class="language-cpp">void loop() {
   digitalWrite(LED_BUILTIN, HIGH);
   delay(1000);
 
@@ -327,21 +330,24 @@ void loop() {
 <h2>3. Neblokujúce časovanie: <code>millis()</code></h2>
 <p><strong>Čas: 11 – 18 min</strong></p>
 <p>V Arduino frameworku vracia <code>millis()</code> počet milisekúnd od začiatku vykonávania programu.</p>
-<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button></div><pre class="code-sample language-cpp"><code class="language-cpp">unsigned long teraz = millis();
+<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button>
+      <a class="online-editor" href="https://wokwi.com/projects/new/arduino-uno" target="_blank" rel="noopener noreferrer" title="Nový projekt Wokwi. Skopírujte ukážku do editora; úryvok vložte do úplného programu.">Otvoriť simulátor Arduino Uno</a></div><pre class="code-sample language-cpp"><code class="language-cpp">unsigned long teraz = millis();
 </code></pre><p class="code-status" role="status" aria-live="polite"></p>
 <h3>Základný princíp</h3>
 <p>Namiesto príkazu „čakaj 500 ms“ používame otázku:</p>
 <blockquote>
 <p>Uplynulo už 500 ms od poslednej činnosti?</p>
 </blockquote>
-<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button></div><pre class="code-sample language-cpp"><code class="language-cpp">if (teraz - predoslyCas &gt;= interval) {
+<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button>
+      <a class="online-editor" href="https://wokwi.com/projects/new/arduino-uno" target="_blank" rel="noopener noreferrer" title="Nový projekt Wokwi. Skopírujte ukážku do editora; úryvok vložte do úplného programu.">Otvoriť simulátor Arduino Uno</a></div><pre class="code-sample language-cpp"><code class="language-cpp">if (teraz - predoslyCas &gt;= interval) {
   predoslyCas = teraz;
   vykonajCinnost();
 }
 </code></pre><p class="code-status" role="status" aria-live="polite"></p>
 <p>Ak interval ešte neuplynul, program pokračuje ďalej.</p>
 <h3>Blikanie LED bez <code>delay()</code></h3>
-<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button></div><pre class="code-sample language-cpp"><code class="language-cpp">const unsigned long INTERVAL_MS = 500;
+<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button>
+      <a class="online-editor" href="https://wokwi.com/projects/new/arduino-uno" target="_blank" rel="noopener noreferrer" title="Nový projekt Wokwi. Skopírujte ukážku do editora; úryvok vložte do úplného programu.">Otvoriť simulátor Arduino Uno</a></div><pre class="code-sample language-cpp"><code class="language-cpp">const unsigned long INTERVAL_MS = 500;
 
 unsigned long poslednaZmena = 0;
 bool ledSvieti = false;
@@ -379,7 +385,8 @@ void loop() {
 <p>LED mení stav približne každých 500 ms, takže celá perióda je približne jedna sekunda.</p>
 <h3>Prečo používame odčítanie?</h3>
 <p>Odporúčaný zápis:</p>
-<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button></div><pre class="code-sample language-cpp"><code class="language-cpp">teraz - poslednaZmena &gt;= INTERVAL_MS
+<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button>
+      <a class="online-editor" href="https://wokwi.com/projects/new/arduino-uno" target="_blank" rel="noopener noreferrer" title="Nový projekt Wokwi. Skopírujte ukážku do editora; úryvok vložte do úplného programu.">Otvoriť simulátor Arduino Uno</a></div><pre class="code-sample language-cpp"><code class="language-cpp">teraz - poslednaZmena &gt;= INTERVAL_MS
 </code></pre><p class="code-status" role="status" aria-live="polite"></p>
 <p>Pri 32-bitovom čase sa hodnota <code>millis()</code> pretočí približne po <strong>49,7 dňa</strong>.</p>
 <p>Odčítanie neznamienkových hodnôt umožňuje správne vyhodnocovať bežné krátke intervaly aj cez toto pretočenie. Program však musí čas kontrolovať dostatočne často; týmto postupom nesledujeme ľubovoľný počet celých pretočení.</p>
@@ -393,7 +400,8 @@ void loop() {
 <li>každé 2 sekundy vypísať správu.</li>
 </ul>
 <p>Každá úloha dostane vlastnú časovú premennú.</p>
-<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button></div><pre class="code-sample language-cpp"><code class="language-cpp">const unsigned long INTERVAL_LED = 500;
+<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button>
+      <a class="online-editor" href="https://wokwi.com/projects/new/arduino-uno" target="_blank" rel="noopener noreferrer" title="Nový projekt Wokwi. Skopírujte ukážku do editora; úryvok vložte do úplného programu.">Otvoriť simulátor Arduino Uno</a></div><pre class="code-sample language-cpp"><code class="language-cpp">const unsigned long INTERVAL_LED = 500;
 const unsigned long INTERVAL_VYPIS = 2000;
 
 unsigned long casLed = 0;
@@ -560,7 +568,8 @@ Nastane, keď sa hodnota počítadla zhoduje s nastavenou porovnávacou hodnotou
 <p>Presnosť reálneho času závisí aj od presnosti hodinového zdroja.</p>
 <h3>Prepojenie s ISR</h3>
 <p>Ak povolíme príslušné prerušenie, ISR sa môže spustiť pri každej zhode:</p>
-<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button></div><pre class="code-sample language-cpp"><code class="language-cpp">ISR(TIMER1_COMPA_vect) {
+<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button>
+      <a class="online-editor" href="https://wokwi.com/projects/new/arduino-uno" target="_blank" rel="noopener noreferrer" title="Nový projekt Wokwi. Skopírujte ukážku do editora; úryvok vložte do úplného programu.">Otvoriť simulátor Arduino Uno</a></div><pre class="code-sample language-cpp"><code class="language-cpp">ISR(TIMER1_COMPA_vect) {
   // Krátka obsluha porovnávacej zhody Timer1.
 }
 </code></pre><p class="code-status" role="status" aria-live="polite"></p>
@@ -612,7 +621,8 @@ Ak iné úlohy pokračujú, znamená to, že hlavná slučka už nie je blokovan
 <p><strong>Čas: 36 – 40 min</strong></p>
 <p>Raspberry Pi s Linuxom používa operačný systém, ktorý prideľuje procesorový čas viacerým procesom a vláknam.</p>
 <h3>Blokujúce čakanie</h3>
-<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button></div><pre class="code-sample language-python"><code class="language-python">from time import sleep
+<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button>
+      <a class="online-editor" href="https://wokwi.com/projects/new/pi-pico" target="_blank" rel="noopener noreferrer" title="Wokwi Pico podporuje MicroPython, nie gpiozero; prepnite projekt na MicroPython a upravte ukážku.">Otvoriť Wokwi Raspberry Pi Pico</a><span class="simulator-note">Wokwi Pico nepodporuje gpiozero. Prepnite projekt na MicroPython a upravte ukážku.</span></div><pre class="code-sample language-python"><code class="language-python">from time import sleep
 
 while True:
     print(&quot;Pravidelna sprava&quot;)
@@ -622,7 +632,8 @@ while True:
 <p>Navyše interval medzi výpismi zahŕňa aj čas spracovania slučky.</p>
 <h3>Plánovanie pomocou monotónnych hodín</h3>
 <p>Na meranie intervalov používame napríklad <code>time.monotonic()</code>. Tieto hodiny nie sú ovplyvnené bežnou zmenou systémového dátumu a času.</p>
-<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button></div><pre class="code-sample language-python"><code class="language-python">from time import monotonic, sleep
+<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button>
+      <a class="online-editor" href="https://wokwi.com/projects/new/pi-pico" target="_blank" rel="noopener noreferrer" title="Wokwi Pico podporuje MicroPython, nie gpiozero; prepnite projekt na MicroPython a upravte ukážku.">Otvoriť Wokwi Raspberry Pi Pico</a><span class="simulator-note">Wokwi Pico nepodporuje gpiozero. Prepnite projekt na MicroPython a upravte ukážku.</span></div><pre class="code-sample language-python"><code class="language-python">from time import monotonic, sleep
 
 interval = 1.0
 dalsiTermin = monotonic() + interval
@@ -668,7 +679,8 @@ while True:
 <p><strong>Výpočet:</strong> <code>T = ((249 + 1) × 64) / 16 000 000 = 0,001 s</code></p>
 <p><strong>Výsledok: 1 ms.</strong></p>
 <h3>C. Nájdi problém</h3>
-<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button></div><pre class="code-sample language-cpp"><code class="language-cpp">if (millis() - poslednyCas &gt;= 1000) {
+<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button>
+      <a class="online-editor" href="https://wokwi.com/projects/new/arduino-uno" target="_blank" rel="noopener noreferrer" title="Nový projekt Wokwi. Skopírujte ukážku do editora; úryvok vložte do úplného programu.">Otvoriť simulátor Arduino Uno</a></div><pre class="code-sample language-cpp"><code class="language-cpp">if (millis() - poslednyCas &gt;= 1000) {
   Serial.println(&quot;Ubehla sekunda&quot;);
 }
 </code></pre><p class="code-status" role="status" aria-live="polite"></p>

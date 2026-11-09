@@ -87,7 +87,8 @@
     .code-actions { display: flex; flex-wrap: wrap; align-items: center; gap: .55rem; margin: .8rem 0 .35rem; }
     .copy-btn, .online-editor { display: inline-block; padding: .4rem .7rem; border: 1px solid var(--line); border-radius: .5rem; font: 600 .9rem/1.4 system-ui, -apple-system, "Segoe UI", sans-serif; text-decoration: none; }
     .copy-btn { background: var(--acc); border-color: var(--acc); color: #fff; cursor: pointer; }
-    .online-editor { background: var(--card); color: var(--fg); }
+    .online-editor { background: var(--card); color: var(--fg); }}
+    .simulator-note { flex-basis: 100%; margin-top: -.25rem; color: var(--mut); font-size: .85rem; }
     .code-status { min-height: 1.4em; margin: 0 0 .75rem; color: var(--mut); font-size: .85rem; }
     .lead-card { margin: 14px 0; padding: 14px 17px; border: 1px solid var(--line); border-radius: 12px; background: var(--card); }
     .safety-notice, .safety-reminder { margin: 1rem 0; padding: 14px 17px; border: 1px solid var(--line); border-left: 5px solid var(--acc); border-radius: 12px; background: var(--note); }
@@ -271,7 +272,8 @@
 <li>prevziať údaj z periférie, ak to jej obsluha vyžaduje,</li>
 <li>vykonať krátku, nevyhnutnú reakciu.</li>
 </ul>
-<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button></div><pre class="code-sample language-cpp"><code class="language-cpp">void priImpulze() {
+<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button>
+      <a class="online-editor" href="https://wokwi.com/projects/new/arduino-uno" target="_blank" rel="noopener noreferrer" title="Nový projekt Wokwi. Skopírujte ukážku do editora; úryvok vložte do úplného programu.">Otvoriť simulátor Arduino Uno</a></div><pre class="code-sample language-cpp"><code class="language-cpp">void priImpulze() {
   pocetImpulzov++;
 }
 </code></pre><p class="code-status" role="status" aria-live="polite"></p>
@@ -285,7 +287,8 @@
 <p>Krátka ISR zmenšuje oneskorenie hlavného programu aj ďalších obslúh.</p>
 <h3>Pravidlo 2: V ISR nečakáme pomocou <code>delay()</code></h3>
 <p>Nevhodný príklad:</p>
-<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button></div><pre class="code-sample language-cpp"><code class="language-cpp">void priStlaceni() {
+<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button>
+      <a class="online-editor" href="https://wokwi.com/projects/new/arduino-uno" target="_blank" rel="noopener noreferrer" title="Nový projekt Wokwi. Skopírujte ukážku do editora; úryvok vložte do úplného programu.">Otvoriť simulátor Arduino Uno</a></div><pre class="code-sample language-cpp"><code class="language-cpp">void priStlaceni() {
   delay(500);
 }
 </code></pre><p class="code-status" role="status" aria-live="polite"></p>
@@ -294,7 +297,8 @@
 <p><strong>Ak treba niečo vykonať neskôr, ISR zaznamená požiadavku a časovanie zabezpečí hlavný program.</strong></p>
 <h3>Pravidlo 3: Výpisy a komunikáciu presunieme mimo ISR</h3>
 <p>Nevhodný príklad:</p>
-<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button></div><pre class="code-sample language-cpp"><code class="language-cpp">void priStlaceni() {
+<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button>
+      <a class="online-editor" href="https://wokwi.com/projects/new/arduino-uno" target="_blank" rel="noopener noreferrer" title="Nový projekt Wokwi. Skopírujte ukážku do editora; úryvok vložte do úplného programu.">Otvoriť simulátor Arduino Uno</a></div><pre class="code-sample language-cpp"><code class="language-cpp">void priStlaceni() {
   Serial.println(&quot;Tlacidlo bolo stlacene&quot;);
 }
 </code></pre><p class="code-status" role="status" aria-live="polite"></p>
@@ -309,7 +313,8 @@
 <p>Používame iba funkcie, pri ktorých platforma výslovne povoľuje volanie z ISR.</p>
 <h3>Pravidlo 4: Vyhýbame sa dynamickému prideľovaniu pamäte</h3>
 <p>V ISR nevytvárame rozsiahle objekty ani texty pomocou operácií ako:</p>
-<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button></div><pre class="code-sample language-cpp"><code class="language-cpp">String sprava = &quot;Nova udalost&quot;;
+<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button>
+      <a class="online-editor" href="https://wokwi.com/projects/new/arduino-uno" target="_blank" rel="noopener noreferrer" title="Nový projekt Wokwi. Skopírujte ukážku do editora; úryvok vložte do úplného programu.">Otvoriť simulátor Arduino Uno</a></div><pre class="code-sample language-cpp"><code class="language-cpp">String sprava = &quot;Nova udalost&quot;;
 </code></pre><p class="code-status" role="status" aria-live="polite"></p>
 <p>Dynamické prideľovanie pamäte môže používať zámky a mať nepredvídateľný čas vykonania.</p>
 <h3>Prehľad</h3>
@@ -359,7 +364,8 @@
 <h2>3. Zdieľané údaje a význam <code>volatile</code></h2>
 <p><strong>Čas: 13 – 20 min</strong></p>
 <p>ISR potrebuje hlavnému programu oznámiť, že nastala udalosť. Použijeme spoločnú premennú:</p>
-<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button></div><pre class="code-sample language-cpp"><code class="language-cpp">volatile bool udalost = false;
+<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button>
+      <a class="online-editor" href="https://wokwi.com/projects/new/arduino-uno" target="_blank" rel="noopener noreferrer" title="Nový projekt Wokwi. Skopírujte ukážku do editora; úryvok vložte do úplného programu.">Otvoriť simulátor Arduino Uno</a></div><pre class="code-sample language-cpp"><code class="language-cpp">volatile bool udalost = false;
 
 void priStlaceni() {
   udalost = true;
@@ -379,12 +385,14 @@ void priStlaceni() {
 <h3>Atómová operácia</h3>
 <p><strong>Atómová operácia je z pohľadu ostatných vykonávaní nedeliteľná.</strong></p>
 <p>ATmega328P je 8-bitový mikrokontrolér. Bežné načítanie 16-bitovej premennej vyžaduje viac krokov.</p>
-<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button></div><pre class="code-sample language-cpp"><code class="language-cpp">volatile uint16_t pocet = 0;
+<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button>
+      <a class="online-editor" href="https://wokwi.com/projects/new/arduino-uno" target="_blank" rel="noopener noreferrer" title="Nový projekt Wokwi. Skopírujte ukážku do editora; úryvok vložte do úplného programu.">Otvoriť simulátor Arduino Uno</a></div><pre class="code-sample language-cpp"><code class="language-cpp">volatile uint16_t pocet = 0;
 </code></pre><p class="code-status" role="status" aria-live="polite"></p>
 <p>Ak ISR zmení premennú medzi načítaním jej jednotlivých bajtov, hlavný program môže dostať nesprávne zloženú hodnotu.</p>
 <h3>Strata udalosti aj pri <code>bool</code></h3>
 <p>Problematický kód:</p>
-<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button></div><pre class="code-sample language-cpp"><code class="language-cpp">if (udalost) {
+<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button>
+      <a class="online-editor" href="https://wokwi.com/projects/new/arduino-uno" target="_blank" rel="noopener noreferrer" title="Nový projekt Wokwi. Skopírujte ukážku do editora; úryvok vložte do úplného programu.">Otvoriť simulátor Arduino Uno</a></div><pre class="code-sample language-cpp"><code class="language-cpp">if (udalost) {
   spracujUdalost();
   udalost = false;
 }
@@ -410,7 +418,8 @@ void priStlaceni() {
 <li>Stlačenie vyvolá hranu <code>FALLING</code>.</li>
 </ul>
 <h3>Program pre Arduino Uno R3</h3>
-<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button></div><pre class="code-sample language-cpp"><code class="language-cpp">#include &lt;util/atomic.h&gt;
+<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button>
+      <a class="online-editor" href="https://wokwi.com/projects/new/arduino-uno" target="_blank" rel="noopener noreferrer" title="Nový projekt Wokwi. Skopírujte ukážku do editora; úryvok vložte do úplného programu.">Otvoriť simulátor Arduino Uno</a></div><pre class="code-sample language-cpp"><code class="language-cpp">#include &lt;util/atomic.h&gt;
 
 const byte TLACIDLO = 2;
 volatile bool udalost = false;
@@ -444,7 +453,8 @@ void loop() {
 }
 </code></pre><p class="code-status" role="status" aria-live="polite"></p>
 <h3>Ako funguje chránený blok?</h3>
-<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button></div><pre class="code-sample language-cpp"><code class="language-cpp">ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
+<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button>
+      <a class="online-editor" href="https://wokwi.com/projects/new/arduino-uno" target="_blank" rel="noopener noreferrer" title="Nový projekt Wokwi. Skopírujte ukážku do editora; úryvok vložte do úplného programu.">Otvoriť simulátor Arduino Uno</a></div><pre class="code-sample language-cpp"><code class="language-cpp">ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
   spracovat = udalost;
   udalost = false;
 }
@@ -466,7 +476,8 @@ void loop() {
 <h2>5. Keď potrebujeme počítať impulzy</h2>
 <p><strong>Čas: 27 – 30 min</strong></p>
 <p>Pri snímači otáčok môžeme potrebovať počet zachytených impulzov.</p>
-<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button></div><pre class="code-sample language-cpp"><code class="language-cpp">#include &lt;util/atomic.h&gt;
+<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button>
+      <a class="online-editor" href="https://wokwi.com/projects/new/arduino-uno" target="_blank" rel="noopener noreferrer" title="Nový projekt Wokwi. Skopírujte ukážku do editora; úryvok vložte do úplného programu.">Otvoriť simulátor Arduino Uno</a></div><pre class="code-sample language-cpp"><code class="language-cpp">#include &lt;util/atomic.h&gt;
 
 volatile uint16_t pocetImpulzov = 0;
 
@@ -475,7 +486,8 @@ void priImpulze() {
 }
 </code></pre><p class="code-status" role="status" aria-live="polite"></p>
 <p>Hlavný program bezpečne prevezme počet a vynuluje počítadlo:</p>
-<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button></div><pre class="code-sample language-cpp"><code class="language-cpp">uint16_t prevzatyPocet;
+<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button>
+      <a class="online-editor" href="https://wokwi.com/projects/new/arduino-uno" target="_blank" rel="noopener noreferrer" title="Nový projekt Wokwi. Skopírujte ukážku do editora; úryvok vložte do úplného programu.">Otvoriť simulátor Arduino Uno</a></div><pre class="code-sample language-cpp"><code class="language-cpp">uint16_t prevzatyPocet;
 
 ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
   prevzatyPocet = pocetImpulzov;
@@ -498,7 +510,8 @@ ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
 <p>Na ochranu spoločných údajov preto použijeme mechanizmus kritickej sekcie poskytovaný platformou.</p>
 <h3>Ukážka pre Arduino framework na ESP32</h3>
 <p>Príklad predpokladá dosku s dostupným <strong>GPIO27</strong>. Tlačidlo je pripojené medzi GPIO27 a GND.</p>
-<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button></div><pre class="code-sample language-cpp"><code class="language-cpp">const int TLACIDLO = 27;
+<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button>
+      <a class="online-editor" href="https://wokwi.com/projects/new/esp32" target="_blank" rel="noopener noreferrer" title="Nový projekt Wokwi. Skopírujte ukážku do editora; úryvok vložte do úplného programu.">Otvoriť simulátor ESP32</a></div><pre class="code-sample language-cpp"><code class="language-cpp">const int TLACIDLO = 27;
 
 portMUX_TYPE zamok = portMUX_INITIALIZER_UNLOCKED;
 volatile bool udalost = false;
@@ -548,7 +561,8 @@ void loop() {
 <p>Na Raspberry Pi s Linuxom nie je Python callback knižnice <code>gpiozero</code> priamou hardvérovou ISR.</p>
 <p>Aj callback však potrebuje rozumnú organizáciu práce. Ak v ňom vykonávame dlhú operáciu, môžeme zdržiavať spracovanie ďalších udalostí.</p>
 <h3>Odovzdanie udalosti pomocou <code>Event</code></h3>
-<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button></div><pre class="code-sample language-python"><code class="language-python">from gpiozero import Button
+<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button>
+      <a class="online-editor" href="https://wokwi.com/projects/new/pi-pico" target="_blank" rel="noopener noreferrer" title="Wokwi Pico podporuje MicroPython, nie gpiozero; prepnite projekt na MicroPython a upravte ukážku.">Otvoriť Wokwi Raspberry Pi Pico</a><span class="simulator-note">Wokwi Pico nepodporuje gpiozero. Prepnite projekt na MicroPython a upravte ukážku.</span></div><pre class="code-sample language-python"><code class="language-python">from gpiozero import Button
 from threading import Event
 
 udalost = Event()
@@ -587,7 +601,8 @@ finally:
 <h2>8. Úloha: Nájdi a oprav chyby</h2>
 <p><strong>Čas: 39 – 43 min</strong></p>
 <p>Nasledujúca funkcia má na Arduino Uno obsluhovať stlačenie tlačidla:</p>
-<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button></div><pre class="code-sample language-cpp"><code class="language-cpp">void priStlaceni() {
+<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button>
+      <a class="online-editor" href="https://wokwi.com/projects/new/arduino-uno" target="_blank" rel="noopener noreferrer" title="Nový projekt Wokwi. Skopírujte ukážku do editora; úryvok vložte do úplného programu.">Otvoriť simulátor Arduino Uno</a></div><pre class="code-sample language-cpp"><code class="language-cpp">void priStlaceni() {
   Serial.println(&quot;Stlacene&quot;);
 
   delay(1000);
@@ -613,7 +628,8 @@ finally:
 </ul>
 <p>Dlhé držanie tlačidla môže udržiavať procesor v ISR. Na Uno navyše nemožno očakávať správne fungovanie uvedeného <code>delay()</code>.</p>
 <p>Opravená ISR:</p>
-<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button></div><pre class="code-sample language-cpp"><code class="language-cpp">volatile bool udalost = false;
+<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button>
+      <a class="online-editor" href="https://wokwi.com/projects/new/arduino-uno" target="_blank" rel="noopener noreferrer" title="Nový projekt Wokwi. Skopírujte ukážku do editora; úryvok vložte do úplného programu.">Otvoriť simulátor Arduino Uno</a></div><pre class="code-sample language-cpp"><code class="language-cpp">volatile bool udalost = false;
 
 void priStlaceni() {
   udalost = true;

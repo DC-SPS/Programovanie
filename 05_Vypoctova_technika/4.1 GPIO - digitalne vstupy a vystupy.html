@@ -87,7 +87,8 @@
     .code-actions { display: flex; flex-wrap: wrap; align-items: center; gap: .55rem; margin: .8rem 0 .35rem; }
     .copy-btn, .online-editor { display: inline-block; padding: .4rem .7rem; border: 1px solid var(--line); border-radius: .5rem; font: 600 .9rem/1.4 system-ui, -apple-system, "Segoe UI", sans-serif; text-decoration: none; }
     .copy-btn { background: var(--acc); border-color: var(--acc); color: #fff; cursor: pointer; }
-    .online-editor { background: var(--card); color: var(--fg); }
+    .online-editor { background: var(--card); color: var(--fg); }}
+    .simulator-note { flex-basis: 100%; margin-top: -.25rem; color: var(--mut); font-size: .85rem; }
     .code-status { min-height: 1.4em; margin: 0 0 .75rem; color: var(--mut); font-size: .85rem; }
     .lead-card { margin: 14px 0; padding: 14px 17px; border: 1px solid var(--line); border-radius: 12px; background: var(--card); }
     .safety-notice, .safety-reminder { margin: 1rem 0; padding: 14px 17px; border: 1px solid var(--line); border-left: 5px solid var(--acc); border-radius: 12px; background: var(--note); }
@@ -300,12 +301,14 @@ Je GPIO pripojené k tlačidlu vstup alebo výstup?</p>
 <li><code>HIGH</code> – logická jednotka.</li>
 </ul>
 <p>Nie je to automaticky meranie presnej hodnoty napätia.</p>
-<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button></div><pre class="code-sample language-cpp"><code class="language-cpp">int stav = digitalRead(2);
+<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button>
+      <a class="online-editor" href="https://wokwi.com/projects/new/arduino-uno" target="_blank" rel="noopener noreferrer" title="Nový projekt Wokwi. Skopírujte ukážku do editora; úryvok vložte do úplného programu.">Otvoriť simulátor Arduino Uno</a></div><pre class="code-sample language-cpp"><code class="language-cpp">int stav = digitalRead(2);
 </code></pre><p class="code-status" role="status" aria-live="polite"></p>
 <p>Výsledkom je <code>LOW</code> alebo <code>HIGH</code>.</p>
 <h3>Digitálny výstup</h3>
 <p>Digitálny výstup nastavuje nízku alebo vysokú úroveň:</p>
-<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button></div><pre class="code-sample language-cpp"><code class="language-cpp">digitalWrite(8, HIGH);
+<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button>
+      <a class="online-editor" href="https://wokwi.com/projects/new/arduino-uno" target="_blank" rel="noopener noreferrer" title="Nový projekt Wokwi. Skopírujte ukážku do editora; úryvok vložte do úplného programu.">Otvoriť simulátor Arduino Uno</a></div><pre class="code-sample language-cpp"><code class="language-cpp">digitalWrite(8, HIGH);
 </code></pre><p class="code-status" role="status" aria-live="polite"></p>
 <p>Výstupné napätie závisí od platformy a pripojenej záťaže.</p>
 <h3>Logická úroveň nie je univerzálne napätie</h3>
@@ -383,7 +386,8 @@ spoľahlivé LOW       stav nie je zaručený    spoľahlivé HIGH
 <h3>Vnútorný pull-up</h3>
 <p>Mnohé mikrokontroléry majú pull-up rezistor zabudovaný.</p>
 <p>Na Arduino Uno ho zapneme:</p>
-<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button></div><pre class="code-sample language-cpp"><code class="language-cpp">pinMode(2, INPUT_PULLUP);
+<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button>
+      <a class="online-editor" href="https://wokwi.com/projects/new/arduino-uno" target="_blank" rel="noopener noreferrer" title="Nový projekt Wokwi. Skopírujte ukážku do editora; úryvok vložte do úplného programu.">Otvoriť simulátor Arduino Uno</a></div><pre class="code-sample language-cpp"><code class="language-cpp">pinMode(2, INPUT_PULLUP);
 </code></pre><p class="code-status" role="status" aria-live="polite"></p>
 <p>Tlačidlo potom pripojíme medzi D2 a GND.</p>
 <h3>Pull-down rezistor</h3>
@@ -450,7 +454,8 @@ spoľahlivé LOW       stav nie je zaručený    spoľahlivé HIGH
 </ul>
 <p>Zapojenie zostavujeme pri odpojenom napájaní.</p>
 <h3>Program</h3>
-<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button></div><pre class="code-sample language-cpp"><code class="language-cpp">const byte TLACIDLO = 2;
+<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button>
+      <a class="online-editor" href="https://wokwi.com/projects/new/arduino-uno" target="_blank" rel="noopener noreferrer" title="Nový projekt Wokwi. Skopírujte ukážku do editora; úryvok vložte do úplného programu.">Otvoriť simulátor Arduino Uno</a></div><pre class="code-sample language-cpp"><code class="language-cpp">const byte TLACIDLO = 2;
 const byte LED = 8;
 
 void setup() {
@@ -471,20 +476,24 @@ void loop() {
 </code></pre><p class="code-status" role="status" aria-live="polite"></p>
 <h3>Vysvetlenie</h3>
 <p><strong>1. Nastavenie vstupu</strong></p>
-<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button></div><pre class="code-sample language-cpp"><code class="language-cpp">pinMode(TLACIDLO, INPUT_PULLUP);
+<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button>
+      <a class="online-editor" href="https://wokwi.com/projects/new/arduino-uno" target="_blank" rel="noopener noreferrer" title="Nový projekt Wokwi. Skopírujte ukážku do editora; úryvok vložte do úplného programu.">Otvoriť simulátor Arduino Uno</a></div><pre class="code-sample language-cpp"><code class="language-cpp">pinMode(TLACIDLO, INPUT_PULLUP);
 </code></pre><p class="code-status" role="status" aria-live="polite"></p>
 <p>Vstup používa vnútorný pull-up.</p>
 <p><strong>2. Nastavenie výstupu</strong></p>
-<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button></div><pre class="code-sample language-cpp"><code class="language-cpp">digitalWrite(LED, LOW);
+<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button>
+      <a class="online-editor" href="https://wokwi.com/projects/new/arduino-uno" target="_blank" rel="noopener noreferrer" title="Nový projekt Wokwi. Skopírujte ukážku do editora; úryvok vložte do úplného programu.">Otvoriť simulátor Arduino Uno</a></div><pre class="code-sample language-cpp"><code class="language-cpp">digitalWrite(LED, LOW);
 pinMode(LED, OUTPUT);
 </code></pre><p class="code-status" role="status" aria-live="polite"></p>
 <p>Na Uno tým najprv pripravíme nízku výstupnú hodnotu a potom zapneme výstupný režim.</p>
 <p><strong>3. Načítanie tlačidla</strong></p>
-<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button></div><pre class="code-sample language-cpp"><code class="language-cpp">bool stlacene = digitalRead(TLACIDLO) == LOW;
+<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button>
+      <a class="online-editor" href="https://wokwi.com/projects/new/arduino-uno" target="_blank" rel="noopener noreferrer" title="Nový projekt Wokwi. Skopírujte ukážku do editora; úryvok vložte do úplného programu.">Otvoriť simulátor Arduino Uno</a></div><pre class="code-sample language-cpp"><code class="language-cpp">bool stlacene = digitalRead(TLACIDLO) == LOW;
 </code></pre><p class="code-status" role="status" aria-live="polite"></p>
 <p>Stlačené tlačidlo spojí vstup so zemou, preto čítame <code>LOW</code>.</p>
 <p><strong>4. Ovládanie LED</strong></p>
-<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button></div><pre class="code-sample language-cpp"><code class="language-cpp">digitalWrite(LED, stlacene ? HIGH : LOW);
+<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button>
+      <a class="online-editor" href="https://wokwi.com/projects/new/arduino-uno" target="_blank" rel="noopener noreferrer" title="Nový projekt Wokwi. Skopírujte ukážku do editora; úryvok vložte do úplného programu.">Otvoriť simulátor Arduino Uno</a></div><pre class="code-sample language-cpp"><code class="language-cpp">digitalWrite(LED, stlacene ? HIGH : LOW);
 </code></pre><p class="code-status" role="status" aria-live="polite"></p>
 <p>LED svieti, keď je tlačidlo stlačené.</p>
 <h3>Súvis s predchádzajúcimi hodinami</h3>
@@ -528,7 +537,8 @@ pinMode(LED, OUTPUT);
 <p>Podrobnejšiu konfiguráciu registrov si ukážeme v nasledujúcej hodine.</p>
 <h3>ESP32</h3>
 <p>Na ESP32 môžeme v Arduino frameworku používať rovnaké základné funkcie:</p>
-<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button></div><pre class="code-sample language-cpp"><code class="language-cpp">pinMode(27, INPUT_PULLUP);
+<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button>
+      <a class="online-editor" href="https://wokwi.com/projects/new/arduino-uno" target="_blank" rel="noopener noreferrer" title="Nový projekt Wokwi. Skopírujte ukážku do editora; úryvok vložte do úplného programu.">Otvoriť simulátor Arduino Uno</a></div><pre class="code-sample language-cpp"><code class="language-cpp">pinMode(27, INPUT_PULLUP);
 int stav = digitalRead(27);
 </code></pre><p class="code-status" role="status" aria-live="polite"></p>
 <p>Príklad predpokladá dosku, na ktorej je GPIO27 dostupný a vhodný na daný účel.</p>
@@ -547,7 +557,8 @@ int stav = digitalRead(27);
 <li>tlačidlo medzi <strong>GPIO17 a GND</strong>,</li>
 <li>LED cez <strong>rezistor 680 Ω</strong> medzi GPIO27 a GND.</li>
 </ul>
-<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button></div><pre class="code-sample language-python"><code class="language-python">from gpiozero import Button, LED
+<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button>
+      <a class="online-editor" href="https://wokwi.com/projects/new/pi-pico" target="_blank" rel="noopener noreferrer" title="Wokwi Pico podporuje MicroPython, nie gpiozero; prepnite projekt na MicroPython a upravte ukážku.">Otvoriť Wokwi Raspberry Pi Pico</a><span class="simulator-note">Wokwi Pico nepodporuje gpiozero. Prepnite projekt na MicroPython a upravte ukážku.</span></div><pre class="code-sample language-python"><code class="language-python">from gpiozero import Button, LED
 from signal import pause
 
 tlacidlo = Button(17, pull_up=True)

@@ -40,6 +40,7 @@ Každá nová lekcia alebo študijný materiál v Markdown formáte by mal podľ
 - **Komentáre**: Píšte v slovenskom jazyku. Komentáre majú vysvetľovať *prečo* sa niečo robí, nie iba opakovať syntax.
 - **Oslovenie študentov**: V učebných textoch, zadaniach, navigácii a v ukážkovom používateľskom rozhraní používajte jednotne formálne vykanie ("Vytvorte...", "Nainštalujte..."). Pokyny určené výlučne vyučujúcemu od tejto konvencie oddeľte. Nemeňte identifikátory, syntax kódu ani citované názvy zdrojov len kvôli zjednoteniu oslovenia.
 - **Kompilácia bez varovaní**: C/C++ kód musí byť skompilovateľný s príznakmi `-Wall -Wextra`.
+- **Online simulácia**: Pri každom spustiteľnom ukážkovom kóde určenom na kopírovanie zobrazte vedľa tlačidla „Kopírovať kód“ odkaz na zodpovedajúci projekt vo Wokwi (Arduino Uno, ESP32 alebo Raspberry Pi Pico). Pri neúplnom úryvku vysvetlite, že ho treba vložiť do celého programu. Raspberry Pi Pico je mikrokontrolér a nie je totožné s Raspberry Pi s Linuxom; ukážky `gpiozero` neoznačujte ako priamo spustiteľné vo Wokwi Pico. Ak simulátor nepodporuje danú platformu alebo jazyk, uveďte obmedzenie a poskytnite vhodné prostredie.
 
 ---
 

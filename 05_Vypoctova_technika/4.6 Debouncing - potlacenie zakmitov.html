@@ -87,7 +87,8 @@
     .code-actions { display: flex; flex-wrap: wrap; align-items: center; gap: .55rem; margin: .8rem 0 .35rem; }
     .copy-btn, .online-editor { display: inline-block; padding: .4rem .7rem; border: 1px solid var(--line); border-radius: .5rem; font: 600 .9rem/1.4 system-ui, -apple-system, "Segoe UI", sans-serif; text-decoration: none; }
     .copy-btn { background: var(--acc); border-color: var(--acc); color: #fff; cursor: pointer; }
-    .online-editor { background: var(--card); color: var(--fg); }
+    .online-editor { background: var(--card); color: var(--fg); }}
+    .simulator-note { flex-basis: 100%; margin-top: -.25rem; color: var(--mut); font-size: .85rem; }
     .code-status { min-height: 1.4em; margin: 0 0 .75rem; color: var(--mut); font-size: .85rem; }
     .lead-card { margin: 14px 0; padding: 14px 17px; border: 1px solid var(--line); border-radius: 12px; background: var(--card); }
     .safety-notice, .safety-reminder { margin: 1rem 0; padding: 14px 17px; border: 1px solid var(--line); border-left: 5px solid var(--acc); border-radius: 12px; background: var(--note); }
@@ -246,7 +247,8 @@
 <h2>1. Jedno stlačenie, viac udalostí</h2>
 <p><strong>Čas: 0 – 5 min</strong></p>
 <p>Predstavme si počítadlo stlačení tlačidla:</p>
-<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button></div><pre class="code-sample language-cpp"><code class="language-cpp">if (nastaloStlacenie) {
+<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button>
+      <a class="online-editor" href="https://wokwi.com/projects/new/arduino-uno" target="_blank" rel="noopener noreferrer" title="Nový projekt Wokwi. Skopírujte ukážku do editora; úryvok vložte do úplného programu.">Otvoriť simulátor Arduino Uno</a></div><pre class="code-sample language-cpp"><code class="language-cpp">if (nastaloStlacenie) {
   pocet++;
 }
 </code></pre><p class="code-status" role="status" aria-live="polite"></p>
@@ -307,7 +309,8 @@ LOW           └─┘ └─┘ └─────────
 </table>
 <h3>Dve rozdielne príčiny opakovania</h3>
 <p>Opakované spracovanie nemusí spôsobovať iba zákmit.</p>
-<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button></div><pre class="code-sample language-cpp"><code class="language-cpp">if (digitalRead(TLACIDLO) == LOW) {
+<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button>
+      <a class="online-editor" href="https://wokwi.com/projects/new/arduino-uno" target="_blank" rel="noopener noreferrer" title="Nový projekt Wokwi. Skopírujte ukážku do editora; úryvok vložte do úplného programu.">Otvoriť simulátor Arduino Uno</a></div><pre class="code-sample language-cpp"><code class="language-cpp">if (digitalRead(TLACIDLO) == LOW) {
   pocet++;
 }
 </code></pre><p class="code-status" role="status" aria-live="polite"></p>
@@ -389,7 +392,8 @@ Mení sa vstup?
 </tbody>
 </table>
 <h3>Program</h3>
-<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button></div><pre class="code-sample language-cpp"><code class="language-cpp">const byte TLACIDLO = 2;
+<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button>
+      <a class="online-editor" href="https://wokwi.com/projects/new/arduino-uno" target="_blank" rel="noopener noreferrer" title="Nový projekt Wokwi. Skopírujte ukážku do editora; úryvok vložte do úplného programu.">Otvoriť simulátor Arduino Uno</a></div><pre class="code-sample language-cpp"><code class="language-cpp">const byte TLACIDLO = 2;
 const unsigned long DEBOUNCE_MS = 30;
 
 int posledneCitanie;
@@ -472,25 +476,29 @@ void loop() {
 </tbody>
 </table>
 <h3>Krok 1: Zistíme zmenu</h3>
-<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button></div><pre class="code-sample language-cpp"><code class="language-cpp">if (citanie != posledneCitanie) {
+<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button>
+      <a class="online-editor" href="https://wokwi.com/projects/new/arduino-uno" target="_blank" rel="noopener noreferrer" title="Nový projekt Wokwi. Skopírujte ukážku do editora; úryvok vložte do úplného programu.">Otvoriť simulátor Arduino Uno</a></div><pre class="code-sample language-cpp"><code class="language-cpp">if (citanie != posledneCitanie) {
   posledneCitanie = citanie;
   casPoslednejZmeny = teraz;
 }
 </code></pre><p class="code-status" role="status" aria-live="polite"></p>
 <p>Pri každej zachytenej zmene začneme interval stability merať odznova.</p>
 <h3>Krok 2: Počkáme bez zastavenia programu</h3>
-<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button></div><pre class="code-sample language-cpp"><code class="language-cpp">if (teraz - casPoslednejZmeny &gt;= DEBOUNCE_MS)
+<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button>
+      <a class="online-editor" href="https://wokwi.com/projects/new/arduino-uno" target="_blank" rel="noopener noreferrer" title="Nový projekt Wokwi. Skopírujte ukážku do editora; úryvok vložte do úplného programu.">Otvoriť simulátor Arduino Uno</a></div><pre class="code-sample language-cpp"><code class="language-cpp">if (teraz - casPoslednejZmeny &gt;= DEBOUNCE_MS)
 </code></pre><p class="code-status" role="status" aria-live="polite"></p>
 <p>Program nečaká na jednom mieste. Opakovane prechádza cez <code>loop()</code> a kontroluje uplynutý čas.</p>
 <p>Odčítanie časov v type <code>unsigned long</code> umožňuje správne vyhodnocovanie krátkych intervalov aj pri pretočení hodnoty <code>millis()</code>.</p>
 <h3>Krok 3: Prijmeme nový stabilný stav</h3>
-<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button></div><pre class="code-sample language-cpp"><code class="language-cpp">if (citanie != stabilnyStav) {
+<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button>
+      <a class="online-editor" href="https://wokwi.com/projects/new/arduino-uno" target="_blank" rel="noopener noreferrer" title="Nový projekt Wokwi. Skopírujte ukážku do editora; úryvok vložte do úplného programu.">Otvoriť simulátor Arduino Uno</a></div><pre class="code-sample language-cpp"><code class="language-cpp">if (citanie != stabilnyStav) {
   stabilnyStav = citanie;
 }
 </code></pre><p class="code-status" role="status" aria-live="polite"></p>
 <p>Ak sa potvrdený stav nemení, nová udalosť nevznikne.</p>
 <h3>Krok 4: Reagujeme iba na stlačenie</h3>
-<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button></div><pre class="code-sample language-cpp"><code class="language-cpp">if (stabilnyStav == LOW) {
+<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button>
+      <a class="online-editor" href="https://wokwi.com/projects/new/arduino-uno" target="_blank" rel="noopener noreferrer" title="Nový projekt Wokwi. Skopírujte ukážku do editora; úryvok vložte do úplného programu.">Otvoriť simulátor Arduino Uno</a></div><pre class="code-sample language-cpp"><code class="language-cpp">if (stabilnyStav == LOW) {
   ledSvieti = !ledSvieti;
 }
 </code></pre><p class="code-status" role="status" aria-live="polite"></p>
@@ -511,7 +519,8 @@ void loop() {
 <h3>Čo ak používame prerušenie?</h3>
 <p>Prerušenie môže zachytiť aj jednotlivé zákmity.</p>
 <p>Nevhodné riešenie:</p>
-<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button></div><pre class="code-sample language-cpp"><code class="language-cpp">void ARDUINO_ISR_ATTR priStlaceni() {
+<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button>
+      <a class="online-editor" href="https://wokwi.com/projects/new/esp32" target="_blank" rel="noopener noreferrer" title="Nový projekt Wokwi. Skopírujte ukážku do editora; úryvok vložte do úplného programu.">Otvoriť simulátor ESP32</a></div><pre class="code-sample language-cpp"><code class="language-cpp">void ARDUINO_ISR_ATTR priStlaceni() {
   delay(30);
 }
 </code></pre><p class="code-status" role="status" aria-live="polite"></p>
@@ -538,7 +547,8 @@ void loop() {
 <li>Číslovanie v programe je BCM GPIO.</li>
 </ul>
 <h3>Program</h3>
-<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button></div><pre class="code-sample language-python"><code class="language-python">from gpiozero import Button
+<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button>
+      <a class="online-editor" href="https://wokwi.com/projects/new/pi-pico" target="_blank" rel="noopener noreferrer" title="Wokwi Pico podporuje MicroPython, nie gpiozero; prepnite projekt na MicroPython a upravte ukážku.">Otvoriť Wokwi Raspberry Pi Pico</a><span class="simulator-note">Wokwi Pico nepodporuje gpiozero. Prepnite projekt na MicroPython a upravte ukážku.</span></div><pre class="code-sample language-python"><code class="language-python">from gpiozero import Button
 from signal import pause
 
 pocet = 0
@@ -562,7 +572,8 @@ finally:
     tlacidlo.close()
 </code></pre><p class="code-status" role="status" aria-live="polite"></p>
 <h3>Vysvetlenie</h3>
-<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button></div><pre class="code-sample language-python"><code class="language-python">bounce_time=0.05
+<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button>
+      <a class="online-editor" href="https://wokwi.com/projects/new/pi-pico" target="_blank" rel="noopener noreferrer" title="Wokwi Pico podporuje MicroPython, nie gpiozero; prepnite projekt na MicroPython a upravte ukážku.">Otvoriť Wokwi Raspberry Pi Pico</a><span class="simulator-note">Wokwi Pico nepodporuje gpiozero. Prepnite projekt na MicroPython a upravte ukážku.</span></div><pre class="code-sample language-python"><code class="language-python">bounce_time=0.05
 </code></pre><p class="code-status" role="status" aria-live="polite"></p>
 <p>Hodnota je uvedená v <strong>sekundách</strong>:</p>
 <p><strong>0,05 s = 50 ms</strong></p>
@@ -629,7 +640,8 @@ finally:
 <li>Raz.</li>
 </ol>
 </section><h3>B. Nájdi problém</h3>
-<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button></div><pre class="code-sample language-cpp"><code class="language-cpp">if (digitalRead(TLACIDLO) == LOW) {
+<div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button>
+      <a class="online-editor" href="https://wokwi.com/projects/new/arduino-uno" target="_blank" rel="noopener noreferrer" title="Nový projekt Wokwi. Skopírujte ukážku do editora; úryvok vložte do úplného programu.">Otvoriť simulátor Arduino Uno</a></div><pre class="code-sample language-cpp"><code class="language-cpp">if (digitalRead(TLACIDLO) == LOW) {
   pocet++;
   delay(30);
 }
