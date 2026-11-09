@@ -75,3 +75,30 @@ git pull origin main
 ## 🏁 Pokračovanie v štúdiu
 
 Po zvládnutí modulu Git pokračujte modulom [`01_Python`](../01_Python/), kde využijete získané zručnosti pri verzovaní prvých Python skriptov.
+
+
+## Kompletný kurz – prednášky 00 až 20
+
+Vizuálny ťahák a dvadsať samostatných HTML prednášok sú dostupné aj v [katalógu kurzu](./index.html).
+
+- [00 Git v kocke](./00_Git_v_kocke.html)
+- [01 Úvod – v znamení verzovania kódu](./01_Uvod.html)
+- [02 Čo je to Git](./02_Co_je_Git.html)
+- [03 Inštalácia Gitu vo Windows a macOS](./03_Instalacia_Gitu.html)
+- [04 Visual Studio Code a Git](./04_VS_Code_a_Git.html)
+- [05 Ako funguje Git](./05_Ako_funguje_Git.html)
+- [06 Základné príkazy – init, add, commit](./06_Zakladne_prikazy.html)
+- [07 Commity a Vim](./07_Commity_a_Vim.html)
+- [08 git rm](./08_git_rm.html)
+- [09 git mv](./09_git_mv.html)
+- [10 git branch](./10_git_branch.html)
+- [11 git merge](./11_git_merge.html)
+- [12 Čo je to GitHub](./12_Co_je_GitHub.html)
+- [13 git clone a git fetch](./13_git_clone_a_fetch.html)
+- [14 git pull a git push](./14_git_pull_a_push.html)
+- [15 Merge konflikty](./15_Merge_konflikty.html)
+- [16 Súbor .gitignore](./16_gitignore.html)
+- [17 git log a história](./17_git_log_a_historia.html)
+- [18 git reset a git checkout](./18_git_reset_a_checkout.html)
+- [19 README.md a Markdown](./19_README_a_Markdown.html)
+- [20 Ako Git naozaj funguje – interná databáza](./20_Git_pod_kapotou.html)
