@@ -32,7 +32,7 @@
 ## Pracovný postup
 
 - Pri začatí práce preskúmaj existujúce súbory, lokálne pokyny a relevantnú architektúru.
-- Pri novej funkcii vytvor špecifikáciu pred návrhom implementácie. Použi Codex skills `$speckit-constitution`, `$speckit-specify`, `$speckit-clarify`, `$speckit-plan`, `$speckit-tasks`, `$speckit-analyze`, `$speckit-implement` a `$speckit-converge` podľa potreby; vykonávaj ich postupne a artefakty kontroluj.
+- Pri novej funkcii vytvor špecifikáciu pred návrhom implementácie. Použi skills Spec Kit aktívnej integrácie (`/speckit-constitution`, `/speckit-specify`, `/speckit-clarify`, `/speckit-plan`, `/speckit-tasks`, `/speckit-analyze`, `/speckit-implement` a `/speckit-converge`) podľa potreby; vykonávaj ich postupne a artefakty kontroluj.
 - Pred odovzdaním skontroluj diff, odkazy a súlad s touto ústavou a lokálnymi pokynmi. Spúšťaj iba tie testy alebo verifikácie, ktoré požiadavka alebo projektové pravidlá vyžadujú.
 - Vetvy, commity a pull requesty vytváraj podľa `CONTRIBUTING.md`, ak ich používateľ alebo pracovný kontext požaduje.
 
@@ -40,4 +40,4 @@
 
 Táto ústava je projektovým východiskom pre plánovanie zmien. Pri rozpore sa uplatnia bezpečnostné a platformové obmedzenia a potom špecifickejšie pravidlá dotknutého modulu. Ústavu upravuj iba pri zmene dohodnutých projektových zásad a spolu s úpravou skontroluj nadväzujúce šablóny.
 
-**Verzia:** 1.0.0 | **Schválené:** 2026-11-09 | **Naposledy upravené:** 2026-11-09
+**Verzia:** 1.0.1 | **Schválené:** 2026-11-09 | **Naposledy upravené:** 2026-11-09

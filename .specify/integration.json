@@ -3,14 +3,14 @@
   "integration_state_schema": 1,
   "installed_integrations": [
     "none",
-    "codex"
+    "copilot"
   ],
   "integration_settings": {
     "none": {
       "script": "ps",
       "invoke_separator": "."
     },
-    "codex": {
+    "copilot": {
       "script": "ps",
       "raw_options": "--skills",
       "parsed_options": {
@@ -19,6 +19,6 @@
       "invoke_separator": "-"
     }
   },
-  "integration": "codex",
-  "default_integration": "codex"
+  "integration": "copilot",
+  "default_integration": "copilot"
 }
