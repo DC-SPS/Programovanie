@@ -64,6 +64,16 @@
     .timeline span{padding:.35rem .6rem;border-radius:7px;background:var(--line)}
     .timeline .chosen{background:var(--acc);color:#fff}
     .timeline b{color:var(--mut)}
+    .compile-architecture{margin:1rem 0;padding:1rem;border:1px solid var(--line);border-radius:12px;background:var(--card)}
+    .compile-architecture ol{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:.6rem;margin:0;padding:0;list-style:none;counter-reset:compile-step}
+    .compile-architecture li{position:relative;display:grid;align-content:start;gap:.35rem;min-width:0;min-height:8rem;padding:.75rem;border:1px solid var(--line);border-radius:9px;background:var(--bg);counter-increment:compile-step}
+    .compile-architecture li::before{content:counter(compile-step);display:grid;place-items:center;width:1.75rem;height:1.75rem;border-radius:50%;background:var(--acc);color:#fff;font-weight:800}
+    .compile-architecture li:not(:last-child)::after{position:absolute;top:50%;right:-.62rem;z-index:1;content:"→";color:var(--acc);font-weight:900}
+    .compile-architecture strong{line-height:1.3}
+    .compile-architecture small{color:var(--mut);line-height:1.45}
+    .compile-architecture figcaption{margin-top:.75rem;color:var(--mut);font-size:.9rem}
+    @media(max-width:760px){.compile-architecture ol{grid-template-columns:repeat(2,minmax(0,1fr))}.compile-architecture li:not(:last-child)::after{display:none}}
+    @media(max-width:520px){.compile-architecture ol{grid-template-columns:1fr}.compile-architecture li{min-height:0}}
     .matching-game{margin:1rem 0;padding:1rem;border:1px solid var(--line);border-radius:12px;background:var(--card)}
     .matching-help,.matching-feedback{margin:.4rem 0;color:var(--mut)}
     .matching-board{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.55rem}
@@ -318,6 +328,16 @@
     <h2 data-read-aloud="selected">5. Ako sa norma objaví v príkaze?</h2>
     <p data-read-aloud="selected">Neskôr budeme zdrojový súbor v jazyku C prekladať príkazom podobným tomuto:</p>
     <pre data-read-aloud="optional"><code>gcc -std=c17 -Wall -Wextra -Wpedantic main.c -o program</code></pre>
+    <figure class="compile-architecture" aria-labelledby="compile-architecture-caption">
+      <ol aria-label="Zjednodušené fázy prekladu programu v jazyku C">
+        <li><strong>Zdrojový kód</strong><small><code>main.c</code> obsahuje program zapísaný v jazyku C.</small></li>
+        <li><strong>Preprocesor</strong><small>Spracuje direktívy, napríklad <code>#include</code>.</small></li>
+        <li><strong>Kompilátor a assembler</strong><small>Preložia zdrojový kód a pripravia objektový súbor.</small></li>
+        <li><strong>Linker</strong><small>Prepojí objektový súbor s potrebnými knižnicami.</small></li>
+        <li><strong>Spustiteľný program</strong><small>Výsledný súbor možno spustiť v príslušnom operačnom systéme.</small></li>
+      </ol>
+      <figcaption id="compile-architecture-caption"><strong>Od zdrojového kódu k programu:</strong> ide o zjednodušený model. Konkrétne medzikroky a názvy súborov sa môžu líšiť podľa kompilátora a platformy.</figcaption>
+    </figure>
     <ul data-read-aloud="selected">
       <li><code>gcc</code> spustí kompilátor GCC;</li>
       <li><code>-std=c17</code> požiada GCC o režim jazyka C17;</li>

@@ -32,6 +32,13 @@
     .flow{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:.55rem;align-items:stretch}
     .flow-step{display:grid;place-items:center;min-height:88px;padding:.7rem;border:1px solid var(--line);border-radius:10px;background:var(--card);text-align:center}
     .flow-step strong{display:block;color:var(--acc)}
+    .program-anatomy{margin:1rem 0;padding:1rem;border:1px solid var(--line);border-radius:12px;background:var(--card)}
+    .program-anatomy h4{margin:.1rem 0 .25rem;color:var(--acc);font-size:1rem}
+    .program-anatomy ol{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.6rem;margin:.75rem 0 0;padding:0;list-style:none;counter-reset:program-line}
+    .program-anatomy li{min-width:0;padding:.75rem;border:1px solid var(--line);border-radius:9px;background:var(--bg);counter-increment:program-line}
+    .program-anatomy li::before{content:"Časť " counter(program-line);display:block;margin-bottom:.3rem;color:var(--mut);font-size:.8rem;font-weight:750}
+    .program-anatomy p{margin:.25rem 0 0}
+    .program-anatomy figcaption{color:var(--mut);font-size:.9rem}
     .flow-arrow{display:none}
     .caption{margin-top:.4rem;font-size:.9rem}
     .scroll{overflow-x:auto}
@@ -53,7 +60,7 @@
     .sources,footer{margin-top:2rem;padding-top:1rem;border-top:1px solid var(--line)}
     footer{color:var(--mut);font-size:14px}
     .glossary-list{display:grid;grid-template-columns:minmax(8rem,.35fr) 1fr;gap:.3rem .8rem}.glossary-list dt{font-weight:750}.glossary-list dd{margin:0}
-    @media(max-width:620px){main{width:min(100% - 1.2rem,860px)}.flow{grid-template-columns:1fr}.flow-step{min-height:56px}.timeline td:first-child{white-space:normal}}
+    @media(max-width:620px){main{width:min(100% - 1.2rem,860px)}.flow{grid-template-columns:1fr}.flow-step{min-height:56px}.program-anatomy ol{grid-template-columns:1fr}.timeline td:first-child{white-space:normal}}
     @media(max-width:520px){.glossary-list{grid-template-columns:1fr;gap:.1rem}.glossary-list dd{margin-bottom:.5rem}}
     @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important}}
 
@@ -196,13 +203,22 @@
     <h2>3. Názorné programové príklady</h2>
     <h3>Príklad 1 – prvý pozdrav</h3>
     <p><strong>Problém:</strong> po spustení programu zobrazte používateľovi krátky pozdrav.</p>
-    <pre class="code-sample"><code>#include &lt;stdio.h&gt;
+    <figure class="program-anatomy" aria-labelledby="program-anatomy-caption">
+      <figcaption id="program-anatomy-caption"><strong>Anatómia minimálneho programu v C:</strong> každý riadok má v programe vlastnú úlohu.</figcaption>
+      <pre class="code-sample"><code>#include &lt;stdio.h&gt;
 
 int main(void) {
     // Vypiseme uvodny pozdrav.
     printf("Ahoj, svet!\n");
     return 0;
 }</code></pre>
+      <ol>
+        <li><h4><code>#include &lt;stdio.h&gt;</code></h4><p>Preprocesor sprístupní deklaráciu funkcie <code>printf</code> zo štandardnej vstupno-výstupnej knižnice.</p></li>
+        <li><h4><code>int main(void)</code></h4><p>Definuje hlavnú funkciu, v ktorej sa začína vykonávanie bežného programu.</p></li>
+        <li><h4><code>printf(...);</code></h4><p>Vypíše text na štandardný výstup; <code>\n</code> presunie kurzor na nový riadok.</p></li>
+        <li><h4><code>return 0;</code></h4><p>Ukončí funkciu <code>main</code> s návratovým kódom označujúcim úspešné skončenie.</p></li>
+      </ol>
+    </figure>
     <p><strong>Očakávaný výstup:</strong></p>
     <pre class="output"><code>Ahoj, svet!</code></pre>
     <p><strong>Rozbor:</strong> Príkaz <code>#include</code> sprístupní <code>printf</code>. Program začne vykonávať telo funkcie <code>main</code>, vypíše text a sekvenciou <code>\n</code> prejde na ďalší riadok. Potom vráti hodnotu <code>0</code> a skončí.</p>
