@@ -622,7 +622,7 @@ Ak iné úlohy pokračujú, znamená to, že hlavná slučka už nie je blokovan
 <p>Raspberry Pi s Linuxom používa operačný systém, ktorý prideľuje procesorový čas viacerým procesom a vláknam.</p>
 <h3>Blokujúce čakanie</h3>
 <div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button>
-      <a class="online-editor" href="https://wokwi.com/projects/new/pi-pico" target="_blank" rel="noopener noreferrer" title="Wokwi Pico podporuje MicroPython, nie gpiozero; prepnite projekt na MicroPython a upravte ukážku.">Otvoriť Wokwi Raspberry Pi Pico</a><span class="simulator-note">Wokwi Pico nepodporuje gpiozero. Prepnite projekt na MicroPython a upravte ukážku.</span></div><pre class="code-sample language-python"><code class="language-python">from time import sleep
+      <a class="online-editor" href="https://wokwi.com/projects/new/pi-pico" target="_blank" rel="noopener noreferrer" title="Wokwi Pico používa MicroPython; štandardnú Python ukážku treba upraviť.">Otvoriť Wokwi Raspberry Pi Pico</a><span class="simulator-note">Štandardnú Python ukážku upravte pre MicroPython.</span></div><pre class="code-sample language-python"><code class="language-python">from time import sleep
 
 while True:
     print(&quot;Pravidelna sprava&quot;)
@@ -633,7 +633,7 @@ while True:
 <h3>Plánovanie pomocou monotónnych hodín</h3>
 <p>Na meranie intervalov používame napríklad <code>time.monotonic()</code>. Tieto hodiny nie sú ovplyvnené bežnou zmenou systémového dátumu a času.</p>
 <div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button>
-      <a class="online-editor" href="https://wokwi.com/projects/new/pi-pico" target="_blank" rel="noopener noreferrer" title="Wokwi Pico podporuje MicroPython, nie gpiozero; prepnite projekt na MicroPython a upravte ukážku.">Otvoriť Wokwi Raspberry Pi Pico</a><span class="simulator-note">Wokwi Pico nepodporuje gpiozero. Prepnite projekt na MicroPython a upravte ukážku.</span></div><pre class="code-sample language-python"><code class="language-python">from time import monotonic, sleep
+      <a class="online-editor" href="https://wokwi.com/projects/new/pi-pico" target="_blank" rel="noopener noreferrer" title="Wokwi Pico používa MicroPython; štandardnú Python ukážku treba upraviť.">Otvoriť Wokwi Raspberry Pi Pico</a><span class="simulator-note">Štandardnú Python ukážku upravte pre MicroPython.</span></div><pre class="code-sample language-python"><code class="language-python">from time import monotonic, sleep
 
 interval = 1.0
 dalsiTermin = monotonic() + interval

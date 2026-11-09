@@ -614,7 +614,7 @@ pinMode(pin, OUTPUT);
 </code></pre><p class="code-status" role="status" aria-live="polite"></p>
 <p>Na podporovaných pinech je dostupný aj open-drain:</p>
 <div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button>
-      <a class="online-editor" href="https://wokwi.com/projects/new/arduino-uno" target="_blank" rel="noopener noreferrer" title="Nový projekt Wokwi. Skopírujte ukážku do editora; úryvok vložte do úplného programu.">Otvoriť simulátor Arduino Uno</a></div><pre class="code-sample language-cpp"><code class="language-cpp">pinMode(pin, OUTPUT_OPEN_DRAIN);
+      <a class="online-editor" href="https://wokwi.com/projects/new/esp32" target="_blank" rel="noopener noreferrer" title="Nový projekt Wokwi. Skopírujte ukážku do editora; úryvok vložte do úplného programu.">Otvoriť simulátor ESP32</a></div><pre class="code-sample language-cpp"><code class="language-cpp">pinMode(pin, OUTPUT_OPEN_DRAIN);
 </code></pre><p class="code-status" role="status" aria-live="polite"></p>
 <h3>Príklad vstupu s pull-down</h3>
 <p>Pre klasickú vývojovú dosku ESP32 s dostupným GPIO27:</p>
@@ -623,7 +623,7 @@ pinMode(pin, OUTPUT);
 <li>tlačidlo medzi GPIO27 a 3,3 V.</li>
 </ul>
 <div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button>
-      <a class="online-editor" href="https://wokwi.com/projects/new/arduino-uno" target="_blank" rel="noopener noreferrer" title="Nový projekt Wokwi. Skopírujte ukážku do editora; úryvok vložte do úplného programu.">Otvoriť simulátor Arduino Uno</a></div><pre class="code-sample language-cpp"><code class="language-cpp">const int TLACIDLO = 27;
+      <a class="online-editor" href="https://wokwi.com/projects/new/esp32" target="_blank" rel="noopener noreferrer" title="Nový projekt Wokwi. Skopírujte ukážku do editora; úryvok vložte do úplného programu.">Otvoriť simulátor ESP32</a></div><pre class="code-sample language-cpp"><code class="language-cpp">const int TLACIDLO = 27;
 
 void setup() {
   Serial.begin(115200);
@@ -648,7 +648,7 @@ void loop() {
 <h3>Open-drain na ESP32</h3>
 <p>Pri nakonfigurovanom open-drain výstupe:</p>
 <div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button>
-      <a class="online-editor" href="https://wokwi.com/projects/new/arduino-uno" target="_blank" rel="noopener noreferrer" title="Nový projekt Wokwi. Skopírujte ukážku do editora; úryvok vložte do úplného programu.">Otvoriť simulátor Arduino Uno</a></div><pre class="code-sample language-cpp"><code class="language-cpp">digitalWrite(pin, LOW);   // Aktívne stiahnutie na zem.
+      <a class="online-editor" href="https://wokwi.com/projects/new/esp32" target="_blank" rel="noopener noreferrer" title="Nový projekt Wokwi. Skopírujte ukážku do editora; úryvok vložte do úplného programu.">Otvoriť simulátor ESP32</a></div><pre class="code-sample language-cpp"><code class="language-cpp">digitalWrite(pin, LOW);   // Aktívne stiahnutie na zem.
 digitalWrite(pin, HIGH);  // Uvoľnenie výstupu.
 </code></pre><p class="code-status" role="status" aria-live="polite"></p>
 <p>Pre vysokú úroveň potrebujeme vhodný pull-up.</p>
@@ -675,7 +675,7 @@ tlacidlo = Button(17, pull_up=True)
 <h3>Vstup s pull-down</h3>
 <p>Tlačidlo medzi <strong>GPIO17 a 3,3 V</strong>:</p>
 <div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button>
-      <a class="online-editor" href="https://wokwi.com/projects/new/pi-pico" target="_blank" rel="noopener noreferrer" title="Wokwi Pico podporuje MicroPython, nie gpiozero; prepnite projekt na MicroPython a upravte ukážku.">Otvoriť Wokwi Raspberry Pi Pico</a><span class="simulator-note">Wokwi Pico nepodporuje gpiozero. Prepnite projekt na MicroPython a upravte ukážku.</span></div><pre class="code-sample language-python"><code class="language-python">tlacidlo = Button(17, pull_up=False)
+      <a class="online-editor" href="https://wokwi.com/projects/new/pi-pico" target="_blank" rel="noopener noreferrer" title="Wokwi Pico používa MicroPython; štandardnú Python ukážku treba upraviť.">Otvoriť Wokwi Raspberry Pi Pico</a><span class="simulator-note">Štandardnú Python ukážku upravte pre MicroPython.</span></div><pre class="code-sample language-python"><code class="language-python">tlacidlo = Button(17, pull_up=False)
 </code></pre><p class="code-status" role="status" aria-live="polite"></p>
 <h3>Výstup s počiatočným stavom</h3>
 <div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button>
@@ -704,7 +704,7 @@ vystup = DigitalOutputDevice(
 </code></pre><p class="code-status" role="status" aria-live="polite"></p>
 <p>Potom:</p>
 <div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button>
-      <a class="online-editor" href="https://wokwi.com/projects/new/pi-pico" target="_blank" rel="noopener noreferrer" title="Wokwi Pico podporuje MicroPython, nie gpiozero; prepnite projekt na MicroPython a upravte ukážku.">Otvoriť Wokwi Raspberry Pi Pico</a><span class="simulator-note">Wokwi Pico nepodporuje gpiozero. Prepnite projekt na MicroPython a upravte ukážku.</span></div><pre class="code-sample language-python"><code class="language-python">vystup.on()   # Fyzicky LOW.
+      <a class="online-editor" href="https://wokwi.com/projects/new/pi-pico" target="_blank" rel="noopener noreferrer" title="Wokwi Pico používa MicroPython; štandardnú Python ukážku treba upraviť.">Otvoriť Wokwi Raspberry Pi Pico</a><span class="simulator-note">Štandardnú Python ukážku upravte pre MicroPython.</span></div><pre class="code-sample language-python"><code class="language-python">vystup.on()   # Fyzicky LOW.
 vystup.off()  # Fyzicky HIGH.
 </code></pre><p class="code-status" role="status" aria-live="polite"></p>
 <p><strong><code>active_high=False</code> nemení výstup na open-drain.</strong> Iba obracia vzťah medzi logickým stavom zariadenia a fyzickou úrovňou.</p>

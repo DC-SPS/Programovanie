@@ -418,11 +418,10 @@ void setup() {
 
     <h2>8. Raspberry Pi: polling a udalosti v Pythone</h2>
     <p>Bežné Raspberry Pi (napríklad Pi 4 alebo Pi 5) je jednodoskový počítač s operačným systémom Linux. <strong>Raspberry Pi Pico</strong> je naopak doska s mikrokontrolérom, teda odlišná platforma. Na bežnom Raspberry Pi možno na vstupy použiť Python a knižnicu <code>gpiozero</code>.</p>
-    <p>V nasledujúcich príkladoch je tlačidlo pripojené medzi <code>GPIO17</code> (označenie BCM) a GND. Na štandardnom 40-pinovom konektore je GPIO17 fyzický pin 11; knižnica používa označenie BCM, nie fyzické číslo kontaktu. Online editor Pythonu umožní kód upraviť, ale knižnica <code>gpiozero</code> a fyzické GPIO vyžadujú Raspberry Pi; tieto ukážky preto v bežnom online editore nespustíte.</p>
+    <p>V nasledujúcich príkladoch je tlačidlo pripojené medzi <code>GPIO17</code> (označenie BCM) a GND. Na štandardnom 40-pinovom konektore je GPIO17 fyzický pin 11; knižnica používa označenie BCM, nie fyzické číslo kontaktu. Pri kóde je odkaz na Wokwi Raspberry Pi Pico. Wokwi Pico používa MicroPython, preto v ňom ukážky s knižnicou <code>gpiozero</code> nespustíte bez prepísania. Pôvodný kód možno spustiť na Raspberry Pi s Linuxom.</p>
     <h3>Polling</h3>
     <div class="code-actions">
       <button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button>
-      <a class="online-editor" href="https://www.programiz.com/python-programming/online-compiler/" target="_blank" rel="noopener noreferrer">Otvoriť online editor Pythonu</a>
       <a class="online-editor" href="https://wokwi.com/projects/new/pi-pico" target="_blank" rel="noopener noreferrer" title="Wokwi Pico podporuje MicroPython, nie gpiozero; prepnite projekt na MicroPython a upravte ukážku.">Otvoriť Wokwi Raspberry Pi Pico</a><span class="simulator-note">Wokwi Pico nepodporuje gpiozero. Prepnite projekt na MicroPython a upravte ukážku.</span></div>
     <pre class="code-sample language-python"><code>from gpiozero import Button
 from time import sleep
@@ -438,7 +437,6 @@ while True:
     <h3>Udalostné riadenie</h3>
     <div class="code-actions">
       <button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button>
-      <a class="online-editor" href="https://www.programiz.com/python-programming/online-compiler/" target="_blank" rel="noopener noreferrer">Otvoriť online editor Pythonu</a>
       <a class="online-editor" href="https://wokwi.com/projects/new/pi-pico" target="_blank" rel="noopener noreferrer" title="Wokwi Pico podporuje MicroPython, nie gpiozero; prepnite projekt na MicroPython a upravte ukážku.">Otvoriť Wokwi Raspberry Pi Pico</a><span class="simulator-note">Wokwi Pico nepodporuje gpiozero. Prepnite projekt na MicroPython a upravte ukážku.</span></div>
     <pre class="code-sample language-python"><code>from gpiozero import Button
 from signal import pause
