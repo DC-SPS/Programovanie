@@ -31,7 +31,17 @@ Prehľad tematických celkov a dostupných materiálov je na stránke
 - [5.5 PWM – princíp činnosti](./5.5%20PWM%20-%20princip%20cinnosti.html)
 - [5.6 Filtrácia, kalibrácia a presnosť merania](./5.6%20Filtracia%20kalibracia%20a%20presnost%20merania.html)
 
+## Tematický celok 7 – Embedded a reálne operačné systémy
+
+- [7.1 Reálne a embedded OS](./7.1%20Realne%20a%20embedded%20OS.html)
+- [7.2 Operačný systém v embedded systémoch](./7.2%20Operacny%20system%20v%20embedded%20systemoch.html)
+- [7.3 Multitasking](./7.3%20Multitasking.html)
+- [7.4 Scheduler – plánovač úloh](./7.4%20Scheduler%20-%20planovac%20uloh.html)
+- [7.5 Synchronizácia úloh](./7.5%20Synchronizacia%20uloh.html)
+- [7.6 RTOS – princíp a použitie](./7.6%20RTOS%20-%20princip%20a%20pouzitie.html)
+
 Ostatné témy z 65-bodovej osnovy sú zatiaľ vedené ako plán učiva. Prednášky
+
 tematických celkov 3, 4, 5 a 6 sú určené na 45 minút.
 
 ## Tematický celok 6 – Komunikačné rozhrania a protokoly
@@ -45,3 +55,5 @@ tematických celkov 3, 4, 5 a 6 sú určené na 45 minút.
 - [6.7 USB a ďalšie rozhrania](./6.7%20USB%20a%20dalsie%20rozhrania.html)
 - [6.8 Komunikačné protokoly – rámce a adresovanie](./6.8%20Komunikacne%20protokoly%20-%20ramce%20a%20adresovanie.html)
 
+
+tematick?ch celkov 3, 4, 5, 6 a 7 s? ur?en? na 45 min?t.

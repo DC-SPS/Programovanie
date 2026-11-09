@@ -1,0 +1,98 @@
+<!doctype html><html lang="sk"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#101827"><meta name="description" content="Synchronizácia úloh – tematický celok 07 Výpočtová technika."><title>7.5 Synchronizácia úloh | Výpočtová technika</title><style>:root{color-scheme:light;--bg:#f7f8fa;--surface:#fff;--text:#1c2330;--muted:#5b6678;--accent:#1f6feb;--border:#d9dee7;--note:#fff4d6}@media(prefers-color-scheme:dark){:root:not([data-theme]){color-scheme:dark;--bg:#12161d;--surface:#1b212b;--text:#e6eaf1;--muted:#9aa6b8;--accent:#5aa2ff;--border:#2d3644;--note:#3a3017}}:root[data-theme=dark]{color-scheme:dark;--bg:#12161d;--surface:#1b212b;--text:#e6eaf1;--muted:#9aa6b8;--accent:#5aa2ff;--border:#2d3644;--note:#3a3017}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:16px/1.65 system-ui,-apple-system,"Segoe UI",sans-serif}a{color:var(--accent)}nav,main{width:min(100% - 2rem,900px);margin:auto}nav{display:flex;gap:.55rem;flex-wrap:wrap;padding:.8rem 0}nav a,.button{display:inline-block;padding:.4rem .7rem;border:1px solid var(--border);border-radius:.55rem;text-decoration:none;color:inherit;background:var(--surface)}main{padding:1rem 0 3rem}a:focus-visible,button:focus-visible{outline:3px solid var(--accent);outline-offset:3px}h1{font-size:clamp(1.8rem,5vw,2.6rem);line-height:1.2}h2{margin-top:2rem}h3{margin-top:1.5rem}.muted{color:var(--muted)}.note{margin:1rem 0;padding:1rem;border:1px solid var(--border);border-radius:12px;background:var(--note)}.scroll{overflow:auto}table{width:100%;border-collapse:collapse}th,td{padding:.6rem .7rem;border:1px solid var(--border);text-align:left;vertical-align:top}th{background:var(--surface)}pre{margin:.65rem 0 1rem;padding:1rem;border-radius:9px;overflow:auto;background:#0f172a;color:#e2e8f0;font:14px/1.55 ui-monospace,SFMono-Regular,Consolas,monospace}.equation{overflow:auto;margin:1rem 0;padding:.8rem 1rem;text-align:center;border-left:4px solid var(--accent);background:var(--surface)}.equation code{white-space:pre-wrap}.code-actions{display:flex;gap:.5rem;flex-wrap:wrap}button{padding:.55rem .8rem;border:0;border-radius:8px;background:#4b91f1;color:#fff;font-weight:700;cursor:pointer}.sources,footer{margin-top:2rem;padding-top:1rem;border-top:1px solid var(--border)}blockquote{margin:1rem 0;padding:.3rem 1rem;border-left:4px solid var(--accent);background:var(--surface)}@media(max-width:600px){nav,main{width:calc(100% - 1.2rem)}}</style><script src="../lesson-top.js" defer></script></head><body><nav aria-label="Navigácia kurzov"><a href="index.html#celok-07">Výpočtová technika – osnova</a><a href="../index.html">Všetky kurzy</a><a href="../nastavenia.html">Nastavenia vzhľadu</a></nav><main><header><p class="muted"><a href="index.html#celok-07">Výpočtová technika</a> · Tematický celok 07 · Prednáška 7.5</p><h1>7.5 Synchronizácia úloh</h1><p class="muted">Embedded a reálne operačné systémy · 45 minút</p></header><div class="note"><strong>Platforma a bezpečnosť:</strong> Pojem ?reálny operačný systém? v tomto tematickom celku označuje RTOS. Kódové ukážky FreeRTOS sú určené pre Arduino-ESP32 na Wokwi ESP32. Konkrétne piny, počet jadier, ADC a vlastnosti FreeRTOS závisia od modelu dosky a verzie frameworku. Pred zapojením overte pinout dosky; LED pripojte cez rezistor.</div><p><strong>Trvanie:</strong> 45 minút<br><strong>Nadväznosť:</strong> Multitasking a plánovanie.</p>
+<h2>Ciele hodiny</h2>
+<p>Žiak má vedieť:</p>
+<ul><li>vysvetliť race condition,</li><li>rozlíšiť mutex, semafor a frontu,</li><li>vysvetliť kritickú sekciu,</li><li>rozpoznať deadlock a priority inversion,</li><li>vybrať vhodný spôsob odovzdania údajov.</li></ul>
+<h2>Časový plán</h2>
+<div class="scroll"><table><thead><tr><th>Čas</th><th>Obsah</th></tr></thead><tbody><tr><td>0 – 5 min</td><td>Dve úlohy menia jednu hodnotu</td></tr><tr><td>5 – 14 min</td><td>Race condition a kritická sekcia</td></tr><tr><td>14 – 25 min</td><td>Mutex, semafor a fronta</td></tr><tr><td>25 – 33 min</td><td>Komunikácia cez frontu</td></tr><tr><td>33 – 41 min</td><td>Deadlock a inverzia priorít</td></tr><tr><td>41 – 45 min</td><td>Overenie a zápis</td></tr></tbody></table></div>
+<h2>1. Spoločné údaje</h2>
+<p><strong>0 – 5 min</strong></p>
+<p>Dve úlohy vykonávajú:</p>
+<div class="code-actions"><button type="button" data-copy-code="lesson-7-5-code-1">Kopírovať kód</button><a class="button" href="https://wokwi.com/projects/new/esp32" target="_blank" rel="noopener noreferrer">Otvoriť Wokwi ESP32</a></div><p id="status-lesson-7-5-code-1" class="muted" aria-live="polite"></p>
+<p class="note"><strong>Kódový výňatok:</strong> Ukážka demonštruje časť FreeRTOS programu. Na simuláciu ju vložte do kompletného projektu pre Arduino-ESP32.</p>
+<pre><code id="lesson-7-5-code-1">pocet++;</code></pre>
+<p>Očakávame zvýšenie o dva. Výsledok však môže byť zvýšený iba o jeden.</p>
+<p><strong>Race condition vzniká, keď výsledok závisí od nežiaduceho načasovania súbežných prístupov.</strong></p>
+<h2>2. Prečo sa hodnota stratí?</h2>
+<p><strong>5 – 14 min</strong></p>
+<p>Zvýšenie môže pozostávať z krokov:</p>
+<ol><li>načítaj hodnotu,</li><li>zvýš ju,</li><li>zapíš výsledok.</li></ol>
+<p>Možný priebeh pri počiatočnej hodnote 10:</p>
+<div class="scroll"><table><thead><tr><th>Krok</th><th>Úloha A</th><th>Úloha B</th></tr></thead><tbody><tr><td>1</td><td>Načíta 10</td><td></td></tr><tr><td>2</td><td></td><td>Načíta 10</td></tr><tr><td>3</td><td>Vypočíta 11</td><td></td></tr><tr><td>4</td><td></td><td>Vypočíta 11</td></tr><tr><td>5</td><td>Zapíše 11</td><td></td></tr><tr><td>6</td><td></td><td>Zapíše 11</td></tr></tbody></table></div>
+<p>Výsledkom je 11, nie 12.</p>
+<p><strong><code>volatile</code> tento problém nevyrieši.</strong></p>
+<h3>Kritická sekcia</h3>
+<p>Časť programu, v ktorej chránime prístup k spoločnému prostriedku.</p>
+<p>Má byť krátka. Konkrétny spôsob ochrany závisí od platformy.</p>
+<p>Na viacjadrovom ESP32 nestačí všeobecne iba zakázať prerušenia na jednom jadre.</p>
+<h2>3. Synchronizačné mechanizmy</h2>
+<p><strong>14 – 25 min</strong></p>
+<h3>Mutex</h3>
+<p>Zámok na vzájomné vylúčenie.</p>
+<p>Použitie:</p>
+<ul><li>spoločný displej,</li><li>spoločná dátová štruktúra,</li><li>periféria používaná viacerými úlohami.</li></ul>
+<p>Úloha získa mutex, vykoná chránenú činnosť a uvoľní ho.</p>
+<p>Mutex má vlastníctvo. Vo FreeRTOS ho uvoľňuje úloha, ktorá ho získala.</p>
+<h3>Semafor</h3>
+<p>Slúži napríklad na:</p>
+<ul><li>signalizáciu udalosti,</li><li>evidenciu počtu dostupných prostriedkov.</li></ul>
+<p>Binárny semafor má najviac jeden dostupný token. Počítací semafor ich môže mať viac.</p>
+<h3>Fronta – queue</h3>
+<p>Prenáša položky medzi úlohami.</p>
+<p>Príklady:</p>
+<ul><li>namerané hodnoty,</li><li>príkazy pre ovládač,</li><li>udalosti.</li></ul>
+<p>Bežná FreeRTOS fronta kopíruje položku do svojho úložiska.</p>
+<h3>Prehľad</h3>
+<div class="scroll"><table><thead><tr><th>Potreba</th><th>Vhodný mechanizmus</th></tr></thead><tbody><tr><td>Jedna úloha naraz používa displej</td><td>Mutex</td></tr><tr><td>Oznámenie udalosti</td><td>Semafor alebo notifikácia</td></tr><tr><td>Prenos postupnosti meraní</td><td>Fronta</td></tr><tr><td>Veľmi krátka ochrana spoločných údajov</td><td>Vhodná kritická sekcia</td></tr></tbody></table></div>
+<h3>ISR</h3>
+<p>Mutex nepatrí do ISR. Pre podporované operácie z ISR používame varianty API označené <code>FromISR</code>.</p>
+<h2>4. Odovzdanie merania cez frontu</h2>
+<p><strong>25 – 33 min</strong></p>
+<p>Zjednodušený princíp FreeRTOS:</p>
+<div class="code-actions"><button type="button" data-copy-code="lesson-7-5-code-2">Kopírovať kód</button><a class="button" href="https://wokwi.com/projects/new/esp32" target="_blank" rel="noopener noreferrer">Otvoriť Wokwi ESP32</a></div><p id="status-lesson-7-5-code-2" class="muted" aria-live="polite"></p>
+<p class="note"><strong>Kódový výňatok:</strong> Ukážka demonštruje časť FreeRTOS programu. Na simuláciu ju vložte do kompletného projektu pre Arduino-ESP32.</p>
+<pre><code id="lesson-7-5-code-2">QueueHandle_t fronta;</code></pre>
+<p>Pri inicializácii:</p>
+<div class="code-actions"><button type="button" data-copy-code="lesson-7-5-code-3">Kopírovať kód</button><a class="button" href="https://wokwi.com/projects/new/esp32" target="_blank" rel="noopener noreferrer">Otvoriť Wokwi ESP32</a></div><p id="status-lesson-7-5-code-3" class="muted" aria-live="polite"></p>
+<p class="note"><strong>Kódový výňatok:</strong> Ukážka demonštruje časť FreeRTOS programu. Na simuláciu ju vložte do kompletného projektu pre Arduino-ESP32.</p>
+<pre><code id="lesson-7-5-code-3">fronta = xQueueCreate(8, sizeof(int));</code></pre>
+<p>Producent:</p>
+<div class="code-actions"><button type="button" data-copy-code="lesson-7-5-code-4">Kopírovať kód</button><a class="button" href="https://wokwi.com/projects/new/esp32" target="_blank" rel="noopener noreferrer">Otvoriť Wokwi ESP32</a></div><p id="status-lesson-7-5-code-4" class="muted" aria-live="polite"></p>
+<p class="note"><strong>Kódový výňatok:</strong> Ukážka demonštruje časť FreeRTOS programu. Na simuláciu ju vložte do kompletného projektu pre Arduino-ESP32.</p>
+<pre><code id="lesson-7-5-code-4">int meranie = 123;
+
+if (xQueueSend(fronta, &amp;meranie, 0) != pdPASS) {
+  // Fronta je plná: treba zvolenú reakciu.
+}</code></pre>
+<p>Príjemca:</p>
+<div class="code-actions"><button type="button" data-copy-code="lesson-7-5-code-5">Kopírovať kód</button><a class="button" href="https://wokwi.com/projects/new/esp32" target="_blank" rel="noopener noreferrer">Otvoriť Wokwi ESP32</a></div><p id="status-lesson-7-5-code-5" class="muted" aria-live="polite"></p>
+<p class="note"><strong>Kódový výňatok:</strong> Ukážka demonštruje časť FreeRTOS programu. Na simuláciu ju vložte do kompletného projektu pre Arduino-ESP32.</p>
+<pre><code id="lesson-7-5-code-5">int prijataHodnota;
+
+if (xQueueReceive(
+      fronta,
+      &amp;prijataHodnota,
+      portMAX_DELAY
+    ) == pdPASS) {
+
+  spracujMeranie(prijataHodnota);
+}</code></pre>
+<p>Sú to časti programu, nie kompletná aplikácia.</p>
+<p>Pri úspešnom príjme získa príjemca vlastnú skopírovanú hodnotu. Nemusí čítať súčasne menenú globálnu premennú.</p>
+<p>Musíme overiť vytvorenie fronty a určiť správanie pri jej zaplnení.</p>
+<h2>5. Deadlock a inverzia priorít</h2>
+<p><strong>33 – 41 min</strong></p>
+<h3>Deadlock – uviaznutie</h3>
+<ul><li>A vlastní zámok X a čaká na Y.</li><li>B vlastní zámok Y a čaká na X.</li></ul>
+<p>Ani jedna nemôže pokračovať.</p>
+<p>Prevencia:</p>
+<ul><li>jednotné poradie získavania zámkov,</li><li>obmedzenie vnoreného zamykania,</li><li>vhodné timeouty a reakcie na chybu.</li></ul>
+<h3>Priority inversion – inverzia priorít</h3>
+<ol><li>Nízka priorita vlastní mutex.</li><li>Vysoká priorita ho potrebuje a čaká.</li><li>Stredná priorita odoberá procesor nízkej úlohe.</li><li>Vysoká úloha nepriamo čaká aj na strednú.</li></ol>
+<p>Niektoré mutexy používajú <strong>dedenie priority</strong>: vlastník dočasne získa vyššiu prioritu, aby mohol zámok skôr uvoľniť.</p>
+<p>Vo FreeRTOS mutex podporuje tento mechanizmus. Binárny semafor nie je jeho plnohodnotnou náhradou.</p>
+<h3>Úloha</h3>
+<p>Snímanie vytvára hodnoty a komunikačná úloha ich odosiela. Vyber mechanizmus.</p>
+<p><strong>Odpoveď:</strong> Fronta, s definovaným správaním pri zaplnení.</p>
+<h2>6. Zápis</h2>
+<p><strong>41 – 45 min</strong></p>
+<blockquote><p>Súbežný prístup k spoločným údajom môže vytvoriť race condition.</p><p>Mutex zabezpečuje vzájomné vylúčenie.</p><p>Semafor signalizuje udalosť alebo dostupnosť prostriedku.</p><p>Fronta prenáša položky medzi úlohami.</p><p>Deadlock je vzájomné čakanie bez možnosti pokračovania.</p><p>Inverziu priorít môže zmierniť dedenie priority.</p><p><code>volatile</code> nenahrádza synchronizáciu.</p></blockquote><section class="sources"><h2>Zdroje na ďalšie štúdium</h2><ul><li><a href="https://www.freertos.org/Documentation/02-Kernel/02-Kernel-features/01-Tasks-and-co-routines/04-Task-scheduling" target="_blank" rel="noopener noreferrer">FreeRTOS – plánovanie úloh</a></li><li><a href="https://www.freertos.org/Documentation/02-Kernel/02-Kernel-features/02-Queues-mutexes-and-semaphores/01-Queues" target="_blank" rel="noopener noreferrer">FreeRTOS – fronty</a></li><li><a href="https://www.freertos.org/Documentation/02-Kernel/02-Kernel-features/02-Queues-mutexes-and-semaphores/04-Mutexes" target="_blank" rel="noopener noreferrer">FreeRTOS – mutexy</a></li><li><a href="https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/system/freertos.html" target="_blank" rel="noopener noreferrer">Espressif ESP-IDF FreeRTOS</a></li><li><a href="https://wokwi.com/projects/new/esp32" target="_blank" rel="noopener noreferrer">Wokwi ESP32</a></li></ul></section><footer><p>Prednáška 7.5 · Výpočtová technika · Celok 07</p><p><a href="7.4 Scheduler - planovac uloh.html">← Predchádzajúca téma</a> · <a href="index.html#celok-07">Osnova celku 07</a> · <a href="7.6 RTOS - princip a pouzitie.html">Nasledujúca téma →</a></p></footer></main><script src="../theme.js" defer></script><script>document.addEventListener('click',async event=>{const button=event.target.closest('[data-copy-code]');if(!button)return;const code=document.getElementById(button.dataset.copyCode);const status=document.getElementById('status-'+button.dataset.copyCode);try{await navigator.clipboard.writeText(code.innerText);status.textContent='Kód bol skopírovaný.'}catch{status.textContent='Kopírovanie sa nepodarilo. Označte kód a skopírujte ho ručne.'}})</script></body></html>
