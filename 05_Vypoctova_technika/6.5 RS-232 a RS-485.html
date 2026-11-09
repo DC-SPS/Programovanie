@@ -1,0 +1,58 @@
+<!doctype html><html lang="sk"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#101827"><meta name="description" content="RS-232 a RS-485 – tematický celok 06 Výpočtová technika."><title>6.5 RS-232 a RS-485 | Výpočtová technika</title><style>:root{color-scheme:light;--bg:#f7f8fa;--surface:#fff;--text:#1c2330;--muted:#5b6678;--accent:#1f6feb;--border:#d9dee7;--note:#fff4d6}@media(prefers-color-scheme:dark){:root:not([data-theme]){color-scheme:dark;--bg:#12161d;--surface:#1b212b;--text:#e6eaf1;--muted:#9aa6b8;--accent:#5aa2ff;--border:#2d3644;--note:#3a3017}}:root[data-theme=dark]{color-scheme:dark;--bg:#12161d;--surface:#1b212b;--text:#e6eaf1;--muted:#9aa6b8;--accent:#5aa2ff;--border:#2d3644;--note:#3a3017}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:16px/1.65 system-ui,-apple-system,"Segoe UI",sans-serif}a{color:var(--accent)}nav,main{width:min(100% - 2rem,900px);margin:auto}nav{display:flex;gap:.55rem;flex-wrap:wrap;padding:.8rem 0}nav a,.button{display:inline-block;padding:.4rem .7rem;border:1px solid var(--border);border-radius:.55rem;text-decoration:none;color:inherit;background:var(--surface)}main{padding:1rem 0 3rem}a:focus-visible,button:focus-visible{outline:3px solid var(--accent);outline-offset:3px}h1{font-size:clamp(1.8rem,5vw,2.6rem);line-height:1.2}h2{margin-top:2rem}h3{margin-top:1.5rem}.muted{color:var(--muted)}.note{margin:1rem 0;padding:1rem;border:1px solid var(--border);border-radius:12px;background:var(--note)}.scroll{overflow:auto}table{width:100%;border-collapse:collapse}th,td{padding:.6rem .7rem;border:1px solid var(--border);text-align:left;vertical-align:top}th{background:var(--surface)}pre{margin:.65rem 0 1rem;padding:1rem;border-radius:9px;overflow:auto;background:#0f172a;color:#e2e8f0;font:14px/1.55 ui-monospace,SFMono-Regular,Consolas,monospace}.equation{overflow:auto;margin:1rem 0;padding:.8rem 1rem;text-align:center;border-left:4px solid var(--accent);background:var(--surface)}.equation code{white-space:pre-wrap}.code-actions{display:flex;gap:.5rem;flex-wrap:wrap}button{padding:.55rem .8rem;border:0;border-radius:8px;background:#4b91f1;color:#fff;font-weight:700;cursor:pointer}.sources,footer{margin-top:2rem;padding-top:1rem;border-top:1px solid var(--border)}blockquote{margin:1rem 0;padding:.3rem 1rem;border-left:4px solid var(--accent);background:var(--surface)}@media(max-width:600px){nav,main{width:calc(100% - 1.2rem)}}</style><script src="../lesson-top.js" defer></script></head><body><nav aria-label="Navigácia kurzov"><a href="index.html#celok-06">Výpočtová technika – osnova</a><a href="../index.html">Všetky kurzy</a><a href="../nastavenia.html">Nastavenia vzhľadu</a></nav><main><header><p class="muted"><a href="index.html#celok-06">Výpočtová technika</a> · Tematický celok 06 · Prednáška 6.5</p><h1>6.5 RS-232 a RS-485</h1><p class="muted">Komunikačné rozhrania a protokoly · 45 minút</p></header><div class="note"><strong>Bezpečnosť:</strong> GPIO, UART, RS-232 a RS-485 nie sú elektricky zameniteľné. Pri prepojení overte napäťové úrovne a použite vhodné prevodníky alebo transceivery. Päťvoltový signál nepripájajte priamo na 3,3 V vstup, ak doska nie je naň určená.</div><h2>Ciele hodiny</h2>
+<p>Žiak má vedieť:</p>
+<ul><li>odlíšiť UART od elektrického rozhrania,</li><li>vysvetliť základ RS-232 a RS-485,</li><li>opísať diferenciálny prenos,</li><li>vysvetliť účel zakončenia RS-485,</li><li>vybrať vhodný transceiver.</li></ul>
+<h2>Časový plán</h2>
+<div class="scroll"><table><thead><tr><th>Čas</th><th>Obsah</th></tr></thead><tbody><tr><td>0 – 5 min</td><td>Prečo nestačí UART GPIO</td></tr><tr><td>5 – 15 min</td><td>RS-232</td></tr><tr><td>15 – 27 min</td><td>RS-485</td></tr><tr><td>27 – 35 min</td><td>Topológia a zakončenie</td></tr><tr><td>35 – 41 min</td><td>Praktické situácie</td></tr><tr><td>41 – 45 min</td><td>Overenie a zápis</td></tr></tbody></table></div>
+<h2>1. UART a elektrická vrstva</h2>
+<p><strong>0 – 5 min</strong></p>
+<p>UART vytvára a prijíma sériové znaky.</p>
+<p>Na vedenie signálu medzi zariadeniami môžeme použiť rôzne elektrické rozhrania:</p>
+<pre class="diagram"><code>UART → transceiver → vedenie → transceiver → UART</code></pre>
+<p>RS-232 a RS-485 riešia predovšetkým elektrické vlastnosti prenosu. Samy neurčujú napríklad význam príkazu „zapni ventilátor“.</p>
+<h2>2. RS-232</h2>
+<p><strong>5 – 15 min</strong></p>
+<p>RS-232 sa používa najmä na spojenie dvoch zariadení.</p>
+<p>Vlastnosti:</p>
+<ul><li>signály sa vyhodnocujú voči spoločnej referencii,</li><li>používa iné napätia než GPIO,</li><li>pri dátových signáloch zodpovedá logickej jednotke záporné a nule kladné napätie.</li></ul>
+<p>Na prijímači sú platné dátové úrovne typicky:</p>
+<ul><li>menej než −3 V: logická jednotka,</li><li>viac než +3 V: logická nula.</li></ul>
+<p>Oblasť medzi −3 V a +3 V nie je platnou zaručenou dátovou úrovňou.</p>
+<h3>Prevodník</h3>
+<p>Na prepojenie s mikrokontrolérom použijeme vhodný transceiver, napríklad zo skupiny MAX3232 podľa požadovaného napájania a parametrov.</p>
+<p><strong>USB–UART adaptér s 3,3 V logikou nie je automaticky USB–RS-232 adaptér.</strong></p>
+<h2>3. RS-485</h2>
+<p><strong>15 – 27 min</strong></p>
+<p>RS-485 používa <strong>diferenciálny prenos</strong>. Prijímač vyhodnocuje rozdiel napätí medzi dvoma vodičmi.</p>
+<p>Výhody:</p>
+<ul><li>vyššia odolnosť proti spoločnému rušeniu,</li><li>možnosť viacerých zariadení na vedení,</li><li>vhodnosť pre priemyselné prostredie.</li></ul>
+<h3>Dvojvodičová komunikácia</h3>
+<p>Bežná dvojvodičová RS-485 je half-duplex:</p>
+<ul><li>všetci zdieľajú pár vodičov,</li><li>v danom okamihu vysiela iba jeden účastník.</li></ul>
+<p>Transceiver má často riadenie:</p>
+<ul><li><code>DE</code>: povolenie vysielača,</li><li><code>/RE</code>: povolenie prijímača, aktívne v nule.</li></ul>
+<p>Riadenie smeru musí zabezpečiť program alebo adaptér.</p>
+<h3>Označenia A a B</h3>
+<p>Označenia a ich interpretácia nemusia byť medzi výrobcami modulov používané jednotne.</p>
+<p><strong>Polaritu overujeme podľa dokumentácie konkrétneho transceivera a zariadenia.</strong></p>
+<h2>4. Topológia, zakončenie a referencia</h2>
+<p><strong>27 – 35 min</strong></p>
+<p>Odporúčaná základná topológia je priebežné vedenie s krátkymi odbočkami:</p>
+<pre class="diagram"><code>Zakončenie ── zariadenie ── zariadenie ── zariadenie ── zakončenie</code></pre>
+<h3>Zakončenie</h3>
+<p>Na fyzických koncoch vedenia sa podľa parametrov siete používajú zakončovacie rezistory zodpovedajúce impedancii kábla, často <strong>120 Ω</strong>.</p>
+<ul><li>Nedávame ich automaticky ku každému zariadeniu.</li><li>Potreba závisí aj od dĺžky a rýchlosti hrán.</li><li>Zakončenie potláča odrazy.</li></ul>
+<h3>Bias rezistory</h3>
+<p>Môžu zabezpečovať definovaný pokojový stav, keď nikto nevysiela. Ich návrh musí zohľadniť celú sieť a vlastnosti prijímačov.</p>
+<h3>Spoločná referencia</h3>
+<p>Diferenciálny prenos neznamená neobmedzenú odolnosť voči rozdielu zemných potenciálov. Musíme dodržať povolený common-mode rozsah.</p>
+<p>Podľa inštalácie použijeme referenčný vodič, ochrany a prípadne galvanické oddelenie.</p>
+<h2>5. Praktické situácie</h2>
+<p><strong>35 – 41 min</strong></p>
+<div class="scroll"><table><thead><tr><th>Situácia</th><th>Vhodný prístup</th></tr></thead><tbody><tr><td>ESP32 ku krátko pripojenému UART modulu</td><td>Kompatibilný logický UART</td></tr><tr><td>Počítač k zariadeniu s RS-232</td><td>RS-232 adaptér</td></tr><tr><td>Viac priemyselných snímačov na jednej linke</td><td>RS-485 s vhodným protokolom</td></tr></tbody></table></div>
+<p>Dosah a rýchlosť súvisia s káblom, zapojením, rušením a transceiverom. <strong>Maximálny dosah a maximálna rýchlosť sa spravidla nedosahujú súčasne.</strong></p>
+<h3>Otázka</h3>
+<p>Znamená RS-485 automaticky Modbus?</p>
+<p><strong>Nie.</strong> Modbus RTU môže používať RS-485, ale po RS-485 možno prenášať aj iné protokoly.</p>
+<h2>6. Zápis</h2>
+<p><strong>41 – 45 min</strong></p>
+<blockquote><p>UART a elektrické rozhranie nie sú totožné pojmy.  </p><p>RS-232 používa napäťové úrovne nezlučiteľné s priamym pripojením na GPIO.  </p><p>RS-485 používa diferenciálny prenos a umožňuje viacbodové spojenie.  </p><p>Dvojvodičová RS-485 býva half-duplex.  </p><p>Zakončenie patrí na fyzické konce vhodne navrhnutého vedenia.  </p><p>Správne zapojenie zahŕňa aj polaritu, referenciu, riadenie smeru a ochrany.</p></blockquote><section class="sources"><h2>Zdroje na ďalšie štúdium</h2><ul><li><a href="https://docs.arduino.cc/language-reference/">Arduino Language Reference</a></li><li><a href="https://www.modbus.org/docs/Modbus_Application_Protocol_V1_1b3.pdf">Modbus Application Protocol Specification</a></li><li><a href="https://www.modbus.org/modbus-specifications">Modbus specifications</a></li><li><a href="https://www.raspberrypi.com/documentation/computers/raspberry-pi.html">Raspberry Pi documentation</a></li><li><a href="https://wokwi.com/projects/new/arduino-uno">Wokwi Arduino Uno</a> – online simulátor pre príklady na Arduino Uno.</li></ul></section><footer><p>Prednáška 6.5 · Výpočtová technika · Celok 06</p><p><a href="6.4 SPI.html">← Predchádzajúca téma</a> · <a href="index.html#celok-06">Osnova celku 06</a> · <a href="6.6 Modbus RTU.html">Nasledujúca téma →</a></p></footer></main><script src="../theme.js" defer></script><script>document.addEventListener('click',async event=>{const button=event.target.closest('[data-copy-code]');if(!button)return;const code=document.getElementById(button.dataset.copyCode);const status=document.getElementById('status-'+button.dataset.copyCode);try{await navigator.clipboard.writeText(code.innerText);status.textContent='Kód bol skopírovaný.'}catch{status.textContent='Kopírovanie sa nepodarilo. Označte kód a skopírujte ho ručne.'}})</script></body></html>

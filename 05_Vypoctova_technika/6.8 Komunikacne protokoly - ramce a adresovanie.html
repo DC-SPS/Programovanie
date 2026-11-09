@@ -1,0 +1,105 @@
+<!doctype html><html lang="sk"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#101827"><meta name="description" content="Komunikačné protokoly – rámce a adresovanie – tematický celok 06 Výpočtová technika."><title>6.8 Komunikačné protokoly – rámce a adresovanie | Výpočtová technika</title><style>:root{color-scheme:light;--bg:#f7f8fa;--surface:#fff;--text:#1c2330;--muted:#5b6678;--accent:#1f6feb;--border:#d9dee7;--note:#fff4d6}@media(prefers-color-scheme:dark){:root:not([data-theme]){color-scheme:dark;--bg:#12161d;--surface:#1b212b;--text:#e6eaf1;--muted:#9aa6b8;--accent:#5aa2ff;--border:#2d3644;--note:#3a3017}}:root[data-theme=dark]{color-scheme:dark;--bg:#12161d;--surface:#1b212b;--text:#e6eaf1;--muted:#9aa6b8;--accent:#5aa2ff;--border:#2d3644;--note:#3a3017}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:16px/1.65 system-ui,-apple-system,"Segoe UI",sans-serif}a{color:var(--accent)}nav,main{width:min(100% - 2rem,900px);margin:auto}nav{display:flex;gap:.55rem;flex-wrap:wrap;padding:.8rem 0}nav a,.button{display:inline-block;padding:.4rem .7rem;border:1px solid var(--border);border-radius:.55rem;text-decoration:none;color:inherit;background:var(--surface)}main{padding:1rem 0 3rem}a:focus-visible,button:focus-visible{outline:3px solid var(--accent);outline-offset:3px}h1{font-size:clamp(1.8rem,5vw,2.6rem);line-height:1.2}h2{margin-top:2rem}h3{margin-top:1.5rem}.muted{color:var(--muted)}.note{margin:1rem 0;padding:1rem;border:1px solid var(--border);border-radius:12px;background:var(--note)}.scroll{overflow:auto}table{width:100%;border-collapse:collapse}th,td{padding:.6rem .7rem;border:1px solid var(--border);text-align:left;vertical-align:top}th{background:var(--surface)}pre{margin:.65rem 0 1rem;padding:1rem;border-radius:9px;overflow:auto;background:#0f172a;color:#e2e8f0;font:14px/1.55 ui-monospace,SFMono-Regular,Consolas,monospace}.equation{overflow:auto;margin:1rem 0;padding:.8rem 1rem;text-align:center;border-left:4px solid var(--accent);background:var(--surface)}.equation code{white-space:pre-wrap}.code-actions{display:flex;gap:.5rem;flex-wrap:wrap}button{padding:.55rem .8rem;border:0;border-radius:8px;background:#4b91f1;color:#fff;font-weight:700;cursor:pointer}.sources,footer{margin-top:2rem;padding-top:1rem;border-top:1px solid var(--border)}blockquote{margin:1rem 0;padding:.3rem 1rem;border-left:4px solid var(--accent);background:var(--surface)}@media(max-width:600px){nav,main{width:calc(100% - 1.2rem)}}</style><script src="../lesson-top.js" defer></script></head><body><nav aria-label="Navigácia kurzov"><a href="index.html#celok-06">Výpočtová technika – osnova</a><a href="../index.html">Všetky kurzy</a><a href="../nastavenia.html">Nastavenia vzhľadu</a></nav><main><header><p class="muted"><a href="index.html#celok-06">Výpočtová technika</a> · Tematický celok 06 · Prednáška 6.8</p><h1>6.8 Komunikačné protokoly – rámce a adresovanie</h1><p class="muted">Komunikačné rozhrania a protokoly · 45 minút</p></header><div class="note"><strong>Bezpečnosť:</strong> GPIO, UART, RS-232 a RS-485 nie sú elektricky zameniteľné. Pri prepojení overte napäťové úrovne a použite vhodné prevodníky alebo transceivery. Päťvoltový signál nepripájajte priamo na 3,3 V vstup, ak doska nie je naň určená.</div><h2>Ciele hodiny</h2>
+<p>Žiak má vedieť:</p>
+<ul><li>vysvetliť účel rámcovania,</li><li>navrhnúť jednoduchú štruktúru správy,</li><li>rozlíšiť adresu, príkaz a dáta,</li><li>vysvetliť kontrolu chýb, timeout a potvrdenie,</li><li>rozpoznať problém neúplných a opakovaných správ.</li></ul>
+<h2>Časový plán</h2>
+<div class="scroll"><table><thead><tr><th>Čas</th><th>Obsah</th></tr></thead><tbody><tr><td>0 – 5 min</td><td>Bajty ešte nie sú dohodnutá správa</td></tr><tr><td>5 – 16 min</td><td>Štruktúra rámca</td></tr><tr><td>16 – 25 min</td><td>Adresovanie a reprezentácia údajov</td></tr><tr><td>25 – 34 min</td><td>Chyby, potvrdenia a timeout</td></tr><tr><td>34 – 41 min</td><td>Návrh vlastného protokolu</td></tr><tr><td>41 – 45 min</td><td>Overenie a zápis</td></tr></tbody></table></div>
+<h2>1. Prečo potrebujeme protokol?</h2>
+<p><strong>0 – 5 min</strong></p>
+<p>Prijímač dostane:</p>
+<pre class="diagram"><code>01 02 19</code></pre>
+<p>Bez dohody nevie:</p>
+<ul><li>kde správa začína a končí,</li><li>čo znamená <code>01</code>,</li><li>či <code>19</code> je číslo, znak alebo časť hodnoty,</li><li>či niektorý bajt nechýba.</li></ul>
+<p><strong>Protokol určuje štruktúru aj význam komunikácie.</strong></p>
+<p>UART prenáša znaky, ale bežne neoznačuje hranice aplikačných správ.</p>
+<h2>2. Štruktúra rámca</h2>
+<p><strong>5 – 16 min</strong></p>
+<p>Jedna možná štruktúra:</p>
+<pre class="diagram"><code>Začiatok | Adresa | Príkaz | Dĺžka | Dáta | Kontrola</code></pre>
+<div class="scroll"><table><thead><tr><th>Pole</th><th>Úloha</th></tr></thead><tbody><tr><td>Začiatok</td><td>Pomáha nájsť hranicu rámca</td></tr><tr><td>Adresa</td><td>Určuje cieľ alebo zdroj podľa dohody</td></tr><tr><td>Príkaz</td><td>Určuje požadovanú operáciu</td></tr><tr><td>Dĺžka</td><td>Určuje počet dátových bajtov</td></tr><tr><td>Dáta</td><td>Prenášané hodnoty</td></tr><tr><td>Kontrola</td><td>Pomáha odhaliť poškodenie</td></tr></tbody></table></div>
+<h3>Spôsoby rámcovania</h3>
+<ul><li>pevná dĺžka,</li><li>pole dĺžky,</li><li>oddeľovací znak,</li><li>časová medzera,</li><li>kombinácia viacerých spôsobov.</li></ul>
+<p>Ak sa oddeľovací znak môže objaviť v dátach, potrebujeme napríklad escaping alebo iné jednoznačné kódovanie.</p>
+<h3>Textový protokol</h3>
+<pre class="diagram"><code>LED,1\n
+TEMP,25.3\n</code></pre>
+<p>Výhody: čitateľnosť a jednoduché ladenie.</p>
+<h3>Binárny protokol</h3>
+<p>Výhody: menšia veľkosť a presne definované polia. Vyžaduje dôslednú dohodu o formáte.</p>
+<h2>3. Adresovanie a dátový formát</h2>
+<p><strong>16 – 25 min</strong></p>
+<p>Adresa môže identifikovať:</p>
+<ul><li>zariadenie,</li><li>službu,</li><li>register,</li><li>zdroj alebo cieľ správy.</li></ul>
+<p>Tieto významy nezamieňame.</p>
+<h3>Dohoda o hodnote</h3>
+<p>Pre teplotu treba určiť:</p>
+<ul><li>znamienkovosť,</li><li>jednotku,</li><li>mierku,</li><li>počet bajtov,</li><li>poradie bajtov.</li></ul>
+<p>Príklad:</p>
+<pre class="diagram"><code>Teplota 25,3 °C
+→ celé číslo 253
+→ 16-bitová hodnota 0x00FD
+→ pri vyššom bajte napred: 00 FD</code></pre>
+<p>Pre záporné teploty musíme určiť znamienkovú reprezentáciu.</p>
+<h3>Verzia protokolu</h3>
+<p>Pri rozširovaní systému môže pomôcť pole verzie. Prijímač potom vie odmietnuť alebo inak spracovať nepodporovaný formát.</p>
+<h2>4. Kontrola chýb a priebeh komunikácie</h2>
+<p><strong>25 – 34 min</strong></p>
+<h3>Kontrola integrity</h3>
+<p>Možnosti:</p>
+<ul><li>parita,</li><li>jednoduchý súčet,</li><li>XOR kontrola,</li><li>CRC.</li></ul>
+<p>Majú rozdielne schopnosti odhaliť poškodenie.</p>
+<p><strong>Kontrolný súčet ani CRC nie sú ochranou proti úmyselnej zmene správy.</strong> Na autentickosť a zabezpečenie slúžia iné mechanizmy.</p>
+<h3>Timeout</h3>
+<p>Prijímač nesmie navždy čakať na zvyšok neúplnej správy.</p>
+<p>Po uplynutí limitu môže:</p>
+<ul><li>zahodiť rozpracovaný rámec,</li><li>ohlásiť chybu,</li><li>začať hľadať nový rámec.</li></ul>
+<h3>Potvrdenie a opakovanie</h3>
+<p>Odosielateľ môže čakať na ACK a pri jeho neprijatí správu zopakovať.</p>
+<p>Vzniká problém:</p>
+<ol><li>Prijímač vykoná príkaz.</li><li>Potvrdenie sa stratí.</li><li>Odosielateľ zopakuje príkaz.</li><li>Prijímač ho môže vykonať druhýkrát.</li></ol>
+<p>Pomôcť môže sekvenčné číslo a rozpoznanie duplicít.</p>
+<h3>Vhodný návrh príkazov</h3>
+<p>Príkaz:</p>
+<pre class="diagram"><code>NASTAV LED NA ZAPNUTÉ</code></pre>
+<p>sa bezpečnejšie opakuje než:</p>
+<pre class="diagram"><code>PREPNI LED</code></pre>
+<p>Opakované prepnutie totiž môže obnoviť pôvodný stav.</p>
+<h2>5. Návrh vlastného protokolu</h2>
+<p><strong>34 – 41 min</strong></p>
+<p>Navrhnime jednoduchý školský rámec:</p>
+<pre class="diagram"><code>AA | ADR | CMD | LEN | DATA... | XOR</code></pre>
+<p>Pravidlá:</p>
+<ul><li><code>AA</code>: začiatočný bajt,</li><li><code>ADR</code>: cieľové zariadenie,</li><li><code>CMD</code>: príkaz,</li><li><code>LEN</code>: počet dátových bajtov, najviac 16,</li><li><code>XOR</code>: XOR polí od <code>ADR</code> po posledný dátový bajt.</li></ul>
+<p>Príkaz na nastavenie LED:</p>
+<pre class="diagram"><code>AA 01 10 01 01 11</code></pre>
+<p>Význam:</p>
+<ul><li>zariadenie 1,</li><li>príkaz <code>0x10</code>,</li><li>jeden dátový bajt,</li><li>hodnota 1 znamená zapnutie.</li></ul>
+<p>Kontrola:</p>
+<div class="equation" role="math"><code>01 \oplus 10 \oplus 01 \oplus 01 = 11</code></div>
+<p>Hodnoty sú zapísané hexadecimálne.</p>
+<h3>Úloha pre žiakov</h3>
+<p>Zostav rámec na vypnutie LED zariadenia 2.</p>
+<p><strong>Riešenie:</strong></p>
+<pre class="diagram"><code>AA 02 10 01 00 13</code></pre>
+<h3>Čo ešte musí riešiť prijímač?</h3>
+<ul><li>maximálnu dĺžku,</li><li>neznámy príkaz,</li><li>timeout,</li><li>chybnú kontrolu,</li><li>opätovné nájdenie začiatku po poškodenej správe.</li></ul>
+<p>Tento školský návrh nie je hotový priemyselný protokol. Jednobajtový XOR má slabé schopnosti detekcie chýb a samotné <code>AA</code> nezaručuje bezchybné opätovné zosúladenie po poškodení.</p>
+<h3>Prijímanie ako stavový automat</h3>
+<pre class="diagram"><code>Čakaj na začiatok
+        ↓
+Načítaj hlavičku
+        ↓
+Over dĺžku
+        ↓
+Načítaj dáta a kontrolu
+        ↓
+Over správu
+        ↓
+Vykonaj alebo odmietni</code></pre>
+<h2>6. Overenie a zápis</h2>
+<p><strong>41 – 45 min</strong></p>
+<ol><li>Je jeden bajt prijatý cez UART automaticky celá správa?   <strong>Nie.</strong></li></ol>
+<ol><li>Prečo potrebujeme maximálnu dĺžku?   <strong>Aby chybná správa neprekročila kapacitu prijímacieho bufferu.</strong></li></ol>
+<ol><li>Čo rieši sekvenčné číslo?   <strong>Pomáha párovať odpovede a rozpoznávať opakované správy.</strong></li></ol>
+<ol><li>Zaručuje CRC autentickosť odosielateľa?   <strong>Nie.</strong></li></ol>
+<blockquote><p>Protokol určuje štruktúru, význam a pravidlá výmeny správ.  </p><p>Rámcovanie umožňuje rozpoznať hranice správy.  </p><p>Adresovanie určuje účastníka alebo objekt podľa pravidiel protokolu.  </p><p>Dátový formát musí definovať jednotky, mierku, typ a poradie bajtov.  </p><p>Spoľahlivá komunikácia potrebuje kontrolu dĺžky, integrity a časové limity.  </p><p>Pri opakovaní príkazov treba počítať s duplicitami.</p></blockquote>
+<p>Celok <strong>6 – Komunikačné rozhrania a protokoly</strong> je pripravený ako <strong>osem 45-minútových hodín</strong> s výkladom, príkladmi, úlohami a zápisom do zošita.</p><section class="sources"><h2>Zdroje na ďalšie štúdium</h2><ul><li><a href="https://docs.arduino.cc/language-reference/">Arduino Language Reference</a></li><li><a href="https://www.modbus.org/docs/Modbus_Application_Protocol_V1_1b3.pdf">Modbus Application Protocol Specification</a></li><li><a href="https://www.modbus.org/modbus-specifications">Modbus specifications</a></li><li><a href="https://www.raspberrypi.com/documentation/computers/raspberry-pi.html">Raspberry Pi documentation</a></li><li><a href="https://wokwi.com/projects/new/arduino-uno">Wokwi Arduino Uno</a> – online simulátor pre príklady na Arduino Uno.</li></ul></section><footer><p>Prednáška 6.8 · Výpočtová technika · Celok 06</p><p><a href="6.7 USB a dalsie rozhrania.html">← Predchádzajúca téma</a> · <a href="index.html#celok-06">Osnova celku 06</a></p></footer></main><script src="../theme.js" defer></script><script>document.addEventListener('click',async event=>{const button=event.target.closest('[data-copy-code]');if(!button)return;const code=document.getElementById(button.dataset.copyCode);const status=document.getElementById('status-'+button.dataset.copyCode);try{await navigator.clipboard.writeText(code.innerText);status.textContent='Kód bol skopírovaný.'}catch{status.textContent='Kopírovanie sa nepodarilo. Označte kód a skopírujte ho ručne.'}})</script></body></html>

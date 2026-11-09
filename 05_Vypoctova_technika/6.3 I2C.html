@@ -1,0 +1,95 @@
+<!doctype html><html lang="sk"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#101827"><meta name="description" content="I²C – tematický celok 06 Výpočtová technika."><title>6.3 I²C | Výpočtová technika</title><style>:root{color-scheme:light;--bg:#f7f8fa;--surface:#fff;--text:#1c2330;--muted:#5b6678;--accent:#1f6feb;--border:#d9dee7;--note:#fff4d6}@media(prefers-color-scheme:dark){:root:not([data-theme]){color-scheme:dark;--bg:#12161d;--surface:#1b212b;--text:#e6eaf1;--muted:#9aa6b8;--accent:#5aa2ff;--border:#2d3644;--note:#3a3017}}:root[data-theme=dark]{color-scheme:dark;--bg:#12161d;--surface:#1b212b;--text:#e6eaf1;--muted:#9aa6b8;--accent:#5aa2ff;--border:#2d3644;--note:#3a3017}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:16px/1.65 system-ui,-apple-system,"Segoe UI",sans-serif}a{color:var(--accent)}nav,main{width:min(100% - 2rem,900px);margin:auto}nav{display:flex;gap:.55rem;flex-wrap:wrap;padding:.8rem 0}nav a,.button{display:inline-block;padding:.4rem .7rem;border:1px solid var(--border);border-radius:.55rem;text-decoration:none;color:inherit;background:var(--surface)}main{padding:1rem 0 3rem}a:focus-visible,button:focus-visible{outline:3px solid var(--accent);outline-offset:3px}h1{font-size:clamp(1.8rem,5vw,2.6rem);line-height:1.2}h2{margin-top:2rem}h3{margin-top:1.5rem}.muted{color:var(--muted)}.note{margin:1rem 0;padding:1rem;border:1px solid var(--border);border-radius:12px;background:var(--note)}.scroll{overflow:auto}table{width:100%;border-collapse:collapse}th,td{padding:.6rem .7rem;border:1px solid var(--border);text-align:left;vertical-align:top}th{background:var(--surface)}pre{margin:.65rem 0 1rem;padding:1rem;border-radius:9px;overflow:auto;background:#0f172a;color:#e2e8f0;font:14px/1.55 ui-monospace,SFMono-Regular,Consolas,monospace}.equation{overflow:auto;margin:1rem 0;padding:.8rem 1rem;text-align:center;border-left:4px solid var(--accent);background:var(--surface)}.equation code{white-space:pre-wrap}.code-actions{display:flex;gap:.5rem;flex-wrap:wrap}button{padding:.55rem .8rem;border:0;border-radius:8px;background:#4b91f1;color:#fff;font-weight:700;cursor:pointer}.sources,footer{margin-top:2rem;padding-top:1rem;border-top:1px solid var(--border)}blockquote{margin:1rem 0;padding:.3rem 1rem;border-left:4px solid var(--accent);background:var(--surface)}@media(max-width:600px){nav,main{width:calc(100% - 1.2rem)}}</style><script src="../lesson-top.js" defer></script></head><body><nav aria-label="Navigácia kurzov"><a href="index.html#celok-06">Výpočtová technika – osnova</a><a href="../index.html">Všetky kurzy</a><a href="../nastavenia.html">Nastavenia vzhľadu</a></nav><main><header><p class="muted"><a href="index.html#celok-06">Výpočtová technika</a> · Tematický celok 06 · Prednáška 6.3</p><h1>6.3 I²C</h1><p class="muted">Komunikačné rozhrania a protokoly · 45 minút</p></header><div class="note"><strong>Bezpečnosť:</strong> GPIO, UART, RS-232 a RS-485 nie sú elektricky zameniteľné. Pri prepojení overte napäťové úrovne a použite vhodné prevodníky alebo transceivery. Päťvoltový signál nepripájajte priamo na 3,3 V vstup, ak doska nie je naň určená.</div><h2>Ciele hodiny</h2>
+<p>Žiak má vedieť:</p>
+<ul><li>vysvetliť úlohu SDA a SCL,</li><li>vysvetliť potrebu pull-up rezistorov,</li><li>opísať adresovanie a potvrdenie ACK,</li><li>pripojiť jednoduché I²C zariadenie,</li><li>rozpoznať obmedzenia zbernice.</li></ul>
+<h2>Časový plán</h2>
+<div class="scroll"><table><thead><tr><th>Čas</th><th>Obsah</th></tr></thead><tbody><tr><td>0 – 5 min</td><td>Viac zariadení na dvoch signáloch</td></tr><tr><td>5 – 15 min</td><td>Elektrický princíp</td></tr><tr><td>15 – 25 min</td><td>Priebeh komunikácie</td></tr><tr><td>25 – 35 min</td><td>Arduino: vyhľadanie zariadení</td></tr><tr><td>35 – 40 min</td><td>Platformy a chyby</td></tr><tr><td>40 – 45 min</td><td>Úlohy a zápis</td></tr></tbody></table></div>
+<h2>1. Čo je I²C?</h2>
+<p><strong>0 – 5 min</strong></p>
+<p><strong>I²C – Inter-Integrated Circuit – je synchrónna sériová zbernica.</strong></p>
+<p>Používa sa najmä na komunikáciu medzi obvodmi na doske alebo na krátkych prepojeniach.</p>
+<p>Príklady:</p>
+<ul><li>teplotné snímače,</li><li>hodiny reálneho času,</li><li>malé displeje,</li><li>EEPROM.</li></ul>
+<h2>2. Signály a pull-up rezistory</h2>
+<p><strong>5 – 15 min</strong></p>
+<div class="scroll"><table><thead><tr><th>Signál</th><th>Význam</th></tr></thead><tbody><tr><td>SDA</td><td>Dáta</td></tr><tr><td>SCL</td><td>Hodiny</td></tr></tbody></table></div>
+<p>Pri bežnom zapojení potrebujeme aj GND.</p>
+<p>SDA a SCL používajú výstupy typu open-drain:</p>
+<ul><li>zariadenie môže vodič stiahnuť na <code>LOW</code>,</li><li>vysokú úroveň vytvára pull-up rezistor.</li></ul>
+<pre class="diagram"><code>Napájanie logiky
+   │          │
+ pull-up    pull-up
+   │          │
+  SDA        SCL
+   │          │
+ ┌─┴──────────┴─┐
+ │ zariadenia   │
+ └──────────────┘</code></pre>
+<p>Hodnota pull-up rezistorov závisí od napätia, rýchlosti, kapacity zbernice a schopností zariadení.</p>
+<p><strong>Viac modulov môže mať vlastné pull-up rezistory. Ich paralelné spojenie zmenší výsledný odpor.</strong></p>
+<p>Pri 3,3 V zariadeniach overíme, či modul neťahá vodiče na 5 V.</p>
+<h2>3. Priebeh komunikácie</h2>
+<p><strong>15 – 25 min</strong></p>
+<p>Zariadenie riadiace transakciu označíme ako <strong>controller</strong>, oslovené zariadenie ako <strong>target</strong>.</p>
+<p>Typická transakcia:</p>
+<pre class="diagram"><code>START → adresa + R/W → ACK → dáta → ACK → STOP</code></pre>
+<ul><li><strong>START:</strong> začiatok transakcie,</li><li><strong>adresa:</strong> výber zariadenia,</li><li><strong>R/W:</strong> smer prenosu,</li><li><strong>ACK:</strong> potvrdenie,</li><li><strong>NACK:</strong> nepotvrdenie alebo ukončenie príjmu podľa situácie,</li><li><strong>STOP:</strong> ukončenie transakcie.</li></ul>
+<p>Pri bežnom prenose je každý bajt nasledovaný deviatym hodinovým impulzom na ACK/NACK.</p>
+<h3>Adresovanie</h3>
+<p>Najčastejšie sa používajú 7-bitové adresy. Niektoré adresy sú rezervované.</p>
+<p>Arduino <code>Wire</code> bežne očakáva <strong>7-bitovú adresu</strong>, napríklad <code>0x48</code>. Niektoré datasheety uvádzajú osembitový adresný bajt už s bitom R/W; tieto zápisy treba rozlíšiť.</p>
+<h3>Rýchlosti</h3>
+<p>Bežné režimy:</p>
+<ul><li>Standard-mode: do 100 kbit/s,</li><li>Fast-mode: do 400 kbit/s.</li></ul>
+<p>Rýchlejšie režimy vyžadujú podporu a vhodné zapojenie.</p>
+<h2>4. Arduino: I²C scanner</h2>
+<p><strong>25 – 35 min</strong></p>
+<p>Na Uno R3:</p>
+<ul><li>SDA = A4,</li><li>SCL = A5.</li></ul>
+<p>Program zisťuje, ktoré zariadenia potvrdia adresovanie:</p>
+<div class="code-actions"><button type="button" data-copy-code="lesson-3-code-1">Kopírovať kód</button><a class="button" href="https://wokwi.com/projects/new/arduino-uno" target="_blank" rel="noopener noreferrer">Otvoriť Wokwi Arduino Uno</a></div><p id="status-lesson-3-code-1" class="muted" aria-live="polite"></p>
+<pre><code id="lesson-3-code-1">#include &lt;Wire.h&gt;
+
+void setup() {
+  Serial.begin(9600);
+  Wire.begin();
+
+  Serial.println(&quot;Hladam I2C zariadenia...&quot;);
+
+  for (uint8_t adresa = 0x08; adresa &lt;= 0x77; adresa++) {
+    Wire.beginTransmission(adresa);
+    uint8_t chyba = Wire.endTransmission();
+
+    if (chyba == 0) {
+      Serial.print(&quot;Najdene: 0x&quot;);
+
+      if (adresa &lt; 16) {
+        Serial.print('0');
+      }
+
+      Serial.println(adresa, HEX);
+    }
+  }
+
+  Serial.println(&quot;Koniec hladania.&quot;);
+}
+
+void loop() {
+}</code></pre>
+<p>Scanner neidentifikuje spoľahlivo typ súčiastky. Zistí iba odpoveď na adrese.</p>
+<p>Nie každé zariadenie sa musí správať podľa očakávania jednoduchého scannera.</p>
+<h2>5. Platformy a časté problémy</h2>
+<p><strong>35 – 40 min</strong></p>
+<h3>ESP32</h3>
+<p>I²C piny môžu byť podľa variantu a frameworku nastaviteľné. Na mnohých klasických vývojových doskách sa používa SDA21 a SCL22, nejde však o univerzálne pravidlo.</p>
+<h3>Raspberry Pi</h3>
+<p>Na bežnom 40-pinovom konektore:</p>
+<ul><li>GPIO2/SDA: fyzický pin 3,</li><li>GPIO3/SCL: fyzický pin 5.</li></ul>
+<p>Používame 3,3 V logiku a overíme konfiguráciu systému.</p>
+<h3>Najčastejšie chyby</h3>
+<ul><li>chýbajúce alebo nevhodné pull-up rezistory,</li><li>nesprávne napätie,</li><li>dve zariadenia s rovnakou adresou,</li><li>príliš dlhé vodiče,</li><li>zamenené SDA a SCL.</li></ul>
+<h2>6. Úlohy a zápis</h2>
+<p><strong>40 – 45 min</strong></p>
+<ol><li>Čo vytvára vysokú úroveň na SDA?   <strong>Pull-up rezistor.</strong></li></ol>
+<ol><li>Môžu dve zariadenia s rovnakou pevnou adresou bežne zdieľať tú istú vetvu?   <strong>Nie bez ďalšieho riešenia, napríklad multiplexora.</strong></li></ol>
+<ol><li>Znamená ACK správnosť celého merania?   <strong>Nie, ide o potvrdenie na úrovni prenosu.</strong></li></ol>
+<blockquote><p>I²C používa SDA a SCL.  </p><p>Zariadenia zdieľajú zbernicu a rozlišujú sa adresou.  </p><p>Open-drain vodiče potrebujú pull-up rezistory.  </p><p>Prenos obsahuje START, adresovanie, dáta, ACK/NACK a STOP.  </p><p>Napätie, kapacita zbernice a pull-up rezistory ovplyvňujú spoľahlivosť.</p></blockquote><section class="sources"><h2>Zdroje na ďalšie štúdium</h2><ul><li><a href="https://docs.arduino.cc/language-reference/">Arduino Language Reference</a></li><li><a href="https://www.modbus.org/docs/Modbus_Application_Protocol_V1_1b3.pdf">Modbus Application Protocol Specification</a></li><li><a href="https://www.modbus.org/modbus-specifications">Modbus specifications</a></li><li><a href="https://www.raspberrypi.com/documentation/computers/raspberry-pi.html">Raspberry Pi documentation</a></li><li><a href="https://wokwi.com/projects/new/arduino-uno">Wokwi Arduino Uno</a> – online simulátor pre príklady na Arduino Uno.</li></ul></section><footer><p>Prednáška 6.3 · Výpočtová technika · Celok 06</p><p><a href="6.2 UART.html">← Predchádzajúca téma</a> · <a href="index.html#celok-06">Osnova celku 06</a> · <a href="6.4 SPI.html">Nasledujúca téma →</a></p></footer></main><script src="../theme.js" defer></script><script>document.addEventListener('click',async event=>{const button=event.target.closest('[data-copy-code]');if(!button)return;const code=document.getElementById(button.dataset.copyCode);const status=document.getElementById('status-'+button.dataset.copyCode);try{await navigator.clipboard.writeText(code.innerText);status.textContent='Kód bol skopírovaný.'}catch{status.textContent='Kopírovanie sa nepodarilo. Označte kód a skopírujte ho ručne.'}})</script></body></html>
