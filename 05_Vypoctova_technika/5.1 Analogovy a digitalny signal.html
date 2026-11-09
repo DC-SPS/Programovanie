@@ -1,0 +1,87 @@
+<!doctype html><html lang="sk"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#101827"><meta name="description" content="Analógový a digitálny signál – tematický celok 05 Výpočtová technika."><title>5.1 Analógový a digitálny signál | Výpočtová technika</title><style>
+:root{color-scheme:light;--bg:#f7f8fa;--surface:#fff;--text:#1c2330;--muted:#5b6678;--accent:#1f6feb;--border:#d9dee7;--note:#fff4d6} @media(prefers-color-scheme:dark){:root:not([data-theme]){color-scheme:dark;--bg:#12161d;--surface:#1b212b;--text:#e6eaf1;--muted:#9aa6b8;--accent:#5aa2ff;--border:#2d3644;--note:#3a3017}}:root[data-theme=dark]{color-scheme:dark;--bg:#12161d;--surface:#1b212b;--text:#e6eaf1;--muted:#9aa6b8;--accent:#5aa2ff;--border:#2d3644;--note:#3a3017}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:16px/1.65 system-ui,-apple-system,"Segoe UI",sans-serif}a{color:var(--accent)}nav,main{width:min(100% - 2rem,900px);margin:auto}nav{display:flex;gap:.55rem;flex-wrap:wrap;padding:.8rem 0}nav a,.button{display:inline-block;padding:.4rem .7rem;border:1px solid var(--border);border-radius:.55rem;text-decoration:none;color:inherit;background:var(--surface)}main{padding:1rem 0 3rem}a:focus-visible,button:focus-visible{outline:3px solid var(--accent);outline-offset:3px}h1{font-size:clamp(1.8rem,5vw,2.6rem);line-height:1.2}h2{margin-top:2rem}h3{margin-top:1.5rem}.muted{color:var(--muted)}.note{margin:1rem 0;padding:1rem;border:1px solid var(--border);border-radius:12px;background:var(--note)}.scroll{overflow:auto}table{width:100%;border-collapse:collapse}th,td{padding:.6rem .7rem;border:1px solid var(--border);text-align:left;vertical-align:top}th{background:var(--surface)}pre{margin:.65rem 0 1rem;padding:1rem;border-radius:9px;overflow:auto;background:#0f172a;color:#e2e8f0;font:14px/1.55 ui-monospace,SFMono-Regular,Consolas,monospace}.equation{overflow:auto;margin:1rem 0;padding:.8rem 1rem;text-align:center;border-left:4px solid var(--accent);background:var(--surface)}.equation code{white-space:pre-wrap}.code-actions{display:flex;gap:.5rem;flex-wrap:wrap}button{padding:.55rem .8rem;border:0;border-radius:8px;background:#4b91f1;color:#fff;font-weight:700;cursor:pointer}.sources,footer{margin-top:2rem;padding-top:1rem;border-top:1px solid var(--border)}blockquote{margin:1rem 0;padding:.3rem 1rem;border-left:4px solid var(--accent);background:var(--surface)}@media(max-width:600px){nav,main{width:calc(100% - 1.2rem)}}
+</style><script src="../lesson-top.js" defer></script></head><body><nav aria-label="Navigácia kurzov"><a href="index.html#celok-05">Výpočtová technika – osnova</a><a href="../index.html">Všetky kurzy</a><a href="../nastavenia.html">Nastavenia vzhľadu</a></nav><main><header><p class="muted"><a href="index.html#celok-05">Výpočtová technika</a> · Tematický celok 05 · Prednáška 5.1</p><h1>5.1 Analógový a digitálny signál</h1><p class="muted">Analógové a výkonové periférie · 45 minút</p></header><div class="note"><strong>Bezpečnosť:</strong> Pri praktických ukážkach používajte iba nízke napätia. Motory, výkonové LED ani iné výkonové záťaže nepripájajte priamo na GPIO; použite vhodný výkonový ovládač. Každá prednáška je určená na 45 minút pre 3. ročník strednej školy.</div><p><strong>Trvanie:</strong> 45 minút<br><strong>Pomôcky:</strong> tabuľa, potenciometer, Arduino Uno; voliteľne osciloskop.</p>
+<h2>Ciele hodiny</h2>
+<p>Žiak má vedieť:</p>
+<ul><li>vysvetliť pojem signál,</li><li>rozlíšiť analógovú a digitálnu reprezentáciu,</li><li>rozlíšiť spojitosť v čase a v hodnote,</li><li>uviesť príklady analógových a digitálnych snímačov,</li><li>vysvetliť potrebu prevodu medzi fyzikálnou veličinou a číslom.</li></ul>
+<h2>Časový plán</h2>
+<div class="scroll"><table><thead><tr><th>Čas</th><th>Obsah</th></tr></thead><tbody><tr><td>0 – 5 min</td><td>Signály okolo nás</td></tr><tr><td>5 – 14 min</td><td>Analógový signál</td></tr><tr><td>14 – 23 min</td><td>Digitálny signál</td></tr><tr><td>23 – 30 min</td><td>Prechod medzi analógovým a digitálnym svetom</td></tr><tr><td>30 – 39 min</td><td>Praktická ukážka</td></tr><tr><td>39 – 45 min</td><td>Úlohy, overenie a zápis</td></tr></tbody></table></div>
+<h2>1. Čo je signál?</h2>
+<p><strong>0 – 5 min</strong></p>
+<p><strong>Signál je fyzikálna veličina, ktorej priebeh nesie informáciu.</strong></p>
+<p>V elektronike môže ísť napríklad o napätie meniace sa podľa:</p>
+<ul><li>teploty,</li><li>intenzity svetla,</li><li>zvuku,</li><li>polohy ovládacieho prvku.</li></ul>
+<p>Príklad: snímač vytvára napätie závislé od teploty. Napätie je signál, ktorý nesie informáciu o teplote.</p>
+<p><strong>Otázka:</strong> Je teplota v miestnosti sama osebe digitálne číslo?</p>
+<p><em>Odpoveď: Nie. Číselný údaj na displeji je jej nameraná a spracovaná reprezentácia.</em></p>
+<h2>2. Analógový signál</h2>
+<p><strong>5 – 14 min</strong></p>
+<p>Pri analógovej reprezentácii sa informácia vyjadruje hodnotou signálu, ktorá sa môže v určitom rozsahu plynulo meniť.</p>
+<p>Príklady:</p>
+<ul><li>napätie z potenciometra,</li><li>zvukový signál z mikrofónneho predzosilňovača,</li><li>výstup analógového teplotného snímača.</li></ul>
+<h3>Základné vlastnosti</h3>
+<ul><li><strong>Amplitúda:</strong> veľkosť signálu vzhľadom na zvolenú referenciu.</li><li><strong>Perióda <code class="math-inline">T</code>:</strong> čas jedného opakovania periodického priebehu.</li><li><strong>Frekvencia <code class="math-inline">f</code>:</strong> počet opakovaní za sekundu.</li></ul>
+<div class="equation" role="math"><code>f = \frac{1}{T}</code></div>
+<p>Ak sa priebeh opakuje každých 20 ms:</p>
+<div class="equation" role="math"><code>f = \frac{1}{0{,}020} = 50\ \text{Hz}</code></div>
+<p>Nie každý analógový signál je periodický. Teplota miestnosti sa nemusí pravidelne opakovať.</p>
+<h2>3. Digitálny signál</h2>
+<p><strong>14 – 23 min</strong></p>
+<p>Pri digitálnej reprezentácii sa informácia vyjadruje diskrétnymi symbolmi. V bežnej digitálnej elektronike používame dva logické stavy:</p>
+<ul><li><code>LOW</code>,</li><li><code>HIGH</code>.</li></ul>
+<p>Príklady:</p>
+<ul><li>stav tlačidla,</li><li>impulzy zo snímača otáčok,</li><li>sériová komunikácia UART,</li><li>riadiaci signál PWM.</li></ul>
+<p><strong>Digitálny elektrický signál je stále fyzikálne napätie.</strong> Jeho prechody nie sú dokonale okamžité a môže obsahovať rušenie.</p>
+<p>Prijímač vyhodnocuje napäťové rozsahy ako logickú nulu alebo jednotku.</p>
+<h3>Dve odlišné vlastnosti</h3>
+<div class="scroll"><table><thead><tr><th>Vlastnosť</th><th>Otázka</th></tr></thead><tbody><tr><td>Spojitosť v čase</td><td>Existuje signál priebežne alebo iba ako vzorky?</td></tr><tr><td>Spojitosť v hodnote</td><td>Môže hodnota plynulo nadobúdať hodnoty alebo vyberáme z konečnej množiny?</td></tr></tbody></table></div>
+<p>Vzorkovanie vytvára hodnoty v diskrétnych okamihoch. Kvantovanie obmedzuje počet reprezentovateľných hodnôt. Podrobnejšie ich preberieme v téme 5.3.</p>
+<h2>4. Prevod medzi svetmi</h2>
+<p><strong>23 – 30 min</strong></p>
+<p>Typický merací reťazec:</p>
+<pre class="diagram"><code>Fyzikálna veličina
+        ↓
+Snímač
+        ↓
+Analógový elektrický signál
+        ↓
+ADC
+        ↓
+Číslo v programe</code></pre>
+<p>Opačný smer:</p>
+<pre class="diagram"><code>Číslo v programe
+        ↓
+DAC
+        ↓
+Analógové napätie alebo prúd</code></pre>
+<p>PWM vytvára impulzný signál s nastaviteľnou striedou. <strong>Samotný PWM výstup nie je plynulé analógové napätie.</strong></p>
+<h2>5. Praktická ukážka: potenciometer</h2>
+<p><strong>30 – 39 min</strong></p>
+<h3>Zapojenie pre Arduino Uno R3</h3>
+<p>Potenciometer približne 10 kΩ:</p>
+<ul><li>jeden krajný vývod na 5 V,</li><li>druhý krajný vývod na GND,</li><li>stredný vývod na A0.</li></ul>
+<div class="code-actions"><button type="button" data-copy-code="lesson-1-code-1">Kopírovať kód</button><a class="button" href="https://wokwi.com/projects/new/arduino-uno" target="_blank" rel="noopener noreferrer">Otvoriť Wokwi Arduino Uno</a></div><p id="status-lesson-1-code-1" class="muted" aria-live="polite"></p>
+<pre><code id="lesson-1-code-1">void setup() {
+  Serial.begin(9600);
+}
+
+void loop() {
+  int hodnota = analogRead(A0);
+
+  Serial.println(hodnota);
+  delay(100);
+}</code></pre>
+<p>Otáčaním potenciometra meníme analógové napätie. Program vypisuje výsledok jeho digitálneho prevodu.</p>
+<p>Na Uno je bežný rozsah výsledkov <strong>0 až 1023</strong>.</p>
+<p><strong>Demonštrácia:</strong> Porovnaj pomalé otáčanie potenciometra s tlačidlom, ktoré poskytuje iba dva zamýšľané stavy.</p>
+<h2>6. Úlohy a zápis</h2>
+<p><strong>39 – 45 min</strong></p>
+<ol><li>Je napätie na jazdci potenciometra analógový signál?  </li></ol>
+<p><strong>Áno.</strong></p>
+<ol><li>Je UART analógová reprezentácia údajov?  </li></ol>
+<p><strong>Nie, ide o digitálnu komunikáciu.</strong></p>
+<ol><li>Aká je frekvencia pri perióde 1 ms?  </li></ol>
+<p><strong>1 kHz.</strong></p>
+<ol><li>Je každý analógový signál sínusový?  </li></ol>
+<p><strong>Nie.</strong></p>
+<blockquote><p>Signál je fyzikálny priebeh nesúci informáciu.  </p><p>Analógová reprezentácia využíva plynulo sa meniacu hodnotu.  </p><p>Digitálna reprezentácia používa diskrétne symboly.  </p><p>ADC prevádza analógovú hodnotu na číslo, DAC vykonáva opačný prevod.  </p><p>Frekvencia periodického signálu je <code class="math-inline">f = 1/T</code>.</p></blockquote><section class="sources"><h2>Zdroje na ďalšie štúdium</h2><ul><li><a href="https://docs.arduino.cc/language-reference/">Arduino Language Reference</a> – analógové I/O a jazykové API.</li><li><a href="https://docs.espressif.com/projects/arduino-esp32/en/latest/api/ledc.html">Espressif Arduino-ESP32 LEDC</a> – PWM na ESP32.</li><li><a href="https://www.raspberrypi.com/documentation/pico-sdk/hardware.html">Raspberry Pi Pico SDK</a> – periférie ADC/PWM pre Pico.</li><li><a href="https://www.raspberrypi.com/documentation/computers/raspberry-pi.html">Raspberry Pi GPIO</a> – elektrické limity GPIO.</li></ul></section><footer><p>Prednáška 5.1 · Výpočtová technika · Celok 05</p><p><a href="index.html#celok-05">← Predchádzajúca téma</a> · <a href="index.html#celok-05">Osnova celku 05</a> · <a href="5.2 ADC - princip cinnosti.html">Nasledujúca téma →</a></p></footer></main><script src="../theme.js" defer></script><script>document.addEventListener('click',async event=>{const button=event.target.closest('[data-copy-code]');if(!button)return;const code=document.getElementById(button.dataset.copyCode);const status=document.getElementById('status-'+button.dataset.copyCode);try{await navigator.clipboard.writeText(code.innerText);status.textContent='Kód bol skopírovaný.'}catch{status.textContent='Kopírovanie sa nepodarilo. Označte kód a skopírujte ho ručne.'}})</script></body></html>

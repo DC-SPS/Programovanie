@@ -1,0 +1,87 @@
+<!doctype html><html lang="sk"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#101827"><meta name="description" content="DAC – princíp a použitie – tematický celok 05 Výpočtová technika."><title>5.4 DAC – princíp a použitie | Výpočtová technika</title><style>
+:root{color-scheme:light;--bg:#f7f8fa;--surface:#fff;--text:#1c2330;--muted:#5b6678;--accent:#1f6feb;--border:#d9dee7;--note:#fff4d6} @media(prefers-color-scheme:dark){:root:not([data-theme]){color-scheme:dark;--bg:#12161d;--surface:#1b212b;--text:#e6eaf1;--muted:#9aa6b8;--accent:#5aa2ff;--border:#2d3644;--note:#3a3017}}:root[data-theme=dark]{color-scheme:dark;--bg:#12161d;--surface:#1b212b;--text:#e6eaf1;--muted:#9aa6b8;--accent:#5aa2ff;--border:#2d3644;--note:#3a3017}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:16px/1.65 system-ui,-apple-system,"Segoe UI",sans-serif}a{color:var(--accent)}nav,main{width:min(100% - 2rem,900px);margin:auto}nav{display:flex;gap:.55rem;flex-wrap:wrap;padding:.8rem 0}nav a,.button{display:inline-block;padding:.4rem .7rem;border:1px solid var(--border);border-radius:.55rem;text-decoration:none;color:inherit;background:var(--surface)}main{padding:1rem 0 3rem}a:focus-visible,button:focus-visible{outline:3px solid var(--accent);outline-offset:3px}h1{font-size:clamp(1.8rem,5vw,2.6rem);line-height:1.2}h2{margin-top:2rem}h3{margin-top:1.5rem}.muted{color:var(--muted)}.note{margin:1rem 0;padding:1rem;border:1px solid var(--border);border-radius:12px;background:var(--note)}.scroll{overflow:auto}table{width:100%;border-collapse:collapse}th,td{padding:.6rem .7rem;border:1px solid var(--border);text-align:left;vertical-align:top}th{background:var(--surface)}pre{margin:.65rem 0 1rem;padding:1rem;border-radius:9px;overflow:auto;background:#0f172a;color:#e2e8f0;font:14px/1.55 ui-monospace,SFMono-Regular,Consolas,monospace}.equation{overflow:auto;margin:1rem 0;padding:.8rem 1rem;text-align:center;border-left:4px solid var(--accent);background:var(--surface)}.equation code{white-space:pre-wrap}.code-actions{display:flex;gap:.5rem;flex-wrap:wrap}button{padding:.55rem .8rem;border:0;border-radius:8px;background:#4b91f1;color:#fff;font-weight:700;cursor:pointer}.sources,footer{margin-top:2rem;padding-top:1rem;border-top:1px solid var(--border)}blockquote{margin:1rem 0;padding:.3rem 1rem;border-left:4px solid var(--accent);background:var(--surface)}@media(max-width:600px){nav,main{width:calc(100% - 1.2rem)}}
+</style><script src="../lesson-top.js" defer></script></head><body><nav aria-label="Navigácia kurzov"><a href="index.html#celok-05">Výpočtová technika – osnova</a><a href="../index.html">Všetky kurzy</a><a href="../nastavenia.html">Nastavenia vzhľadu</a></nav><main><header><p class="muted"><a href="index.html#celok-05">Výpočtová technika</a> · Tematický celok 05 · Prednáška 5.4</p><h1>5.4 DAC – princíp a použitie</h1><p class="muted">Analógové a výkonové periférie · 45 minút</p></header><div class="note"><strong>Bezpečnosť:</strong> Pri praktických ukážkach používajte iba nízke napätia. Motory, výkonové LED ani iné výkonové záťaže nepripájajte priamo na GPIO; použite vhodný výkonový ovládač. Každá prednáška je určená na 45 minút pre 3. ročník strednej školy.</div><p><strong>Trvanie:</strong> 45 minút<br><strong>Nadväznosť:</strong> ADC, kvantovanie.</p>
+<h2>Ciele hodiny</h2>
+<p>Žiak má vedieť:</p>
+<ul><li>vysvetliť funkciu DAC,</li><li>vypočítať ideálnu výstupnú úroveň,</li><li>rozlíšiť DAC a PWM,</li><li>uviesť použitie externého DAC,</li><li>vysvetliť obmedzenú zaťažiteľnosť výstupu.</li></ul>
+<h2>Časový plán</h2>
+<div class="scroll"><table><thead><tr><th>Čas</th><th>Obsah</th></tr></thead><tbody><tr><td>0 – 5 min</td><td>Opačný smer prevodu</td></tr><tr><td>5 – 15 min</td><td>Princíp DAC</td></tr><tr><td>15 – 23 min</td><td>Výpočty a parametre</td></tr><tr><td>23 – 33 min</td><td>Dostupnosť na platformách</td></tr><tr><td>33 – 40 min</td><td>Použitie a návrh systému</td></tr><tr><td>40 – 45 min</td><td>Overenie a zápis</td></tr></tbody></table></div>
+<h2>1. Čo je DAC?</h2>
+<p><strong>0 – 5 min</strong></p>
+<p><strong>DAC – Digital-to-Analog Converter – prevádza digitálny kód na analógový výstup.</strong></p>
+<p>Výstupom môže byť napätie alebo prúd.</p>
+<pre class="diagram"><code>Číslo → DAC → analógový výstup</code></pre>
+<p>Použitie:</p>
+<ul><li>zvuk,</li><li>generovanie priebehov,</li><li>nastavovanie riadiaceho napätia,</li><li>laboratórne prístroje.</li></ul>
+<h2>2. Princíp</h2>
+<p><strong>5 – 15 min</strong></p>
+<p>DAC vytvára jednu z konečného počtu výstupných úrovní.</p>
+<p>Jednou z možných realizácií je odporová sieť <strong>R–2R</strong>. Kombinácia digitálnych bitov určuje výsledné napätie.</p>
+<p>Na základné pochopenie:</p>
+<ul><li>vyššie bity majú väčšiu váhu,</li><li>nižšie bity jemnejšie menia výstup.</li></ul>
+<p>Pri postupnej zmene kódu vzniká schodovitý priebeh. Pri generovaní signálu sa môže použiť výstupný rekonštrukčný filter.</p>
+<h2>3. Výpočty a parametre</h2>
+<p><strong>15 – 23 min</strong></p>
+<p>Pre jednoduchý ideálny unipolárny DAC:</p>
+<div class="equation" role="math"><code>U_\text{out} = V_\text{ref}\frac{k}{2^n}</code></div>
+<p>Konkrétny DAC môže mať ďalšie zosilnenie alebo inú charakteristiku; rozhoduje dokumentácia.</p>
+<h3>Príklad: 8 bitov, referencia 3,3 V</h3>
+<div class="equation" role="math"><code>\Delta U = \frac{3{,}3}{256} \approx 12{,}89\ \text{mV}</code></div>
+<p>Pre kód 128:</p>
+<div class="equation" role="math"><code>U_\text{out} = 3{,}3 \cdot \frac{128}{256} = 1{,}65\ \text{V}</code></div>
+<p>Pre kód 255:</p>
+<div class="equation" role="math"><code>U_\text{out} \approx 3{,}287\ \text{V}</code></div>
+<p>Najvyšší výstup tohto ideálneho modelu je o jeden krok nižší než referencia.</p>
+<h3>Dôležité parametre</h3>
+<ul><li>rozlíšenie,</li><li>presnosť a linearita,</li><li>čas ustálenia,</li><li>výstupný rozsah,</li><li>prípustná záťaž.</li></ul>
+<p><strong>Výstup DAC nie je automaticky zdroj schopný napájať motor alebo reproduktor.</strong></p>
+<h2>4. Platformy</h2>
+<p><strong>23 – 33 min</strong></p>
+<h3>Arduino Uno R3</h3>
+<p>ATmega328P nemá bežný integrovaný DAC.</p>
+<p>Možnosti:</p>
+<ul><li>externý DAC, napríklad MCP4725 cez I²C,</li><li>PWM s vhodným filtrom.</li></ul>
+<p>Na Uno:</p>
+<div class="code-actions"><button type="button" data-copy-code="lesson-4-code-1">Kopírovať kód</button><a class="button" href="https://wokwi.com/projects/new/arduino-uno" target="_blank" rel="noopener noreferrer">Otvoriť Wokwi Arduino Uno</a></div><p id="status-lesson-4-code-1" class="muted" aria-live="polite"></p>
+<p class="muted">Ide o úryvok kódu. Pred spustením ho vložte na označené miesto do úplného programu.</p>
+<pre><code id="lesson-4-code-1">analogWrite(9, 128);</code></pre>
+<p>vytvára PWM. <strong>Nevytvára priamo stabilné analógové napätie z DAC.</strong></p>
+<h3>Pôvodný ESP32</h3>
+<p>Pôvodný ESP32 má dva 8-bitové DAC výstupy na GPIO25 a GPIO26.</p>
+<p>Jednoduchá ukážka pre podporovaný pôvodný ESP32 v Arduino frameworku:</p>
+<div class="code-actions"><button type="button" data-copy-code="lesson-4-code-2">Kopírovať kód</button><a class="button" href="https://wokwi.com/projects/new/esp32" target="_blank" rel="noopener noreferrer">Otvoriť Wokwi ESP32</a></div><p id="status-lesson-4-code-2" class="muted" aria-live="polite"></p>
+<pre><code id="lesson-4-code-2">void setup() {
+  dacWrite(25, 128);
+}
+
+void loop() {
+}</code></pre>
+<p>Výstup má byť približne v strednej časti dostupného rozsahu. Presnú hodnotu overíme meraním a dokumentáciou.</p>
+<p>Nie všetky varianty ESP32 majú DAC. Napríklad ESP32-C3 a ESP32-S3 tento pôvodný DAC periférny blok nemajú.</p>
+<h3>Raspberry Pi</h3>
+<p>Bežný GPIO nie je presný univerzálny DAC výstup.</p>
+<p>Použijeme napríklad:</p>
+<ul><li>externý I²C alebo SPI DAC,</li><li>zvukový DAC modul podľa účelu.</li></ul>
+<h2>5. Návrh systému</h2>
+<p><strong>33 – 40 min</strong></p>
+<h3>Úloha: riadiace napätie 0 až 10 V</h3>
+<p>Mikrokontrolér pracuje s logikou 3,3 V.</p>
+<p>Možný reťazec:</p>
+<pre class="diagram"><code>Mikrokontrolér
+      ↓
+DAC
+      ↓
+Vhodný zosilňovač s príslušným napájaním
+      ↓
+Riadiace napätie 0 až 10 V</code></pre>
+<p>Samotné nastavenie najvyššieho kódu nevytvorí 10 V z obvodu napájaného iba 3,3 V.</p>
+<h3>Otázky</h3>
+<ol><li>Čo potrebujeme na generovanie sínusovky?  </li></ol>
+<p><strong>Postupnosť vzoriek, pravidelné aktualizácie DAC a podľa požiadaviek filter.</strong></p>
+<ol><li>Môžeme výstup DAC ľubovoľne zaťažovať?  </li></ol>
+<p><strong>Nie.</strong></p>
+<ol><li>Stačí vysoké rozlíšenie na presný výstup?  </li></ol>
+<p><strong>Nie, rozhoduje aj referencia, linearita a výstupný obvod.</strong></p>
+<h2>6. Zápis</h2>
+<p><strong>40 – 45 min</strong></p>
+<blockquote><p>DAC prevádza digitálny kód na analógové napätie alebo prúd.  </p><p>Rozlíšenie určuje počet dostupných úrovní.  </p><p>Výstup má obmedzený rozsah, presnosť a zaťažiteľnosť.  </p><p>Arduino Uno R3 nemá integrovaný univerzálny DAC.  </p><p>PWM a DAC sú rozdielne mechanizmy.  </p><p>Pre výkonovú záťaž potrebujeme vhodný zosilňovač alebo ovládač.</p></blockquote><section class="sources"><h2>Zdroje na ďalšie štúdium</h2><ul><li><a href="https://docs.arduino.cc/language-reference/">Arduino Language Reference</a> – analógové I/O a jazykové API.</li><li><a href="https://docs.espressif.com/projects/arduino-esp32/en/latest/api/ledc.html">Espressif Arduino-ESP32 LEDC</a> – PWM na ESP32.</li><li><a href="https://www.raspberrypi.com/documentation/pico-sdk/hardware.html">Raspberry Pi Pico SDK</a> – periférie ADC/PWM pre Pico.</li><li><a href="https://www.raspberrypi.com/documentation/computers/raspberry-pi.html">Raspberry Pi GPIO</a> – elektrické limity GPIO.</li></ul></section><footer><p>Prednáška 5.4 · Výpočtová technika · Celok 05</p><p><a href="5.3 Vzorkovanie a kvantovanie.html">← Predchádzajúca téma</a> · <a href="index.html#celok-05">Osnova celku 05</a> · <a href="5.5 PWM - princip cinnosti.html">Nasledujúca téma →</a></p></footer></main><script src="../theme.js" defer></script><script>document.addEventListener('click',async event=>{const button=event.target.closest('[data-copy-code]');if(!button)return;const code=document.getElementById(button.dataset.copyCode);const status=document.getElementById('status-'+button.dataset.copyCode);try{await navigator.clipboard.writeText(code.innerText);status.textContent='Kód bol skopírovaný.'}catch{status.textContent='Kopírovanie sa nepodarilo. Označte kód a skopírujte ho ručne.'}})</script></body></html>

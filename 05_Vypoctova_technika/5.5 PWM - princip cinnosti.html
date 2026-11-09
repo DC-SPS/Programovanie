@@ -1,0 +1,120 @@
+<!doctype html><html lang="sk"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#101827"><meta name="description" content="PWM – princíp činnosti – tematický celok 05 Výpočtová technika."><title>5.5 PWM – princíp činnosti | Výpočtová technika</title><style>
+:root{color-scheme:light;--bg:#f7f8fa;--surface:#fff;--text:#1c2330;--muted:#5b6678;--accent:#1f6feb;--border:#d9dee7;--note:#fff4d6} @media(prefers-color-scheme:dark){:root:not([data-theme]){color-scheme:dark;--bg:#12161d;--surface:#1b212b;--text:#e6eaf1;--muted:#9aa6b8;--accent:#5aa2ff;--border:#2d3644;--note:#3a3017}}:root[data-theme=dark]{color-scheme:dark;--bg:#12161d;--surface:#1b212b;--text:#e6eaf1;--muted:#9aa6b8;--accent:#5aa2ff;--border:#2d3644;--note:#3a3017}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:16px/1.65 system-ui,-apple-system,"Segoe UI",sans-serif}a{color:var(--accent)}nav,main{width:min(100% - 2rem,900px);margin:auto}nav{display:flex;gap:.55rem;flex-wrap:wrap;padding:.8rem 0}nav a,.button{display:inline-block;padding:.4rem .7rem;border:1px solid var(--border);border-radius:.55rem;text-decoration:none;color:inherit;background:var(--surface)}main{padding:1rem 0 3rem}a:focus-visible,button:focus-visible{outline:3px solid var(--accent);outline-offset:3px}h1{font-size:clamp(1.8rem,5vw,2.6rem);line-height:1.2}h2{margin-top:2rem}h3{margin-top:1.5rem}.muted{color:var(--muted)}.note{margin:1rem 0;padding:1rem;border:1px solid var(--border);border-radius:12px;background:var(--note)}.scroll{overflow:auto}table{width:100%;border-collapse:collapse}th,td{padding:.6rem .7rem;border:1px solid var(--border);text-align:left;vertical-align:top}th{background:var(--surface)}pre{margin:.65rem 0 1rem;padding:1rem;border-radius:9px;overflow:auto;background:#0f172a;color:#e2e8f0;font:14px/1.55 ui-monospace,SFMono-Regular,Consolas,monospace}.equation{overflow:auto;margin:1rem 0;padding:.8rem 1rem;text-align:center;border-left:4px solid var(--accent);background:var(--surface)}.equation code{white-space:pre-wrap}.code-actions{display:flex;gap:.5rem;flex-wrap:wrap}button{padding:.55rem .8rem;border:0;border-radius:8px;background:#4b91f1;color:#fff;font-weight:700;cursor:pointer}.sources,footer{margin-top:2rem;padding-top:1rem;border-top:1px solid var(--border)}blockquote{margin:1rem 0;padding:.3rem 1rem;border-left:4px solid var(--accent);background:var(--surface)}@media(max-width:600px){nav,main{width:calc(100% - 1.2rem)}}
+</style><script src="../lesson-top.js" defer></script></head><body><nav aria-label="Navigácia kurzov"><a href="index.html#celok-05">Výpočtová technika – osnova</a><a href="../index.html">Všetky kurzy</a><a href="../nastavenia.html">Nastavenia vzhľadu</a></nav><main><header><p class="muted"><a href="index.html#celok-05">Výpočtová technika</a> · Tematický celok 05 · Prednáška 5.5</p><h1>5.5 PWM – princíp činnosti</h1><p class="muted">Analógové a výkonové periférie · 45 minút</p></header><div class="note"><strong>Bezpečnosť:</strong> Pri praktických ukážkach používajte iba nízke napätia. Motory, výkonové LED ani iné výkonové záťaže nepripájajte priamo na GPIO; použite vhodný výkonový ovládač. Každá prednáška je určená na 45 minút pre 3. ročník strednej školy.</div><p><strong>Trvanie:</strong> 45 minút<br><strong>Nadväznosť:</strong> Digitálny signál, časovače a DAC.</p>
+<h2>Ciele hodiny</h2>
+<p>Žiak má vedieť:</p>
+<ul><li>vysvetliť princíp PWM,</li><li>vypočítať striedu a frekvenciu,</li><li>nastaviť jas LED pomocou PWM,</li><li>rozlíšiť priemerné napätie a okamžitý priebeh,</li><li>opísať ovládanie výkonovej záťaže cez budič.</li></ul>
+<h2>Časový plán</h2>
+<div class="scroll"><table><thead><tr><th>Čas</th><th>Obsah</th></tr></thead><tbody><tr><td>0 – 5 min</td><td>Prečo zapínať a vypínať</td></tr><tr><td>5 – 16 min</td><td>Perióda, frekvencia a strieda</td></tr><tr><td>16 – 28 min</td><td>Arduino: regulácia jasu</td></tr><tr><td>28 – 35 min</td><td>Výkonové riadenie</td></tr><tr><td>35 – 40 min</td><td>ESP32 a Raspberry Pi</td></tr><tr><td>40 – 45 min</td><td>Úlohy a zápis</td></tr></tbody></table></div>
+<h2>1. Čo je PWM?</h2>
+<p><strong>0 – 5 min</strong></p>
+<p><strong>PWM – Pulse Width Modulation – je impulzno-šírková modulácia.</strong></p>
+<p>V bežnom PWM s pevnou periódou meníme čas, počas ktorého je signál v aktívnom stave.</p>
+<p>Výstup prepína medzi dvoma úrovňami. Mení sa šírka impulzu.</p>
+<p>Použitie:</p>
+<ul><li>regulácia jasu LED,</li><li>riadenie motorov,</li><li>riadenie výkonových meničov,</li><li>vytvorenie filtrovaného riadiaceho napätia.</li></ul>
+<h2>2. Perióda a strieda</h2>
+<p><strong>5 – 16 min</strong></p>
+<div class="equation" role="math"><code>T = t_\text{ON} + t_\text{OFF}</code></div>
+<div class="equation" role="math"><code>f = \frac{1}{T}</code></div>
+<div class="equation" role="math"><code>D = \frac{t_\text{ON}}{T}</code></div>
+<p>Striedu <code class="math-inline">D</code> vyjadrujeme aj v percentách.</p>
+<h3>Príklad</h3>
+<ul><li>perióda 2 ms,</li><li>čas zapnutia 0,5 ms.</li></ul>
+<div class="equation" role="math"><code>f = \frac{1}{0{,}002} = 500\ \text{Hz}</code></div>
+<div class="equation" role="math"><code>D = \frac{0{,}5}{2} = 0{,}25 = 25\%</code></div>
+<h3>Priemerné napätie</h3>
+<p>Pre ideálny signál prepínajúci medzi 0 V a <code class="math-inline">U_H</code>:</p>
+<div class="equation" role="math"><code>U_\text{priemer} = D \cdot U_H</code></div>
+<p>Pri 5 V a striede 25 %:</p>
+<div class="equation" role="math"><code>U_\text{priemer} = 1{,}25\ \text{V}</code></div>
+<p><strong>Na pine však stále striedavo meriame približne 0 V a 5 V.</strong> Priemer nie je totožný s okamžitým napätím.</p>
+<p>Účinok na záťaž závisí od jej vlastností. Výkon nemožno vo všetkých prípadoch vypočítať jednoduchým dosadením priemerného napätia do vzorca pre jednosmerné napájanie.</p>
+<h2>3. Arduino Uno: jas LED</h2>
+<p><strong>16 – 28 min</strong></p>
+<h3>Zapojenie</h3>
+<ul><li>D9 → rezistor 680 Ω → anóda LED,</li><li>katóda LED → GND,</li><li>potenciometer 10 kΩ medzi 5 V a GND,</li><li>jazdec potenciometra → A0.</li></ul>
+<div class="code-actions"><button type="button" data-copy-code="lesson-5-code-1">Kopírovať kód</button><a class="button" href="https://wokwi.com/projects/new/arduino-uno" target="_blank" rel="noopener noreferrer">Otvoriť Wokwi Arduino Uno</a></div><p id="status-lesson-5-code-1" class="muted" aria-live="polite"></p>
+<pre><code id="lesson-5-code-1">const byte LED = 9;
+const byte POTENCIOMETER = A0;
+
+void setup() {
+  pinMode(LED, OUTPUT);
+}
+
+void loop() {
+  int vstup = analogRead(POTENCIOMETER);
+
+  int pwm = vstup / 4;
+
+  analogWrite(LED, pwm);
+}</code></pre>
+<h3>Vysvetlenie</h3>
+<p>Na Uno:</p>
+<ul><li><code>analogRead()</code> vracia bežne 0 až 1023,</li><li><code>analogWrite()</code> používa bežne 0 až 255,</li><li>delením štyrmi získame vhodný rozsah.</li></ul>
+<p>PWM podporujú piny Uno R3:</p>
+<p><strong>3, 5, 6, 9, 10 a 11.</strong></p>
+<p>Frekvencia závisí od pinu a nastavenia časovača. Bežne je približne 490 Hz alebo 980 Hz.</p>
+<h3>Vnímanie jasu</h3>
+<p>Dvojnásobná strieda nemusí vyzerať ako dvojnásobný jas. Ľudské vnímanie nie je lineárne.</p>
+<h3>Súvis s časovačmi</h3>
+<p>PWM vytvára hardvérový časovač. Program nemusí každý impulz ručne zapínať a vypínať.</p>
+<p>Zmena konfigurácie časovača môže ovplyvniť iné funkcie a knižnice.</p>
+<h2>4. Výkonové riadenie</h2>
+<p><strong>28 – 35 min</strong></p>
+<p>GPIO neposkytuje prúd potrebný pre motor alebo výkonový LED pás.</p>
+<p>Typický princíp:</p>
+<pre class="diagram"><code>GPIO s PWM → budič alebo vhodný tranzistor → záťaž</code></pre>
+<p>Pre jednosmerný motor môžeme použiť vhodný MOSFET alebo motorový ovládač.</p>
+<p>Treba riešiť:</p>
+<ul><li>napätie a prúd záťaže,</li><li>vhodné budenie tranzistora,</li><li>ochranu pri indukčnej záťaži,</li><li>napájanie a spoločnú referenciu, ak nie je obvod izolovaný.</li></ul>
+<h3>Výber frekvencie</h3>
+<ul><li>Príliš nízka frekvencia môže spôsobiť viditeľné blikanie LED.</li><li>Pri motore môže vzniknúť počuteľný zvuk.</li><li>Vyššia frekvencia zvyšuje nároky na spínanie a môže zvýšiť straty.</li></ul>
+<h3>PWM ako približný analógový výstup</h3>
+<pre class="diagram"><code>PWM → dolnopriepustný filter → vyhladené napätie</code></pre>
+<p>Filter zmenšuje zvlnenie, ale spomaľuje reakciu na zmenu striedy.</p>
+<h2>5. ESP32 a Raspberry Pi</h2>
+<p><strong>35 – 40 min</strong></p>
+<h3>ESP32</h3>
+<p>Periféria LEDC umožňuje nastaviť frekvenciu a rozlíšenie PWM.</p>
+<p>Medzi dosiahnuteľnou frekvenciou a rozlíšením existuje kompromis.</p>
+<p>Príklad pre Arduino-ESP32 <strong>3.x</strong> na doske s vhodným GPIO25:</p>
+<div class="code-actions"><button type="button" data-copy-code="lesson-5-code-2">Kopírovať kód</button><a class="button" href="https://wokwi.com/projects/new/esp32" target="_blank" rel="noopener noreferrer">Otvoriť Wokwi ESP32</a></div><p id="status-lesson-5-code-2" class="muted" aria-live="polite"></p>
+<pre><code id="lesson-5-code-2">const int LED_PIN = 25;
+
+void setup() {
+  if (ledcAttach(LED_PIN, 5000, 8)) {
+    ledcWrite(LED_PIN, 128);
+  }
+}
+
+void loop() {
+}</code></pre>
+<p>Ide o približne polovičnú striedu pri 8-bitovom nastavení. LED pripojíme cez rezistor.</p>
+<p>Staršie verzie jadra používajú odlišné LEDC API.</p>
+<h3>Raspberry Pi</h3>
+<p>Príklad s <code>gpiozero</code>:</p>
+<div class="code-actions"><button type="button" data-copy-code="lesson-5-code-3">Kopírovať kód</button><a class="button" href="https://wokwi.com/projects/new/pi-pico" target="_blank" rel="noopener noreferrer">Otvoriť Wokwi Raspberry Pi Pico</a></div><p id="status-lesson-5-code-3" class="muted" aria-live="polite"></p>
+<p class="note"><strong>Upozornenie:</strong> Tento príklad používa knižnicu gpiozero určenú pre Raspberry Pi s Linuxom. Na Raspberry Pi Pico nie je priamo spustiteľný; na simuláciu použite Wokwi Pico po prepise programu na MicroPython.</p>
+<pre><code id="lesson-5-code-3">from gpiozero import PWMLED
+from signal import pause
+
+led = PWMLED(18, frequency=100)
+led.value = 0.5
+
+try:
+    pause()
+finally:
+    led.close()</code></pre>
+<p>Kvalita a spôsob generovania PWM závisia od GPIO backendu. Pri presnom časovaní vyberáme vhodné hardvérové riešenie.</p>
+<h2>6. Úlohy a zápis</h2>
+<p><strong>40 – 45 min</strong></p>
+<ol><li>Pri perióde 1 ms je zapnutie 0,75 ms. Aká je strieda?  </li></ol>
+<p><strong>75 %.</strong></p>
+<ol><li>Aká je frekvencia?  </li></ol>
+<p><strong>1 kHz.</strong></p>
+<ol><li>Aké je ideálne priemerné napätie pri 3,3 V a 50 %?  </li></ol>
+<p><strong>1,65 V.</strong></p>
+<ol><li>Je na nefiltrovanom pine stále 1,65 V?  </li></ol>
+<p><strong>Nie.</strong></p>
+<blockquote><p>PWM mení šírku impulzu, bežne pri pevnej perióde.  </p><p>Strieda je pomer času zapnutia k perióde.  </p><p>PWM je digitálny impulzný priebeh.  </p><p>Priemerné napätie závisí od striedy a úrovní signálu.  </p><p>Výkonové záťaže riadime cez vhodný ovládač.  </p><p>Filtrovaním PWM môžeme získať približné analógové napätie.</p></blockquote><section class="sources"><h2>Zdroje na ďalšie štúdium</h2><ul><li><a href="https://docs.arduino.cc/language-reference/">Arduino Language Reference</a> – analógové I/O a jazykové API.</li><li><a href="https://docs.espressif.com/projects/arduino-esp32/en/latest/api/ledc.html">Espressif Arduino-ESP32 LEDC</a> – PWM na ESP32.</li><li><a href="https://www.raspberrypi.com/documentation/pico-sdk/hardware.html">Raspberry Pi Pico SDK</a> – periférie ADC/PWM pre Pico.</li><li><a href="https://www.raspberrypi.com/documentation/computers/raspberry-pi.html">Raspberry Pi GPIO</a> – elektrické limity GPIO.</li></ul></section><footer><p>Prednáška 5.5 · Výpočtová technika · Celok 05</p><p><a href="5.4 DAC - princip a pouzitie.html">← Predchádzajúca téma</a> · <a href="index.html#celok-05">Osnova celku 05</a> · <a href="5.6 Filtracia kalibracia a presnost merania.html">Nasledujúca téma →</a></p></footer></main><script src="../theme.js" defer></script><script>document.addEventListener('click',async event=>{const button=event.target.closest('[data-copy-code]');if(!button)return;const code=document.getElementById(button.dataset.copyCode);const status=document.getElementById('status-'+button.dataset.copyCode);try{await navigator.clipboard.writeText(code.innerText);status.textContent='Kód bol skopírovaný.'}catch{status.textContent='Kopírovanie sa nepodarilo. Označte kód a skopírujte ho ručne.'}})</script></body></html>

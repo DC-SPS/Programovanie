@@ -1,0 +1,125 @@
+<!doctype html><html lang="sk"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#101827"><meta name="description" content="Filtrácia, kalibrácia a presnosť merania – tematický celok 05 Výpočtová technika."><title>5.6 Filtrácia, kalibrácia a presnosť merania | Výpočtová technika</title><style>
+:root{color-scheme:light;--bg:#f7f8fa;--surface:#fff;--text:#1c2330;--muted:#5b6678;--accent:#1f6feb;--border:#d9dee7;--note:#fff4d6} @media(prefers-color-scheme:dark){:root:not([data-theme]){color-scheme:dark;--bg:#12161d;--surface:#1b212b;--text:#e6eaf1;--muted:#9aa6b8;--accent:#5aa2ff;--border:#2d3644;--note:#3a3017}}:root[data-theme=dark]{color-scheme:dark;--bg:#12161d;--surface:#1b212b;--text:#e6eaf1;--muted:#9aa6b8;--accent:#5aa2ff;--border:#2d3644;--note:#3a3017}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:16px/1.65 system-ui,-apple-system,"Segoe UI",sans-serif}a{color:var(--accent)}nav,main{width:min(100% - 2rem,900px);margin:auto}nav{display:flex;gap:.55rem;flex-wrap:wrap;padding:.8rem 0}nav a,.button{display:inline-block;padding:.4rem .7rem;border:1px solid var(--border);border-radius:.55rem;text-decoration:none;color:inherit;background:var(--surface)}main{padding:1rem 0 3rem}a:focus-visible,button:focus-visible{outline:3px solid var(--accent);outline-offset:3px}h1{font-size:clamp(1.8rem,5vw,2.6rem);line-height:1.2}h2{margin-top:2rem}h3{margin-top:1.5rem}.muted{color:var(--muted)}.note{margin:1rem 0;padding:1rem;border:1px solid var(--border);border-radius:12px;background:var(--note)}.scroll{overflow:auto}table{width:100%;border-collapse:collapse}th,td{padding:.6rem .7rem;border:1px solid var(--border);text-align:left;vertical-align:top}th{background:var(--surface)}pre{margin:.65rem 0 1rem;padding:1rem;border-radius:9px;overflow:auto;background:#0f172a;color:#e2e8f0;font:14px/1.55 ui-monospace,SFMono-Regular,Consolas,monospace}.equation{overflow:auto;margin:1rem 0;padding:.8rem 1rem;text-align:center;border-left:4px solid var(--accent);background:var(--surface)}.equation code{white-space:pre-wrap}.code-actions{display:flex;gap:.5rem;flex-wrap:wrap}button{padding:.55rem .8rem;border:0;border-radius:8px;background:#4b91f1;color:#fff;font-weight:700;cursor:pointer}.sources,footer{margin-top:2rem;padding-top:1rem;border-top:1px solid var(--border)}blockquote{margin:1rem 0;padding:.3rem 1rem;border-left:4px solid var(--accent);background:var(--surface)}@media(max-width:600px){nav,main{width:calc(100% - 1.2rem)}}
+</style><script src="../lesson-top.js" defer></script></head><body><nav aria-label="Navigácia kurzov"><a href="index.html#celok-05">Výpočtová technika – osnova</a><a href="../index.html">Všetky kurzy</a><a href="../nastavenia.html">Nastavenia vzhľadu</a></nav><main><header><p class="muted"><a href="index.html#celok-05">Výpočtová technika</a> · Tematický celok 05 · Prednáška 5.6</p><h1>5.6 Filtrácia, kalibrácia a presnosť merania</h1><p class="muted">Analógové a výkonové periférie · 45 minút</p></header><div class="note"><strong>Bezpečnosť:</strong> Pri praktických ukážkach používajte iba nízke napätia. Motory, výkonové LED ani iné výkonové záťaže nepripájajte priamo na GPIO; použite vhodný výkonový ovládač. Každá prednáška je určená na 45 minút pre 3. ročník strednej školy.</div><p><strong>Trvanie:</strong> 45 minút<br><strong>Nadväznosť:</strong> ADC, vzorkovanie a kvantovanie.</p>
+<h2>Ciele hodiny</h2>
+<p>Žiak má vedieť:</p>
+<ul><li>rozlíšiť rozlíšenie, presnosť a opakovateľnosť,</li><li>rozpoznať náhodnú a systematickú zložku chyby,</li><li>použiť jednoduché priemerovanie,</li><li>vysvetliť dvojbodovú kalibráciu,</li><li>posúdiť kompromis medzi vyhladením a rýchlosťou reakcie.</li></ul>
+<h2>Časový plán</h2>
+<div class="scroll"><table><thead><tr><th>Čas</th><th>Obsah</th></tr></thead><tbody><tr><td>0 – 5 min</td><td>Prečo meranie kolíše</td></tr><tr><td>5 – 15 min</td><td>Presnosť a zdroje chýb</td></tr><tr><td>15 – 25 min</td><td>Filtrácia</td></tr><tr><td>25 – 35 min</td><td>Kalibrácia</td></tr><tr><td>35 – 41 min</td><td>Praktický merací reťazec</td></tr><tr><td>41 – 45 min</td><td>Overenie a zápis</td></tr></tbody></table></div>
+<h2>1. Prečo dostávame rôzne výsledky?</h2>
+<p><strong>0 – 5 min</strong></p>
+<p>Na zdanlivo rovnakom vstupe ADC číta:</p>
+<pre class="diagram"><code>510, 512, 511, 514, 513</code></pre>
+<p>Príčinou môže byť:</p>
+<ul><li>elektrický šum,</li><li>kolísanie napájania,</li><li>rušenie,</li><li>zmena meranej veličiny,</li><li>vlastnosti ADC a zdroja signálu.</li></ul>
+<p><strong>Kolísanie nemusí znamenať chybu programu.</strong></p>
+<h2>2. Základné pojmy</h2>
+<p><strong>5 – 15 min</strong></p>
+<div class="scroll"><table><thead><tr><th>Pojem</th><th>Význam</th></tr></thead><tbody><tr><td>Rozlíšenie</td><td>Jemnosť dostupných kódov alebo zobrazovaných hodnôt</td></tr><tr><td>Presnosť</td><td>Zhoda výsledku so skutočnou alebo referenčnou hodnotou</td></tr><tr><td>Opakovateľnosť</td><td>Zhoda opakovaných výsledkov za rovnakých podmienok</td></tr><tr><td>Chyba merania</td><td>Rozdiel nameranej a referenčnej hodnoty</td></tr></tbody></table></div>
+<p>Prístroj môže stále ukazovať <strong>25,0 °C</strong>, hoci referencia ukazuje <strong>23,0 °C</strong>.</p>
+<p>Má dobrú opakovateľnosť, ale systematicky posunutý výsledok.</p>
+<h3>Zdroje chýb</h3>
+<ul><li>offset – posunutie,</li><li>chyba zosilnenia alebo mierky,</li><li>nelinearita,</li><li>neistota referencie,</li><li>šum,</li><li>teplotná závislosť,</li><li>nevhodné zapojenie.</li></ul>
+<p>Počet desatinných miest na displeji nedokazuje presnosť.</p>
+<h2>3. Filtrácia</h2>
+<p><strong>15 – 25 min</strong></p>
+<h3>Aritmetický priemer</h3>
+<div class="equation" role="math"><code>\bar{x} = \frac{x_1+x_2+\dots+x_N}{N}</code></div>
+<p>Pre hodnoty:</p>
+<pre class="diagram"><code>510, 512, 511, 514, 513</code></pre>
+<p>je priemer:</p>
+<div class="equation" role="math"><code>\bar{x}=512</code></div>
+<p>Priemerovanie môže zmenšiť vplyv náhodného šumu. Neodstráni automaticky systematický posun.</p>
+<p>Pri nezávislom šume vhodných vlastností klesá smerodajná odchýlka priemeru približne s <code class="math-inline">1/\sqrt{N}</code>. V praxi však vzorky môžu byť vzájomne závislé.</p>
+<h3>Arduino: priemer 16 vzoriek</h3>
+<div class="code-actions"><button type="button" data-copy-code="lesson-6-code-1">Kopírovať kód</button><a class="button" href="https://wokwi.com/projects/new/arduino-uno" target="_blank" rel="noopener noreferrer">Otvoriť Wokwi Arduino Uno</a></div><p id="status-lesson-6-code-1" class="muted" aria-live="polite"></p>
+<pre><code id="lesson-6-code-1">const byte VSTUP = A0;
+const byte POCET = 16;
+
+void setup() {
+  Serial.begin(9600);
+}
+
+void loop() {
+  uint32_t sucet = 0;
+
+  for (byte i = 0; i &lt; POCET; i++) {
+    sucet += analogRead(VSTUP);
+    delay(2);
+  }
+
+  float priemer = sucet / float(POCET);
+
+  Serial.println(priemer, 2);
+  delay(100);
+}</code></pre>
+<p>Ide o jednoduchú blokujúcu ukážku. Pre súbežné riadenie by sme vzorky zbierali priebežne bez dlhého čakania.</p>
+<h3>Ďalšie filtre</h3>
+<div class="scroll"><table><thead><tr><th>Filter</th><th>Typická vlastnosť</th></tr></thead><tbody><tr><td>Kĺzavý priemer</td><td>Vyhladzuje, ale oneskoruje zmeny</td></tr><tr><td>Medián</td><td>Potláča ojedinelé odľahlé hodnoty</td></tr><tr><td>Exponenciálny filter</td><td>Jednoduchý, potrebuje málo pamäte</td></tr><tr><td>Analógový RC filter</td><td>Potláča rýchle zmeny ešte pred ADC</td></tr></tbody></table></div>
+<p>Exponenciálny filter:</p>
+<div class="equation" role="math"><code>y_k = y_{k-1}+\alpha(x_k-y_{k-1})</code></div>
+<p>Pre <code class="math-inline">0&lt;\alpha\leq1</code>:</p>
+<ul><li>menšie <code class="math-inline">\alpha</code> znamená silnejšie vyhladenie,</li><li>väčšie <code class="math-inline">\alpha</code> znamená rýchlejšiu reakciu.</li></ul>
+<p>Filter inicializujeme vhodne, napríklad prvou vzorkou.</p>
+<h2>4. Kalibrácia</h2>
+<p><strong>25 – 35 min</strong></p>
+<p><strong>Kalibráciou určujeme vzťah medzi údajom meradla a referenčnými hodnotami.</strong> Na jeho základe môžeme zaviesť korekciu výsledkov.</p>
+<h3>Jednobodová korekcia</h3>
+<p>Ak meranie vykazuje približne konštantný posun:</p>
+<pre class="diagram"><code>Referencia:  20,0 °C
+Meranie:     22,0 °C</code></pre>
+<p>môžeme v príslušnom rozsahu skúsiť korekciu:</p>
+<div class="equation" role="math"><code>T_\text{opravené}=T_\text{merané}-2</code></div>
+<p>Jeden bod však nestačí na overenie chyby mierky ani nelinearity.</p>
+<h3>Dvojbodová lineárna korekcia</h3>
+<p>Zmeriame dva známe body:</p>
+<div class="scroll"><table><thead><tr><th>Referenčné napätie</th><th>Kód ADC</th></tr></thead><tbody><tr><td>1,00 V</td><td>210</td></tr><tr><td>4,00 V</td><td>820</td></tr></tbody></table></div>
+<p>Použijeme:</p>
+<div class="equation" role="math"><code>U=a\cdot k+b</code></div>
+<div class="equation" role="math"><code>a=\frac{4{,}00-1{,}00}{820-210}
+=\frac{3}{610}
+\approx0{,}004918</code></div>
+<div class="equation" role="math"><code>b=1{,}00-a\cdot210
+\approx-0{,}03279</code></div>
+<p>Pre kód 515:</p>
+<div class="equation" role="math"><code>U\approx2{,}50\ \text{V}</code></div>
+<p>Program:</p>
+<div class="code-actions"><button type="button" data-copy-code="lesson-6-code-2">Kopírovať kód</button><a class="button" href="https://wokwi.com/projects/new/arduino-uno" target="_blank" rel="noopener noreferrer">Otvoriť Wokwi Arduino Uno</a></div><p id="status-lesson-6-code-2" class="muted" aria-live="polite"></p>
+<p class="muted">Ide o úryvok kódu. Pred spustením ho vložte na označené miesto do úplného programu.</p>
+<pre><code id="lesson-6-code-2">float prepocitajNapatie(int kod) {
+  const float A = 3.0f / 610.0f;
+  const float B = 1.0f - A * 210.0f;
+
+  return A * kod + B;
+}</code></pre>
+<h3>Obmedzenia</h3>
+<ul><li>Referencia musí byť dostatočne spoľahlivá.</li><li>Kalibračné body majú pokrývať používaný rozsah.</li><li>Dva body neopravia všeobecnú nelinearitu.</li><li>Mimo kalibrovaného rozsahu môže byť odhad horší.</li><li>Zmenu teploty alebo zostarnutie súčiastok treba podľa požiadaviek zohľadniť.</li></ul>
+<h2>5. Návrh kvalitného merania</h2>
+<p><strong>35 – 41 min</strong></p>
+<p>Odporúčaný postup:</p>
+<ol><li>Overiť elektrické zapojenie a prípustný vstupný rozsah.</li><li>Zvoliť vhodnú referenciu a rozsah ADC.</li><li>Zabezpečiť primerané vzorkovanie a analógovú filtráciu.</li><li>Prezrieť si nespracované údaje.</li><li>Vybrať digitálny filter podľa požadovanej reakcie.</li><li>Porovnať výsledky s referenciou.</li><li>Zaviesť a overiť kalibračnú korekciu.</li><li>Uvádzať primeraný počet platných číslic.</li></ol>
+<h3>Porovnanie platforiem</h3>
+<ul><li><strong>AVR/Uno:</strong> dôležitá je referencia, zdrojová impedancia a obmedzené rozlíšenie.</li><li><strong>ESP32:</strong> využijeme dostupné kalibračné rozhrania a overíme charakteristiku ADC.</li><li><strong>Raspberry Pi:</strong> výsledok závisí najmä od externého ADC, referencie, zapojenia a časovania získavania dát.</li></ul>
+<h3>Úloha</h3>
+<p>Meradlo pri skutočnej hodnote 10,0 ukazuje:</p>
+<pre class="diagram"><code>12,0; 12,1; 11,9; 12,0</code></pre>
+<p><strong>Otázky:</strong></p>
+<ul><li>Pomôže priemerovanie?  </li></ul>
+<p><strong>Zmenší kolísanie.</strong></p>
+<ul><li>Odstráni odchýlku približne +2?  </li></ul>
+<p><strong>Nie.</strong></p>
+<ul><li>Čo potrebujeme?  </li></ul>
+<p><strong>Overenie referenciou a vhodnú korekciu, prípadne opravu príčiny.</strong></p>
+<h2>6. Overenie a zápis</h2>
+<p><strong>41 – 45 min</strong></p>
+<ol><li>Je stabilná hodnota automaticky správna?  </li></ol>
+<p><strong>Nie.</strong></p>
+<ol><li>Ktorý filter je vhodný na ojedinelé odľahlé hodnoty?  </li></ol>
+<p><strong>Často medián.</strong></p>
+<ol><li>Čo býva nevýhodou silného vyhladenia?  </li></ol>
+<p><strong>Pomalšia reakcia.</strong></p>
+<ol><li>Zaručí dvojbodová korekcia presnosť v celom rozsahu?  </li></ol>
+<p><strong>Nie.</strong></p>
+<blockquote><p>Rozlíšenie, presnosť a opakovateľnosť sú odlišné vlastnosti.  </p><p>Filtrácia môže potlačiť šum, ale mení časovú odozvu merania.  </p><p>Priemerovanie automaticky neodstraňuje systematickú chybu.  </p><p>Kalibrácia porovnáva meranie s referenčnými hodnotami.  </p><p>Dvojbodová lineárna korekcia upravuje posun a mierku.  </p><p>Kvalita výsledku závisí od celého meracieho reťazca.</p></blockquote>
+<hr>
+<p>Celok <strong>5 – Analógové a výkonové periférie</strong> je tým pripravený ako <strong>šesť 45-minútových hodín</strong> s výkladom, praktickými ukážkami, úlohami a zápisom do zošita.</p><section class="sources"><h2>Zdroje na ďalšie štúdium</h2><ul><li><a href="https://docs.arduino.cc/language-reference/">Arduino Language Reference</a> – analógové I/O a jazykové API.</li><li><a href="https://docs.espressif.com/projects/arduino-esp32/en/latest/api/ledc.html">Espressif Arduino-ESP32 LEDC</a> – PWM na ESP32.</li><li><a href="https://www.raspberrypi.com/documentation/pico-sdk/hardware.html">Raspberry Pi Pico SDK</a> – periférie ADC/PWM pre Pico.</li><li><a href="https://www.raspberrypi.com/documentation/computers/raspberry-pi.html">Raspberry Pi GPIO</a> – elektrické limity GPIO.</li></ul></section><footer><p>Prednáška 5.6 · Výpočtová technika · Celok 05</p><p><a href="5.5 PWM - princip cinnosti.html">← Predchádzajúca téma</a> · <a href="index.html#celok-05">Osnova celku 05</a> · <a href="index.html#celok-05">Nasledujúca téma →</a></p></footer></main><script src="../theme.js" defer></script><script>document.addEventListener('click',async event=>{const button=event.target.closest('[data-copy-code]');if(!button)return;const code=document.getElementById(button.dataset.copyCode);const status=document.getElementById('status-'+button.dataset.copyCode);try{await navigator.clipboard.writeText(code.innerText);status.textContent='Kód bol skopírovaný.'}catch{status.textContent='Kopírovanie sa nepodarilo. Označte kód a skopírujte ho ručne.'}})</script></body></html>

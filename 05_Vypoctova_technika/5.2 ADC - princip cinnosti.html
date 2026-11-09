@@ -1,0 +1,91 @@
+<!doctype html><html lang="sk"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#101827"><meta name="description" content="ADC – princíp činnosti – tematický celok 05 Výpočtová technika."><title>5.2 ADC – princíp činnosti | Výpočtová technika</title><style>
+:root{color-scheme:light;--bg:#f7f8fa;--surface:#fff;--text:#1c2330;--muted:#5b6678;--accent:#1f6feb;--border:#d9dee7;--note:#fff4d6} @media(prefers-color-scheme:dark){:root:not([data-theme]){color-scheme:dark;--bg:#12161d;--surface:#1b212b;--text:#e6eaf1;--muted:#9aa6b8;--accent:#5aa2ff;--border:#2d3644;--note:#3a3017}}:root[data-theme=dark]{color-scheme:dark;--bg:#12161d;--surface:#1b212b;--text:#e6eaf1;--muted:#9aa6b8;--accent:#5aa2ff;--border:#2d3644;--note:#3a3017}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:16px/1.65 system-ui,-apple-system,"Segoe UI",sans-serif}a{color:var(--accent)}nav,main{width:min(100% - 2rem,900px);margin:auto}nav{display:flex;gap:.55rem;flex-wrap:wrap;padding:.8rem 0}nav a,.button{display:inline-block;padding:.4rem .7rem;border:1px solid var(--border);border-radius:.55rem;text-decoration:none;color:inherit;background:var(--surface)}main{padding:1rem 0 3rem}a:focus-visible,button:focus-visible{outline:3px solid var(--accent);outline-offset:3px}h1{font-size:clamp(1.8rem,5vw,2.6rem);line-height:1.2}h2{margin-top:2rem}h3{margin-top:1.5rem}.muted{color:var(--muted)}.note{margin:1rem 0;padding:1rem;border:1px solid var(--border);border-radius:12px;background:var(--note)}.scroll{overflow:auto}table{width:100%;border-collapse:collapse}th,td{padding:.6rem .7rem;border:1px solid var(--border);text-align:left;vertical-align:top}th{background:var(--surface)}pre{margin:.65rem 0 1rem;padding:1rem;border-radius:9px;overflow:auto;background:#0f172a;color:#e2e8f0;font:14px/1.55 ui-monospace,SFMono-Regular,Consolas,monospace}.equation{overflow:auto;margin:1rem 0;padding:.8rem 1rem;text-align:center;border-left:4px solid var(--accent);background:var(--surface)}.equation code{white-space:pre-wrap}.code-actions{display:flex;gap:.5rem;flex-wrap:wrap}button{padding:.55rem .8rem;border:0;border-radius:8px;background:#4b91f1;color:#fff;font-weight:700;cursor:pointer}.sources,footer{margin-top:2rem;padding-top:1rem;border-top:1px solid var(--border)}blockquote{margin:1rem 0;padding:.3rem 1rem;border-left:4px solid var(--accent);background:var(--surface)}@media(max-width:600px){nav,main{width:calc(100% - 1.2rem)}}
+</style><script src="../lesson-top.js" defer></script></head><body><nav aria-label="Navigácia kurzov"><a href="index.html#celok-05">Výpočtová technika – osnova</a><a href="../index.html">Všetky kurzy</a><a href="../nastavenia.html">Nastavenia vzhľadu</a></nav><main><header><p class="muted"><a href="index.html#celok-05">Výpočtová technika</a> · Tematický celok 05 · Prednáška 5.2</p><h1>5.2 ADC – princíp činnosti</h1><p class="muted">Analógové a výkonové periférie · 45 minút</p></header><div class="note"><strong>Bezpečnosť:</strong> Pri praktických ukážkach používajte iba nízke napätia. Motory, výkonové LED ani iné výkonové záťaže nepripájajte priamo na GPIO; použite vhodný výkonový ovládač. Každá prednáška je určená na 45 minút pre 3. ročník strednej školy.</div><p><strong>Trvanie:</strong> 45 minút<br><strong>Nadväznosť:</strong> Analógový a digitálny signál.</p>
+<h2>Ciele hodiny</h2>
+<p>Žiak má vedieť:</p>
+<ul><li>vysvetliť účel ADC,</li><li>určiť počet kódov podľa rozlíšenia,</li><li>vysvetliť význam referenčného napätia,</li><li>približne vypočítať napätie z výsledku prevodu,</li><li>rozlíšiť rozlíšenie a presnosť.</li></ul>
+<h2>Časový plán</h2>
+<div class="scroll"><table><thead><tr><th>Čas</th><th>Obsah</th></tr></thead><tbody><tr><td>0 – 5 min</td><td>Prečo procesor potrebuje ADC</td></tr><tr><td>5 – 15 min</td><td>Princíp a základné parametre</td></tr><tr><td>15 – 24 min</td><td>Výpočty</td></tr><tr><td>24 – 34 min</td><td>Arduino Uno: meranie napätia</td></tr><tr><td>34 – 39 min</td><td>ESP32 a Raspberry Pi</td></tr><tr><td>39 – 45 min</td><td>Úlohy a zápis</td></tr></tbody></table></div>
+<h2>1. Čo je ADC?</h2>
+<p><strong>0 – 5 min</strong></p>
+<p><strong>ADC – Analog-to-Digital Converter – je analógovo-digitálny prevodník.</strong></p>
+<p>Na základe vstupného analógového signálu vytvorí digitálny kód.</p>
+<pre class="diagram"><code>Vstupné napätie → ADC → číselný výsledok</code></pre>
+<p>ADC nemeria priamo teplotu ani vzdialenosť. Meria elektrický vstup, z ktorého program vypočíta požadovanú veličinu.</p>
+<h2>2. Základné parametre</h2>
+<p><strong>5 – 15 min</strong></p>
+<h3>Rozlíšenie</h3>
+<p>Prevodník s rozlíšením <code class="math-inline">n</code> bitov poskytuje:</p>
+<div class="equation" role="math"><code>2^n</code></div>
+<p>možných kódov.</p>
+<div class="scroll"><table><thead><tr><th>Rozlíšenie</th><th>Počet kódov</th><th>Rozsah kódov</th></tr></thead><tbody><tr><td>8 bitov</td><td>256</td><td>0 až 255</td></tr><tr><td>10 bitov</td><td>1 024</td><td>0 až 1 023</td></tr><tr><td>12 bitov</td><td>4 096</td><td>0 až 4 095</td></tr></tbody></table></div>
+<h3>Referenčné napätie</h3>
+<p>Referenčné napätie pomáha určiť, akému vstupnému rozsahu zodpovedajú digitálne kódy.</p>
+<p>Pre ideálny unipolárny prevodník s rozsahom približne od 0 po <code class="math-inline">V_\text{ref}</code>:</p>
+<div class="equation" role="math"><code>\Delta U = \frac{V_\text{ref}}{2^n}</code></div>
+<p><code class="math-inline">\Delta U</code> je ideálna šírka jedného kvantizačného kroku.</p>
+<p><strong>Prípustné napätie na pine a merací rozsah ADC nie sú automaticky to isté.</strong> Obe podmienky kontrolujeme v dokumentácii.</p>
+<h3>Princíp SAR</h3>
+<p>Mnohé mikrokontroléry používajú ADC s postupnou aproximáciou:</p>
+<ol><li>Zachytia vstupnú hodnotu.</li><li>Vnútorný obvod skúša jednotlivé bity od najvyššieho.</li><li>Porovnáva skúšobnú úroveň so vstupom.</li><li>Postupne zostaví výsledný kód.</li></ol>
+<p>Na pochopenie stačí prirovnanie k hľadaniu čísla postupným delením intervalu.</p>
+<h2>3. Výpočty</h2>
+<p><strong>15 – 24 min</strong></p>
+<p>Pre 10-bitový ADC s referenciou 5,00 V:</p>
+<div class="equation" role="math"><code>\Delta U = \frac{5}{1024} \approx 4{,}88\ \text{mV}</code></div>
+<p>Kód približne 512 zodpovedá napätiu okolo 2,5 V.</p>
+<p>Jednoduchý odhad:</p>
+<div class="equation" role="math"><code>U \approx k \cdot \frac{V_\text{ref}}{2^n}</code></div>
+<p>Kód v skutočnosti predstavuje interval vstupných hodnôt. Presný prevod závisí od prenosovej charakteristiky ADC.</p>
+<p>V jednoduchých programoch sa používa aj mapovanie koncových bodov pomocou <code class="math-inline">2^n-1</code>. <strong>Toto mapovanie netreba zamieňať s ideálnou šírkou kvantizačného kroku <code class="math-inline">V_\text{ref}/2^n</code>.</strong></p>
+<h3>Rozlíšenie nie je presnosť</h3>
+<p>12-bitový výsledok automaticky neznamená presné meranie na 12 bitov.</p>
+<p>Výsledok ovplyvňuje:</p>
+<ul><li>referencia,</li><li>šum,</li><li>nelinearita,</li><li>offset,</li><li>zapojenie a zdroj signálu.</li></ul>
+<h2>4. Arduino Uno: orientačné meranie</h2>
+<p><strong>24 – 34 min</strong></p>
+<p>Použijeme potenciometer zapojený ako v predchádzajúcej hodine.</p>
+<div class="code-actions"><button type="button" data-copy-code="lesson-2-code-1">Kopírovať kód</button><a class="button" href="https://wokwi.com/projects/new/arduino-uno" target="_blank" rel="noopener noreferrer">Otvoriť Wokwi Arduino Uno</a></div><p id="status-lesson-2-code-1" class="muted" aria-live="polite"></p>
+<pre><code id="lesson-2-code-1">const float VREF = 5.00f;
+
+void setup() {
+  Serial.begin(9600);
+}
+
+void loop() {
+  int kod = analogRead(A0);
+
+  float napatie = kod * (VREF / 1024.0f);
+
+  Serial.print(&quot;Kod: &quot;);
+  Serial.print(kod);
+
+  Serial.print(&quot;  Odhad U: &quot;);
+  Serial.print(napatie, 3);
+  Serial.println(&quot; V&quot;);
+
+  delay(200);
+}</code></pre>
+<h3>Čo vysvetliť</h3>
+<ul><li>Uno používa bežne 10-bitový ADC.</li><li>Pri predvolenej referencii je referencia odvodená od AVCC.</li><li>Hodnota 5,00 V je v ukážke predpoklad.</li><li>Skutočné napájanie nemusí byť presne 5,00 V.</li></ul>
+<p>Pri presnejšom meraní treba poznať skutočnú referenciu a prípadne vykonať kalibráciu.</p>
+<p><strong>Na A0 nepripájame ľubovoľné napätie.</strong> Vyššie napätia vyžadujú vhodný delič a podľa použitia ochranu.</p>
+<h2>5. ESP32 a Raspberry Pi</h2>
+<p><strong>34 – 39 min</strong></p>
+<h3>ESP32</h3>
+<ul><li>Mnohé varianty poskytujú bežne 12-bitové výsledky.</li><li>Vstupný rozsah závisí od čipu a nastavenia útlmu.</li><li>Prevod nemusí byť ideálne lineárny.</li><li>Kalibrované rozhranie, napríklad <code>analogReadMilliVolts()</code> v podporovanom Arduino jadre, môže zlepšiť odhad napätia.</li></ul>
+<p><strong>Nastavenie útlmu nerobí GPIO tolerantným voči 5 V.</strong></p>
+<p>Na pôvodnom ESP32 môže použitie ADC2 obmedzovať súčasná prevádzka Wi-Fi; vlastnosti overujeme podľa variantu.</p>
+<h3>Raspberry Pi s Linuxom</h3>
+<p>Bežné GPIO na Pi 4 alebo Pi 5 nemajú univerzálny analógový vstup. Použijeme externý ADC, napríklad:</p>
+<ul><li>MCP3008 cez SPI,</li><li>ADS1115 cez I²C.</li></ul>
+<p>Raspberry Pi Pico je odlišná mikrokontrolérová platforma a ADC obsahuje.</p>
+<h2>6. Úlohy a zápis</h2>
+<p><strong>39 – 45 min</strong></p>
+<ol><li>Koľko kódov poskytuje 12-bitový ADC?  </li></ol>
+<p><strong>4 096.</strong></p>
+<ol><li>Aký je ideálny krok 8-bitového ADC pri rozsahu 2,56 V?  </li></ol>
+<p><strong>10 mV.</strong></p>
+<ol><li>Zlepší viac bitov automaticky chybnú referenciu?  </li></ol>
+<p><strong>Nie.</strong></p>
+<blockquote><p>ADC prevádza analógový vstup na digitálny kód.  </p><p><code class="math-inline">n</code>-bitový ADC má <code class="math-inline">2^n</code> možných kódov.  </p><p>Ideálny krok je približne <code class="math-inline">V_\text{ref}/2^n</code>.  </p><p>Rozlíšenie opisuje jemnosť kódovania, presnosť zhodu merania so skutočnou hodnotou.  </p><p>Merací rozsah aj elektrické limity vstupu musíme overiť.</p></blockquote><section class="sources"><h2>Zdroje na ďalšie štúdium</h2><ul><li><a href="https://docs.arduino.cc/language-reference/">Arduino Language Reference</a> – analógové I/O a jazykové API.</li><li><a href="https://docs.espressif.com/projects/arduino-esp32/en/latest/api/ledc.html">Espressif Arduino-ESP32 LEDC</a> – PWM na ESP32.</li><li><a href="https://www.raspberrypi.com/documentation/pico-sdk/hardware.html">Raspberry Pi Pico SDK</a> – periférie ADC/PWM pre Pico.</li><li><a href="https://www.raspberrypi.com/documentation/computers/raspberry-pi.html">Raspberry Pi GPIO</a> – elektrické limity GPIO.</li></ul></section><footer><p>Prednáška 5.2 · Výpočtová technika · Celok 05</p><p><a href="5.1 Analogovy a digitalny signal.html">← Predchádzajúca téma</a> · <a href="index.html#celok-05">Osnova celku 05</a> · <a href="5.3 Vzorkovanie a kvantovanie.html">Nasledujúca téma →</a></p></footer></main><script src="../theme.js" defer></script><script>document.addEventListener('click',async event=>{const button=event.target.closest('[data-copy-code]');if(!button)return;const code=document.getElementById(button.dataset.copyCode);const status=document.getElementById('status-'+button.dataset.copyCode);try{await navigator.clipboard.writeText(code.innerText);status.textContent='Kód bol skopírovaný.'}catch{status.textContent='Kopírovanie sa nepodarilo. Označte kód a skopírujte ho ručne.'}})</script></body></html>
