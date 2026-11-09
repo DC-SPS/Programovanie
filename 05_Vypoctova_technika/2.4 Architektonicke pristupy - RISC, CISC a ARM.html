@@ -1,0 +1,100 @@
+<!doctype html><html lang="sk"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="2.4 Architektonické prístupy – RISC, CISC a ARM – tematický celok 02"><title>2.4 Architektonické prístupy – RISC, CISC a ARM | Výpočtová technika</title><style>:root{color-scheme:light dark;--bg:#f7f8fa;--surface:#fff;--text:#1c2330;--muted:#5b6678;--accent:#1f6feb;--border:#d9dee7}@media(prefers-color-scheme:dark){:root{--bg:#12161d;--surface:#1b212b;--text:#e6eaf1;--muted:#9aa6b8;--accent:#83c5ff;--border:#2d3644}}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:16px/1.65 system-ui,-apple-system,"Segoe UI",sans-serif}a{color:var(--accent)}nav,main{width:min(100% - 2rem,900px);margin:auto}nav{display:flex;gap:.6rem;flex-wrap:wrap;padding:.8rem 0}nav a,.button{display:inline-block;padding:.45rem .75rem;border:1px solid var(--border);border-radius:.55rem;text-decoration:none;color:inherit;background:var(--surface)}main{padding:1rem 0 3rem}a:focus-visible,button:focus-visible{outline:3px solid var(--accent);outline-offset:3px}h1{font-size:clamp(1.8rem,5vw,2.6rem);line-height:1.2}h2{margin-top:2rem}h3{margin-top:1.5rem}.muted{color:var(--muted)}.scroll{overflow:auto}.formula{margin:1rem 0;text-align:center;font-family:ui-monospace,Consolas,monospace}table{width:100%;border-collapse:collapse}th,td{padding:.6rem .7rem;border:1px solid var(--border);text-align:left;vertical-align:top}pre{margin:.65rem 0 1rem;padding:1rem;border-radius:9px;overflow:auto;background:#0f172a;color:#e2e8f0;font:14px/1.55 ui-monospace,Consolas,monospace}.code-actions{display:flex;gap:.5rem;flex-wrap:wrap;align-items:center}button{padding:.55rem .8rem;border:0;border-radius:8px;background:#4b91f1;color:#fff;font-weight:700;cursor:pointer}.sources,footer,.simulator{margin-top:2rem;padding-top:1rem;border-top:1px solid var(--border)}blockquote{margin:1rem 0;padding:1rem;border:1px solid var(--border);border-radius:12px;background:var(--surface)}@media(max-width:600px){nav,main{width:calc(100% - 1.2rem)}}</style></head><body><nav aria-label="Navigácia kurzov"><a href="index.html#celok-02">Výpočtová technika · osnova</a><a href="../index.html">Všetky kurzy</a><a href="../nastavenia.html">Nastavenia vzhľadu</a></nav><main><header><p class="muted"><a href="index.html#celok-02">Výpočtová technika</a> · Tematický celok 02 · Prednáška 2.4</p><h1>2.4 Architektonické prístupy – RISC, CISC a ARM</h1><p class="muted">Architektúra mikrokontroléra · 45 minút</p></header><p><strong>Trvanie:</strong> 45 minút <strong>Nadväznosť:</strong> Inštrukčný cyklus a vnútorná stavba CPU.</p>
+<h3>Ciele hodiny</h3>
+<p>Žiak má vedieť:</p>
+<ul><li>vysvetliť pojem inštrukčná sada,</li><li>orientačne porovnať RISC a CISC,</li><li>rozlíšiť ISA a mikroarchitektúru,</li><li>správne zaradiť ARM, AVR, x86 a RISC-V,</li><li>vysvetliť, prečo samotné označenie RISC alebo CISC neurčuje výkon.</li></ul>
+<h3>Časový plán</h3>
+<div class="scroll"><table><thead><tr><th>Čas</th><th>Obsah</th></tr></thead><tbody><tr><td>0 – 5 min</td><td>Akým jazykom hovorí procesor</td></tr><tr><td>5 – 17 min</td><td>RISC a CISC</td></tr><tr><td>17 – 26 min</td><td>ISA a mikroarchitektúra</td></tr><tr><td>26 – 36 min</td><td>AVR, ARM, x86, Xtensa a RISC-V</td></tr><tr><td>36 – 41 min</td><td>Porovnávacia úloha</td></tr><tr><td>41 – 45 min</td><td>Overenie a zápis</td></tr></tbody></table></div>
+<h3>1. Inštrukčná sada</h3>
+<p><strong>0 – 5 min</strong></p>
+<p><strong>ISA – Instruction Set Architecture – opisuje programátorovi viditeľné vlastnosti procesora.</strong></p>
+<p>Zahŕňa napríklad:</p>
+<ul><li>inštrukcie a ich kódovanie,</li><li>registre,</li><li>dátové typy,</li><li>spôsoby adresovania,</li><li>pravidlá vykonávania.</li></ul>
+<p>Program pre jednu ISA nemožno všeobecne priamo spustiť na inej ISA.</p>
+<p>Zdrojový program sa však môže preložiť pre viac platforiem, ak používa podporované a prenositeľné rozhrania.</p>
+<h3>2. RISC a CISC</h3>
+<p><strong>5 – 17 min</strong></p>
+<h4>RISC</h4>
+<p><strong>Reduced Instruction Set Computer</strong></p>
+<p>Historicky kladie dôraz napríklad na:</p>
+<ul><li>pravidelnejšie inštrukcie,</li><li>veľa operácií nad registrami,</li><li>jednoduchšie spôsoby adresovania,</li><li>efektívnu realizáciu pipeline.</li></ul>
+<p>Mnohé RISC architektúry používajú princíp <strong>load/store</strong>:</p>
+<ul><li>osobitné inštrukcie prenášajú údaje medzi pamäťou a registrami,</li><li>aritmetika pracuje prevažne s registrami.</li></ul>
+<h4>CISC</h4>
+<p><strong>Complex Instruction Set Computer</strong></p>
+<p>Historicky sa spája napríklad s:</p>
+<ul><li>bohatšími spôsobmi adresovania,</li><li>zložitejšími inštrukciami,</li><li>často premenlivou dĺžkou inštrukcií.</li></ul>
+<p>Jedna inštrukcia môže vykonať viac činností.</p>
+<h4>Orientačné porovnanie</h4>
+<div class="scroll"><table><thead><tr><th>Vlastnosť</th><th>Typické RISC smerovanie</th><th>Typické CISC smerovanie</th></tr></thead><tbody><tr><td>Práca s operandmi</td><td>Dôraz na registre</td><td>Viac možností práce s pamäťou</td></tr><tr><td>Kódovanie</td><td>Často pravidelnejšie</td><td>Často zložitejšie</td></tr><tr><td>Spôsoby adresovania</td><td>Skôr jednoduchšie</td><td>Často početnejšie</td></tr><tr><td>Príklady</td><td>ARM, RISC-V, AVR</td><td>x86</td></tr></tbody></table></div>
+<p>Ide o orientačné charakteristiky, nie pravidlá platné bez výnimky.</p>
+<p><strong>RISC neznamená, že každá inštrukcia trvá jeden cyklus. CISC neznamená automaticky pomalý procesor.</strong></p>
+<h3>3. ISA a mikroarchitektúra</h3>
+<p><strong>17 – 26 min</strong></p>
+<h4>ISA</h4>
+<p>Určuje, čo procesor navonok poskytuje programu.</p>
+<h4>Mikroarchitektúra</h4>
+<p>Určuje, ako je konkrétny procesor vnútorne realizovaný.</p>
+<p>Môže zahŕňať:</p>
+<ul><li>pipeline,</li><li>cache,</li><li>výkonné jednotky,</li><li>predikciu skokov,</li><li>vykonávanie mimo poradia,</li><li>počet jadier.</li></ul>
+<p>Dva procesory môžu podporovať rovnakú ISA, ale mať výrazne odlišný výkon, spotrebu a časovanie.</p>
+<h4>Moderné procesory</h4>
+<p>Hranica RISC/CISC je menej ostrá než v jednoduchých učebnicových modeloch.</p>
+<p>Napríklad moderné x86 procesory často interne rozkladajú inštrukcie na menšie mikrooperácie.</p>
+<p>Výkon závisí aj od:</p>
+<ul><li>pamäte,</li><li>frekvencie,</li><li>kompilátora,</li><li>konkrétneho programu,</li><li>počtu jadier,</li><li>tepelných a energetických obmedzení.</li></ul>
+<h3>4. Konkrétne rodiny</h3>
+<p><strong>26 – 36 min</strong></p>
+<h4>AVR</h4>
+<ul><li>Rodina mikrokontrolérov s RISC architektúrou.</li><li>ATmega328P je 8-bitový AVR.</li><li>Používa sa na Arduino Uno R3.</li></ul>
+<p>Označenie 8-bitový neznamená, že nedokáže počítať so 16-bitovým číslom. Taký výpočet môže vyžadovať viac krokov.</p>
+<h4>ARM</h4>
+<p>ARM nie je tretia protikladná kategória k RISC a CISC. Označuje architektúry a súvisiace procesorové technológie s RISC pôvodom.</p>
+<div class="scroll"><table><thead><tr><th>Profil</th><th>Typické zameranie</th></tr></thead><tbody><tr><td>Cortex-M</td><td>Mikrokontroléry</td></tr><tr><td>Cortex-R</td><td>Časovo náročné riadenie</td></tr><tr><td>Cortex-A</td><td>Aplikačné procesory, často s OS</td></tr></tbody></table></div>
+<p>Nie všetky jadrá v danom profile majú rovnaké funkcie.</p>
+<p>Raspberry Pi 4 a Pi 5 používajú aplikačné procesory ARM. Raspberry Pi Pico používa mikrokontrolér; konkrétna architektúra závisí od modelu.</p>
+<h4>x86</h4>
+<p>Rodina ISA používaná najmä v mnohých osobných počítačoch a serveroch. Tradične sa zaraďuje medzi CISC.</p>
+<h4>RISC-V</h4>
+<p>Otvorená rodina špecifikácií ISA. Existujú rôzne základné varianty a rozšírenia.</p>
+<p>Otvorenosť ISA neznamená, že každý čip alebo jeho implementácia musí byť otvorený hardvér.</p>
+<h4>ESP32</h4>
+<p>Rodina ESP32 používa podľa variantu rozdielne procesorové architektúry:</p>
+<ul><li>pôvodný ESP32: Xtensa,</li><li>ESP32-S3: Xtensa,</li><li>ESP32-C3 a ESP32-C6: RISC-V.</li></ul>
+<p><strong>ESP32 preto nemožno všeobecne označiť ako ARM.</strong></p>
+<h3>5. Porovnávacia úloha</h3>
+<p><strong>36 – 41 min</strong></p>
+<h4>A. Priraď platformu</h4>
+<div class="scroll"><table><thead><tr><th>Platforma</th><th>Architektúra</th></tr></thead><tbody><tr><td>Arduino Uno R3</td><td>AVR</td></tr><tr><td>Pôvodný ESP32</td><td>Xtensa</td></tr><tr><td>ESP32-C3</td><td>RISC-V</td></tr><tr><td>Raspberry Pi 4</td><td>ARM</td></tr><tr><td>Bežný PC s procesorom x86-64</td><td>x86-64</td></tr></tbody></table></div>
+<h4>B. Posúď tvrdenia</h4>
+<p><strong>Nepravda.</strong></p>
+<ol><li>„Každý RISC procesor vykoná každú inštrukciu za jeden cyklus.“  </li></ol>
+<p><strong>Nepravda.</strong></p>
+<ol><li>„ARM je jeden konkrétny mikrokontrolér.“  </li></ol>
+<p><strong>Nepravda.</strong></p>
+<ol><li>„Vyššia frekvencia vždy znamená rýchlejší program.“  </li></ol>
+<p><strong>Áno, ak je prenositeľný a má potrebnú podporu.</strong></p>
+<ol><li>„Rovnaký C++ zdroj môže byť preložený pre rôzne ISA.“  </li></ol>
+<p><strong>Nie.</strong></p>
+<ol><li>„Hotový strojový program pre AVR bežne spustíme priamo na ARM.“  </li></ol>
+<h3>6. Overenie a zápis</h3>
+<p><strong>41 – 45 min</strong></p>
+<blockquote><p>ISA definuje inštrukcie a ďalšie programátorovi viditeľné vlastnosti procesora.  </p></blockquote>
+<blockquote><p>Mikroarchitektúra opisuje konkrétnu vnútornú realizáciu.  </p></blockquote>
+<blockquote><p>RISC a CISC sú architektonické prístupy s historicky odlišným zameraním.  </p></blockquote>
+<blockquote><p>ARM patrí k architektúram s RISC pôvodom.  </p></blockquote>
+<blockquote><p>AVR, ARM, x86, Xtensa a RISC-V nie sú navzájom zameniteľné ISA.  </p></blockquote>
+<blockquote><p>Výkon neurčuje iba frekvencia alebo označenie RISC/CISC.</p></blockquote>
+<p>---</p>
+<p>Celok <strong>2 – Architektúra mikrokontroléra</strong> je pripravený ako <strong>štyri 45-minútové hodiny</strong> s výkladom, príkladmi, aktivitami a zápisom do zošita.</p>
+<section class="simulator"><h2>Praktická ukážka: čítanie vstupu a riadenie LED</h2><p>Úplný program skopírujte do online simulátora Arduino Uno. Simulátor predstavuje mikrokontrolér ATmega328P a umožňuje sledovať vykonávanie programu. Zapojte tlačidlo medzi pin 2 a GND.</p><div class="code-actions"><button type="button" data-copy-code="sketch">Kopírovať kód</button><a class="button" href="https://wokwi.com/projects/new/arduino-uno" target="_blank" rel="noopener">Otvoriť online simulátor Arduino Uno (Wokwi)</a><span id="status-sketch" role="status" aria-live="polite"></span></div><pre><code id="sketch">const byte LED_PIN = LED_BUILTIN;
+const byte BUTTON_PIN = 2;
+
+void setup() {
+    pinMode(LED_PIN, OUTPUT);
+    pinMode(BUTTON_PIN, INPUT_PULLUP);
+}
+
+void loop() {
+    const bool buttonPressed = digitalRead(BUTTON_PIN) == LOW;
+    digitalWrite(LED_PIN, buttonPressed ? HIGH : LOW);
+}</code></pre></section><section class="sources"><h2>Zdroje na ďalšie štúdium</h2><ul><li><a href="https://developer.arm.com/-/media/Arm%20Developer%20Community/PDF/Learn%20the%20Architecture/Armv8-A%20Instruction%20Set%20Architecture.pdf" target="_blank" rel="noopener">Armv8-A Instruction Set Architecture (Arm)</a></li><li><a href="https://docs.espressif.com/projects/esp-hardware-design-guidelines/en/latest/esp32c3/product-overview.html" target="_blank" rel="noopener">ESP32-C3 product overview (Espressif)</a></li><li><a href="https://docs.wokwi.com/getting-started/supported-hardware" target="_blank" rel="noopener">Wokwi supported hardware</a></li></ul></section><footer><p>Prednáška 2.4 · Výpočtová technika · Celok 02</p><p><a href="2.3%20Instrukcny%20cyklus%20mikrokontrolera.html">← Predchádzajúca prednáška</a> </p></footer></main><script src="../theme.js" defer></script><script>document.addEventListener('click',async event=>{const b=event.target.closest('[data-copy-code]');if(!b)return;const c=document.getElementById(b.dataset.copyCode),s=document.getElementById('status-'+b.dataset.copyCode);try{await navigator.clipboard.writeText(c.innerText);s.textContent='Kód bol skopírovaný.'}catch{s.textContent='Kopírovanie sa nepodarilo. Označte kód a skopírujte ho ručne.'}})</script></body></html>

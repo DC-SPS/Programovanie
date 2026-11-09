@@ -1,0 +1,120 @@
+<!doctype html><html lang="sk"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="2.3 Inštrukčný cyklus mikrokontroléra – tematický celok 02"><title>2.3 Inštrukčný cyklus mikrokontroléra | Výpočtová technika</title><style>:root{color-scheme:light dark;--bg:#f7f8fa;--surface:#fff;--text:#1c2330;--muted:#5b6678;--accent:#1f6feb;--border:#d9dee7}@media(prefers-color-scheme:dark){:root{--bg:#12161d;--surface:#1b212b;--text:#e6eaf1;--muted:#9aa6b8;--accent:#83c5ff;--border:#2d3644}}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:16px/1.65 system-ui,-apple-system,"Segoe UI",sans-serif}a{color:var(--accent)}nav,main{width:min(100% - 2rem,900px);margin:auto}nav{display:flex;gap:.6rem;flex-wrap:wrap;padding:.8rem 0}nav a,.button{display:inline-block;padding:.45rem .75rem;border:1px solid var(--border);border-radius:.55rem;text-decoration:none;color:inherit;background:var(--surface)}main{padding:1rem 0 3rem}a:focus-visible,button:focus-visible{outline:3px solid var(--accent);outline-offset:3px}h1{font-size:clamp(1.8rem,5vw,2.6rem);line-height:1.2}h2{margin-top:2rem}h3{margin-top:1.5rem}.muted{color:var(--muted)}.scroll{overflow:auto}.formula{margin:1rem 0;text-align:center;font-family:ui-monospace,Consolas,monospace}table{width:100%;border-collapse:collapse}th,td{padding:.6rem .7rem;border:1px solid var(--border);text-align:left;vertical-align:top}pre{margin:.65rem 0 1rem;padding:1rem;border-radius:9px;overflow:auto;background:#0f172a;color:#e2e8f0;font:14px/1.55 ui-monospace,Consolas,monospace}.code-actions{display:flex;gap:.5rem;flex-wrap:wrap;align-items:center}button{padding:.55rem .8rem;border:0;border-radius:8px;background:#4b91f1;color:#fff;font-weight:700;cursor:pointer}.sources,footer,.simulator{margin-top:2rem;padding-top:1rem;border-top:1px solid var(--border)}blockquote{margin:1rem 0;padding:1rem;border:1px solid var(--border);border-radius:12px;background:var(--surface)}@media(max-width:600px){nav,main{width:calc(100% - 1.2rem)}}</style></head><body><nav aria-label="Navigácia kurzov"><a href="index.html#celok-02">Výpočtová technika · osnova</a><a href="../index.html">Všetky kurzy</a><a href="../nastavenia.html">Nastavenia vzhľadu</a></nav><main><header><p class="muted"><a href="index.html#celok-02">Výpočtová technika</a> · Tematický celok 02 · Prednáška 2.3</p><h1>2.3 Inštrukčný cyklus mikrokontroléra</h1><p class="muted">Architektúra mikrokontroléra · 45 minút</p></header><p><strong>Trvanie:</strong> 45 minút <strong>Nadväznosť:</strong> CPU, ALU a registre.</p>
+<h3>Ciele hodiny</h3>
+<p>Žiak má vedieť:</p>
+<ul><li>vysvetliť základné fázy vykonania inštrukcie,</li><li>rozlíšiť hodinový cyklus a inštrukciu,</li><li>opísať účinok skoku,</li><li>vysvetliť základný princíp pipeline,</li><li>približne vypočítať čas vykonania podľa počtu cyklov.</li></ul>
+<h3>Časový plán</h3>
+<div class="scroll"><table><thead><tr><th>Čas</th><th>Obsah</th></tr></thead><tbody><tr><td>0 – 5 min</td><td>Čo procesor skutočne vykonáva</td></tr><tr><td>5 – 17 min</td><td>Fázy inštrukčného cyklu</td></tr><tr><td>17 – 27 min</td><td>Príklad programu a skok</td></tr><tr><td>27 – 35 min</td><td>Hodiny a pipeline</td></tr><tr><td>35 – 41 min</td><td>Výpočty a aktivita</td></tr><tr><td>41 – 45 min</td><td>Overenie a zápis</td></tr></tbody></table></div>
+<h3>1. Od C++ k strojovým inštrukciám</h3>
+<p><strong>0 – 5 min</strong></p>
+<p>Procesor priamo nevykonáva riadky programu C++.</p>
+<p>Zjednodušene:</p>
+<pre><code>Zdrojový program
+       ↓
+Prekladač a ďalšie nástroje
+       ↓
+Strojové inštrukcie
+       ↓
+Procesor</code></pre>
+<p>Jeden riadok môže vytvoriť:</p>
+<ul><li>viac inštrukcií,</li><li>jednu inštrukciu,</li><li>žiadnu inštrukciu, ak ho optimalizácia odstráni.</li></ul>
+<h3>2. Základné fázy</h3>
+<p><strong>5 – 17 min</strong></p>
+<p>Didaktický model:</p>
+<ol><li><strong>Fetch – načítanie inštrukcie</strong></li><li><strong>Decode – dekódovanie</strong></li><li><strong>Execute – vykonanie</strong></li><li><strong>Prístup k pamäti a zápis výsledku, ak sú potrebné</strong></li></ol>
+<pre><code>Načítaj → Dekóduj → Vykonaj → Ulož výsledok
+   ↑                                  │
+   └──────── ďalšia inštrukcia ────────┘</code></pre>
+<p>Skutočný procesor môže fázy spájať, deliť alebo prekrývať.</p>
+<h4>Načítanie</h4>
+<p>Procesor získa inštrukciu z programovej pamäte.</p>
+<h4>Dekódovanie</h4>
+<p>Riadiaca jednotka určí:</p>
+<ul><li>operáciu,</li><li>operandy,</li><li>spôsob adresovania.</li></ul>
+<h4>Vykonanie</h4>
+<p>Procesor napríklad:</p>
+<ul><li>sčíta registre,</li><li>načíta údaj,</li><li>zapíše výstup,</li><li>zmení tok programu.</li></ul>
+<h4>Zápis výsledku</h4>
+<p>Výsledok môže smerovať do registra, pamäte alebo periférie.</p>
+<p>Nie každá inštrukcia potrebuje samostatný prístup k dátovej pamäti.</p>
+<h3>3. Príklad na AVR</h3>
+<p><strong>17 – 27 min</strong></p>
+<p>Jednoduchý zápis assemblera:</p>
+<pre><code>LDI R16, 5
+LDI R17, 3
+ADD R16, R17</code></pre>
+<h4>Význam</h4>
+<div class="scroll"><table><thead><tr><th>Inštrukcia</th><th>Účinok</th></tr></thead><tbody><tr><td><code>LDI R16, 5</code></td><td>Uloží konštantu 5 do R16</td></tr><tr><td><code>LDI R17, 3</code></td><td>Uloží konštantu 3 do R17</td></tr><tr><td><code>ADD R16, R17</code></td><td>Sčíta hodnoty a výsledok uloží do R16</td></tr></tbody></table></div>
+<p>Výsledok:</p>
+<pre><code>R16 = 8
+R17 = 3</code></pre>
+<p>Na AVR má <code>LDI</code> obmedzenia na použité registre; v tomto príklade sú R16 a R17 platné.</p>
+<h4>Skok</h4>
+<p>Bežný priebeh pokračuje ďalšou inštrukciou. Skok zmení miesto pokračovania.</p>
+<pre><code>RJMP zaciatok</code></pre>
+<p>Podmienený skok môže závisieť od stavového príznaku, napríklad <code>Z</code>.</p>
+<p>Takto procesor realizuje podmienky a cykly vyššieho jazyka.</p>
+<h4>Prerušenie</h4>
+<p>Prerušenie dočasne zmení tok vykonávania. Procesor uloží potrebné informácie a prejde na obsluhu podľa pravidiel architektúry.</p>
+<p>Po návrate pokračuje v prerušenom programe.</p>
+<h3>4. Hodinový cyklus a pipeline</h3>
+<p><strong>27 – 35 min</strong></p>
+<h4>Hodinový cyklus</h4>
+<p>Pri frekvencii 16 MHz:</p>
+<div class="formula"><p>T_\text{clk}=\frac{1}{16\,000\,000}=62{,}5\ \text{ns}</p>
+</div>
+<p><strong>Jedna inštrukcia nemusí trvať jeden hodinový cyklus.</strong></p>
+<p>Na ATmega328P:</p>
+<ul><li>mnohé jednoduché inštrukcie trvajú jeden cyklus,</li><li>iné potrebujú viac cyklov,</li><li>pri niektorých závisí čas aj od výsledku podmienky.</li></ul>
+<h4>Pipeline</h4>
+<p>Procesor môže prekrývať fázy viacerých inštrukcií.</p>
+<p>Zjednodušený príklad:</p>
+<pre><code>Cyklus 1: načítanie A
+Cyklus 2: vykonanie A + načítanie B
+Cyklus 3: vykonanie B + načítanie C</code></pre>
+<p>AVR používa jednoduché prekrytie načítania a vykonávania. Skok môže bežný priebeh narušiť a vyžiadať ďalší čas.</p>
+<p>Pipeline zvyšuje priepustnosť, ale neznamená, že každá jednotlivá inštrukcia má nulové čakanie.</p>
+<h3>5. Výpočty a aktivita</h3>
+<p><strong>35 – 41 min</strong></p>
+<h4>A. Čas inštrukcie</h4>
+<p>Inštrukcia potrebuje dva cykly pri 16 MHz:</p>
+<div class="formula"><p>t=\frac{2}{16\,000\,000}=125\ \text{ns}</p>
+</div>
+<h4>B. Čas úseku programu</h4>
+<p>Úsek má celkovo 160 cyklov:</p>
+<div class="formula"><p>t=\frac{160}{16\,000\,000}=10\ \mu\text{s}</p>
+</div>
+<p>Výpočet predpokladá známy počet cyklov a nezahŕňa dodatočné prerušenia či iné oneskorenia.</p>
+<h4>C. Aktivita</h4>
+<p>Traja žiaci predstavujú:</p>
+<ul><li>pamäť programu,</li><li>dekodér,</li><li>ALU a registre.</li></ul>
+<p>Spracujú kartičky:</p>
+<pre><code>NAČÍTAJ 5
+PRIPOČÍTAJ 3
+ULOŽ VÝSLEDOK</code></pre>
+<p>Trieda určí, ktorá časť systému vykonáva jednotlivé kroky.</p>
+<h3>6. Overenie a zápis</h3>
+<p><strong>41 – 45 min</strong></p>
+<ol><li>Je jeden riadok C++ jedna inštrukcia? <strong>Nie nevyhnutne.</strong></li><li>Musí každá inštrukcia trvať jeden cyklus? <strong>Nie.</strong></li><li>Čo robí skok? <strong>Mení miesto pokračovania programu.</strong></li></ol>
+<h4>Zápis do zošita</h4>
+<blockquote><p>Inštrukčný cyklus zahŕňa načítanie, dekódovanie a vykonanie inštrukcie.  </p></blockquote>
+<blockquote><p>Podľa operácie nasleduje prístup k pamäti a zápis výsledku.  </p></blockquote>
+<blockquote><p>Hodinový cyklus a strojová inštrukcia nie sú totožné pojmy.  </p></blockquote>
+<blockquote><p>Skok mení tok programu.  </p></blockquote>
+<blockquote><p>Pipeline prekrýva fázy viacerých inštrukcií.  </p></blockquote>
+<blockquote><p>Čas vykonania závisí od počtu cyklov aj podmienok systému.</p></blockquote>
+<section class="simulator"><h2>Praktická ukážka: čítanie vstupu a riadenie LED</h2><p>Úplný program skopírujte do online simulátora Arduino Uno. Simulátor predstavuje mikrokontrolér ATmega328P a umožňuje sledovať vykonávanie programu. Zapojte tlačidlo medzi pin 2 a GND.</p><div class="code-actions"><button type="button" data-copy-code="sketch">Kopírovať kód</button><a class="button" href="https://wokwi.com/projects/new/arduino-uno" target="_blank" rel="noopener">Otvoriť online simulátor Arduino Uno (Wokwi)</a><span id="status-sketch" role="status" aria-live="polite"></span></div><pre><code id="sketch">const byte LED_PIN = LED_BUILTIN;
+unsigned long previousMillis = 0;
+bool ledState = false;
+
+void setup() {
+    pinMode(LED_PIN, OUTPUT);
+}
+
+void loop() {
+    const unsigned long now = millis();
+    if (now - previousMillis &gt;= 500) {
+        previousMillis = now;
+        ledState = !ledState;
+        digitalWrite(LED_PIN, ledState);
+    }
+}</code></pre></section><section class="sources"><h2>Zdroje na ďalšie štúdium</h2><ul><li><a href="https://onlinedocs.microchip.com/oxy/GUID-74578654-4F5F-4B29-9F3C-6C3B1F1DF670-en-US-2/GUID-3A867580-03F1-4E43-8949-9FA8E3B4DF3F.html" target="_blank" rel="noopener">AVR instruction execution timing (Microchip)</a></li><li><a href="https://docs.wokwi.com/getting-started/supported-hardware" target="_blank" rel="noopener">Wokwi supported hardware</a></li></ul></section><footer><p>Prednáška 2.3 · Výpočtová technika · Celok 02</p><p><a href="2.2%20Architektura%20MCU%20-%20CPU%2C%20ALU%20a%20registre.html">← Predchádzajúca prednáška</a> <a href="2.4%20Architektonicke%20pristupy%20-%20RISC%2C%20CISC%20a%20ARM.html">Nasledujúca prednáška →</a></p></footer></main><script src="../theme.js" defer></script><script>document.addEventListener('click',async event=>{const b=event.target.closest('[data-copy-code]');if(!b)return;const c=document.getElementById(b.dataset.copyCode),s=document.getElementById('status-'+b.dataset.copyCode);try{await navigator.clipboard.writeText(c.innerText);s.textContent='Kód bol skopírovaný.'}catch{s.textContent='Kopírovanie sa nepodarilo. Označte kód a skopírujte ho ručne.'}})</script></body></html>
