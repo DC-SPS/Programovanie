@@ -32,4 +32,16 @@ Prehľad tematických celkov a dostupných materiálov je na stránke
 - [5.6 Filtrácia, kalibrácia a presnosť merania](./5.6%20Filtracia%20kalibracia%20a%20presnost%20merania.html)
 
 Ostatné témy z 65-bodovej osnovy sú zatiaľ vedené ako plán učiva. Prednášky
-tematických celkov 3, 4 a 5 sú určené na 45 minút.
+tematických celkov 3, 4, 5 a 6 sú určené na 45 minút.
+
+## Tematický celok 6 – Komunikačné rozhrania a protokoly
+
+- [6.1 Sériová a paralelná komunikácia](./6.1%20Seriova%20a%20paralelna%20komunikacia.html)
+- [6.2 UART](./6.2%20UART.html)
+- [6.3 I²C](./6.3%20I2C.html)
+- [6.4 SPI](./6.4%20SPI.html)
+- [6.5 RS-232 a RS-485](./6.5%20RS-232%20a%20RS-485.html)
+- [6.6 Modbus RTU](./6.6%20Modbus%20RTU.html)
+- [6.7 USB a ďalšie rozhrania](./6.7%20USB%20a%20dalsie%20rozhrania.html)
+- [6.8 Komunikačné protokoly – rámce a adresovanie](./6.8%20Komunikacne%20protokoly%20-%20ramce%20a%20adresovanie.html)
+

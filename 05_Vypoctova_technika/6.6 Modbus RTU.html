@@ -1,0 +1,68 @@
+<!doctype html><html lang="sk"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#101827"><meta name="description" content="Modbus RTU – tematický celok 06 Výpočtová technika."><title>6.6 Modbus RTU | Výpočtová technika</title><style>:root{color-scheme:light;--bg:#f7f8fa;--surface:#fff;--text:#1c2330;--muted:#5b6678;--accent:#1f6feb;--border:#d9dee7;--note:#fff4d6}@media(prefers-color-scheme:dark){:root:not([data-theme]){color-scheme:dark;--bg:#12161d;--surface:#1b212b;--text:#e6eaf1;--muted:#9aa6b8;--accent:#5aa2ff;--border:#2d3644;--note:#3a3017}}:root[data-theme=dark]{color-scheme:dark;--bg:#12161d;--surface:#1b212b;--text:#e6eaf1;--muted:#9aa6b8;--accent:#5aa2ff;--border:#2d3644;--note:#3a3017}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:16px/1.65 system-ui,-apple-system,"Segoe UI",sans-serif}a{color:var(--accent)}nav,main{width:min(100% - 2rem,900px);margin:auto}nav{display:flex;gap:.55rem;flex-wrap:wrap;padding:.8rem 0}nav a,.button{display:inline-block;padding:.4rem .7rem;border:1px solid var(--border);border-radius:.55rem;text-decoration:none;color:inherit;background:var(--surface)}main{padding:1rem 0 3rem}a:focus-visible,button:focus-visible{outline:3px solid var(--accent);outline-offset:3px}h1{font-size:clamp(1.8rem,5vw,2.6rem);line-height:1.2}h2{margin-top:2rem}h3{margin-top:1.5rem}.muted{color:var(--muted)}.note{margin:1rem 0;padding:1rem;border:1px solid var(--border);border-radius:12px;background:var(--note)}.scroll{overflow:auto}table{width:100%;border-collapse:collapse}th,td{padding:.6rem .7rem;border:1px solid var(--border);text-align:left;vertical-align:top}th{background:var(--surface)}pre{margin:.65rem 0 1rem;padding:1rem;border-radius:9px;overflow:auto;background:#0f172a;color:#e2e8f0;font:14px/1.55 ui-monospace,SFMono-Regular,Consolas,monospace}.equation{overflow:auto;margin:1rem 0;padding:.8rem 1rem;text-align:center;border-left:4px solid var(--accent);background:var(--surface)}.equation code{white-space:pre-wrap}.code-actions{display:flex;gap:.5rem;flex-wrap:wrap}button{padding:.55rem .8rem;border:0;border-radius:8px;background:#4b91f1;color:#fff;font-weight:700;cursor:pointer}.sources,footer{margin-top:2rem;padding-top:1rem;border-top:1px solid var(--border)}blockquote{margin:1rem 0;padding:.3rem 1rem;border-left:4px solid var(--accent);background:var(--surface)}@media(max-width:600px){nav,main{width:calc(100% - 1.2rem)}}</style><script src="../lesson-top.js" defer></script></head><body><nav aria-label="Navigácia kurzov"><a href="index.html#celok-06">Výpočtová technika – osnova</a><a href="../index.html">Všetky kurzy</a><a href="../nastavenia.html">Nastavenia vzhľadu</a></nav><main><header><p class="muted"><a href="index.html#celok-06">Výpočtová technika</a> · Tematický celok 06 · Prednáška 6.6</p><h1>6.6 Modbus RTU</h1><p class="muted">Komunikačné rozhrania a protokoly · 45 minút</p></header><div class="note"><strong>Bezpečnosť:</strong> GPIO, UART, RS-232 a RS-485 nie sú elektricky zameniteľné. Pri prepojení overte napäťové úrovne a použite vhodné prevodníky alebo transceivery. Päťvoltový signál nepripájajte priamo na 3,3 V vstup, ak doska nie je naň určená.</div><h2>Ciele hodiny</h2>
+<p>Žiak má vedieť:</p>
+<ul><li>vysvetliť vzťah Modbus RTU a RS-485,</li><li>opísať požiadavku a odpoveď,</li><li>rozlíšiť základné dátové oblasti,</li><li>prečítať jednoduchý rámec,</li><li>vysvetliť adresovanie registrov a CRC.</li></ul>
+<h2>Časový plán</h2>
+<div class="scroll"><table><thead><tr><th>Čas</th><th>Obsah</th></tr></thead><tbody><tr><td>0 – 5 min</td><td>Použitie v priemysle</td></tr><tr><td>5 – 14 min</td><td>Client–server a dátový model</td></tr><tr><td>14 – 26 min</td><td>Rámce a funkčné kódy</td></tr><tr><td>26 – 34 min</td><td>Adresovanie a časovanie</td></tr><tr><td>34 – 41 min</td><td>Praktické dekódovanie</td></tr><tr><td>41 – 45 min</td><td>Overenie a zápis</td></tr></tbody></table></div>
+<h2>1. Čo je Modbus RTU?</h2>
+<p><strong>0 – 5 min</strong></p>
+<p>Modbus RTU je sériový komunikačný protokol používaný napríklad pre:</p>
+<ul><li>elektromery,</li><li>regulátory,</li><li>snímače,</li><li>frekvenčné meniče.</li></ul>
+<p>Často používa RS-485.</p>
+<pre class="diagram"><code>Modbus RTU: význam a štruktúra správ
+UART: sériové znaky
+RS-485: elektrický prenos</code></pre>
+<h2>2. Komunikačný model</h2>
+<p><strong>5 – 14 min</strong></p>
+<p>V základnej sériovej sieti:</p>
+<ul><li><strong>client</strong> posiela požiadavku,</li><li><strong>server</strong> odpovedá.</li></ul>
+<p>V staršej dokumentácii sa používajú pojmy master a slave.</p>
+<p>Bežné adresy serverov sú <strong>1 až 247</strong>.</p>
+<p>Adresa <strong>0</strong> je broadcast:</p>
+<ul><li>používa sa na podporované zápisové požiadavky,</li><li>zariadenia na broadcast neodpovedajú.</li></ul>
+<h3>Dátové oblasti</h3>
+<div class="scroll"><table><thead><tr><th>Oblasť</th><th>Veľkosť položky</th><th>Bežný prístup</th></tr></thead><tbody><tr><td>Coils</td><td>1 bit</td><td>Čítanie a zápis</td></tr><tr><td>Discrete inputs</td><td>1 bit</td><td>Čítanie</td></tr><tr><td>Input registers</td><td>16 bitov</td><td>Čítanie</td></tr><tr><td>Holding registers</td><td>16 bitov</td><td>Čítanie a zápis</td></tr></tbody></table></div>
+<p>Význam jednotlivých položiek určuje výrobca zariadenia.</p>
+<h2>3. Štruktúra rámca</h2>
+<p><strong>14 – 26 min</strong></p>
+<pre class="diagram"><code>Adresa | Funkcia | Dáta | CRC</code></pre>
+<div class="scroll"><table><thead><tr><th>Funkčný kód</th><th>Úloha</th></tr></thead><tbody><tr><td><code>0x01</code></td><td>Čítanie coils</td></tr><tr><td><code>0x02</code></td><td>Čítanie discrete inputs</td></tr><tr><td><code>0x03</code></td><td>Čítanie holding registers</td></tr><tr><td><code>0x04</code></td><td>Čítanie input registers</td></tr><tr><td><code>0x06</code></td><td>Zápis jedného holding registra</td></tr><tr><td><code>0x10</code></td><td>Zápis viacerých holding registrov</td></tr></tbody></table></div>
+<h3>Požiadavka na čítanie</h3>
+<pre class="diagram"><code>01 03 00 00 00 02 CRC_L CRC_H</code></pre>
+<p>Význam:</p>
+<ul><li><code>01</code>: adresa zariadenia,</li><li><code>03</code>: čítanie holding registers,</li><li><code>00 00</code>: počiatočná adresa 0,</li><li><code>00 02</code>: počet registrov 2,</li><li>posledné dva bajty: CRC-16/Modbus.</li></ul>
+<h3>Možná odpoveď</h3>
+<pre class="diagram"><code>01 03 04 00 2A 00 64 CRC_L CRC_H</code></pre>
+<ul><li><code>04</code>: počet dátových bajtov,</li><li><code>00 2A</code>: hodnota 42,</li><li><code>00 64</code>: hodnota 100.</li></ul>
+<p>CRC bajty sú tu označené symbolicky, nejde o hotový rámec na odoslanie.</p>
+<h3>Poradie bajtov</h3>
+<ul><li>Viacbajtové polia a 16-bitové registre sa v bežnom rámci posielajú vyšším bajtom napred.</li><li>CRC sa posiela <strong>nižším bajtom napred</strong>.</li><li>Poradie 16-bitových slov v 32-bitových hodnotách treba overiť v dokumentácii zariadenia.</li></ul>
+<h3>Chybová odpoveď</h3>
+<p>Pri výnimke server nastaví najvyšší bit funkčného kódu. Napríklad odpoveď na <code>0x03</code> môže obsahovať <code>0x83</code> a kód výnimky.</p>
+<h2>4. Adresovanie a časovanie</h2>
+<p><strong>26 – 34 min</strong></p>
+<h3>Číslo registra verzus adresa v rámci</h3>
+<p>Dokumentácia môže prvý holding register označiť ako <strong>40001</strong>, ale v prenášanom poli adresy sa použije <strong>0</strong>.</p>
+<p>Nie všetky návody používajú rovnakú konvenciu. Overujeme:</p>
+<ul><li>či je adresa nulová alebo jednotková,</li><li>či ide o referenčné označenie,</li><li>aký funkčný kód sa používa.</li></ul>
+<h3>Oddelenie rámcov</h3>
+<p>Modbus RTU používa časové medzery.</p>
+<p>Základné pravidlo zahŕňa medzi rámcami ticho aspoň <strong>3,5 času znaku</strong>. Príliš dlhá prestávka vo vnútri rámca môže znamenať neplatný rámec.</p>
+<p>Pre vyššie rýchlosti nad 19 200 bit/s špecifikácia odporúča pevné časové hodnoty 750 µs pre vnútorný limit a 1,75 ms pre medzeru medzi rámcami.</p>
+<p>Presné časovanie je vhodné prenechať overenej knižnici.</p>
+<h3>Nastavenie portu</h3>
+<p>Všetky zariadenia musia mať kompatibilnú rýchlosť, paritu a stop bity. Často sa používa 8E1; pri režime bez parity predpisuje sériová špecifikácia Modbus dva stop bity. V praxi sa stretneme aj s inými nastaveniami podľa zariadenia.</p>
+<h2>5. Praktická úloha</h2>
+<p><strong>34 – 41 min</strong></p>
+<p>Zariadenie vracia teplotu ako celé číslo v desatinách °C:</p>
+<pre class="diagram"><code>Register: 253</code></pre>
+<p>Výpočet:</p>
+<div class="equation" role="math"><code>T=253/10=25{,}3\ ^\circ\text{C}</code></div>
+<p>Treba poznať aj:</p>
+<ul><li>znamienkovosť,</li><li>jednotku,</li><li>mierku,</li><li>chybové hodnoty.</li></ul>
+<h3>Otázky</h3>
+<ol><li>Koľko dátových bajtov obsahujú tri registre?   <strong>Šesť.</strong></li></ol>
+<ol><li>Odpovedá server na broadcast?   <strong>Nie.</strong></li></ol>
+<ol><li>Je správne CRC dôkazom správnej jednotky a mierky?   <strong>Nie.</strong></li></ol>
+<h2>6. Zápis</h2>
+<p><strong>41 – 45 min</strong></p>
+<blockquote><p>Modbus RTU je protokol často prenášaný cez RS-485.  </p><p>Client posiela požiadavku a server odpovedá.  </p><p>Rámec obsahuje adresu, funkciu, dáta a CRC.  </p><p>Holding a input registre majú 16 bitov.  </p><p>Význam, mierku a adresovanie určuje dokumentácia zariadenia.  </p><p>Správne časovanie a riadenie smeru RS-485 sú nevyhnutné.</p></blockquote><section class="sources"><h2>Zdroje na ďalšie štúdium</h2><ul><li><a href="https://docs.arduino.cc/language-reference/">Arduino Language Reference</a></li><li><a href="https://www.modbus.org/docs/Modbus_Application_Protocol_V1_1b3.pdf">Modbus Application Protocol Specification</a></li><li><a href="https://www.modbus.org/modbus-specifications">Modbus specifications</a></li><li><a href="https://www.raspberrypi.com/documentation/computers/raspberry-pi.html">Raspberry Pi documentation</a></li><li><a href="https://wokwi.com/projects/new/arduino-uno">Wokwi Arduino Uno</a> – online simulátor pre príklady na Arduino Uno.</li></ul></section><footer><p>Prednáška 6.6 · Výpočtová technika · Celok 06</p><p><a href="6.5 RS-232 a RS-485.html">← Predchádzajúca téma</a> · <a href="index.html#celok-06">Osnova celku 06</a> · <a href="6.7 USB a dalsie rozhrania.html">Nasledujúca téma →</a></p></footer></main><script src="../theme.js" defer></script><script>document.addEventListener('click',async event=>{const button=event.target.closest('[data-copy-code]');if(!button)return;const code=document.getElementById(button.dataset.copyCode);const status=document.getElementById('status-'+button.dataset.copyCode);try{await navigator.clipboard.writeText(code.innerText);status.textContent='Kód bol skopírovaný.'}catch{status.textContent='Kopírovanie sa nepodarilo. Označte kód a skopírujte ho ručne.'}})</script></body></html>

@@ -1,0 +1,55 @@
+<!doctype html><html lang="sk"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#101827"><meta name="description" content="USB a ďalšie rozhrania – tematický celok 06 Výpočtová technika."><title>6.7 USB a ďalšie rozhrania | Výpočtová technika</title><style>:root{color-scheme:light;--bg:#f7f8fa;--surface:#fff;--text:#1c2330;--muted:#5b6678;--accent:#1f6feb;--border:#d9dee7;--note:#fff4d6}@media(prefers-color-scheme:dark){:root:not([data-theme]){color-scheme:dark;--bg:#12161d;--surface:#1b212b;--text:#e6eaf1;--muted:#9aa6b8;--accent:#5aa2ff;--border:#2d3644;--note:#3a3017}}:root[data-theme=dark]{color-scheme:dark;--bg:#12161d;--surface:#1b212b;--text:#e6eaf1;--muted:#9aa6b8;--accent:#5aa2ff;--border:#2d3644;--note:#3a3017}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:16px/1.65 system-ui,-apple-system,"Segoe UI",sans-serif}a{color:var(--accent)}nav,main{width:min(100% - 2rem,900px);margin:auto}nav{display:flex;gap:.55rem;flex-wrap:wrap;padding:.8rem 0}nav a,.button{display:inline-block;padding:.4rem .7rem;border:1px solid var(--border);border-radius:.55rem;text-decoration:none;color:inherit;background:var(--surface)}main{padding:1rem 0 3rem}a:focus-visible,button:focus-visible{outline:3px solid var(--accent);outline-offset:3px}h1{font-size:clamp(1.8rem,5vw,2.6rem);line-height:1.2}h2{margin-top:2rem}h3{margin-top:1.5rem}.muted{color:var(--muted)}.note{margin:1rem 0;padding:1rem;border:1px solid var(--border);border-radius:12px;background:var(--note)}.scroll{overflow:auto}table{width:100%;border-collapse:collapse}th,td{padding:.6rem .7rem;border:1px solid var(--border);text-align:left;vertical-align:top}th{background:var(--surface)}pre{margin:.65rem 0 1rem;padding:1rem;border-radius:9px;overflow:auto;background:#0f172a;color:#e2e8f0;font:14px/1.55 ui-monospace,SFMono-Regular,Consolas,monospace}.equation{overflow:auto;margin:1rem 0;padding:.8rem 1rem;text-align:center;border-left:4px solid var(--accent);background:var(--surface)}.equation code{white-space:pre-wrap}.code-actions{display:flex;gap:.5rem;flex-wrap:wrap}button{padding:.55rem .8rem;border:0;border-radius:8px;background:#4b91f1;color:#fff;font-weight:700;cursor:pointer}.sources,footer{margin-top:2rem;padding-top:1rem;border-top:1px solid var(--border)}blockquote{margin:1rem 0;padding:.3rem 1rem;border-left:4px solid var(--accent);background:var(--surface)}@media(max-width:600px){nav,main{width:calc(100% - 1.2rem)}}</style><script src="../lesson-top.js" defer></script></head><body><nav aria-label="Navigácia kurzov"><a href="index.html#celok-06">Výpočtová technika – osnova</a><a href="../index.html">Všetky kurzy</a><a href="../nastavenia.html">Nastavenia vzhľadu</a></nav><main><header><p class="muted"><a href="index.html#celok-06">Výpočtová technika</a> · Tematický celok 06 · Prednáška 6.7</p><h1>6.7 USB a ďalšie rozhrania</h1><p class="muted">Komunikačné rozhrania a protokoly · 45 minút</p></header><div class="note"><strong>Bezpečnosť:</strong> GPIO, UART, RS-232 a RS-485 nie sú elektricky zameniteľné. Pri prepojení overte napäťové úrovne a použite vhodné prevodníky alebo transceivery. Päťvoltový signál nepripájajte priamo na 3,3 V vstup, ak doska nie je naň určená.</div><h2>Ciele hodiny</h2>
+<p>Žiak má vedieť:</p>
+<ul><li>vysvetliť úlohu hostiteľa a zariadenia USB,</li><li>rozlíšiť konektor, prenosový štandard a napájanie,</li><li>vysvetliť, prečo USB nie je obyčajný UART,</li><li>orientačne porovnať USB, Ethernet, CAN, Wi-Fi a Bluetooth.</li></ul>
+<h2>Časový plán</h2>
+<div class="scroll"><table><thead><tr><th>Čas</th><th>Obsah</th></tr></thead><tbody><tr><td>0 – 5 min</td><td>Rozhrania v počítači</td></tr><tr><td>5 – 17 min</td><td>USB</td></tr><tr><td>17 – 25 min</td><td>USB na vývojových doskách</td></tr><tr><td>25 – 35 min</td><td>Ďalšie rozhrania</td></tr><tr><td>35 – 41 min</td><td>Výber rozhrania</td></tr><tr><td>41 – 45 min</td><td>Overenie a zápis</td></tr></tbody></table></div>
+<h2>1. Prečo existuje viac rozhraní?</h2>
+<p><strong>0 – 5 min</strong></p>
+<p>Iné požiadavky má:</p>
+<ul><li>klávesnica,</li><li>externý disk,</li><li>snímač teploty,</li><li>priemyselný pohon,</li><li>bezdrôtové zariadenie.</li></ul>
+<p>Pri výbere zvažujeme rýchlosť, dosah, spotrebu, odolnosť a zložitosť.</p>
+<h2>2. USB</h2>
+<p><strong>5 – 17 min</strong></p>
+<p><strong>USB – Universal Serial Bus – je sériové rozhranie s definovanými pravidlami komunikácie, pripájania a napájania.</strong></p>
+<h3>Hostiteľ a zariadenie</h3>
+<p>Pri bežnom USB:</p>
+<ul><li>hostiteľ riadi komunikáciu,</li><li>zariadenie poskytuje funkciu.</li></ul>
+<p>Príklady:</p>
+<div class="scroll"><table><thead><tr><th>Hostiteľ</th><th>Zariadenie</th></tr></thead><tbody><tr><td>Počítač</td><td>Klávesnica</td></tr><tr><td>Raspberry Pi v hostiteľskom režime</td><td>USB–UART adaptér</td></tr><tr><td>Počítač</td><td>Vývojová doska</td></tr></tbody></table></div>
+<h3>Enumerácia</h3>
+<p>Po pripojení hostiteľ:</p>
+<ol><li>zistí prítomnosť zariadenia,</li><li>načíta jeho popisné údaje,</li><li>priradí adresu,</li><li>nakonfiguruje komunikáciu.</li></ol>
+<p>Tento proces sa nazýva <strong>enumerácia</strong>.</p>
+<h3>Triedy zariadení</h3>
+<ul><li>HID: klávesnice, myši,</li><li>Mass Storage: úložiská,</li><li>CDC: komunikačné zariadenia, často virtuálny sériový port,</li><li>Audio: zvukové zariadenia.</li></ul>
+<h3>Konektor nie je rýchlosť</h3>
+<p>USB-A, USB-B, Micro-USB a USB-C označujú typy konektorov.</p>
+<p><strong>USB-C samo osebe nezaručuje konkrétnu rýchlosť, obrazový výstup ani výkon napájania.</strong></p>
+<p>Záleží na zariadení, porte aj kábli.</p>
+<h3>Napájanie</h3>
+<p>Vyššie napätia a výkony cez USB Power Delivery vyžadujú podporu a vyjednávanie. USB-C neznamená, že možno ľubovoľne priviesť vyššie napätie.</p>
+<h2>3. USB na vývojových doskách</h2>
+<p><strong>17 – 25 min</strong></p>
+<h3>Arduino Uno R3</h3>
+<p>Hlavný ATmega328P nemá natívne USB.</p>
+<p>Konektor USB je pripojený k prevodníku USB–UART, ktorý sprostredkuje komunikáciu a nahrávanie programu.</p>
+<h3>ESP32</h3>
+<p>Závisí od variantu a dosky:</p>
+<ul><li>pôvodné ESP32 dosky často používajú externý USB–UART prevodník,</li><li>niektoré novšie varianty majú vlastné USB periférie s rozdielnymi možnosťami.</li></ul>
+<p>Prítomnosť USB konektora preto sama neurčuje spôsob komunikácie.</p>
+<h3>Raspberry Pi</h3>
+<p>Bežné USB porty Pi 4 a Pi 5 slúžia ako hostiteľské porty. Možnosti režimu USB zariadenia závisia od modelu a portu.</p>
+<p><strong>USB dátové vodiče nepripájame na ľubovoľné GPIO.</strong> Potrebujú vhodný USB hardvér a zapojenie.</p>
+<h2>4. Ďalšie rozhrania</h2>
+<p><strong>25 – 35 min</strong></p>
+<div class="scroll"><table><thead><tr><th>Rozhranie</th><th>Typické použitie</th><th>Dôležitá vlastnosť</th></tr></thead><tbody><tr><td>Ethernet</td><td>Počítačové a priemyselné siete</td><td>Káblová sieťová komunikácia</td></tr><tr><td>CAN</td><td>Vozidlá a riadiace systémy</td><td>Arbitráž a robustná viacbodová komunikácia</td></tr><tr><td>Wi-Fi</td><td>Bezdrôtové pripojenie k sieti</td><td>Vyšší dátový tok, premenlivé oneskorenie</td></tr><tr><td>Bluetooth LE</td><td>Snímače a príslušenstvo</td><td>Návrh zameraný aj na nízku spotrebu</td></tr><tr><td>1-Wire</td><td>Niektoré snímače</td><td>Jedna dátová linka plus referencia</td></tr><tr><td>I²S</td><td>Digitálny zvuk</td><td>Sériový prenos zvukových vzoriek</td></tr></tbody></table></div>
+<h3>Dve užitočné rozlíšenia</h3>
+<ul><li>Ethernet nie je to isté ako internet.</li><li>Wi-Fi nie je internet; je to spôsob pripojenia k lokálnej sieti.</li></ul>
+<p>CAN identifikátor označuje správu a podieľa sa na priorite. Nie je automaticky jednoduchou adresou konkrétneho zariadenia.</p>
+<h2>5. Výber rozhrania</h2>
+<p><strong>35 – 41 min</strong></p>
+<div class="scroll"><table><thead><tr><th>Úloha</th><th>Možná voľba</th></tr></thead><tbody><tr><td>Krátke spojenie snímača na doske</td><td>I²C</td></tr><tr><td>Rýchly displej pri mikrokontroléri</td><td>SPI</td></tr><tr><td>Ladenie textových správ</td><td>UART alebo USB CDC</td></tr><tr><td>Priemyselný snímač na vedení</td><td>RS-485 a vhodný protokol</td></tr><tr><td>Pripojenie počítača do LAN</td><td>Ethernet alebo Wi-Fi</td></tr><tr><td>Bezdrôtový batériový snímač</td><td>Bluetooth LE podľa požiadaviek</td></tr></tbody></table></div>
+<p><strong>Aktivita:</strong> Žiak vyberie rozhranie pre vlastný projekt a uvedie dve požiadavky, ktoré rozhodli.</p>
+<h2>6. Zápis</h2>
+<p><strong>41 – 45 min</strong></p>
+<blockquote><p>USB používa role hostiteľa a zariadenia a proces enumerácie.  </p><p>Konektor neurčuje automaticky prenosovú rýchlosť ani výkon napájania.  </p><p>USB–UART prevodník a natívne USB sú rozdielne riešenia.  </p><p>Rozhranie vyberáme podľa dosahu, rýchlosti, spotreby, odolnosti a zložitosti.  </p><p>Sieťové pripojenie nie je automaticky pripojenie na internet.</p></blockquote><section class="sources"><h2>Zdroje na ďalšie štúdium</h2><ul><li><a href="https://docs.arduino.cc/language-reference/">Arduino Language Reference</a></li><li><a href="https://www.modbus.org/docs/Modbus_Application_Protocol_V1_1b3.pdf">Modbus Application Protocol Specification</a></li><li><a href="https://www.modbus.org/modbus-specifications">Modbus specifications</a></li><li><a href="https://www.raspberrypi.com/documentation/computers/raspberry-pi.html">Raspberry Pi documentation</a></li><li><a href="https://wokwi.com/projects/new/arduino-uno">Wokwi Arduino Uno</a> – online simulátor pre príklady na Arduino Uno.</li></ul></section><footer><p>Prednáška 6.7 · Výpočtová technika · Celok 06</p><p><a href="6.6 Modbus RTU.html">← Predchádzajúca téma</a> · <a href="index.html#celok-06">Osnova celku 06</a> · <a href="6.8 Komunikacne protokoly - ramce a adresovanie.html">Nasledujúca téma →</a></p></footer></main><script src="../theme.js" defer></script><script>document.addEventListener('click',async event=>{const button=event.target.closest('[data-copy-code]');if(!button)return;const code=document.getElementById(button.dataset.copyCode);const status=document.getElementById('status-'+button.dataset.copyCode);try{await navigator.clipboard.writeText(code.innerText);status.textContent='Kód bol skopírovaný.'}catch{status.textContent='Kopírovanie sa nepodarilo. Označte kód a skopírujte ho ručne.'}})</script></body></html>
