@@ -1,0 +1,65 @@
+<!doctype html><html lang="sk"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="Architektúry MCU a SBC – tematický celok 01"><title>1.4 Architektúry MCU a SBC | Výpočtová technika</title><style>:root{color-scheme:light dark;--bg:#f7f8fa;--surface:#fff;--text:#1c2330;--muted:#5b6678;--accent:#1f6feb;--border:#d9dee7}@media(prefers-color-scheme:dark){:root{--bg:#12161d;--surface:#1b212b;--text:#e6eaf1;--muted:#9aa6b8;--accent:#83c5ff;--border:#2d3644}}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:16px/1.65 system-ui,-apple-system,"Segoe UI",sans-serif}a{color:var(--accent)}nav,main{width:min(100% - 2rem,900px);margin:auto}nav{display:flex;gap:.6rem;flex-wrap:wrap;padding:.8rem 0}nav a,.button{display:inline-block;padding:.45rem .75rem;border:1px solid var(--border);border-radius:.55rem;text-decoration:none;color:inherit;background:var(--surface)}main{padding:1rem 0 3rem}a:focus-visible,button:focus-visible{outline:3px solid var(--accent);outline-offset:3px}h1{font-size:clamp(1.8rem,5vw,2.6rem);line-height:1.2}h2{margin-top:2rem}h3{margin-top:1.5rem}.muted{color:var(--muted)}.scroll{overflow:auto}.formula{margin:1rem 0;text-align:center;font-family:ui-monospace,Consolas,monospace}table{width:100%;border-collapse:collapse}th,td{padding:.6rem .7rem;border:1px solid var(--border);text-align:left;vertical-align:top}pre{margin:.65rem 0 1rem;padding:1rem;border-radius:9px;overflow:auto;background:#0f172a;color:#e2e8f0;font:14px/1.55 ui-monospace,Consolas,monospace}.code-actions{display:flex;gap:.5rem;flex-wrap:wrap;align-items:center}button{padding:.55rem .8rem;border:0;border-radius:8px;background:#4b91f1;color:#fff;font-weight:700;cursor:pointer}.simulator,.sources,footer{margin-top:2rem;padding-top:1rem;border-top:1px solid var(--border)}blockquote{margin:1rem 0;padding:1rem;border:1px solid var(--border);border-radius:12px;background:var(--surface)}@media(max-width:600px){nav,main{width:calc(100% - 1.2rem)}}</style></head><body><nav aria-label="Navigácia kurzov"><a href="index.html#celok-01">Výpočtová technika · osnova celku 01</a><a href="../index.html">Všetky kurzy</a><a href="../nastavenia.html">Nastavenia vzhľadu</a></nav><main><header><p class="muted"><a href="index.html#celok-01">Výpočtová technika</a> · Tematický celok 01 · Prednáška 1.4</p><h1>1.4 Architektúry MCU a SBC</h1><p class="muted">Úvod do mikroprocesorových a embedded systémov · 45 minút</p></header><p><strong>Trvanie:</strong> 45 minút <strong>Nadväznosť:</strong> Mikroprocesor, mikrokontrolér a vývojová doska.</p>
+<h2>Ciele hodiny</h2>
+<p>Žiak má vedieť:</p>
+<ul><li>rozlíšiť MCU, SoC a SBC,</li><li>porovnať ich typické vlastnosti,</li><li>vysvetliť základné rozdiely v pamäti a štarte,</li><li>uviesť význam 8-bitovej a 32-bitovej architektúry,</li><li>vybrať platformu podľa úlohy.</li></ul>
+<h2>Časový plán</h2>
+<div class="scroll"><table><thead><tr><th>Čas</th><th>Obsah</th></tr></thead><tbody><tr><td>0 – 5 min</td><td>Čip a počítačová doska</td></tr><tr><td>5 – 17 min</td><td>Architektúra MCU</td></tr><tr><td>17 – 27 min</td><td>Architektúra SBC</td></tr><tr><td>27 – 35 min</td><td>Porovnanie</td></tr><tr><td>35 – 41 min</td><td>Výber platformy</td></tr><tr><td>41 – 45 min</td><td>Overenie a zápis</td></tr></tbody></table></div>
+<h2>1. Tri pojmy</h2>
+<p><strong>0 – 5 min</strong></p>
+<ul><li><strong>MCU:</strong> mikrokontrolér.</li><li><strong>SoC – System-on-Chip:</strong> čip integrujúci viac funkcií systému.</li><li><strong>SBC – Single-Board Computer:</strong> počítač na jednej doske.</li></ul>
+<p>Tieto kategórie sa čiastočne prekrývajú. Aj MCU možno v širokom zmysle chápať ako systém integrovaný na čipe.</p>
+<p>SBC je kategória dosky, nie názov inštrukčnej sady.</p>
+<h2>2. Architektúra MCU</h2>
+<p><strong>5 – 17 min</strong></p>
+<p>Typický mikrokontrolér:</p>
+<pre><code>CPU ↔ Flash a RAM
+ ↕
+GPIO, časovače, ADC, komunikácia</code></pre>
+<h3>Charakteristické vlastnosti</h3>
+<ul><li>integrované riadiace periférie,</li><li>často menšia pracovná pamäť,</li><li>možnosť krátkeho štartu,</li><li>režimy nízkej spotreby,</li><li>priame riadenie hardvéru.</li></ul>
+<h3>8-bitový a 32-bitový MCU</h3>
+<p>ATmega328P sa označuje ako 8-bitový. Mnohé STM32 a ESP32 sú 32-bitové.</p>
+<p>Označenie súvisí s vlastnosťami procesorovej architektúry, napríklad šírkou bežných registrov a operácií.</p>
+<p><strong>8-bitový MCU dokáže pracovať aj so 16-bitovým alebo 32-bitovým číslom</strong>, ale môže na to potrebovať viac operácií.</p>
+<p>Šírka CPU sama neurčuje:</p>
+<ul><li>počet pinov,</li><li>rozlíšenie ADC,</li><li>veľkosť všetkých premenných,</li><li>výslednú rýchlosť celého projektu.</li></ul>
+<h2>3. Architektúra SBC</h2>
+<p><strong>17 – 27 min</strong></p>
+<p>Typický SBC obsahuje:</p>
+<ul><li>aplikačný SoC,</li><li>väčšiu RAM,</li><li>úložisko alebo konektor preň,</li><li>USB,</li><li>sieťové a obrazové rozhrania,</li><li>napájacie obvody.</li></ul>
+<pre><code>SoC ↔ RAM
+ ↕
+Úložisko, USB, sieť, obraz, GPIO</code></pre>
+<p>Často používa Linux alebo iný všeobecný OS.</p>
+<h3>Spustenie</h3>
+<p>MCU po resete typicky začne vykonávať inicializačný kód firmvéru.</p>
+<p>SBC s Linuxom prechádza bootovacím procesom, načítaním jadra a spustením služieb.</p>
+<p>Konkrétny čas závisí od hardvéru a konfigurácie.</p>
+<h2>4. Porovnanie</h2>
+<p><strong>27 – 35 min</strong></p>
+<div class="scroll"><table><thead><tr><th>Vlastnosť</th><th>Typická MCU doska</th><th>Typický SBC s Linuxom</th></tr></thead><tbody><tr><td>Hlavné použitie</td><td>Riadenie a meranie</td><td>Aplikácie a služby</td></tr><tr><td>Softvér</td><td>Firmvér, prípadne RTOS</td><td>OS a aplikácie</td></tr><tr><td>RAM</td><td>Menšia</td><td>Väčšia</td></tr><tr><td>Analógové vstupy</td><td>Často dostupné</td><td>Často potrebný externý ADC</td></tr><tr><td>Spotreba</td><td>Často nižšia</td><td>Spravidla vyššia</td></tr><tr><td>Presné časovanie</td><td>Hardvérové periférie</td><td>Závisí od periférií a systémových mechanizmov</td></tr><tr><td>Súbory a databázy</td><td>Podľa možností</td><td>Rozsiahla podpora</td></tr></tbody></table></div>
+<p>Bežný Linux negarantuje presné krátke reakcie používateľského programu. Výkonný CPU nie je automatickou náhradou časovača.</p>
+<h2>5. Výber platformy</h2>
+<p><strong>35 – 41 min</strong></p>
+<div class="scroll"><table><thead><tr><th>Zadanie</th><th>Možná voľba</th></tr></thead><tbody><tr><td>Jednoduchý termostat</td><td>MCU</td></tr><tr><td>Batériový senzor</td><td>Úsporný MCU</td></tr><tr><td>Kamera s webovou aplikáciou</td><td>SBC</td></tr><tr><td>Presné počítanie impulzov</td><td>MCU alebo vhodná periféria</td></tr><tr><td>Databáza meraní</td><td>SBC alebo server</td></tr><tr><td>Riadenie a webová vizualizácia</td><td>Kombinácia MCU a SBC</td></tr></tbody></table></div>
+<h3>Návrhová úloha</h3>
+<p>Navrhni rozdelenie systému:</p>
+<pre><code>MCU: meranie a lokálne riadenie
+          ↕
+Komunikačné rozhranie
+          ↕
+SBC: databáza a web</code></pre>
+<p>Urči správanie MCU pri výpadku spojenia so SBC.</p>
+<h2>6. Zápis</h2>
+<p><strong>41 – 45 min</strong></p>
+<blockquote><p>MCU je mikrokontrolér, SBC je počítačová doska.  </p><p>SoC integruje viac funkcií systému do jedného čipu.  </p><p>MCU býva vhodný na meranie a riadenie.  </p><p>SBC býva vhodný na náročnejšie aplikácie a sieťové služby.  </p><p>Bitová šírka procesora sama neurčuje vhodnosť platformy.  </p><p>MCU a SBC môžu v jednom systéme spolupracovať.</p></blockquote>
+<section class="simulator"><h2>Praktická ukážka vo Wokwi</h2><p>Tento sketch spustite na Raspberry Pi Pico. Pico je mikrokontrolérová doska, nie Raspberry Pi SBC s Linuxom.</p><div class="code-actions"><button type="button" data-copy-code="lesson-sketch">Kopírovať kód</button><a class="button" href="https://wokwi.com/projects/new/pi-pico" target="_blank" rel="noopener">Otvoriť Wokwi: Raspberry Pi Pico (RP2040)</a><span id="status-lesson-sketch" role="status" aria-live="polite"></span></div><pre><code id="lesson-sketch">void setup() {
+    pinMode(LED_BUILTIN, OUTPUT);
+}
+
+void loop() {
+    digitalWrite(LED_BUILTIN, HIGH);
+    delay(500);
+    digitalWrite(LED_BUILTIN, LOW);
+    delay(500);
+}</code></pre></section><section class="sources"><h2>Zdroje na ďalšie štúdium</h2><ul><li><a href="https://www.raspberrypi.com/documentation/microcontrollers/raspberry-pi-pico.html" target="_blank" rel="noopener noreferrer">Raspberry Pi Pico documentation</a></li><li><a href="https://www.raspberrypi.com/documentation/computers/raspberry-pi.html" target="_blank" rel="noopener noreferrer">Raspberry Pi computers documentation</a></li><li><a href="https://docs.wokwi.com/parts/wokwi-pi-pico" target="_blank" rel="noopener noreferrer">Wokwi Raspberry Pi Pico</a></li></ul></section><footer><p>Prednáška 1.4 · Výpočtová technika · Celok 01</p><p><a href="1.3%20Vyvojove%20prostredia%20a%20nastroje.html">← Predchádzajúca prednáška</a> <a href="1.5%20STM32%20a%20ARM%20Cortex-M.html">Nasledujúca prednáška →</a></p></footer></main><script src="../theme.js" defer></script><script>document.addEventListener('click',async event=>{const b=event.target.closest('[data-copy-code]');if(!b)return;const c=document.getElementById(b.dataset.copyCode),s=document.getElementById('status-'+b.dataset.copyCode);try{await navigator.clipboard.writeText(c.innerText);s.textContent='Kód bol skopírovaný.'}catch{s.textContent='Kopírovanie sa nepodarilo. Označte kód a skopírujte ho ručne.'}})</script></body></html>

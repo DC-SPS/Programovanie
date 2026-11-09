@@ -1,0 +1,83 @@
+<!doctype html><html lang="sk"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="STM32 a ARM Cortex-M – tematický celok 01"><title>1.5 STM32 a ARM Cortex-M | Výpočtová technika</title><style>:root{color-scheme:light dark;--bg:#f7f8fa;--surface:#fff;--text:#1c2330;--muted:#5b6678;--accent:#1f6feb;--border:#d9dee7}@media(prefers-color-scheme:dark){:root{--bg:#12161d;--surface:#1b212b;--text:#e6eaf1;--muted:#9aa6b8;--accent:#83c5ff;--border:#2d3644}}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:16px/1.65 system-ui,-apple-system,"Segoe UI",sans-serif}a{color:var(--accent)}nav,main{width:min(100% - 2rem,900px);margin:auto}nav{display:flex;gap:.6rem;flex-wrap:wrap;padding:.8rem 0}nav a,.button{display:inline-block;padding:.45rem .75rem;border:1px solid var(--border);border-radius:.55rem;text-decoration:none;color:inherit;background:var(--surface)}main{padding:1rem 0 3rem}a:focus-visible,button:focus-visible{outline:3px solid var(--accent);outline-offset:3px}h1{font-size:clamp(1.8rem,5vw,2.6rem);line-height:1.2}h2{margin-top:2rem}h3{margin-top:1.5rem}.muted{color:var(--muted)}.scroll{overflow:auto}.formula{margin:1rem 0;text-align:center;font-family:ui-monospace,Consolas,monospace}table{width:100%;border-collapse:collapse}th,td{padding:.6rem .7rem;border:1px solid var(--border);text-align:left;vertical-align:top}pre{margin:.65rem 0 1rem;padding:1rem;border-radius:9px;overflow:auto;background:#0f172a;color:#e2e8f0;font:14px/1.55 ui-monospace,Consolas,monospace}.code-actions{display:flex;gap:.5rem;flex-wrap:wrap;align-items:center}button{padding:.55rem .8rem;border:0;border-radius:8px;background:#4b91f1;color:#fff;font-weight:700;cursor:pointer}.simulator,.sources,footer{margin-top:2rem;padding-top:1rem;border-top:1px solid var(--border)}blockquote{margin:1rem 0;padding:1rem;border:1px solid var(--border);border-radius:12px;background:var(--surface)}@media(max-width:600px){nav,main{width:calc(100% - 1.2rem)}}</style></head><body><nav aria-label="Navigácia kurzov"><a href="index.html#celok-01">Výpočtová technika · osnova celku 01</a><a href="../index.html">Všetky kurzy</a><a href="../nastavenia.html">Nastavenia vzhľadu</a></nav><main><header><p class="muted"><a href="index.html#celok-01">Výpočtová technika</a> · Tematický celok 01 · Prednáška 1.5</p><h1>1.5 STM32 a ARM Cortex-M</h1><p class="muted">Úvod do mikroprocesorových a embedded systémov · 45 minút</p></header><p><strong>Trvanie:</strong> 45 minút <strong>Nadväznosť:</strong> MCU a vývojové prostredia.</p>
+<h2>Ciele hodiny</h2>
+<p>Žiak má vedieť:</p>
+<ul><li>rozlíšiť STM32 a Cortex-M,</li><li>pomenovať typické periférie STM32,</li><li>vysvetliť význam dosiek Nucleo a ladiaceho rozhrania,</li><li>opísať základný vývojový postup,</li><li>porozumieť jednoduchej ukážke GPIO.</li></ul>
+<h2>Časový plán</h2>
+<div class="scroll"><table><thead><tr><th>Čas</th><th>Obsah</th></tr></thead><tbody><tr><td>0 – 5 min</td><td>Čo označuje STM32</td></tr><tr><td>5 – 15 min</td><td>Jadrá ARM Cortex-M</td></tr><tr><td>15 – 24 min</td><td>Periférie a vývojové dosky</td></tr><tr><td>24 – 36 min</td><td>Vývojový postup a ukážka</td></tr><tr><td>36 – 41 min</td><td>Porovnanie a úlohy</td></tr><tr><td>41 – 45 min</td><td>Overenie a zápis</td></tr></tbody></table></div>
+<h2>1. STM32 a Cortex-M</h2>
+<p><strong>0 – 5 min</strong></p>
+<p><strong>STM32 je rodina 32-bitových mikrokontrolérov spoločnosti STMicroelectronics.</strong></p>
+<p><strong>Cortex-M je rodina procesorových jadier od Arm</strong>, určená predovšetkým pre mikrokontroléry.</p>
+<p>Vzťah:</p>
+<pre><code>Procesorové jadro Cortex-M
+          +
+Pamäte a periférie od výrobcu
+          ↓
+Konkrétny mikrokontrolér STM32</code></pre>
+<p>Cortex-M používajú aj iní výrobcovia. STM32 preto nie je synonymum pre všetky ARM mikrokontroléry.</p>
+<h2>2. Rodina Cortex-M</h2>
+<p><strong>5 – 15 min</strong></p>
+<p>Príklady jadier:</p>
+<div class="scroll"><table><thead><tr><th>Jadro</th><th>Orientačné zameranie</th></tr></thead><tbody><tr><td>Cortex-M0/M0+</td><td>Jednoduchšie a úsporné aplikácie</td></tr><tr><td>Cortex-M3</td><td>Všeobecné riadiace aplikácie</td></tr><tr><td>Cortex-M4</td><td>Riadenie a spracovanie signálov</td></tr><tr><td>Cortex-M7</td><td>Vyšší výkon</td></tr><tr><td>Cortex-M23/M33</td><td>Aplikácie vrátane bezpečnostných funkcií podľa implementácie</td></tr></tbody></table></div>
+<p>Tabuľka je orientačná. Konkrétne možnosti určuje daný čip.</p>
+<p>Nie každý Cortex-M:</p>
+<ul><li>obsahuje FPU,</li><li>obsahuje cache,</li><li>poskytuje rovnaké zabezpečenie,</li><li>pracuje na rovnakej frekvencii.</li></ul>
+<h3>Prerušenia</h3>
+<p>Cortex-M používa radič prerušení <strong>NVIC – Nested Vectored Interrupt Controller</strong>.</p>
+<p>Umožňuje spravovať prerušenia a ich priority podľa možností jadra a implementácie.</p>
+<p>Podrobná konfigurácia patrí do neskorších tém o prerušení.</p>
+<h2>3. Periférie STM32</h2>
+<p><strong>15 – 24 min</strong></p>
+<p>Podľa konkrétneho modelu môžeme nájsť:</p>
+<ul><li>GPIO,</li><li>časovače a PWM,</li><li>ADC, niekedy DAC,</li><li>UART, SPI a I²C,</li><li>DMA,</li><li>watchdog,</li><li>USB, CAN alebo Ethernet.</li></ul>
+<p><strong>Prítomnosť periférie vždy overujeme v dokumentácii konkrétneho STM32.</strong></p>
+<h3>DMA</h3>
+<p>DMA umožňuje prenášať údaje medzi určenými perifériami a pamäťou bez toho, aby CPU muselo vykonať každý jednotlivý prenos.</p>
+<h3>Vývojové dosky</h3>
+<p>Rodiny dosiek:</p>
+<ul><li>Nucleo,</li><li>Discovery.</li></ul>
+<p>Mnohé obsahujú integrovaný <strong>ST-LINK</strong>, ktorý slúži na programovanie a ladenie.</p>
+<p>Ladenie sa často realizuje cez <strong>SWD – Serial Wire Debug</strong>.</p>
+<h3>Dokumentácia</h3>
+<ul><li><strong>Datasheet:</strong> parametre, puzdro, piny a elektrické limity.</li><li><strong>Reference manual:</strong> podrobný opis periférií a registrov.</li><li><strong>Dokumentácia dosky:</strong> zapojenie konektorov, LED, tlačidiel a napájania.</li></ul>
+<h2>4. Vývojový postup</h2>
+<p><strong>24 – 36 min</strong></p>
+<p>Príklad s STM32CubeIDE a podporovanou doskou Nucleo:</p>
+<ol><li>Vyberieme presný model dosky alebo MCU.</li><li>Nakonfigurujeme GPIO.</li><li>Skontrolujeme hodinový systém.</li><li>Vygenerujeme inicializačný kód.</li><li>Doplníme aplikačnú logiku.</li><li>Zostavíme projekt.</li><li>Nahráme program cez ST-LINK.</li><li>Overíme ho a prípadne spustíme debugger.</li></ol>
+<h3>HAL</h3>
+<p><strong>HAL – Hardware Abstraction Layer – poskytuje funkcie na používanie periférií.</strong></p>
+<p>Priamy prístup k registrom je možný, ale na úvod používame prehľadnejšiu vrstvu.</p>
+<h3>Ukážka blikania</h3>
+<p>Predpokladáme projekt, v ktorom je LED pin nakonfigurovaný ako výstup a pomenovaný <code>LED</code>.</p>
+<p>Do existujúcej hlavnej slučky vložíme:</p>
+<pre><code>while (1)
+{
+  HAL_GPIO_TogglePin(
+    LED_GPIO_Port,
+    LED_Pin
+  );
+
+  HAL_Delay(500);
+}</code></pre>
+<p>Názvy <code>LED_GPIO_Port</code> a <code>LED_Pin</code> musia existovať v danom projekte. Vzniknú podľa pomenovania a generovania konfigurácie.</p>
+<p>Ide o časť programu. Inicializáciu jadra, hodín a GPIO zabezpečuje zvyšok projektu.</p>
+<h3>Breakpoint</h3>
+<p>Nastavíme bod zastavenia na volaní funkcie a sledujeme:</p>
+<ul><li>či sa vykonávanie zastaví,</li><li>hodnoty premenných,</li><li>pokračovanie po krokoch.</li></ul>
+<h2>5. Úlohy</h2>
+<p><strong>36 – 41 min</strong></p>
+<ol><li>Je STM32 názov vývojového prostredia?   <strong>Nie, je to rodina mikrokontrolérov.</strong></li><li>Je Cortex-M celý výrobok so všetkými perifériami?   <strong>Nie, označuje rodinu jadier.</strong></li><li>Na čo slúži ST-LINK?   <strong>Na programovanie a ladenie podporovaných zariadení.</strong></li><li>Kde nájdeme prípustné napätie pinu?   <strong>V dokumentácii konkrétneho čipu a dosky.</strong></li></ol>
+<p>Bežná logika STM32 býva 3,3 V. Prípadná tolerancia 5 V platí iba pre konkrétne piny a podmienky uvedené v datasheete.</p>
+<h2>6. Zápis</h2>
+<p><strong>41 – 45 min</strong></p>
+<blockquote><p>STM32 je rodina 32-bitových mikrokontrolérov.  </p><p>Cortex-M označuje procesorové jadrá používané v mnohých MCU.  </p><p>Vlastnosti a periférie závisia od konkrétneho modelu.  </p><p>Nucleo je rodina vývojových dosiek.  </p><p>ST-LINK a SWD umožňujú programovanie a ladenie.  </p><p>HAL zjednodušuje prístup k hardvérovým perifériám.</p></blockquote>
+<section class="simulator"><h2>Praktická ukážka vo Wokwi</h2><p>Ukážka HAL vyššie patrí do inicializovaného projektu STM32CubeIDE pre konkrétnu dosku; samotný fragment nie je samostatný program. Nasledujúci Wokwi sketch používa Arduino framework na doske Nucleo-L031K6 a demonštruje rovnaké riadenie LED, ale priamo nespúšťa HAL fragment pre Nucleo-F401RE.</p><div class="code-actions"><button type="button" data-copy-code="lesson-sketch">Kopírovať kód</button><a class="button" href="https://wokwi.com/projects/new/st-nucleo-l031k6" target="_blank" rel="noopener">Otvoriť Wokwi: STM32 Nucleo-L031K6</a><span id="status-lesson-sketch" role="status" aria-live="polite"></span></div><pre><code id="lesson-sketch">void setup() {
+    pinMode(LED_BUILTIN, OUTPUT);
+}
+
+void loop() {
+    digitalWrite(LED_BUILTIN, HIGH);
+    delay(500);
+    digitalWrite(LED_BUILTIN, LOW);
+    delay(500);
+}</code></pre></section><section class="sources"><h2>Zdroje na ďalšie štúdium</h2><ul><li><a href="https://www.st.com/resource/en/user_manual/um2609-stm32cubeide-user-manual-stmicroelectronics.pdf" target="_blank" rel="noopener noreferrer">STM32CubeIDE user guide (STMicroelectronics)</a></li><li><a href="https://www.st.com/en/development-tools/st-link.html" target="_blank" rel="noopener noreferrer">ST-LINK and SWD (STMicroelectronics)</a></li><li><a href="https://wokwi.com/projects/new/st-nucleo-l031k6" target="_blank" rel="noopener noreferrer">Wokwi STM32 Nucleo template</a></li></ul></section><footer><p>Prednáška 1.5 · Výpočtová technika · Celok 01</p><p><a href="1.4%20Architektury%20MCU%20a%20SBC.html">← Predchádzajúca prednáška</a> <a href="1.6%20Jednodoskove%20pocitace%20a%20Raspberry%20Pi.html">Nasledujúca prednáška →</a></p></footer></main><script src="../theme.js" defer></script><script>document.addEventListener('click',async event=>{const b=event.target.closest('[data-copy-code]');if(!b)return;const c=document.getElementById(b.dataset.copyCode),s=document.getElementById('status-'+b.dataset.copyCode);try{await navigator.clipboard.writeText(c.innerText);s.textContent='Kód bol skopírovaný.'}catch{s.textContent='Kopírovanie sa nepodarilo. Označte kód a skopírujte ho ručne.'}})</script></body></html>

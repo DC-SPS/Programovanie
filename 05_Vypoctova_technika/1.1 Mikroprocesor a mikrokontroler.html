@@ -1,0 +1,67 @@
+<!doctype html><html lang="sk"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="Mikroprocesor a mikrokontrolér – tematický celok 01"><title>1.1 Mikroprocesor a mikrokontrolér | Výpočtová technika</title><style>:root{color-scheme:light dark;--bg:#f7f8fa;--surface:#fff;--text:#1c2330;--muted:#5b6678;--accent:#1f6feb;--border:#d9dee7}@media(prefers-color-scheme:dark){:root{--bg:#12161d;--surface:#1b212b;--text:#e6eaf1;--muted:#9aa6b8;--accent:#83c5ff;--border:#2d3644}}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:16px/1.65 system-ui,-apple-system,"Segoe UI",sans-serif}a{color:var(--accent)}nav,main{width:min(100% - 2rem,900px);margin:auto}nav{display:flex;gap:.6rem;flex-wrap:wrap;padding:.8rem 0}nav a,.button{display:inline-block;padding:.45rem .75rem;border:1px solid var(--border);border-radius:.55rem;text-decoration:none;color:inherit;background:var(--surface)}main{padding:1rem 0 3rem}a:focus-visible,button:focus-visible{outline:3px solid var(--accent);outline-offset:3px}h1{font-size:clamp(1.8rem,5vw,2.6rem);line-height:1.2}h2{margin-top:2rem}h3{margin-top:1.5rem}.muted{color:var(--muted)}.scroll{overflow:auto}.formula{margin:1rem 0;text-align:center;font-family:ui-monospace,Consolas,monospace}table{width:100%;border-collapse:collapse}th,td{padding:.6rem .7rem;border:1px solid var(--border);text-align:left;vertical-align:top}pre{margin:.65rem 0 1rem;padding:1rem;border-radius:9px;overflow:auto;background:#0f172a;color:#e2e8f0;font:14px/1.55 ui-monospace,Consolas,monospace}.code-actions{display:flex;gap:.5rem;flex-wrap:wrap;align-items:center}button{padding:.55rem .8rem;border:0;border-radius:8px;background:#4b91f1;color:#fff;font-weight:700;cursor:pointer}.simulator,.sources,footer{margin-top:2rem;padding-top:1rem;border-top:1px solid var(--border)}blockquote{margin:1rem 0;padding:1rem;border:1px solid var(--border);border-radius:12px;background:var(--surface)}@media(max-width:600px){nav,main{width:calc(100% - 1.2rem)}}</style></head><body><nav aria-label="Navigácia kurzov"><a href="index.html#celok-01">Výpočtová technika · osnova celku 01</a><a href="../index.html">Všetky kurzy</a><a href="../nastavenia.html">Nastavenia vzhľadu</a></nav><main><header><p class="muted"><a href="index.html#celok-01">Výpočtová technika</a> · Tematický celok 01 · Prednáška 1.1</p><h1>1.1 Mikroprocesor a mikrokontrolér</h1><p class="muted">Úvod do mikroprocesorových a embedded systémov · 45 minút</p></header><p><strong>Trvanie:</strong> 45 minút <strong>Pomôcky:</strong> obrázky alebo ukážky Arduino Uno, ESP32, STM32 Nucleo a Raspberry Pi.</p>
+<h2>Ciele hodiny</h2>
+<p>Žiak má vedieť:</p>
+<ul><li>vysvetliť pojmy procesor, mikroprocesor a mikrokontrolér,</li><li>pomenovať základné časti mikrokontroléra,</li><li>rozlíšiť čip a vývojovú dosku,</li><li>uviesť vhodné použitie jednotlivých riešení,</li><li>vysvetliť základný princíp programového riadenia.</li></ul>
+<h2>Časový plán</h2>
+<div class="scroll"><table><thead><tr><th>Čas</th><th>Obsah</th></tr></thead><tbody><tr><td>0 – 5 min</td><td>Kde sa nachádzajú procesory</td></tr><tr><td>5 – 15 min</td><td>Mikroprocesor a mikrokontrolér</td></tr><tr><td>15 – 25 min</td><td>Vnútorné bloky a programové riadenie</td></tr><tr><td>25 – 34 min</td><td>Čip, doska a platforma</td></tr><tr><td>34 – 41 min</td><td>Príklady a úlohy</td></tr><tr><td>41 – 45 min</td><td>Overenie a zápis</td></tr></tbody></table></div>
+<h2>1. Procesory okolo nás</h2>
+<p><strong>0 – 5 min</strong></p>
+<p>Procesor nájdeme v:</p>
+<ul><li>počítači a telefóne,</li><li>práčke,</li><li>automobile,</li><li>termostate,</li><li>tlačiarni,</li><li>priemyselnom stroji.</li></ul>
+<p>Jeho úlohou je vykonávať inštrukcie programu.</p>
+<p><strong>Otázka:</strong> Musí mať zariadenie s procesorom monitor?</p>
+<p><em>Odpoveď: Nie. Môže iba merať, komunikovať alebo riadiť výstupy.</em></p>
+<h2>2. Mikroprocesor a mikrokontrolér</h2>
+<p><strong>5 – 15 min</strong></p>
+<h3>Mikroprocesor</h3>
+<p>Mikroprocesor je integrovaný obvod realizujúci funkcie procesora. Pre zostavenie celého systému potrebuje ďalšie súčasti, napríklad pracovnú pamäť a vstupno-výstupné obvody.</p>
+<p>Moderné čipy často integrujú veľa ďalších funkcií, preto hranica medzi jednotlivými kategóriami nie je úplne ostrá.</p>
+<h3>Mikrokontrolér – MCU</h3>
+<p>Mikrokontrolér integruje do jedného čipu najmä:</p>
+<ul><li>procesorové jadro,</li><li>pamäte,</li><li>vstupy a výstupy,</li><li>časovače,</li><li>komunikačné periférie.</li></ul>
+<p>Mnohé MCU obsahujú aj ADC, watchdog a ďalšie bloky.</p>
+<h3>Orientačné porovnanie</h3>
+<div class="scroll"><table><thead><tr><th>Vlastnosť</th><th>Mikroprocesorový systém</th><th>Mikrokontrolér</th></tr></thead><tbody><tr><td>Typické zameranie</td><td>Náročnejšie výpočty a aplikácie</td><td>Riadenie zariadenia</td></tr><tr><td>Pamäť</td><td>Často významná časť mimo čipu</td><td>Často integrovaná</td></tr><tr><td>Periférie</td><td>Podľa systému</td><td>Typicky integrované riadiace periférie</td></tr><tr><td>Softvér</td><td>Často všeobecný OS</td><td>Bez OS alebo s RTOS</td></tr><tr><td>Spotreba</td><td>Podľa výkonu a systému</td><td>Často vhodný na úspornú prevádzku</td></tr></tbody></table></div>
+<p>Tieto vlastnosti sú typické, nie bezvýhradné pravidlá.</p>
+<h2>3. Ako mikrokontrolér pracuje?</h2>
+<p><strong>15 – 25 min</strong></p>
+<pre><code>Vstupy → Program a spracovanie → Výstupy</code></pre>
+<p>Príklad termostatu:</p>
+<ol><li>Snímač poskytne údaj.</li><li>Program vyhodnotí teplotu.</li><li>Podľa pravidiel nastaví výstup.</li><li>Postup sa opakuje.</li></ol>
+<h3>Základné bloky</h3>
+<div class="scroll"><table><thead><tr><th>Blok</th><th>Úloha</th></tr></thead><tbody><tr><td>CPU</td><td>Vykonáva inštrukcie</td></tr><tr><td>Flash</td><td>Uchováva program</td></tr><tr><td>RAM</td><td>Uchováva pracovné údaje</td></tr><tr><td>GPIO</td><td>Digitálne vstupy a výstupy</td></tr><tr><td>Časovače</td><td>Merajú čas a vytvárajú časové udalosti</td></tr><tr><td>Komunikačné rozhrania</td><td>Prenášajú údaje</td></tr><tr><td>ADC, ak je prítomný</td><td>Prevádza analógový signál na číslo</td></tr></tbody></table></div>
+<p>Program nevzniká v mikrokontroléri automaticky. Vývojár ho vytvorí, preloží a nahrá.</p>
+<h2>4. Čip, doska a platforma</h2>
+<p><strong>25 – 34 min</strong></p>
+<h3>Čip</h3>
+<p>Konkrétna súčiastka, napríklad:</p>
+<ul><li>ATmega328P,</li><li>STM32F401RE,</li><li>konkrétny čip rodiny ESP32.</li></ul>
+<h3>Vývojová doska</h3>
+<p>Obsahuje čip a obvody potrebné na jednoduchšie používanie:</p>
+<ul><li>napájanie,</li><li>konektory,</li><li>reset,</li><li>programovacie alebo ladiace rozhranie.</li></ul>
+<h3>Platforma</h3>
+<p>Zahŕňa širšie prostredie dosiek, knižníc a nástrojov.</p>
+<p><strong>Arduino nie je jeden konkrétny mikrokontrolér.</strong></p>
+<p>Arduino Uno R3 používa ATmega328P. Iné dosky Arduino používajú odlišné procesory.</p>
+<p>Rovnako STM32 označuje rodinu mikrokontrolérov a Nucleo rodinu vývojových dosiek.</p>
+<h2>5. Úlohy</h2>
+<p><strong>34 – 41 min</strong></p>
+<p>Priraď kategóriu:</p>
+<div class="scroll"><table><thead><tr><th>Príklad</th><th>Kategória</th></tr></thead><tbody><tr><td>ATmega328P</td><td>Mikrokontrolér</td></tr><tr><td>Arduino Uno R3</td><td>Vývojová doska</td></tr><tr><td>STM32 Nucleo</td><td>Vývojová doska</td></tr><tr><td>Raspberry Pi 4</td><td>Jednodoskový počítač</td></tr></tbody></table></div>
+<p>Vyber vhodné riešenie:</p>
+<ol><li>Jednoduchý batériový snímač: <strong>MCU</strong>.</li><li>Webový server s databázou: <strong>často SBC</strong>.</li><li>Ovládanie LED tlačidlom: <strong>MCU postačuje</strong>.</li></ol>
+<p>Žiak svoju voľbu zdôvodní požiadavkami.</p>
+<h2>6. Overenie a zápis</h2>
+<p><strong>41 – 45 min</strong></p>
+<ol><li>Je CPU celý mikrokontrolér? <strong>Nie, je jeho časťou.</strong></li><li>Je Arduino Uno názov čipu? <strong>Nie.</strong></li><li>Musí MCU používať operačný systém? <strong>Nie.</strong></li></ol>
+<blockquote><p>Procesor vykonáva inštrukcie programu.  </p><p>Mikrokontrolér integruje CPU, pamäte a periférie.  </p><p>Vývojová doska uľahčuje napájanie, zapojenie a programovanie čipu.  </p><p>Čip, doska a platforma sú rozdielne pojmy.  </p><p>Riešenie vyberáme podľa požiadaviek projektu.</p></blockquote>
+<section class="simulator"><h2>Praktická ukážka vo Wokwi</h2><p>Ukážka používa Arduino Uno R3 s ATmega328P a mení stav jeho zabudovanej LED. Slúži na pozorovanie, ako program riadi výstup MCU.</p><div class="code-actions"><button type="button" data-copy-code="lesson-sketch">Kopírovať kód</button><a class="button" href="https://wokwi.com/projects/new/arduino-uno" target="_blank" rel="noopener">Otvoriť Wokwi: Arduino Uno R3 (ATmega328P)</a><span id="status-lesson-sketch" role="status" aria-live="polite"></span></div><pre><code id="lesson-sketch">void setup() {
+    pinMode(LED_BUILTIN, OUTPUT);
+}
+
+void loop() {
+    digitalWrite(LED_BUILTIN, HIGH);
+    delay(500);
+    digitalWrite(LED_BUILTIN, LOW);
+    delay(500);
+}</code></pre></section><section class="sources"><h2>Zdroje na ďalšie štúdium</h2><ul><li><a href="https://www.microchip.com/en-us/product/atmega328" target="_blank" rel="noopener noreferrer">ATmega328P – produkt a dokumentácia (Microchip)</a></li><li><a href="https://www.arm.com/glossary/microcontroller" target="_blank" rel="noopener noreferrer">Arm: Microcontroller</a></li><li><a href="https://docs.wokwi.com/parts/wokwi-arduino-uno" target="_blank" rel="noopener noreferrer">Wokwi Arduino Uno R3</a></li></ul></section><footer><p>Prednáška 1.1 · Výpočtová technika · Celok 01</p><p> <a href="1.2%20Embedded%20systemy%20-%20principy%20a%20oblasti%20pouzitia.html">Nasledujúca prednáška →</a></p></footer></main><script src="../theme.js" defer></script><script>document.addEventListener('click',async event=>{const b=event.target.closest('[data-copy-code]');if(!b)return;const c=document.getElementById(b.dataset.copyCode),s=document.getElementById('status-'+b.dataset.copyCode);try{await navigator.clipboard.writeText(c.innerText);s.textContent='Kód bol skopírovaný.'}catch{s.textContent='Kopírovanie sa nepodarilo. Označte kód a skopírujte ho ručne.'}})</script></body></html>

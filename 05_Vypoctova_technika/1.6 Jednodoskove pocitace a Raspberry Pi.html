@@ -1,0 +1,82 @@
+<!doctype html><html lang="sk"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="Jednodoskové počítače a Raspberry Pi – tematický celok 01"><title>1.6 Jednodoskové počítače a Raspberry Pi | Výpočtová technika</title><style>:root{color-scheme:light dark;--bg:#f7f8fa;--surface:#fff;--text:#1c2330;--muted:#5b6678;--accent:#1f6feb;--border:#d9dee7}@media(prefers-color-scheme:dark){:root{--bg:#12161d;--surface:#1b212b;--text:#e6eaf1;--muted:#9aa6b8;--accent:#83c5ff;--border:#2d3644}}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:16px/1.65 system-ui,-apple-system,"Segoe UI",sans-serif}a{color:var(--accent)}nav,main{width:min(100% - 2rem,900px);margin:auto}nav{display:flex;gap:.6rem;flex-wrap:wrap;padding:.8rem 0}nav a,.button{display:inline-block;padding:.45rem .75rem;border:1px solid var(--border);border-radius:.55rem;text-decoration:none;color:inherit;background:var(--surface)}main{padding:1rem 0 3rem}a:focus-visible,button:focus-visible{outline:3px solid var(--accent);outline-offset:3px}h1{font-size:clamp(1.8rem,5vw,2.6rem);line-height:1.2}h2{margin-top:2rem}h3{margin-top:1.5rem}.muted{color:var(--muted)}.scroll{overflow:auto}.formula{margin:1rem 0;text-align:center;font-family:ui-monospace,Consolas,monospace}table{width:100%;border-collapse:collapse}th,td{padding:.6rem .7rem;border:1px solid var(--border);text-align:left;vertical-align:top}pre{margin:.65rem 0 1rem;padding:1rem;border-radius:9px;overflow:auto;background:#0f172a;color:#e2e8f0;font:14px/1.55 ui-monospace,Consolas,monospace}.code-actions{display:flex;gap:.5rem;flex-wrap:wrap;align-items:center}button{padding:.55rem .8rem;border:0;border-radius:8px;background:#4b91f1;color:#fff;font-weight:700;cursor:pointer}.simulator,.sources,footer{margin-top:2rem;padding-top:1rem;border-top:1px solid var(--border)}blockquote{margin:1rem 0;padding:1rem;border:1px solid var(--border);border-radius:12px;background:var(--surface)}@media(max-width:600px){nav,main{width:calc(100% - 1.2rem)}}</style></head><body><nav aria-label="Navigácia kurzov"><a href="index.html#celok-01">Výpočtová technika · osnova celku 01</a><a href="../index.html">Všetky kurzy</a><a href="../nastavenia.html">Nastavenia vzhľadu</a></nav><main><header><p class="muted"><a href="index.html#celok-01">Výpočtová technika</a> · Tematický celok 01 · Prednáška 1.6</p><h1>1.6 Jednodoskové počítače a Raspberry Pi</h1><p class="muted">Úvod do mikroprocesorových a embedded systémov · 45 minút</p></header><p><strong>Trvanie:</strong> 45 minút <strong>Nadväznosť:</strong> MCU a SBC.</p>
+<h2>Ciele hodiny</h2>
+<p>Žiak má vedieť:</p>
+<ul><li>vysvetliť pojem SBC,</li><li>identifikovať hlavné časti Raspberry Pi,</li><li>rozlíšiť RAM a úložisko,</li><li>opísať základné spustenie systému,</li><li>uviesť vhodné použitie a obmedzenia.</li></ul>
+<h2>Časový plán</h2>
+<div class="scroll"><table><thead><tr><th>Čas</th><th>Obsah</th></tr></thead><tbody><tr><td>0 – 5 min</td><td>Počítač na jednej doske</td></tr><tr><td>5 – 17 min</td><td>Časti Raspberry Pi</td></tr><tr><td>17 – 28 min</td><td>Príprava a spustenie</td></tr><tr><td>28 – 36 min</td><td>Prvé príkazy a program</td></tr><tr><td>36 – 41 min</td><td>Použitie a obmedzenia</td></tr><tr><td>41 – 45 min</td><td>Overenie a zápis</td></tr></tbody></table></div>
+<h2>1. Čo je jednodoskový počítač?</h2>
+<p><strong>0 – 5 min</strong></p>
+<p><strong>SBC obsahuje základné časti počítača na jednej doske.</strong></p>
+<p>Raspberry Pi 4 alebo Pi 5 môže poskytovať:</p>
+<ul><li>operačný systém,</li><li>grafické prostredie,</li><li>sieťové služby,</li><li>prácu so súbormi,</li><li>programovanie,</li><li>prístup ku GPIO.</li></ul>
+<p><strong>Raspberry Pi Pico je mikrokontrolérová doska.</strong> Jeho spôsob používania sa líši od Raspberry Pi s Linuxom.</p>
+<h2>2. Hlavné časti</h2>
+<p><strong>5 – 17 min</strong></p>
+<div class="scroll"><table><thead><tr><th>Časť</th><th>Úloha</th></tr></thead><tbody><tr><td>SoC</td><td>Procesor a ďalšie funkčné bloky</td></tr><tr><td>RAM</td><td>Pracovná pamäť</td></tr><tr><td>microSD alebo iné podporované úložisko</td><td>Systém a súbory</td></tr><tr><td>USB</td><td>Periférie</td></tr><tr><td>Ethernet/Wi-Fi podľa modelu</td><td>Sieť</td></tr><tr><td>Obrazový výstup</td><td>Monitor</td></tr><tr><td>GPIO konektor</td><td>Pripojenie elektronických obvodov</td></tr><tr><td>Napájanie</td><td>Energia pre dosku</td></tr></tbody></table></div>
+<p>Rozmiestnenie a prítomnosť konektorov závisia od modelu.</p>
+<h3>RAM a úložisko</h3>
+<p>Otvorený program používa RAM. Uložený súbor sa nachádza na úložisku.</p>
+<p>Po vypnutí sa obsah RAM bežne stratí, uložené súbory zostávajú.</p>
+<h3>GPIO</h3>
+<p>GPIO Raspberry Pi používa logiku <strong>3,3 V</strong>. Nie je určené na priame pripojenie 5 V signálov.</p>
+<p>Bežné GPIO Pi 4 alebo Pi 5 neposkytuje univerzálne analógové meranie. Naň potrebujeme externý ADC.</p>
+<h2>3. Príprava a spustenie</h2>
+<p><strong>17 – 28 min</strong></p>
+<h3>Potrebujeme</h3>
+<ul><li>Raspberry Pi,</li><li>vhodný napájací zdroj,</li><li>podporované úložisko,</li><li>systém,</li><li>podľa spôsobu práce monitor a klávesnicu alebo sieťové pripojenie.</li></ul>
+<h3>Postup</h3>
+<ol><li>Pomocou Raspberry Pi Imager vyberieme systém.</li><li>Vyberieme správne médium.</li><li>Nastavíme používateľa a prípadne sieť.</li><li>Zapíšeme systém.</li><li>Vložíme médium do Raspberry Pi.</li><li>Pripojíme periférie a napájanie.</li><li>Dokončíme prvé spustenie.</li></ol>
+<p><strong>Zápis obrazu systému prepíše obsah zvoleného média.</strong></p>
+<h3>Zjednodušený štart</h3>
+<pre><code>Napájanie
+   ↓
+Bootovací kód a firmvér
+   ↓
+Jadro Linuxu
+   ↓
+Systémové služby
+   ↓
+Prihlásenie a aplikácie</code></pre>
+<h3>Vypnutie</h3>
+<pre><code>sudo poweroff</code></pre>
+<p>Pred odpojením napájania počkáme na dokončenie vypínania podľa modelu a indikácie.</p>
+<h2>4. Prvé príkazy a program</h2>
+<p><strong>28 – 36 min</strong></p>
+<p>V termináli:</p>
+<pre><code>whoami</code></pre>
+<p>Zobrazí používateľa.</p>
+<pre><code>hostname</code></pre>
+<p>Zobrazí názov počítača.</p>
+<pre><code>pwd</code></pre>
+<p>Zobrazí aktuálny adresár.</p>
+<pre><code>ls</code></pre>
+<p>Zobrazí jeho obsah.</p>
+<h3>Prvý program v Pythone</h3>
+<pre><code>from time import sleep
+
+for cislo in range(5):
+    print(&quot;Meranie cislo:&quot;, cislo + 1)
+    sleep(1)</code></pre>
+<p>Program vypíše päť správ s približne sekundovým odstupom.</p>
+<p><code>sleep(1)</code> negarantuje presne jednu sekundu medzi začiatkami výpisov. Čas ovplyvňuje aj vykonávanie programu a plánovanie OS.</p>
+<h2>5. Použitie a obmedzenia</h2>
+<p><strong>36 – 41 min</strong></p>
+<h3>Vhodné použitia</h3>
+<ul><li>záznam meraní,</li><li>lokálny server,</li><li>informačný panel,</li><li>kamera,</li><li>IoT brána,</li><li>výučba Linuxu.</li></ul>
+<h3>Na čo myslíme?</h3>
+<ul><li>stabilné napájanie,</li><li>chladenie podľa záťaže,</li><li>správne vypnutie,</li><li>zálohy,</li><li>aktualizácie,</li><li>zabezpečenie vzdialeného prístupu.</li></ul>
+<p>Pre presné krátke impulzy môže byť vhodnejší mikrokontrolér alebo špecializovaná periféria.</p>
+<h3>Úloha</h3>
+<p>Navrhni spoločné použitie:</p>
+<ul><li>ESP32 meria a riadi,</li><li>Raspberry Pi ukladá a zobrazuje.</li></ul>
+<p>Urči, či má regulácia pokračovať pri vypnutí Raspberry Pi.</p>
+<p><strong>Možná odpoveď:</strong> Áno, ak je lokálne riadenie požadovanou samostatnou funkciou ESP32.</p>
+<h2>6. Overenie a zápis</h2>
+<p><strong>41 – 45 min</strong></p>
+<ol><li>Je microSD operačná pamäť RAM? <strong>Nie.</strong></li><li>Musí mať Raspberry Pi stále pripojený monitor? <strong>Nie.</strong></li><li>Je GPIO určené na napájanie motora? <strong>Nie.</strong></li></ol>
+<blockquote><p>Raspberry Pi s Linuxom je jednodoskový počítač.  </p><p>RAM slúži na pracovné údaje, úložisko na systém a súbory.  </p><p>SBC poskytuje rozsiahle možnosti siete, súborov a aplikácií.  </p><p>Potrebuje vhodné napájanie a správu operačného systému.  </p><p>Raspberry Pi Pico patrí medzi mikrokontrolérové dosky.  </p><p>GPIO Raspberry Pi používa 3,3 V logiku.</p></blockquote>
+<section class="simulator"><h2>Praktická ukážka vo Wokwi</h2><p>Kód je kompatibilný s MicroPython a možno ho vložiť ako main.py do simulátora Raspberry Pi Pico. Pico je mikrokontrolér; simulátor nenahrádza Linuxové prostredie Raspberry Pi 4/5, v ktorom spustíte príkazy z hodiny.</p><div class="code-actions"><button type="button" data-copy-code="lesson-sketch">Kopírovať kód</button><a class="button" href="https://wokwi.com/projects/new/micropython-pi-pico" target="_blank" rel="noopener">Otvoriť Wokwi: Raspberry Pi Pico s MicroPython</a><span id="status-lesson-sketch" role="status" aria-live="polite"></span></div><pre><code id="lesson-sketch" data-filename="main.py">from time import sleep
+
+for cislo in range(5):
+    print(&quot;Meranie cislo:&quot;, cislo + 1)
+    sleep(1)</code></pre><p>V simulátore vytvorte alebo otvorte súbor <code>main.py</code> a vložte doň skopírovaný kód.</p></section><section class="sources"><h2>Zdroje na ďalšie štúdium</h2><ul><li><a href="https://www.raspberrypi.com/software/" target="_blank" rel="noopener noreferrer">Raspberry Pi Imager</a></li><li><a href="https://www.raspberrypi.com/documentation/computers/raspberry-pi.html" target="_blank" rel="noopener noreferrer">Raspberry Pi computer GPIO hardware documentation</a></li><li><a href="https://docs.wokwi.com/guides/micropython" target="_blank" rel="noopener noreferrer">MicroPython on Wokwi</a></li></ul></section><footer><p>Prednáška 1.6 · Výpočtová technika · Celok 01</p><p><a href="1.5%20STM32%20a%20ARM%20Cortex-M.html">← Predchádzajúca prednáška</a> </p></footer></main><script src="../theme.js" defer></script><script>document.addEventListener('click',async event=>{const b=event.target.closest('[data-copy-code]');if(!b)return;const c=document.getElementById(b.dataset.copyCode),s=document.getElementById('status-'+b.dataset.copyCode);try{await navigator.clipboard.writeText(c.innerText);s.textContent='Kód bol skopírovaný.'}catch{s.textContent='Kopírovanie sa nepodarilo. Označte kód a skopírujte ho ručne.'}})</script></body></html>
