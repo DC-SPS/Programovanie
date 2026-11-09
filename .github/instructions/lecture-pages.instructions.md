@@ -4,7 +4,4 @@ applyTo: ["**/*[0-9]*.html", "**/lekcie/*.html"]
 ---
 # Lecture Page Guidelines
 
-- Preserve each course's visual style and lesson content, while following the complete lesson-page pattern exemplified by `02_C/00_Prostredie_a_struktura_programu/4.2_Prvy_program_v_jazyku_C.html`.
-- Include the shared lesson clock, a correctly positioned reading-controls panel, accessible student/teacher view controls, and a visible PDF export action backed by print-specific styles.
-- Keep controls usable by keyboard and touch, responsive on narrow screens, and hidden or reformatted appropriately for printing.
-- Before finishing, verify local links and script/style paths, test the controls, and confirm the print/PDF flow.
+Follow the project page-layout blueprint in `LAYOUT.MD`. The canonical lecture layout is `02_C/00_Prostredie_a_struktura_programu/4.1_Historicky_uvod_a_normy_jazyka_C.html`; preserve each lesson's content and verify the actual page, shared controls, responsive layout, local links, and print/PDF behavior.

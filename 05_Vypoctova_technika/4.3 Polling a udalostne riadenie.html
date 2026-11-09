@@ -6,102 +6,131 @@
   <meta name="theme-color" content="#101827">
   <meta name="description" content="Prednáška o pollingu a udalostnom riadení v embedded systémoch: princípy, rozdiely, príklady a výber prístupu.">
   <title>4.3 Polling a udalostné riadenie | Výpočtová technika</title>
-  <link rel="stylesheet" href="../02_C/00_Prostredie_a_struktura_programu/c-lecture-controls.css">
-  <link rel="stylesheet" href="../lesson-export.css">
   <style>
     :root {
       color-scheme: light;
       --bg: #f7f8fa;
-      --surface: #fff;
-      --text: #1c2330;
-      --muted: #5b6678;
-      --accent: #1f6feb;
-      --border: #d9dee7;
+      --fg: #1c2330;
+      --card: #fff;
+      --mut: #5b6678;
+      --acc: #1f6feb;
+      --line: #d9dee7;
       --note: #fff4d6;
-      --green: #18743a;
+      --good: #18743a;
+      --bad: #b42318;
     }
     @media (prefers-color-scheme: dark) {
-      :root:not([data-theme]) {
+      :root:not([data-theme="light"]) {
         color-scheme: dark;
         --bg: #12161d;
-        --text: #e6eaf1;
-        --surface: #1b212b;
-        --muted: #9aa6b8;
-        --accent: #5aa2ff;
-        --border: #2d3644;
+        --fg: #e6eaf1;
+        --card: #1b212b;
+        --mut: #9aa6b8;
+        --acc: #5aa2ff;
+        --line: #2d3644;
         --note: #3a3017;
-        --green: #63d58a;
+        --good: #63d58a;
+        --bad: #ff8a80;
       }
     }
-    :root[data-theme="light"] { color-scheme: light; }
+    :root[data-theme="light"] {
+      color-scheme: light;
+      --bg: #f7f8fa;
+      --fg: #1c2330;
+      --card: #fff;
+      --mut: #5b6678;
+      --acc: #1f6feb;
+      --line: #d9dee7;
+      --note: #fff4d6;
+      --good: #18743a;
+      --bad: #b42318;
+    }
     :root[data-theme="dark"] {
       color-scheme: dark;
       --bg: #12161d;
-      --text: #e6eaf1;
-      --surface: #1b212b;
-      --muted: #9aa6b8;
-      --accent: #5aa2ff;
-      --border: #2d3644;
+      --fg: #e6eaf1;
+      --card: #1b212b;
+      --mut: #9aa6b8;
+      --acc: #5aa2ff;
+      --line: #2d3644;
       --note: #3a3017;
-      --green: #63d58a;
+      --good: #63d58a;
+      --bad: #ff8a80;
     }
     * { box-sizing: border-box; }
-    body { margin: 0; background: var(--bg); color: var(--text); font: 16px/1.65 system-ui, -apple-system, "Segoe UI", sans-serif; }
-    a { color: var(--accent); }
+    html { scroll-padding-top: 1rem; }
+    body { margin: 0; background: var(--bg); color: var(--fg); font: 16px/1.65 system-ui, -apple-system, "Segoe UI", sans-serif; }
+    a { color: var(--acc); }
     .global-course-nav { display: flex; flex-wrap: wrap; gap: .55rem; align-items: center; width: min(100% - 2rem, 1000px); margin: .75rem auto 0; font: 600 .9rem/1.4 system-ui, -apple-system, "Segoe UI", sans-serif; }
-    .global-course-nav a { display: inline-block; padding: .4rem .7rem; border: 1px solid var(--border); border-radius: .55rem; text-decoration: none; color: inherit; background: var(--surface); }
+    .global-course-nav a { display: inline-block; padding: .4rem .7rem; border: 1px solid var(--line); border-radius: .55rem; text-decoration: none; color: inherit; background: var(--card); }
     .global-course-nav a:hover { text-decoration: underline; }
-    .global-course-nav a:focus-visible, a:focus-visible, button:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
-    main { width: min(100% - 2rem, 860px); margin: auto; padding: 1rem 0 3rem; }
+    .global-course-nav a:focus-visible, a:focus-visible, button:focus-visible, summary:focus-visible, select:focus-visible, input:focus-visible { outline: 3px solid var(--acc); outline-offset: 3px; }
+    main { width: min(100% - 2rem, 860px); margin: auto; padding: 16px 0 3rem; }
     main :is(p, li, td, dd, blockquote) { text-align: justify; text-justify: inter-word; }
     header { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: .6rem; }
-    .crumb, .muted, .caption { color: var(--muted); }
+    .crumb, .muted, .caption { color: var(--mut); }
     h1 { font-size: clamp(1.8rem, 5vw, 2.6rem); line-height: 1.2; margin: .8rem 0; }
     h2 { margin-top: 2rem; font-size: 1.4rem; }
-    h3 { margin-top: 1.4rem; font-size: 1.1rem; }
-    .subtitle { color: var(--muted); }
+    h3 { margin-top: 1.25rem; font-size: 1.1rem; }
+    .lead { font-size: 1.08rem; }
+    .subtitle { color: var(--mut); }
     .tags { display: flex; flex-wrap: wrap; gap: .45rem; margin: 1rem 0; }
-    .tag { padding: 2px 9px; border: 1px solid var(--border); border-radius: 999px; background: var(--surface); font-size: 13px; }
-    .card, .note { margin: 1rem 0; padding: 1rem 1.1rem; border: 1px solid var(--border); border-radius: 12px; background: var(--surface); }
+    .tag { padding: 2px 9px; border: 1px solid var(--line); border-radius: 6px; background: var(--line); font-size: 13px; }
+    .card, .teacher-note, .video-card, .quiz { margin: 14px 0; padding: 14px 17px; border: 1px solid var(--line); border-radius: 12px; background: var(--card); }
+    .teacher-note { display: none; background: var(--note); }
+    body.teacher .teacher-note { display: block; }
+    .teacher-note strong { display: block; margin-bottom: .3rem; }
+    .mode { display: inline-flex; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+    .mode button { padding: 6px 11px; border: 0; background: var(--card); color: var(--fg); font: inherit; cursor: pointer; }
+    .mode button.on { background: var(--acc); color: #fff; }
+    .pdf-export { margin-left: .5rem; padding: .4rem .7rem; border: 1px solid var(--line); border-radius: .55rem; background: var(--card); color: var(--fg); font: 600 .9rem/1.4 system-ui, -apple-system, "Segoe UI", sans-serif; cursor: pointer; }
+    .lead-card { margin: 14px 0; padding: 14px 17px; border: 1px solid var(--line); border-radius: 12px; background: var(--card); }
+    .safety-notice, .safety-reminder { margin: 1rem 0; padding: 14px 17px; border: 1px solid var(--line); border-left: 5px solid var(--acc); border-radius: 12px; background: var(--note); }
+    .safety-notice strong, .safety-reminder strong { display: block; margin-bottom: .25rem; }
     .note { background: var(--note); }
-    .safety-notice { margin: 1rem 0; padding: 14px 17px; border: 1px solid var(--border); border-left: 5px solid var(--accent); border-radius: 12px; background: var(--note); }
-    .safety-notice strong { display: block; margin-bottom: .25rem; }
     .scroll { overflow-x: auto; }
     table { width: 100%; border-collapse: collapse; }
-    th, td { padding: .65rem .7rem; border: 1px solid var(--border); text-align: left; vertical-align: top; }
-    th { background: var(--surface); }
+    th, td { padding: .65rem .7rem; border: 1px solid var(--line); text-align: left; vertical-align: top; }
+    th { background: var(--card); }
+    td:first-child { white-space: nowrap; font-weight: 700; }
     pre { margin: .65rem 0 1rem; padding: 1rem; border-radius: 9px; overflow-x: auto; background: #0f172a; color: #e2e8f0; font: 14px/1.55 ui-monospace, SFMono-Regular, Consolas, monospace; }
     code { font-family: ui-monospace, SFMono-Regular, Consolas, monospace; }
-    :not(pre) > code { padding: .08rem .28rem; border-radius: 4px; background: color-mix(in srgb, var(--border) 55%, transparent); }
-    .output { border-left: 4px solid var(--green); }
-    .sources, footer { margin-top: 2rem; padding-top: 1rem; border-top: 1px solid var(--border); }
-    footer { color: var(--muted); font-size: 14px; }
+    :not(pre) > code { padding: .08rem .28rem; border-radius: 4px; background: color-mix(in srgb, var(--line) 55%, transparent); }
+    .output { border-left: 4px solid var(--good); }
+    .sources { margin-top: 2rem; padding: 1rem 1.1rem; border: 1px solid var(--line); border-radius: 12px; background: var(--card); }
+    .sources h2 { margin-top: 0; }
+    .sources li { margin: .4rem 0; }
     .glossary-list { display: grid; grid-template-columns: minmax(8rem, .35fr) 1fr; gap: .3rem .8rem; }
     .glossary-list dt { font-weight: 750; }
     .glossary-list dd { margin: 0; }
-    .lecture-actions { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: .5rem; }
-    .pdf-export { padding: .4rem .7rem; border: 1px solid var(--border); border-radius: .55rem; background: var(--surface); color: inherit; font: 600 .9rem/1.4 system-ui, sans-serif; cursor: pointer; }
-    body:not(.teacher) .teacher-note { display: none; }
-    @media (max-width: 620px) { main { width: min(100% - 1.2rem, 860px); } }
+    footer { margin-top: 2rem; padding-top: 1rem; border-top: 1px solid var(--line); color: var(--mut); font-size: 14px; }
+    .speech-bubble { position: relative; padding: .85rem 1rem !important; border: 2px solid var(--acc) !important; border-radius: 1.2rem !important; background: color-mix(in srgb, var(--acc) 12%, var(--card)) !important; box-shadow: 0 4px 18px color-mix(in srgb, var(--acc) 18%, transparent); }
+    .speech-bubble::after { position: absolute; bottom: -.65rem; left: 1.2rem; width: 1rem; height: 1rem; border-right: 2px solid var(--acc); border-bottom: 2px solid var(--acc); background: color-mix(in srgb, var(--acc) 12%, var(--card)); content: ""; transform: rotate(45deg); }
+    .narration-target { transition: outline-color .16s ease, background-color .16s ease; text-align: justify; text-justify: inter-word; }
+    .narration-target:hover { outline: 2px solid var(--acc); outline-offset: 3px; background-color: color-mix(in srgb, var(--acc) 8%, transparent); cursor: pointer; }
+    @media (max-width: 620px) { main { width: min(100% - 1.2rem, 860px); } td:first-child { white-space: normal; } }
     @media (max-width: 520px) { .glossary-list { grid-template-columns: 1fr; gap: .1rem; } .glossary-list dd { margin-bottom: .5rem; } }
     @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; } }
     @media print {
-      .global-course-nav, .lesson-side-panel, .mode, .pdf-export { display: none !important; }
-      body { background: #fff !important; color: #111 !important; font-size: 11pt; }
-      main { width: auto; max-width: none; margin: 0; padding: 10mm 12mm; }
-      .card, .note, .safety-notice, pre, table { break-inside: avoid; }
-      .teacher-note { display: block !important; }
-      a { color: inherit; text-decoration: none; }
+      .global-course-nav, .mode, .pdf-export, .narration-controls, .narration-option, .lesson-side-panel { display: none !important; }
+      body { background: #fff !important; color: #111 !important; color-scheme: light !important; font-size: 11pt; }
+      main { width: auto; max-width: none; margin: 0; padding: 12mm 14mm; }
+      .teacher-note { display: block; }
+      a[href^="http://"], a[href^="https://"] { color: inherit !important; text-decoration: none !important; }
+      a[href^="http://"]::after, a[href^="https://"]::after { content: none !important; }
+      .card, .teacher-note, .sources, .safety-notice, .safety-reminder, pre, table, blockquote { break-inside: avoid; page-break-inside: avoid; }
       pre { white-space: pre-wrap; overflow: visible; }
     }
+    @page { size: A4; margin: 0; }
   </style>
+  <link rel="stylesheet" href="../02_C/00_Prostredie_a_struktura_programu/c-lecture-controls.css">
+  <script src="../theme.js" defer></script>
   <script src="../lesson-top.js" defer></script>
 </head>
 <body>
   <nav class="global-course-nav" aria-label="Navigácia kurzov">
-    <a href="index.html">Výpočtová technika – osnova</a>
+    <a href="index.html">Prehľad predmetu</a>
     <a href="../index.html">Všetky kurzy</a>
-    <a href="../nastavenia.html">Nastavenia vzhľadu</a>
   </nav>
   <aside class="lesson-side-panel" aria-label="Ovládanie hodiny a čítania">
     <section class="narration-controls" aria-label="Čítanie prednášky">
@@ -121,6 +150,7 @@
           <option value="2">2×</option>
         </select>
       </label>
+      <p class="page-language-help">Jazyk zmeníte priamo v Google Translate: kliknite na názov cieľového jazyka v hornej lište a vyberte maďarčinu, ukrajinčinu alebo iný jazyk.</p>
       <label class="narration-voice" for="narration-voice"><span class="narration-voice-label">Hlas</span>
         <select id="narration-voice" aria-label="Vyberte hlas na čítanie"><option value="">Automaticky – slovenský hlas</option></select>
       </label>
@@ -133,12 +163,12 @@
     </section>
   </aside>
   <main>
+    <aside class="safety-notice" aria-label="Začiatok hodiny a kontrola pracoviska">
+      <strong>Začíname kontrolou pracoviska:</strong>
+      Skontrolujte lavicu, stoličku, pridelený počítač a stav príslušenstva. Poškodenie, chýbajúcu časť alebo inú závadu ihneď oznámte vyučujúcemu a stručný súhrn pošlite cez EduPage podľa jeho pokynov. Poškodené, nefunkčné ani nebezpečné zariadenie nepoužívajte.
+    </aside>
     <header>
-      <div class="lecture-actions">
-        <p class="crumb"><a href="index.html">Výpočtová technika</a> · Vstupno-výstupný systém, prerušenia a časovanie</p>
-        <h1>4.3 Polling a udalostné riadenie</h1>
-        <p class="subtitle">Dva spôsoby, ako zariadenie zistí, že sa zmenil vstup alebo nastal čas vykonať úlohu.</p>
-      </div>
+      <span class="crumb"><a href="index.html">Výpočtová technika</a> › Vstupno-výstupný systém › 4.3</span>
       <div>
         <div class="mode" role="group" aria-label="Zobrazenie stránky">
           <button id="student-mode" class="on" type="button" aria-pressed="true">Žiak</button>
@@ -147,18 +177,22 @@
         <button class="pdf-export" type="button" onclick="window.print()">Exportovať do PDF</button>
       </div>
     </header>
+    <h1>4.3 Polling a udalostné riadenie</h1>
+    <p class="lead subtitle">Dva spôsoby, ako zariadenie zistí, že sa zmenil vstup alebo nastal čas vykonať úlohu.</p>
     <div class="tags" aria-label="Témy prednášky">
-      <span class="tag">3. ročník SPŠ</span><span class="tag">Polling</span><span class="tag">Udalosť</span><span class="tag">Odozva</span><span class="tag">Embedded systém</span>
+      <span class="tag">Tematický celok 4</span><span class="tag">Výpočtová technika</span><span class="tag">AVR · Arduino · ESP32 · Raspberry Pi</span>
     </div>
-    <div class="safety-notice" role="note">
-      <strong>Bezpečnosť pri práci s elektronikou</strong>
-      Pri skúšaní vstupov používajte iba zapojenie a napájanie schválené vyučujúcim. Vodiče neprepojujte na zapnutom zariadení, ak to pracovný postup výslovne nepovoľuje.
-    </div>
+    <p>V tejto hodine porovnáte pravidelnú kontrolu vstupu s reakciou na oznámenú udalosť. Princípy si ukážete na tlačidle a LED a na príkladoch pre Arduino Uno, ESP32 a bežný počítač Raspberry Pi.</p>
+    <section class="lead-card"><strong>Nadväznosť na predchádzajúce učivo:</strong> V téme vstupno-výstupného systému ste sa oboznámili s perifériami a ich stavmi. Teraz sa zameriate na to, ako program zistí zmenu vstupu a kedy má zareagovať.</section>
+    <section class="teacher-note">
+      <strong>Ciele, predpoklady a pomôcky</strong>
+      Žiaci porovnajú polling a udalostné riadenie, rozlíšia udalosť od prerušenia a navrhnú spôsob obsluhy tlačidla. Predpoklady: základné digitálne vstupy, logické úrovne a jednoduchý programový cyklus. Pomôcky: tabuľa alebo projektor; zapojenie dosky sa vykonáva iba podľa pokynov vyučujúceho.
+    </section>
 
     <section aria-labelledby="plan-hodiny">
       <h2 id="plan-hodiny">Časový plán hodiny</h2>
       <div class="scroll">
-        <table class="timeline">
+        <table>
           <thead><tr><th>Čas</th><th>Činnosť</th><th>Výsledok</th></tr></thead>
           <tbody>
             <tr><td>0–5 min</td><td>Motivácia a základné pojmy</td><td>Žiak vysvetlí, ako môže zariadenie zistiť stlačenie tlačidla.</td></tr>
@@ -260,6 +294,8 @@ hlavný_program:
 
     <h3>Príklad 3 – reakcia na izbovú teplotu</h3>
     <p>Ak sa teplota mení pomaly a regulátor ju má vyhodnocovať napríklad v pravidelných intervaloch, polling môže byť postačujúci. Ak treba reagovať na asynchrónnu správu alebo rýchlu zmenu stavu, vhodnejšie môže byť udalostné oznámenie. Pred návrhom treba určiť, ako rýchlo musí systém reagovať a čo sa stane pri oneskorení.</p>
+
+    <aside class="safety-reminder"><strong>Bezpečnosť pri práci s elektronikou:</strong> Pri skúšaní vstupov používajte iba zapojenie a napájanie schválené vyučujúcim. Vodiče neprepojujte na zapnutom zariadení, ak to pracovný postup výslovne nepovoľuje.</aside>
 
     <h2>4. Arduino Uno: ovládanie LED pollingom</h2>
     <p>Na Arduino Uno R3 pripojte tlačidlo medzi pin <code>D2</code> a <code>GND</code>. Vstup nastavíme na <code>INPUT_PULLUP</code>, ktorý zapne vnútorný pull-up rezistor. Uvoľnené tlačidlo sa preto číta ako <code>HIGH</code> a stlačené ako <code>LOW</code>. LED použije vývod <code>LED_BUILTIN</code>.</p>
@@ -443,6 +479,10 @@ pause()</code></pre>
     <p>Dokončite vetu: „Polling zvolím, keď …; udalostné riadenie zvolím, keď …“ Doplňte aspoň jednu podmienku týkajúcu sa požadovanej odozvy.</p>
     <p><strong>Úloha na samostatnú prácu:</strong> Nakreslite priebeh programu s pollingom a s prerušením. Ku každému uveďte jeden vhodný príklad použitia.</p>
 
+    <h2>12. Ukončenie práce v učebni</h2>
+    <aside class="safety-reminder"><strong>Pred odchodom:</strong> Uložte svoju prácu, zatvorte používané nástroje a odhláste sa alebo vypnite počítač podľa pokynov vyučujúceho. Dosku, vodiče a ďalšie pomôcky ponechajte v stave určenom vyučujúcim. Pracovisko zanechajte čisté a pripravené pre ďalšiu skupinu.</aside>
+    <section class="teacher-note"><strong>Kontrola učebne po hodine</strong> Skontrolujte pracoviská a stav zapožičaných pomôcok. Poškodenie alebo nefunkčné zariadenie zaznamenajte a oznámte podľa školských pravidiel.</section>
+
     <section class="sources" aria-labelledby="sources-heading">
       <h2 id="sources-heading">Odporúčané zdroje</h2>
       <ul>
@@ -489,7 +529,7 @@ pause()</code></pre>
       </dl>
     </section>
     <footer>
-      <p>Materiály predmetu Výpočtová technika · <a href="index.html">Osnova predmetu</a> · <a href="../index.html">Všetky kurzy</a></p>
+      <a href="index.html">Späť na osnovu predmetu</a> · <a href="../index.html">Všetky kurzy</a>
     </footer>
   </main>
   <script src="../02_C/00_Prostredie_a_struktura_programu/c-lecture-controls.js" defer></script>
