@@ -1,0 +1,68 @@
+<!doctype html><html lang="sk"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="IoT broker a komunikácia zariadení 1 ? tematick? celok 09 V?po?tov? technika"><title>9.7 IoT broker a komunikácia zariadení 1 | V?po?tov? technika</title><style>:root{color-scheme:light dark;--bg:#f7f8fa;--surface:#fff;--text:#1c2330;--muted:#5b6678;--accent:#1f6feb;--border:#d9dee7;--note:#fff4d6}@media(prefers-color-scheme:dark){:root{--bg:#12161d;--surface:#1b212b;--text:#e6eaf1;--muted:#9aa6b8;--accent:#5aa2ff;--border:#2d3644;--note:#3a3017}}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:16px/1.65 system-ui,-apple-system,"Segoe UI",sans-serif}a{color:var(--accent)}nav,main{width:min(100% - 2rem,900px);margin:auto}nav{display:flex;gap:.6rem;flex-wrap:wrap;padding:.8rem 0}nav a,.button{display:inline-block;padding:.45rem .75rem;border:1px solid var(--border);border-radius:.55rem;text-decoration:none;color:inherit;background:var(--surface)}main{padding:1rem 0 3rem}a:focus-visible,button:focus-visible{outline:3px solid var(--accent);outline-offset:3px}h1{font-size:clamp(1.8rem,5vw,2.6rem);line-height:1.2}h2{margin-top:2rem}h3{margin-top:1.5rem}.muted{color:var(--muted)}.scroll{overflow:auto}table{width:100%;border-collapse:collapse}th,td{padding:.6rem .7rem;border:1px solid var(--border);text-align:left;vertical-align:top}pre{margin:.65rem 0 1rem;padding:1rem;border-radius:9px;overflow:auto;background:#0f172a;color:#e2e8f0;font:14px/1.55 ui-monospace,Consolas,monospace}.code-actions{display:flex;gap:.5rem;flex-wrap:wrap}button{padding:.55rem .8rem;border:0;border-radius:8px;background:#4b91f1;color:#fff;font-weight:700;cursor:pointer}.sources,footer{margin-top:2rem;padding-top:1rem;border-top:1px solid var(--border)}blockquote{margin:1rem 0;padding:.3rem 1rem;border-left:4px solid var(--accent);background:var(--surface)}.note{margin:1rem 0;padding:1rem;border:1px solid var(--border);border-radius:12px;background:var(--note)}@media(max-width:600px){nav,main{width:calc(100% - 1.2rem)}}</style></head><body><nav aria-label="Navig?cia kurzov"><a href="index.html#celok-09">V?po?tov? technika ? osnova</a><a href="../index.html">V?etky kurzy</a><a href="../nastavenia.html">Nastavenia vzh?adu</a></nav><main><header><p class="muted"><a href="index.html#celok-09">V?po?tov? technika</a> ? Tematick? celok 09 ? Predn??ka 9.7</p><h1>9.7 IoT broker a komunikácia zariadení 1</h1><p class="muted">IoT ? architekt?ra, komunik?cia a bezpe?nos? ? 45 min?t</p></header><div class="note"><strong>Praktick? prostredie:</strong> Uk??ky Wi-Fi na ESP32 mo?no spusti? v online simul?tore. Pr?kazy pre broker a Raspberry Pi ur?en? na lok?lnu laborat?rnu sie? sp???ajte len na zariadeniach, na ktor? m?te opr?vnenie. V pr?kladoch nepou??vajte skuto?n? hesl? ani tokeny.</div><h2>Ciele hodiny</h2>
+<p>Žiak má vedieť:</p>
+<ul><li>prakticky použiť MQTT broker,</li><li>publikovať a odoberať správy,</li><li>overiť retained správanie,</li><li>vysvetliť rozdiel medzi lokálnym a sieťovým prístupom,</li><li>diagnostikovať základný problém komunikácie.</li></ul>
+<h2>Časový plán</h2>
+<div class="scroll"><table><thead><tr><th>Čas</th><th>Obsah</th></tr></thead><tbody><tr><td>0 – 5 min</td><td>Schéma laboratória</td></tr><tr><td>5 – 14 min</td><td>Broker a klientské nástroje</td></tr><tr><td>14 – 26 min</td><td>Prvý prenos</td></tr><tr><td>26 – 34 min</td><td>Retained a filtre</td></tr><tr><td>34 – 41 min</td><td>Komunikácia zariadení</td></tr><tr><td>41 – 45 min</td><td>Overenie a zápis</td></tr></tbody></table></div>
+<h2>1. Laboratórna architektúra</h2>
+<p><strong>0 – 5 min</strong></p>
+<p class="muted">Platforma: text</p><pre><code id="lesson-9-7-code-1">Publisher → Mosquitto broker → Subscriber</code></pre><div class="code-actions"><button type="button" data-copy-code="lesson-9-7-code-1">Kop?rova? k?d</button></div><p id="status-lesson-9-7-code-1" class="muted" aria-live="polite"></p>
+<p>Na prvú ukážku môžu všetky časti bežať na jednom Raspberry Pi. Potom použijeme pripravený sieťový broker.</p>
+<h2>2. Príprava</h2>
+<p><strong>5 – 14 min</strong></p>
+<p>Na Raspberry Pi OS môže učiteľ pripraviť:</p>
+<p class="muted">Platforma: bash</p><pre><code id="lesson-9-7-code-2">sudo apt update</code></pre><div class="code-actions"><button type="button" data-copy-code="lesson-9-7-code-2">Kop?rova? k?d</button><a class="button" href="https://www.raspberrypi.com/documentation/" target="_blank" rel="noopener noreferrer">Dokument?cia Raspberry Pi</a></div><p id="status-lesson-9-7-code-2" class="muted" aria-live="polite"></p>
+<p class="muted">Platforma: bash</p><pre><code id="lesson-9-7-code-3">sudo apt install mosquitto mosquitto-clients</code></pre><div class="code-actions"><button type="button" data-copy-code="lesson-9-7-code-3">Kop?rova? k?d</button><a class="button" href="https://www.raspberrypi.com/documentation/" target="_blank" rel="noopener noreferrer">Dokument?cia Raspberry Pi</a></div><p id="status-lesson-9-7-code-3" class="muted" aria-live="polite"></p>
+<p>Overenie služby:</p>
+<p class="muted">Platforma: bash</p><pre><code id="lesson-9-7-code-4">systemctl status mosquitto</code></pre><div class="code-actions"><button type="button" data-copy-code="lesson-9-7-code-4">Kop?rova? k?d</button><a class="button" href="https://www.raspberrypi.com/documentation/" target="_blank" rel="noopener noreferrer">Dokument?cia Raspberry Pi</a></div><p id="status-lesson-9-7-code-4" class="muted" aria-live="polite"></p>
+<p>Predvolená konfigurácia moderného Mosquitto môže povoľovať iba lokálny prístup. Nainštalovanie preto automaticky nesprístupní broker celej sieti.</p>
+<p>Na sieťové cvičenie učiteľ pripraví listener, účty a prístupové práva. Broker nevystavujeme verejne ako anonymnú službu.</p>
+<h2>3. Prvá správa</h2>
+<p><strong>14 – 26 min</strong></p>
+<p>V prvom termináli:</p>
+<p class="muted">Platforma: bash</p><pre><code id="lesson-9-7-code-5">mosquitto_sub \
+  -h localhost \
+  -t 'skola/ucebna01/temperature' \
+  -v</code></pre><div class="code-actions"><button type="button" data-copy-code="lesson-9-7-code-5">Kop?rova? k?d</button><a class="button" href="https://www.raspberrypi.com/documentation/" target="_blank" rel="noopener noreferrer">Dokument?cia Raspberry Pi</a></div><p id="status-lesson-9-7-code-5" class="muted" aria-live="polite"></p>
+<p>V druhom termináli:</p>
+<p class="muted">Platforma: bash</p><pre><code id="lesson-9-7-code-6">mosquitto_pub \
+  -h localhost \
+  -t 'skola/ucebna01/temperature' \
+  -m '23.6'</code></pre><div class="code-actions"><button type="button" data-copy-code="lesson-9-7-code-6">Kop?rova? k?d</button><a class="button" href="https://www.raspberrypi.com/documentation/" target="_blank" rel="noopener noreferrer">Dokument?cia Raspberry Pi</a></div><p id="status-lesson-9-7-code-6" class="muted" aria-live="polite"></p>
+<p>Odberateľ zobrazí tému a obsah.</p>
+<h3>Experiment</h3>
+<ol><li>Ukonči odberateľa.</li><li>Publikuj novú bežnú správu.</li><li>Znovu spusti odberateľa.</li></ol>
+<p>Pri tomto jednoduchom odbere bez zachovanej relácie a bez retained správy sa stará správa automaticky nezobrazí.</p>
+<h2>4. Retained a zástupné filtre</h2>
+<p><strong>26 – 34 min</strong></p>
+<p>Publikovanie posledného stavu:</p>
+<p class="muted">Platforma: bash</p><pre><code id="lesson-9-7-code-7">mosquitto_pub \
+  -h localhost \
+  -t 'skola/ucebna01/status' \
+  -m 'online' \
+  -r</code></pre><div class="code-actions"><button type="button" data-copy-code="lesson-9-7-code-7">Kop?rova? k?d</button><a class="button" href="https://www.raspberrypi.com/documentation/" target="_blank" rel="noopener noreferrer">Dokument?cia Raspberry Pi</a></div><p id="status-lesson-9-7-code-7" class="muted" aria-live="polite"></p>
+<p>Nový odber:</p>
+<p class="muted">Platforma: bash</p><pre><code id="lesson-9-7-code-8">mosquitto_sub \
+  -h localhost \
+  -t 'skola/ucebna01/#' \
+  -v</code></pre><div class="code-actions"><button type="button" data-copy-code="lesson-9-7-code-8">Kop?rova? k?d</button><a class="button" href="https://www.raspberrypi.com/documentation/" target="_blank" rel="noopener noreferrer">Dokument?cia Raspberry Pi</a></div><p id="status-lesson-9-7-code-8" class="muted" aria-live="polite"></p>
+<p>Mal by dostať uloženú retained správu.</p>
+<p>Vymazanie retained obsahu danej témy:</p>
+<p class="muted">Platforma: bash</p><pre><code id="lesson-9-7-code-9">mosquitto_pub \
+  -h localhost \
+  -t 'skola/ucebna01/status' \
+  -r \
+  -n</code></pre><div class="code-actions"><button type="button" data-copy-code="lesson-9-7-code-9">Kop?rova? k?d</button><a class="button" href="https://www.raspberrypi.com/documentation/" target="_blank" rel="noopener noreferrer">Dokument?cia Raspberry Pi</a></div><p id="status-lesson-9-7-code-9" class="muted" aria-live="polite"></p>
+<p>Tieto príkazy používame na vlastných laboratórnych témach.</p>
+<h2>5. Dve zariadenia</h2>
+<p><strong>34 – 41 min</strong></p>
+<p>Učiteľ poskytne:</p>
+<ul><li>adresu brokera,</li><li>spôsob autentifikácie,</li><li>CA certifikát pri TLS,</li><li>povolený prefix tém.</li></ul>
+<p>Každá skupina použije vlastný priestor:</p>
+<p class="muted">Platforma: text</p><pre><code id="lesson-9-7-code-10">vyuka/skupina01/temperature
+vyuka/skupina02/temperature</code></pre><div class="code-actions"><button type="button" data-copy-code="lesson-9-7-code-10">Kop?rova? k?d</button></div><p id="status-lesson-9-7-code-10" class="muted" aria-live="polite"></p>
+<p>Pri ESP32 alebo inom klientovi nastavíme jedinečné client ID. Dve pripojenia s rovnakým client ID môžu viesť k odpájaniu predchádzajúceho klienta.</p>
+<h3>Diagnostický postup</h3>
+<ol><li>Je zariadenie pripojené do siete?</li><li>Je broker dostupný?</li><li>Sú správne údaje a TLS nastavenie?</li><li>Má klient právo na tému?</li><li>Zhoduje sa téma a filter?</li><li>Nie je duplicitné client ID?</li></ol>
+<h2>6. Zápis</h2>
+<p><strong>41 – 45 min</strong></p>
+<blockquote><p>Broker smeruje správy medzi klientmi.  </p><p><code>mosquitto_pub</code> publikuje, <code>mosquitto_sub</code> odoberá.  </p><p>Lokálny prístup a sieťový listener sú rozdielne konfigurácie.  </p><p>Retained správa poskytuje posledný uložený stav témy.  </p><p>Každé zariadenie má mať vhodnú identitu a pridelené oprávnenia.</p></blockquote><section class="sources"><h2>Zdroje na ?al?ie ?t?dium</h2><ul><li><a href="https://docs.espressif.com/projects/arduino-esp32/en/latest/api/wifi.html">Arduino-ESP32 Wi-Fi API</a></li><li><a href="https://docs.wokwi.com/guides/esp32-wifi">Wokwi ESP32 Wi-Fi and guest network</a></li><li><a href="https://www.rfc-editor.org/rfc/rfc9293.html">TCP, IETF RFC 9293</a></li><li><a href="https://www.rfc-editor.org/rfc/rfc768.html">UDP, IETF RFC 768</a></li><li><a href="https://www.rfc-editor.org/rfc/rfc9110.html">HTTP Semantics, IETF RFC 9110</a></li><li><a href="https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html">MQTT 5.0, OASIS specification</a></li><li><a href="https://mosquitto.org/documentation/">Eclipse Mosquitto documentation</a></li><li><a href="https://www.mosquitto.org/documentation/authentication-methods/">Mosquitto authentication and access control</a></li><li><a href="https://www.bluetooth.com/bluetooth-le-primer/">Bluetooth LE primer and GATT</a></li><li><a href="https://csrc.nist.gov/pubs/ir/8259/a/final">NIST IoT Device Cybersecurity Baseline</a></li><li><a href="https://owasp.org/projects/iot-security-verification-standard">OWASP IoT Security Verification Standard</a></li></ul></section><footer><p>Predn??ka 9.7 ? V?po?tov? technika ? Celok 09</p><p><a href="9.6%20MQTT.html">? Predch?dzaj?ca t?ma</a> ? <a href="index.html#celok-09">Osnova celku 09</a> ? <a href="9.8%20Spracovanie%20a%20ukladanie%20dat.html">Nasleduj?ca t?ma ?</a></p></footer></main><script src="../theme.js" defer></script><script>document.addEventListener('click',async event=>{const b=event.target.closest('[data-copy-code]');if(!b)return;const c=document.getElementById(b.dataset.copyCode),s=document.getElementById('status-'+b.dataset.copyCode);try{await navigator.clipboard.writeText(c.innerText);s.textContent='K?d bol skop?rovan?.'}catch{s.textContent='Kop?rovanie sa nepodarilo. Ozna?te k?d a skop?rujte ho ru?ne.'}})</script></body></html>

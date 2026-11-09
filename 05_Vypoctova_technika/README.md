@@ -51,7 +51,7 @@ Prehľad tematických celkov a dostupných materiálov je na stránke
 - [7.5 Synchronizácia úloh](./7.5%20Synchronizacia%20uloh.html)
 - [7.6 RTOS – princíp a použitie](./7.6%20RTOS%20-%20princip%20a%20pouzitie.html)
 
-Predn&#225;&#353;ky tematick&#253;ch celkov 3, 4, 5, 6, 7 a 8 s&#250; ur&#269;en&#233; na 45 min&#250;t.
+Predn&#225;&#353;ky tematick&#253;ch celkov 3 a&#382; 9 s&#250; ur&#269;en&#233; na 45 min&#250;t.
 
 ## Tematick&#253; celok 8 &#8211; Jednodoskov&#233; po&#269;&#237;ta&#269;e a ich opera&#269;n&#253; syst&#233;m
 
@@ -62,3 +62,16 @@ Predn&#225;&#353;ky tematick&#253;ch celkov 3, 4, 5, 6, 7 a 8 s&#250; ur&#269;en
 - [8.5 Procesy a služby](./8.5%20Procesy%20a%20sluzby.html)
 - [8.6 SSH a vzdialená správa](./8.6%20SSH%20a%20vzdialena%20sprava.html)
 - [8.7 GPIO v Linuxe](./8.7%20GPIO%20v%20Linuxe.html)
+
+
+## Tematick&#253; celok 9 &#8211; IoT, architekt&#250;ra, komunik&#225;cia a bezpe&#269;nos&#357;
+
+- [9.1 IoT architektúra](./9.1%20IoT%20architektura.html)
+- [9.2 TCP/IP a IP komunikácia](./9.2%20TCPIP%20a%20IP%20komunikacia.html)
+- [9.3 Wi-Fi](./9.3%20Wi-Fi.html)
+- [9.4 Bluetooth a BLE](./9.4%20Bluetooth%20a%20BLE.html)
+- [9.5 HTTP a REST API](./9.5%20HTTP%20a%20REST%20API.html)
+- [9.6 MQTT](./9.6%20MQTT.html)
+- [9.7 IoT broker a komunikácia zariadení 1](./9.7%20IoT%20broker%20a%20komunikacia%20zariadeni%201.html)
+- [9.8 Spracovanie a ukladanie dát](./9.8%20Spracovanie%20a%20ukladanie%20dat.html)
+- [9.9 Bezpečnosť IoT zariadení](./9.9%20Bezpecnost%20IoT%20zariadeni.html)

@@ -1,0 +1,79 @@
+<!doctype html><html lang="sk"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="HTTP a REST API ? tematick? celok 09 V?po?tov? technika"><title>9.5 HTTP a REST API | V?po?tov? technika</title><style>:root{color-scheme:light dark;--bg:#f7f8fa;--surface:#fff;--text:#1c2330;--muted:#5b6678;--accent:#1f6feb;--border:#d9dee7;--note:#fff4d6}@media(prefers-color-scheme:dark){:root{--bg:#12161d;--surface:#1b212b;--text:#e6eaf1;--muted:#9aa6b8;--accent:#5aa2ff;--border:#2d3644;--note:#3a3017}}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:16px/1.65 system-ui,-apple-system,"Segoe UI",sans-serif}a{color:var(--accent)}nav,main{width:min(100% - 2rem,900px);margin:auto}nav{display:flex;gap:.6rem;flex-wrap:wrap;padding:.8rem 0}nav a,.button{display:inline-block;padding:.45rem .75rem;border:1px solid var(--border);border-radius:.55rem;text-decoration:none;color:inherit;background:var(--surface)}main{padding:1rem 0 3rem}a:focus-visible,button:focus-visible{outline:3px solid var(--accent);outline-offset:3px}h1{font-size:clamp(1.8rem,5vw,2.6rem);line-height:1.2}h2{margin-top:2rem}h3{margin-top:1.5rem}.muted{color:var(--muted)}.scroll{overflow:auto}table{width:100%;border-collapse:collapse}th,td{padding:.6rem .7rem;border:1px solid var(--border);text-align:left;vertical-align:top}pre{margin:.65rem 0 1rem;padding:1rem;border-radius:9px;overflow:auto;background:#0f172a;color:#e2e8f0;font:14px/1.55 ui-monospace,Consolas,monospace}.code-actions{display:flex;gap:.5rem;flex-wrap:wrap}button{padding:.55rem .8rem;border:0;border-radius:8px;background:#4b91f1;color:#fff;font-weight:700;cursor:pointer}.sources,footer{margin-top:2rem;padding-top:1rem;border-top:1px solid var(--border)}blockquote{margin:1rem 0;padding:.3rem 1rem;border-left:4px solid var(--accent);background:var(--surface)}.note{margin:1rem 0;padding:1rem;border:1px solid var(--border);border-radius:12px;background:var(--note)}@media(max-width:600px){nav,main{width:calc(100% - 1.2rem)}}</style></head><body><nav aria-label="Navig?cia kurzov"><a href="index.html#celok-09">V?po?tov? technika ? osnova</a><a href="../index.html">V?etky kurzy</a><a href="../nastavenia.html">Nastavenia vzh?adu</a></nav><main><header><p class="muted"><a href="index.html#celok-09">V?po?tov? technika</a> ? Tematick? celok 09 ? Predn??ka 9.5</p><h1>9.5 HTTP a REST API</h1><p class="muted">IoT ? architekt?ra, komunik?cia a bezpe?nos? ? 45 min?t</p></header><div class="note"><strong>Praktick? prostredie:</strong> Uk??ky Wi-Fi na ESP32 mo?no spusti? v online simul?tore. Pr?kazy pre broker a Raspberry Pi ur?en? na lok?lnu laborat?rnu sie? sp???ajte len na zariadeniach, na ktor? m?te opr?vnenie. V pr?kladoch nepou??vajte skuto?n? hesl? ani tokeny.</div><h2>Ciele hodiny</h2>
+<p>Žiak má vedieť:</p>
+<ul><li>vysvetliť požiadavku a odpoveď HTTP,</li><li>rozlíšiť základné metódy,</li><li>prečítať URL a JSON,</li><li>vysvetliť účel REST API,</li><li>rozlíšiť HTTP a HTTPS.</li></ul>
+<h2>Časový plán</h2>
+<div class="scroll"><table><thead><tr><th>Čas</th><th>Obsah</th></tr></thead><tbody><tr><td>0 – 5 min</td><td>Zariadenie komunikuje so serverom</td></tr><tr><td>5 – 17 min</td><td>Požiadavka a odpoveď</td></tr><tr><td>17 – 27 min</td><td>REST a zdroje</td></tr><tr><td>27 – 37 min</td><td>Praktické volania</td></tr><tr><td>37 – 41 min</td><td>Chyby a timeout</td></tr><tr><td>41 – 45 min</td><td>Overenie a zápis</td></tr></tbody></table></div>
+<h2>1. HTTP</h2>
+<p><strong>0 – 17 min</strong></p>
+<p><strong>HTTP je aplikačný protokol založený na výmene požiadaviek a odpovedí.</strong></p>
+<p>Klient môže byť:</p>
+<ul><li>prehliadač,</li><li>ESP32,</li><li>Python program.</li></ul>
+<p>Server spracuje požiadavku a odošle odpoveď.</p>
+<h3>Požiadavka obsahuje</h3>
+<ul><li>metódu,</li><li>cieľovú cestu,</li><li>hlavičky,</li><li>podľa potreby telo.</li></ul>
+<h3>Základné metódy</h3>
+<div class="scroll"><table><thead><tr><th>Metóda</th><th>Bežný účel</th></tr></thead><tbody><tr><td>GET</td><td>Získanie reprezentácie zdroja</td></tr><tr><td>POST</td><td>Odovzdanie údajov na spracovanie, často vytvorenie položky</td></tr><tr><td>PUT</td><td>Vytvorenie alebo nahradenie stavu na určenej adrese</td></tr><tr><td>PATCH</td><td>Čiastočná zmena</td></tr><tr><td>DELETE</td><td>Odstránenie zdroja</td></tr></tbody></table></div>
+<h3>Stavové kódy</h3>
+<div class="scroll"><table><thead><tr><th>Kód</th><th>Význam</th></tr></thead><tbody><tr><td>200</td><td>Úspech</td></tr><tr><td>201</td><td>Vytvorené</td></tr><tr><td>400</td><td>Nesprávna požiadavka</td></tr><tr><td>401</td><td>Chýbajúca alebo neplatná autentifikácia</td></tr><tr><td>403</td><td>Prístup zakázaný</td></tr><tr><td>404</td><td>Zdroj nenájdený</td></tr><tr><td>500</td><td>Vnútorná chyba servera</td></tr></tbody></table></div>
+<h2>2. REST API</h2>
+<p><strong>17 – 27 min</strong></p>
+<p>REST je architektonický štýl. Nie každé HTTP rozhranie s JSON je plne REST.</p>
+<p>Pre úvod používame zdroje:</p>
+<p class="muted">Platforma: text</p><pre><code id="lesson-9-5-code-1">/api/devices
+/api/devices/ucebna01
+/api/measurements</code></pre><div class="code-actions"><button type="button" data-copy-code="lesson-9-5-code-1">Kop?rova? k?d</button></div><p id="status-lesson-9-5-code-1" class="muted" aria-live="polite"></p>
+<p>Príklad merania:</p>
+<p class="muted">Platforma: json</p><pre><code id="lesson-9-5-code-2">{
+  &quot;device_id&quot;: &quot;ucebna01&quot;,
+  &quot;temperature_c&quot;: 23.6,
+  &quot;valid&quot;: true
+}</code></pre><div class="code-actions"><button type="button" data-copy-code="lesson-9-5-code-2">Kop?rova? k?d</button><a class="button" href="https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html" target="_blank" rel="noopener noreferrer">?pecifik?cia MQTT</a></div><p id="status-lesson-9-5-code-2" class="muted" aria-live="polite"></p>
+<p>API musí určiť povinné polia, typy, jednotky a reakcie na chyby.</p>
+<h3>HTTP a HTTPS</h3>
+<p>HTTPS používa TLS na ochranu spojenia.</p>
+<p>Klient má overovať certifikát servera a jeho názov. Vypnutie overovania certifikátu odstraňuje dôležitú časť ochrany.</p>
+<p>HTTP/1.1 a HTTP/2 bežne používajú TCP; HTTP/3 používa QUIC nad UDP.</p>
+<h2>3. Praktické volania</h2>
+<p><strong>27 – 37 min</strong></p>
+<p>Učiteľ poskytne adresu pripraveného školského API. Nasledujúca adresa je iba vzor.</p>
+<p>Čítanie:</p>
+<p class="muted">Platforma: bash</p><pre><code id="lesson-9-5-code-3">curl --max-time 5 \
+  http://192.168.1.50:8000/api/devices/ucebna01</code></pre><div class="code-actions"><button type="button" data-copy-code="lesson-9-5-code-3">Kop?rova? k?d</button><a class="button" href="https://www.raspberrypi.com/documentation/" target="_blank" rel="noopener noreferrer">Dokument?cia Raspberry Pi</a></div><p id="status-lesson-9-5-code-3" class="muted" aria-live="polite"></p>
+<p>Odoslanie:</p>
+<p class="muted">Platforma: bash</p><pre><code id="lesson-9-5-code-4">curl --max-time 5 \
+  -X POST \
+  -H 'Content-Type: application/json' \
+  -d '{&quot;device_id&quot;:&quot;ucebna01&quot;,&quot;temperature_c&quot;:23.6}' \
+  http://192.168.1.50:8000/api/measurements</code></pre><div class="code-actions"><button type="button" data-copy-code="lesson-9-5-code-4">Kop?rova? k?d</button><a class="button" href="https://www.raspberrypi.com/documentation/" target="_blank" rel="noopener noreferrer">Dokument?cia Raspberry Pi</a></div><p id="status-lesson-9-5-code-4" class="muted" aria-live="polite"></p>
+<p>Nešifrované HTTP používame v tejto ukážke iba v oddelenej laboratórnej sieti bez citlivých údajov.</p>
+<h3>Python klient</h3>
+<p class="muted">Platforma: python</p><pre><code id="lesson-9-5-code-5">import requests
+
+url = &quot;http://192.168.1.50:8000/api/measurements&quot;
+
+meranie = {
+    &quot;device_id&quot;: &quot;ucebna01&quot;,
+    &quot;temperature_c&quot;: 23.6
+}
+
+try:
+    odpoved = requests.post(
+        url,
+        json=meranie,
+        timeout=5
+    )
+
+    odpoved.raise_for_status()
+    print(&quot;Odoslane:&quot;, odpoved.status_code)
+
+except requests.RequestException as chyba:
+    print(&quot;Komunikacia zlyhala:&quot;, chyba)</code></pre><div class="code-actions"><button type="button" data-copy-code="lesson-9-5-code-5">Kop?rova? k?d</button><a class="button" href="https://www.raspberrypi.com/documentation/" target="_blank" rel="noopener noreferrer">Dokument?cia Raspberry Pi</a></div><p id="status-lesson-9-5-code-5" class="muted" aria-live="polite"></p>
+<p>Vyžaduje dostupný server a knižnicu <code>requests</code>.</p>
+<h2>4. Timeout a opakovanie</h2>
+<p><strong>37 – 41 min</strong></p>
+<p>Ak klient nedostane odpoveď, nemusí vedieť, či server požiadavku vykonal.</p>
+<p>Opakovaný POST môže vytvoriť duplicitnú položku. Pomôcť môže:</p>
+<ul><li>jednoznačné ID merania,</li><li>kontrola duplicít,</li><li>idempotentný návrh operácie.</li></ul>
+<h2>5. Zápis</h2>
+<p><strong>41 – 45 min</strong></p>
+<blockquote><p>HTTP používa požiadavky a odpovede.  </p><p>Metóda vyjadruje typ operácie, stavový kód výsledok spracovania.  </p><p>JSON je dátový formát, nie transportný protokol.  </p><p>REST je architektonický štýl práce so zdrojmi.  </p><p>HTTPS chráni spojenie pomocou TLS.  </p><p>Klient musí riešiť timeouty, chyby a možné duplicity.</p></blockquote><section class="sources"><h2>Zdroje na ?al?ie ?t?dium</h2><ul><li><a href="https://docs.espressif.com/projects/arduino-esp32/en/latest/api/wifi.html">Arduino-ESP32 Wi-Fi API</a></li><li><a href="https://docs.wokwi.com/guides/esp32-wifi">Wokwi ESP32 Wi-Fi and guest network</a></li><li><a href="https://www.rfc-editor.org/rfc/rfc9293.html">TCP, IETF RFC 9293</a></li><li><a href="https://www.rfc-editor.org/rfc/rfc768.html">UDP, IETF RFC 768</a></li><li><a href="https://www.rfc-editor.org/rfc/rfc9110.html">HTTP Semantics, IETF RFC 9110</a></li><li><a href="https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html">MQTT 5.0, OASIS specification</a></li><li><a href="https://mosquitto.org/documentation/">Eclipse Mosquitto documentation</a></li><li><a href="https://www.mosquitto.org/documentation/authentication-methods/">Mosquitto authentication and access control</a></li><li><a href="https://www.bluetooth.com/bluetooth-le-primer/">Bluetooth LE primer and GATT</a></li><li><a href="https://csrc.nist.gov/pubs/ir/8259/a/final">NIST IoT Device Cybersecurity Baseline</a></li><li><a href="https://owasp.org/projects/iot-security-verification-standard">OWASP IoT Security Verification Standard</a></li></ul></section><footer><p>Predn??ka 9.5 ? V?po?tov? technika ? Celok 09</p><p><a href="9.4%20Bluetooth%20a%20BLE.html">? Predch?dzaj?ca t?ma</a> ? <a href="index.html#celok-09">Osnova celku 09</a> ? <a href="9.6%20MQTT.html">Nasleduj?ca t?ma ?</a></p></footer></main><script src="../theme.js" defer></script><script>document.addEventListener('click',async event=>{const b=event.target.closest('[data-copy-code]');if(!b)return;const c=document.getElementById(b.dataset.copyCode),s=document.getElementById('status-'+b.dataset.copyCode);try{await navigator.clipboard.writeText(c.innerText);s.textContent='K?d bol skop?rovan?.'}catch{s.textContent='Kop?rovanie sa nepodarilo. Ozna?te k?d a skop?rujte ho ru?ne.'}})</script></body></html>
