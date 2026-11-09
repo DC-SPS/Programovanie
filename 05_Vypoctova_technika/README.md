@@ -51,7 +51,7 @@ Prehľad tematických celkov a dostupných materiálov je na stránke
 - [7.5 Synchronizácia úloh](./7.5%20Synchronizacia%20uloh.html)
 - [7.6 RTOS – princíp a použitie](./7.6%20RTOS%20-%20princip%20a%20pouzitie.html)
 
-Predn&#225;&#353;ky tematick&#253;ch celkov 3 a&#382; 9 s&#250; ur&#269;en&#233; na 45 min&#250;t.
+Predn&#225;&#353;ky tematick&#253;ch celkov 3 a&#382; 10 s&#250; ur&#269;en&#233; na 45 min&#250;t.
 
 ## Tematick&#253; celok 8 &#8211; Jednodoskov&#233; po&#269;&#237;ta&#269;e a ich opera&#269;n&#253; syst&#233;m
 
@@ -75,3 +75,11 @@ Predn&#225;&#353;ky tematick&#253;ch celkov 3 a&#382; 9 s&#250; ur&#269;en&#233;
 - [9.7 IoT broker a komunikácia zariadení 1](./9.7%20IoT%20broker%20a%20komunikacia%20zariadeni%201.html)
 - [9.8 Spracovanie a ukladanie dát](./9.8%20Spracovanie%20a%20ukladanie%20dat.html)
 - [9.9 Bezpečnosť IoT zariadení](./9.9%20Bezpecnost%20IoT%20zariadeni.html)
+
+## Tematick&#253; celok 10 &#8211; N&#225;vrh a realiz&#225;cia embedded syst&#233;mu
+
+- [Analýza zadania](./10.1%20Analyza%20zadania.html)
+- [Návrh architektúry systému](./10.2%20Navrh%20architektury%20systemu.html)
+- [Testovanie a diagnostika](./10.3%20Testovanie%20a%20diagnostika.html)
+- [Dokumentácia embedded systému](./10.4%20Dokumentacia%20embedded%20systemu.html)
+- [Integrácia, vyhodnotenie a obhajoba projektu](./10.5%20Integracia%20vyhodnotenie%20a%20obhajoba%20projektu.html)
