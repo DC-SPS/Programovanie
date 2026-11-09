@@ -84,6 +84,11 @@
     .mode button { padding: 6px 11px; border: 0; background: var(--card); color: var(--fg); font: inherit; cursor: pointer; }
     .mode button.on { background: var(--acc); color: #fff; }
     .pdf-export { margin-left: .5rem; padding: .4rem .7rem; border: 1px solid var(--line); border-radius: .55rem; background: var(--card); color: var(--fg); font: 600 .9rem/1.4 system-ui, -apple-system, "Segoe UI", sans-serif; cursor: pointer; }
+    .code-actions { display: flex; flex-wrap: wrap; align-items: center; gap: .55rem; margin: .8rem 0 .35rem; }
+    .copy-btn, .online-editor { display: inline-block; padding: .4rem .7rem; border: 1px solid var(--line); border-radius: .5rem; font: 600 .9rem/1.4 system-ui, -apple-system, "Segoe UI", sans-serif; text-decoration: none; }
+    .copy-btn { background: var(--acc); border-color: var(--acc); color: #fff; cursor: pointer; }
+    .online-editor { background: var(--card); color: var(--fg); }
+    .code-status { min-height: 1.4em; margin: 0 0 .75rem; color: var(--mut); font-size: .85rem; }
     .lead-card { margin: 14px 0; padding: 14px 17px; border: 1px solid var(--line); border-radius: 12px; background: var(--card); }
     .safety-notice, .safety-reminder { margin: 1rem 0; padding: 14px 17px; border: 1px solid var(--line); border-left: 5px solid var(--acc); border-radius: 12px; background: var(--note); }
     .safety-notice strong, .safety-reminder strong { display: block; margin-bottom: .25rem; }
@@ -112,7 +117,7 @@
     @media (max-width: 520px) { .glossary-list { grid-template-columns: 1fr; gap: .1rem; } .glossary-list dd { margin-bottom: .5rem; } }
     @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; } }
     @media print {
-      .global-course-nav, .mode, .pdf-export, .narration-controls, .narration-option, .lesson-side-panel { display: none !important; }
+      .global-course-nav, .mode, .pdf-export, .code-actions, .code-status, .narration-controls, .narration-option, .lesson-side-panel { display: none !important; }
       body { background: #fff !important; color: #111 !important; color-scheme: light !important; font-size: 11pt; }
       main { width: auto; max-width: none; margin: 0; padding: 12mm 14mm; }
       .teacher-note { display: block; }
@@ -169,13 +174,11 @@
     </aside>
     <header>
       <span class="crumb"><a href="index.html">Výpočtová technika</a> › Vstupno-výstupný systém › 4.3</span>
-      <div>
-        <div class="mode" role="group" aria-label="Zobrazenie stránky">
-          <button id="student-mode" class="on" type="button" aria-pressed="true">Žiak</button>
-          <button id="teacher-mode" type="button" aria-pressed="false">Učiteľ</button>
-        </div>
-        <button class="pdf-export" type="button" onclick="window.print()">Exportovať do PDF</button>
+      <div class="mode" role="group" aria-label="Zobrazenie stránky">
+        <button id="student-mode" class="on" type="button" aria-pressed="true">Žiak</button>
+        <button id="teacher-mode" type="button" aria-pressed="false">Učiteľ</button>
       </div>
+      <button class="pdf-export" type="button" onclick="window.print()">Exportovať do PDF</button>
     </header>
     <h1>4.3 Polling a udalostné riadenie</h1>
     <p class="lead subtitle">Dva spôsoby, ako zariadenie zistí, že sa zmenil vstup alebo nastal čas vykonať úlohu.</p>
@@ -229,11 +232,13 @@
     <h2>2. Teoretický výklad</h2>
     <h3>Polling: program sa pravidelne pýta</h3>
     <p><strong>Polling</strong> (cyklické zisťovanie stavu) znamená, že program v opakovanom cykle číta vstup alebo sa pýta periférie, či nastala zmena. Pri tlačidle môže zistiť, či je práve stlačené; pri komunikácii sa môže pýtať, či už prišli dáta.</p>
+    <div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button></div>
     <pre><code>opakuj stále:
     stav = prečítaj_vstup()
     ak stav je odlišný od predchádzajúceho:
         spracuj_zmenu(stav)
     predchádzajúci_stav = stav</code></pre>
+    <p class="code-status" role="status" aria-live="polite"></p>
     <p>V jednoduchom mikrokontroléri môže takýto cyklus priebežne vykonávať aj inú prácu. Ak však iba opakovane číta vstup bez užitočnej činnosti alebo čakania, spotrebúva čas procesora. Interval medzi kontrolami ovplyvňuje, ako rýchlo program zmenu zistí.</p>
     <div class="card">
       <strong>Čo ovplyvňuje polling:</strong>
@@ -247,6 +252,7 @@
 
     <h3>Udalostné riadenie: program spracuje oznámenie</h3>
     <p>Pri <strong>udalostnom riadení</strong> program vykoná príslušnú obsluhu, keď dostane udalosť – napríklad informáciu o zmene vstupu, prijatí správy alebo dokončení merania. Zdroj udalosti môže systém upozorniť prostredníctvom prerušenia, komunikačnej knižnice, frontu správ alebo iného mechanizmu platformy.</p>
+    <div class="code-actions"><button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button></div>
     <pre><code>keď_príde_udalost(zmena_tlačidla):
     zaznamenaj_udalost(zmena_tlačidla)
 
@@ -254,6 +260,7 @@ hlavný_program:
     opakuj:
         ak je udalosť pripravená:
             spracuj_udalost()</code></pre>
+    <p class="code-status" role="status" aria-live="polite"></p>
     <p>Program nemusí neustále zisťovať stav každého vstupu. Odozva môže byť rýchla a čas procesora sa dá využiť na inú prácu alebo čakanie. Presné správanie a spotreba však závisia od hardvéru, operačného systému a spôsobu, akým je udalosť doručená.</p>
 
     <h3>Udalosť, prerušenie a ISR nie sú synonymá</h3>
@@ -308,6 +315,10 @@ hlavný_program:
         </tbody>
       </table>
     </div>
+    <div class="code-actions">
+      <button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button>
+      <a class="online-editor" href="https://wokwi.com/projects/new/arduino-uno" target="_blank" rel="noopener noreferrer">Otvoriť simulátor Arduino Uno</a>
+    </div>
     <pre class="code-sample language-cpp"><code>const byte BUTTON_PIN = 2;
 bool previousPressed = false;
 
@@ -324,6 +335,7 @@ void loop() {
         previousPressed = pressed;
     }
 }</code></pre>
+    <p class="code-status" role="status" aria-live="polite"></p>
     <p>Funkcia <code>loop()</code> sa opakuje a pri každom priechode číta aktuálny stav. Premenná <code>previousPressed</code> umožňuje rozpoznať zmenu, aby program vyhodnotil stlačenie a uvoľnenie iba pri prechode do nového stavu. Ukážka zámerne neobsahuje <code>delay()</code>; blokujúce čakanie by odložilo ďalšie kontroly a iné úlohy.</p>
     <p><strong>Otázka:</strong> Čo by sa zmenilo, keby program čakal pomocou <code>delay(1000)</code>? Krátke stlačenie by mohlo prebehnúť medzi dvoma kontrolami a program by ho nemusel zaznamenať.</p>
 
@@ -345,6 +357,10 @@ void loop() {
 
     <h2>6. Arduino Uno: zaznamenanie stlačenia prerušením</h2>
     <p>Zapojenie tlačidla medzi D2 a GND zostáva rovnaké. Obslužná funkcia iba nastaví príznak; hlavná slučka ho prevezme a vykoná zmenu LED.</p>
+    <div class="code-actions">
+      <button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button>
+      <a class="online-editor" href="https://wokwi.com/projects/new/arduino-uno" target="_blank" rel="noopener noreferrer">Otvoriť simulátor Arduino Uno</a>
+    </div>
     <pre class="code-sample language-cpp"><code>const byte BUTTON_PIN = 2;
 volatile bool buttonEvent = false;
 bool ledOn = false;
@@ -372,6 +388,7 @@ void loop() {
 
     // Ostatné úlohy programu môžu pokračovať aj bez čakania na tlačidlo.
 }</code></pre>
+    <p class="code-status" role="status" aria-live="polite"></p>
     <ul>
       <li><code>attachInterrupt()</code> priradí vstupu obslužnú funkciu a režim hrany.</li>
       <li><code>volatile</code> upozorňuje prekladač, že hodnotu môže meniť aj ISR; samo osebe však nezabezpečuje bezpečnú synchronizáciu.</li>
@@ -381,6 +398,10 @@ void loop() {
 
     <h2>7. ESP32: rovnaký princíp, odlišné vlastnosti dosky</h2>
     <p>ESP32 je rodina mikrokontrolérov; podľa konkrétneho variantu a dosky môže ponúkať napríklad Wi-Fi, Bluetooth a viac procesorových jadier. V Arduino frameworku sa používa podobný spôsob registrácie prerušenia, no dostupné GPIO a obmedzenia sa líšia podľa modelu.</p>
+    <div class="code-actions">
+      <button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button>
+      <a class="online-editor" href="https://wokwi.com/projects/new/esp32" target="_blank" rel="noopener noreferrer">Otvoriť simulátor ESP32</a>
+    </div>
     <pre class="code-sample language-cpp"><code>const int BUTTON_PIN = 27; // Iba ak GPIO27 je dostupný na danej doske.
 void ARDUINO_ISR_ATTR onButtonPress();
 
@@ -388,6 +409,7 @@ void setup() {
     pinMode(BUTTON_PIN, INPUT_PULLUP);
     attachInterrupt(digitalPinToInterrupt(BUTTON_PIN), onButtonPress, FALLING);
 }</code></pre>
+    <p class="code-status" role="status" aria-live="polite"></p>
     <p>Ukážka zobrazuje registráciu obsluhy; definícia <code>onButtonPress()</code> musí byť doplnená podľa bezpečného spôsobu odovzdania udalosti hlavnej úlohe. Pri zložitejších aplikáciách ESP32 sa používajú napríklad fronty FreeRTOS alebo kritická sekcia. Nepredpokladajte, že samotné <code>volatile</code> chráni zdieľané údaje medzi jadrami.</p>
     <div class="card">
       <strong>Elektrická bezpečnosť:</strong> GPIO ESP32 pracujú s logikou 3,3 V a nie sú určené na priame pripojenie 5 V. Pred zapojením skontrolujte dokumentáciu konkrétnej dosky aj dostupnosť vybraného pinu.
@@ -395,8 +417,12 @@ void setup() {
 
     <h2>8. Raspberry Pi: polling a udalosti v Pythone</h2>
     <p>Bežné Raspberry Pi (napríklad Pi 4 alebo Pi 5) je jednodoskový počítač s operačným systémom Linux. <strong>Raspberry Pi Pico</strong> je naopak doska s mikrokontrolérom, teda odlišná platforma. Na bežnom Raspberry Pi možno na vstupy použiť Python a knižnicu <code>gpiozero</code>.</p>
-    <p>V nasledujúcich príkladoch je tlačidlo pripojené medzi <code>GPIO17</code> (označenie BCM) a GND. Na štandardnom 40-pinovom konektore je GPIO17 fyzický pin 11; knižnica používa označenie BCM, nie fyzické číslo kontaktu.</p>
+    <p>V nasledujúcich príkladoch je tlačidlo pripojené medzi <code>GPIO17</code> (označenie BCM) a GND. Na štandardnom 40-pinovom konektore je GPIO17 fyzický pin 11; knižnica používa označenie BCM, nie fyzické číslo kontaktu. Online editor Pythonu umožní kód upraviť, ale knižnica <code>gpiozero</code> a fyzické GPIO vyžadujú Raspberry Pi; tieto ukážky preto v bežnom online editore nespustíte.</p>
     <h3>Polling</h3>
+    <div class="code-actions">
+      <button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button>
+      <a class="online-editor" href="https://www.programiz.com/python-programming/online-compiler/" target="_blank" rel="noopener noreferrer">Otvoriť online editor Pythonu</a>
+    </div>
     <pre class="code-sample language-python"><code>from gpiozero import Button
 from time import sleep
 
@@ -406,8 +432,13 @@ while True:
     if button.is_pressed:
         print("Tlacidlo je stlacene")
     sleep(0.1)</code></pre>
+    <p class="code-status" role="status" aria-live="polite"></p>
     <p>Program kontroluje stav približne každých 100 ms. Kým tlačidlo držíme, správa sa môže vypísať opakovane. Čakanie <code>sleep()</code> obmedzí zbytočné kontrolovanie, ale zároveň ovplyvní najkratšiu zmenu, ktorú program stihne zachytiť.</p>
     <h3>Udalostné riadenie</h3>
+    <div class="code-actions">
+      <button class="copy-btn" type="button" data-copy-code>Kopírovať kód</button>
+      <a class="online-editor" href="https://www.programiz.com/python-programming/online-compiler/" target="_blank" rel="noopener noreferrer">Otvoriť online editor Pythonu</a>
+    </div>
     <pre class="code-sample language-python"><code>from gpiozero import Button
 from signal import pause
 
@@ -417,6 +448,7 @@ def on_press():
 button = Button(17, pull_up=True, bounce_time=0.05)
 button.when_pressed = on_press
 pause()</code></pre>
+    <p class="code-status" role="status" aria-live="polite"></p>
     <ul>
       <li><code>when_pressed</code> zaregistruje funkciu, ktorú knižnica zavolá pri stlačení.</li>
       <li><code>bounce_time=0.05</code> nastaví časové potlačenie zákmitov kontaktu.</li>
@@ -532,6 +564,22 @@ pause()</code></pre>
       <a href="index.html">Späť na osnovu predmetu</a> · <a href="../index.html">Všetky kurzy</a>
     </footer>
   </main>
+  <script>
+    document.addEventListener("click", async (event) => {
+      const button = event.target.closest("[data-copy-code]");
+      if (!button) return;
+
+      const codeBlock = button.parentElement.nextElementSibling;
+      const code = codeBlock.querySelector("code");
+      const status = codeBlock.nextElementSibling;
+      try {
+        await navigator.clipboard.writeText(code.innerText);
+        status.textContent = "Kód bol skopírovaný do schránky.";
+      } catch {
+        status.textContent = "Kopírovanie nie je dostupné. Označte kód a skopírujte ho pomocou Ctrl+C.";
+      }
+    });
+  </script>
   <script src="../02_C/00_Prostredie_a_struktura_programu/c-lecture-controls.js" defer></script>
   <script type="module" src="../lesson-remote.js"></script>
 </body>

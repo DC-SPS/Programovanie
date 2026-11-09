@@ -41,19 +41,22 @@ Prehľadové stránky kurzov, prihlásenie a diaľkové ovládanie majú odlišn
    - pokyn pred odchodom a učiteľská poznámka, ak je relevantná;
    - odporúčané zdroje, register pojmov a pätička s navigáciou späť/pokračovať.
 
-Prispôsob obsahové sekcie predmetu a cieľom hodiny; nevkladaj prázdne ani nerelevantné bloky len kvôli zoznamu. Neprepracúvaj názov, číslovanie ani poradie prednášky.
+Prispôsob obsahové sekcie predmetu a cieľom hodiny; nevkladaj prázdne ani nerelevantné bloky len kvôli zoznamu. V pätičke uveď odkaz na ďalšiu prednášku iba vtedy, ak cieľová stránka existuje; nevymýšľaj odkazy na plánované alebo nepublikované prednášky. Neprepracúvaj názov, číslovanie ani poradie prednášky.
 
 ## Triedy a správanie
 
 - Použi existujúce triedy vzoru, ak zdieľané skripty alebo CSS podľa nich vyhľadávajú prvky: `.global-course-nav`, `.lesson-side-panel`, `.narration-controls`, `.mode`, `.pdf-export`, `.teacher-note`, `.safety-notice`, `.safety-reminder`, `.card`, `.sources`, `.glossary-list` a `footer`.
 - Prepínač Žiak/Učiteľ musí aktualizovať `body.teacher`, vzhľad tlačidiel aj `aria-pressed`. Odpovede a učiteľské poznámky sa skryjú v žiackom režime a zobrazia v učiteľskom režime. Pri tlači zobraz učiteľské riešenia podľa vzoru.
 - Tlačidlo PDF spúšťa `window.print()`. Tlačové štýly skryjú navigáciu a ovládacie prvky, nastavia biely podklad a tmavý text, zachovajú čitateľnosť tabuliek a kódu a obmedzia nevhodné zalomenie kariet. Nepridávaj PDF knižnicu, ak ju projekt nepoužíva.
+- Ovládanie kódu vlož priamo do HTML pri každom bloku `<pre><code>`: tlačidlo **Kopírovať kód** musí byť viditeľné už pred spustením JavaScriptu a po kliknutí skopírovať obsah príslušného bloku. Výsledok oznám cez prístupný stav a pri nedostupnej schránke zobraz návod na ručné kopírovanie. Nepoužívaj JavaScript ako jediný spôsob, ktorým sa tlačidlá do stránky doplnia.
+- Ku spustiteľnému príkladu pridaj vedľa kopírovania odkaz **Online editor** alebo **Simulátor** iba vtedy, ak zodpovedá jazyku a platforme ukážky. Pseudokód označ iba na kopírovanie. Jasne uveď, ak online nástroj nevie spustiť príklad pre chýbajúci hardvér alebo knižnicu; neprezentuj taký odkaz ako spustiteľné riešenie.
 - Každý interaktívny prvok musí mať popis, klávesnicové ovládanie a zrozumiteľnú spätnú väzbu. Nevkladaj interakcie, ktoré predstierajú funkčnosť.
 
 ## Kontrolný zoznam pred dokončením
 
 - Porovnaj výsledné rozloženie a ovládanie s 4.1 na širokej aj úzkej obrazovke.
 - Over umiestnenie a fungovanie navigácie, hodín, čítania, hlasu, prepínača režimu a exportu do tlače/PDF.
+- Skontroluj, že kopírovacie tlačidlo je prítomné v HTML pri každom bloku kódu, skopíruje správny blok a online odkazy zodpovedajú jazyku a platforme; vyskúšaj aj tlačový režim.
 - Skontroluj všetky relatívne odkazy na skripty, CSS, navigáciu a lokálne zdroje.
 - Over tlačový vzhľad vrátane učiteľských poznámok, dlhých tabuliek a blokov kódu.
 - Spusti dostupné kontroly syntaxe a `git diff --check`; over, že nesúvisiaci obsah stránky zostal zachovaný.
