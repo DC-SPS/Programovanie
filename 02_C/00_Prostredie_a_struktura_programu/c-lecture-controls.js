@@ -1,4 +1,4 @@
-﻿(() => {
+(() => {
     const studentButton = document.getElementById("student-mode") || document.getElementById("student") || document.getElementById("bs");
     const teacherButton = document.getElementById("teacher-mode") || document.getElementById("teacher") || document.getElementById("bt");
     const setTeacherMode = (enabled) => {
@@ -22,6 +22,19 @@
     const voiceSelect = document.getElementById("narration-voice");
     const volumeSelect = document.getElementById("narration-volume");
     const volumeValue = document.getElementById("narration-volume-value");
+    const narrationControls = playButton?.closest(".narration-controls");
+    if (narrationControls && !narrationControls.querySelector(".narration-settings")) {
+      const settings = document.createElement("details");
+      settings.className = "narration-settings";
+      const summary = document.createElement("summary");
+      summary.textContent = "Nastavenia hlasu";
+      settings.append(summary);
+      [speedSelect?.closest("label"), narrationControls.querySelector(".page-language-help"), voiceSelect?.closest("label"), volumeSelect?.closest("label")]
+        .filter((node) => node && node.parentElement === narrationControls)
+        .forEach((node) => settings.append(node));
+      const readingStatusNode = narrationControls.querySelector("#reading-status");
+      narrationControls.insertBefore(settings, readingStatusNode || null);
+    }
     const narrationSpeedKey = "lesson-narration.playback-rate.v2";
     const narrationVoiceKey = "lesson-narration.voice";
     const narrationVolumeKey = "lesson-narration.volume";
@@ -291,9 +304,12 @@
       });
     });
 
-    playButton.addEventListener("click", () => startReading(getSelectedItems()));
+    const syncPlayButton = document.querySelector('.lecture-sync-controls [data-action="play"]');
+    const syncPauseButton = document.querySelector('.lecture-sync-controls [data-action="pause"]');
+    playButton.addEventListener("click", () => syncPlayButton ? syncPlayButton.click() : startReading(getSelectedItems()));
     stopButton.addEventListener("click", () => stopReading());
     pauseButton.addEventListener("click", () => {
+      if (syncPauseButton) { syncPauseButton.click(); return; }
       if (!isReading || !speechSupported) return;
       if (isPaused) {
         if (restartCurrentOnResume) {
@@ -320,7 +336,10 @@
       }
       updateControls();
     });
-    replayButton.addEventListener("click", () => startReading(previousSelection));
+    replayButton.addEventListener("click", () => {
+      if (syncPlayButton) window.lessonSpeechRemote?.restartLesson?.();
+      else startReading(previousSelection);
+    });
     const restartSpeechForSetting = (message) => {
       if (!isReading) {
         readingStatus.textContent = message;

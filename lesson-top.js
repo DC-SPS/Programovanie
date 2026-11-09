@@ -1,6 +1,15 @@
 (() => {
   "use strict";
 
+  const currentScript = document.currentScript;
+  if (currentScript && !document.querySelector('script[data-lesson-voice-loader]')) {
+    const voiceLoader = document.createElement("script");
+    voiceLoader.src = new URL("lesson-voice.js", currentScript.src).href;
+    voiceLoader.dataset.lessonVoiceLoader = "true";
+    voiceLoader.defer = true;
+    document.head.append(voiceLoader);
+  }
+
   const main = document.querySelector("main") || document.body;
   if (!main || document.querySelector(".lesson-clock")) return;
 
