@@ -1,0 +1,65 @@
+<!doctype html><html lang="sk"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="MQTT &#8211; tematick&#253; celok 09 V&#253;po&#269;tov&#225; technika"><title>9.6 MQTT | V&#253;po&#269;tov&#225; technika</title><style>:root{color-scheme:light dark;--bg:#f7f8fa;--surface:#fff;--text:#1c2330;--muted:#5b6678;--accent:#1f6feb;--border:#d9dee7;--note:#fff4d6}@media(prefers-color-scheme:dark){:root{--bg:#12161d;--surface:#1b212b;--text:#e6eaf1;--muted:#9aa6b8;--accent:#5aa2ff;--border:#2d3644;--note:#3a3017}}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:16px/1.65 system-ui,-apple-system,"Segoe UI",sans-serif}a{color:var(--accent)}nav,main{width:min(100% - 2rem,900px);margin:auto}nav{display:flex;gap:.6rem;flex-wrap:wrap;padding:.8rem 0}nav a,.button{display:inline-block;padding:.45rem .75rem;border:1px solid var(--border);border-radius:.55rem;text-decoration:none;color:inherit;background:var(--surface)}main{padding:1rem 0 3rem}a:focus-visible,button:focus-visible{outline:3px solid var(--accent);outline-offset:3px}h1{font-size:clamp(1.8rem,5vw,2.6rem);line-height:1.2}h2{margin-top:2rem}h3{margin-top:1.5rem}.muted{color:var(--muted)}.scroll{overflow:auto}table{width:100%;border-collapse:collapse}th,td{padding:.6rem .7rem;border:1px solid var(--border);text-align:left;vertical-align:top}pre{margin:.65rem 0 1rem;padding:1rem;border-radius:9px;overflow:auto;background:#0f172a;color:#e2e8f0;font:14px/1.55 ui-monospace,Consolas,monospace}.code-actions{display:flex;gap:.5rem;flex-wrap:wrap}button{padding:.55rem .8rem;border:0;border-radius:8px;background:#4b91f1;color:#fff;font-weight:700;cursor:pointer}.sources,footer{margin-top:2rem;padding-top:1rem;border-top:1px solid var(--border)}blockquote{margin:1rem 0;padding:.3rem 1rem;border-left:4px solid var(--accent);background:var(--surface)}.note{margin:1rem 0;padding:1rem;border:1px solid var(--border);border-radius:12px;background:var(--note)}@media(max-width:600px){nav,main{width:calc(100% - 1.2rem)}}</style></head><body><nav aria-label="Navig&#225;cia kurzov"><a href="index.html#celok-09">V&#253;po&#269;tov&#225; technika &#183; osnova</a><a href="../index.html">V&#353;etky kurzy</a><a href="../nastavenia.html">Nastavenia vzh&#318;adu</a></nav><main><header><p class="muted"><a href="index.html#celok-09">V&#253;po&#269;tov&#225; technika</a> &#183; Tematick&#253; celok 09 &#183; Predn&#225;&#353;ka 9.6</p><h1>9.6 MQTT</h1><p class="muted">IoT &#8211; architekt&#250;ra, komunik&#225;cia a bezpe&#269;nos&#357; &#183; 45 min&#250;t</p></header><div class="note"><strong>Praktick&#233; prostredie:</strong> Uk&#225;&#382;ky Wi-Fi na ESP32 mo&#382;no spusti&#357; v online simul&#225;tore. Pr&#237;kazy pre broker a Raspberry Pi ur&#269;en&#233; na lok&#225;lnu laborat&#243;rnu sie&#357; sp&#250;&#353;&#357;ajte len na zariadeniach, na ktor&#233; m&#225;te opr&#225;vnenie. V pr&#237;kladoch nepou&#382;&#237;vajte skuto&#269;n&#233; hesl&#225; ani tokeny.</div><h2>Ciele hodiny</h2>
+<p>Žiak má vedieť:</p>
+<ul><li>vysvetliť model publish/subscribe,</li><li>rozlíšiť broker a klienta,</li><li>používať témy,</li><li>vysvetliť QoS 0, 1 a 2,</li><li>rozlíšiť retained správu a históriu.</li></ul>
+<h2>Časový plán</h2>
+<div class="scroll"><table><thead><tr><th>Čas</th><th>Obsah</th></tr></thead><tbody><tr><td>0 – 5 min</td><td>Od požiadaviek k správam</td></tr><tr><td>5 – 17 min</td><td>Broker, publisher a subscriber</td></tr><tr><td>17 – 27 min</td><td>Témy a filtre</td></tr><tr><td>27 – 36 min</td><td>QoS, retained a Last Will</td></tr><tr><td>36 – 41 min</td><td>Návrh komunikácie</td></tr><tr><td>41 – 45 min</td><td>Overenie a zápis</td></tr></tbody></table></div>
+<h2>1. Princíp MQTT</h2>
+<p><strong>0 – 17 min</strong></p>
+<p>MQTT je aplikačný protokol používaný napríklad na IoT telemetriu.</p>
+<p>Bežne pracuje nad TCP, prípadne s TLS.</p>
+<p class="muted">Platforma: text</p><pre><code id="lesson-9-6-code-1">Zariadenie publikuje
+         ↓
+       Broker
+       ↙    ↘
+Databáza   Dashboard</code></pre><div class="code-actions"><button type="button" data-copy-code="lesson-9-6-code-1">Kop&#237;rova&#357; k&#243;d</button></div><p id="status-lesson-9-6-code-1" class="muted" aria-live="polite"></p>
+<ul><li><strong>Publisher:</strong> publikuje správu.</li><li><strong>Subscriber:</strong> odoberá správy.</li><li><strong>Broker:</strong> prijíma správy a smeruje ich odberateľom.</li></ul>
+<p>Jeden klient môže publikovať aj odoberať.</p>
+<p>Publisher nemusí poznať konkrétnych príjemcov.</p>
+<h2>2. Témy</h2>
+<p><strong>17 – 27 min</strong></p>
+<p>Príklady:</p>
+<p class="muted">Platforma: text</p><pre><code id="lesson-9-6-code-2">skola/ucebna01/temperature
+skola/ucebna01/status
+skola/ucebna01/fan/set
+skola/ucebna01/fan/state</code></pre><div class="code-actions"><button type="button" data-copy-code="lesson-9-6-code-2">Kop&#237;rova&#357; k&#243;d</button></div><p id="status-lesson-9-6-code-2" class="muted" aria-live="polite"></p>
+<p>Téma určuje smerovanie, payload obsah správy.</p>
+<h3>Zástupné znaky pri odbere</h3>
+<ul><li><code>+</code>: jedna úroveň,</li><li><code>#</code>: viac úrovní; používa sa na konci filtra.</li></ul>
+<p class="muted">Platforma: text</p><pre><code id="lesson-9-6-code-3">skola/+/temperature</code></pre><div class="code-actions"><button type="button" data-copy-code="lesson-9-6-code-3">Kop&#237;rova&#357; k&#243;d</button></div><p id="status-lesson-9-6-code-3" class="muted" aria-live="polite"></p>
+<p>odoberá teploty rôznych učební.</p>
+<p class="muted">Platforma: text</p><pre><code id="lesson-9-6-code-4">skola/ucebna01/#</code></pre><div class="code-actions"><button type="button" data-copy-code="lesson-9-6-code-4">Kop&#237;rova&#357; k&#243;d</button></div><p id="status-lesson-9-6-code-4" class="muted" aria-live="polite"></p>
+<p>odoberá všetky podtémy učebne.</p>
+<p>Zástupné znaky sa používajú vo filtroch odberu, nie v názve publikovanej témy.</p>
+<h3>Dátový obsah</h3>
+<p>Payload môže byť napríklad:</p>
+<p class="muted">Platforma: text</p><pre><code id="lesson-9-6-code-5">23.6</code></pre><div class="code-actions"><button type="button" data-copy-code="lesson-9-6-code-5">Kop&#237;rova&#357; k&#243;d</button></div><p id="status-lesson-9-6-code-5" class="muted" aria-live="polite"></p>
+<p>alebo:</p>
+<p class="muted">Platforma: json</p><pre><code id="lesson-9-6-code-6">{&quot;value&quot;:23.6,&quot;unit&quot;:&quot;degC&quot;,&quot;valid&quot;:true}</code></pre><div class="code-actions"><button type="button" data-copy-code="lesson-9-6-code-6">Kop&#237;rova&#357; k&#243;d</button><a class="button" href="https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html" target="_blank" rel="noopener noreferrer">&#352;pecifik&#225;cia MQTT</a></div><p id="status-lesson-9-6-code-6" class="muted" aria-live="polite"></p>
+<p>MQTT samo neurčuje význam údajov.</p>
+<h2>3. QoS</h2>
+<p><strong>27 – 36 min</strong></p>
+<div class="scroll"><table><thead><tr><th>QoS</th><th>Základná vlastnosť</th></tr></thead><tbody><tr><td>0</td><td>Najviac raz; bez príslušného potvrdenia doručenia</td></tr><tr><td>1</td><td>Aspoň raz; môžu vzniknúť duplicity</td></tr><tr><td>2</td><td>Presne raz na príslušnom MQTT komunikačnom úseku</td></tr></tbody></table></div>
+<p>QoS 2 neznamená automaticky, že fyzický príkaz bol presne raz vykonaný v celej aplikácii.</p>
+<p>Výsledok závisí aj od odberu, relácie a aplikačného spracovania.</p>
+<h3>Retained správa</h3>
+<p>Broker uchová poslednú retained správu pre konkrétnu tému a poskytne ju novým odberateľom podľa pravidiel odberu.</p>
+<p><strong>Retained nie je databázová história.</strong></p>
+<p>Pri riadiacich témach zvažujeme, či je opätovné doručenie starej požiadavky žiaduce.</p>
+<h3>Last Will</h3>
+<p>Klient môže pri pripájaní nastaviť správu, ktorú broker zverejní pri neočakávanom zániku spojenia podľa pravidiel protokolu.</p>
+<p>Príklad:</p>
+<p class="muted">Platforma: text</p><pre><code id="lesson-9-6-code-7">Téma: skola/ucebna01/status
+Obsah: offline</code></pre><div class="code-actions"><button type="button" data-copy-code="lesson-9-6-code-7">Kop&#237;rova&#357; k&#243;d</button></div><p id="status-lesson-9-6-code-7" class="muted" aria-live="polite"></p>
+<p>Detekcia nemusí byť okamžitá. Závisí od spojenia a časových mechanizmov.</p>
+<h2>4. Návrhová úloha</h2>
+<p><strong>36 – 41 min</strong></p>
+<p>Navrhnite témy pre svetlo:</p>
+<ul><li>požadovaný stav,</li><li>skutočný stav,</li><li>dostupnosť zariadenia.</li></ul>
+<p><strong>Možné riešenie:</strong></p>
+<p class="muted">Platforma: text</p><pre><code id="lesson-9-6-code-8">skola/ucebna01/light/set
+skola/ucebna01/light/state
+skola/ucebna01/status</code></pre><div class="code-actions"><button type="button" data-copy-code="lesson-9-6-code-8">Kop&#237;rova&#357; k&#243;d</button></div><p id="status-lesson-9-6-code-8" class="muted" aria-live="polite"></p>
+<p>Požiadavka a skutočný stav sú oddelené. Odoslanie príkazu ešte nedokazuje vykonanie.</p>
+<h2>5. Zápis</h2>
+<p><strong>41 – 45 min</strong></p>
+<blockquote><p>MQTT používa publish/subscribe komunikáciu cez broker.  </p><p>Téma smeruje správu, payload nesie údaje.  </p><p>QoS určuje vlastnosti doručenia v rámci MQTT komunikácie.  </p><p>Pri QoS 1 treba počítať s duplicitami.  </p><p>Retained uchováva poslednú správu témy, nie celú históriu.  </p><p>Last Will pomáha oznamovať neočakávané odpojenie.</p></blockquote><section class="sources"><h2>Zdroje na &#271;al&#353;ie &#353;t&#250;dium</h2><ul><li><a href="https://docs.espressif.com/projects/arduino-esp32/en/latest/api/wifi.html">Arduino-ESP32 Wi-Fi API</a></li><li><a href="https://docs.wokwi.com/guides/esp32-wifi">Wokwi ESP32 Wi-Fi and guest network</a></li><li><a href="https://www.rfc-editor.org/rfc/rfc9293.html">TCP, IETF RFC 9293</a></li><li><a href="https://www.rfc-editor.org/rfc/rfc768.html">UDP, IETF RFC 768</a></li><li><a href="https://www.rfc-editor.org/rfc/rfc9110.html">HTTP Semantics, IETF RFC 9110</a></li><li><a href="https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html">MQTT 5.0, OASIS specification</a></li><li><a href="https://mosquitto.org/documentation/">Eclipse Mosquitto documentation</a></li><li><a href="https://www.mosquitto.org/documentation/authentication-methods/">Mosquitto authentication and access control</a></li><li><a href="https://www.bluetooth.com/bluetooth-le-primer/">Bluetooth LE primer and GATT</a></li><li><a href="https://csrc.nist.gov/pubs/ir/8259/a/final">NIST IoT Device Cybersecurity Baseline</a></li><li><a href="https://owasp.org/projects/iot-security-verification-standard">OWASP IoT Security Verification Standard</a></li></ul></section><footer><p>Predn&#225;&#353;ka 9.6 &#183; V&#253;po&#269;tov&#225; technika &#183; Celok 09</p><p><a href="9.5%20HTTP%20a%20REST%20API.html">&#8592; Predch&#225;dzaj&#250;ca t&#233;ma</a> &#183; <a href="index.html#celok-09">Osnova celku 09</a> &#183; <a href="9.7%20IoT%20broker%20a%20komunikacia%20zariadeni%201.html">Nasleduj&#250;ca t&#233;ma &#8594;</a></p></footer></main><script src="../theme.js" defer></script><script>document.addEventListener('click',async event=>{const b=event.target.closest('[data-copy-code]');if(!b)return;const c=document.getElementById(b.dataset.copyCode),s=document.getElementById('status-'+b.dataset.copyCode);try{await navigator.clipboard.writeText(c.innerText);s.textContent='K\u00f3d bol skop\u00edrovan\u00fd.'}catch{s.textContent='Kop\u00edrovanie sa nepodarilo. Ozna\u010dte k\u00f3d a skop\u00edrujte ho ru\u010dne.'}})</script></body></html>

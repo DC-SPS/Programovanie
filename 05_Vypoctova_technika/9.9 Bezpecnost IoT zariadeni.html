@@ -1,0 +1,75 @@
+<!doctype html><html lang="sk"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="Bezpečnosť IoT zariadení &#8211; tematick&#253; celok 09 V&#253;po&#269;tov&#225; technika"><title>9.9 Bezpečnosť IoT zariadení | V&#253;po&#269;tov&#225; technika</title><style>:root{color-scheme:light dark;--bg:#f7f8fa;--surface:#fff;--text:#1c2330;--muted:#5b6678;--accent:#1f6feb;--border:#d9dee7;--note:#fff4d6}@media(prefers-color-scheme:dark){:root{--bg:#12161d;--surface:#1b212b;--text:#e6eaf1;--muted:#9aa6b8;--accent:#5aa2ff;--border:#2d3644;--note:#3a3017}}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:16px/1.65 system-ui,-apple-system,"Segoe UI",sans-serif}a{color:var(--accent)}nav,main{width:min(100% - 2rem,900px);margin:auto}nav{display:flex;gap:.6rem;flex-wrap:wrap;padding:.8rem 0}nav a,.button{display:inline-block;padding:.45rem .75rem;border:1px solid var(--border);border-radius:.55rem;text-decoration:none;color:inherit;background:var(--surface)}main{padding:1rem 0 3rem}a:focus-visible,button:focus-visible{outline:3px solid var(--accent);outline-offset:3px}h1{font-size:clamp(1.8rem,5vw,2.6rem);line-height:1.2}h2{margin-top:2rem}h3{margin-top:1.5rem}.muted{color:var(--muted)}.scroll{overflow:auto}table{width:100%;border-collapse:collapse}th,td{padding:.6rem .7rem;border:1px solid var(--border);text-align:left;vertical-align:top}pre{margin:.65rem 0 1rem;padding:1rem;border-radius:9px;overflow:auto;background:#0f172a;color:#e2e8f0;font:14px/1.55 ui-monospace,Consolas,monospace}.code-actions{display:flex;gap:.5rem;flex-wrap:wrap}button{padding:.55rem .8rem;border:0;border-radius:8px;background:#4b91f1;color:#fff;font-weight:700;cursor:pointer}.sources,footer{margin-top:2rem;padding-top:1rem;border-top:1px solid var(--border)}blockquote{margin:1rem 0;padding:.3rem 1rem;border-left:4px solid var(--accent);background:var(--surface)}.note{margin:1rem 0;padding:1rem;border:1px solid var(--border);border-radius:12px;background:var(--note)}@media(max-width:600px){nav,main{width:calc(100% - 1.2rem)}}</style></head><body><nav aria-label="Navig&#225;cia kurzov"><a href="index.html#celok-09">V&#253;po&#269;tov&#225; technika &#183; osnova</a><a href="../index.html">V&#353;etky kurzy</a><a href="../nastavenia.html">Nastavenia vzh&#318;adu</a></nav><main><header><p class="muted"><a href="index.html#celok-09">V&#253;po&#269;tov&#225; technika</a> &#183; Tematick&#253; celok 09 &#183; Predn&#225;&#353;ka 9.9</p><h1>9.9 Bezpečnosť IoT zariadení</h1><p class="muted">IoT &#8211; architekt&#250;ra, komunik&#225;cia a bezpe&#269;nos&#357; &#183; 45 min&#250;t</p></header><div class="note"><strong>Praktick&#233; prostredie:</strong> Uk&#225;&#382;ky Wi-Fi na ESP32 mo&#382;no spusti&#357; v online simul&#225;tore. Pr&#237;kazy pre broker a Raspberry Pi ur&#269;en&#233; na lok&#225;lnu laborat&#243;rnu sie&#357; sp&#250;&#353;&#357;ajte len na zariadeniach, na ktor&#233; m&#225;te opr&#225;vnenie. V pr&#237;kladoch nepou&#382;&#237;vajte skuto&#269;n&#233; hesl&#225; ani tokeny.</div><h2>Ciele hodiny</h2>
+<p>Žiak má vedieť:</p>
+<ul><li>pomenovať základné bezpečnostné ciele,</li><li>rozlíšiť autentifikáciu a autorizáciu,</li><li>vysvetliť účel TLS,</li><li>navrhnúť základné zabezpečenie zariadenia,</li><li>určiť reakciu na kompromitovaný účet alebo zariadenie.</li></ul>
+<h2>Časový plán</h2>
+<div class="scroll"><table><thead><tr><th>Čas</th><th>Obsah</th></tr></thead><tbody><tr><td>0 – 5 min</td><td>Čo chránime</td></tr><tr><td>5 – 16 min</td><td>Hrozby a bezpečnostné ciele</td></tr><tr><td>16 – 27 min</td><td>Identita, oprávnenia a šifrovanie</td></tr><tr><td>27 – 36 min</td><td>Životný cyklus zariadenia</td></tr><tr><td>36 – 41 min</td><td>Rozbor scenára</td></tr><tr><td>41 – 45 min</td><td>Overenie a zápis</td></tr></tbody></table></div>
+<h2>1. Čo chránime?</h2>
+<p><strong>0 – 5 min</strong></p>
+<p>IoT zariadenie môže:</p>
+<ul><li>merať,</li><li>ukladať údaje,</li><li>ovládať fyzický proces,</li><li>poskytovať prístup do siete.</li></ul>
+<p>Bezpečnostná chyba preto nemusí znamenať iba stratu súboru. Môže viesť aj k nesprávnemu ovládaniu zariadenia.</p>
+<h2>2. Bezpečnostné ciele</h2>
+<p><strong>5 – 16 min</strong></p>
+<div class="scroll"><table><thead><tr><th>Cieľ</th><th>Význam</th></tr></thead><tbody><tr><td>Dôvernosť</td><td>Údaje čítajú iba oprávnení</td></tr><tr><td>Integrita</td><td>Údaje a príkazy nie sú neoprávnene menené</td></tr><tr><td>Dostupnosť</td><td>Služba je dostupná podľa požiadaviek</td></tr><tr><td>Autentickosť</td><td>Vieme overiť identitu alebo pôvod</td></tr><tr><td>Dohľadateľnosť</td><td>Máme primerané záznamy o udalostiach</td></tr></tbody></table></div>
+<h3>Typické hrozby</h3>
+<ul><li>predvolené heslá,</li><li>spoločný účet všetkých zariadení,</li><li>nešifrované citlivé údaje,</li><li>zraniteľný firmvér,</li><li>príliš široké oprávnenia,</li><li>nezabezpečené diagnostické rozhranie,</li><li>fyzický prístup k zariadeniu.</li></ul>
+<p>Bezpečnostný návrh vychádza z konkrétnych rizík a hodnoty systému.</p>
+<h2>3. Identita a oprávnenia</h2>
+<p><strong>16 – 27 min</strong></p>
+<h3>Autentifikácia</h3>
+<p>Odpovedá na otázku:</p>
+<blockquote><p>Kto sa pripája?</p></blockquote>
+<p>Možnosti:</p>
+<ul><li>heslo,</li><li>API token,</li><li>certifikát,</li><li>kryptografický kľúč.</li></ul>
+<h3>Autorizácia</h3>
+<p>Odpovedá na otázku:</p>
+<blockquote><p>Čo smie pripojený účastník robiť?</p></blockquote>
+<p>Príklad MQTT:</p>
+<p>Zariadenie <code>ucebna01</code> smie:</p>
+<ul><li>publikovať vlastné merania,</li><li>odoberať vlastné príkazy.</li></ul>
+<p>Nemusí mať právo čítať a meniť všetky témy školy.</p>
+<h3>TLS</h3>
+<p>TLS chráni komunikáciu a umožňuje overiť server. Pri vzájomnom TLS možno overovať certifikát aj na strane klienta.</p>
+<p>Musíme správne riešiť:</p>
+<ul><li>dôveryhodné certifikáty,</li><li>overenie názvu servera,</li><li>platnosť certifikátov,</li><li>ochranu súkromných kľúčov.</li></ul>
+<p><strong>Šifrovanie samo nevyrieši nesprávne oprávnenia ani napadnutý koncový systém.</strong></p>
+<h3>Tajné údaje</h3>
+<p>Heslá a tokeny:</p>
+<ul><li>nevkladáme do verejného repozitára,</li><li>nevypisujeme do logov,</li><li>podľa možností prideľujeme každému zariadeniu samostatne,</li><li>musíme vedieť zmeniť alebo zneplatniť.</li></ul>
+<h2>4. Životný cyklus zariadenia</h2>
+<p><strong>27 – 36 min</strong></p>
+<h3>Pred nasadením</h3>
+<ul><li>zmeniť predvolené prístupy,</li><li>vypnúť nepotrebné služby,</li><li>nastaviť minimálne práva,</li><li>prideliť identitu,</li><li>aktualizovať podporovaný softvér.</li></ul>
+<h3>Počas prevádzky</h3>
+<ul><li>sledovať stav a chyby,</li><li>pravidelne aktualizovať,</li><li>overovať dostupnosť záloh,</li><li>evidovať zariadenia a verzie.</li></ul>
+<h3>Aktualizácie firmvéru</h3>
+<p>Podpis aktualizácie umožňuje zariadeniu overiť jej pôvod a integritu.</p>
+<p>Secure boot môže overovať spúšťaný kód. Šifrovanie Flash má iný účel: chráni údaje uložené v pamäti podľa možností platformy.</p>
+<p>Tieto funkcie vyžadujú správnu konfiguráciu a správu kľúčov.</p>
+<h3>Vyradenie</h3>
+<p>Pred odovzdaním alebo likvidáciou:</p>
+<ul><li>odstrániť citlivé údaje,</li><li>zneplatniť tokeny a certifikáty,</li><li>zrušiť nepotrebné účty,</li><li>aktualizovať evidenciu.</li></ul>
+<h2>5. Rozbor scenára</h2>
+<p><strong>36 – 41 min</strong></p>
+<p>Zariadenia školy používajú:</p>
+<ul><li>rovnaké heslo,</li><li>anonymný MQTT broker dostupný z internetu,</li><li>oprávnenie publikovať do ľubovoľnej témy,</li><li>firmvér bez možnosti aktualizácie.</li></ul>
+<h3>Úloha</h3>
+<p>Navrhnite päť úprav.</p>
+<p><strong>Možné riešenie:</strong></p>
+<ol><li>Samostatná identita každého zariadenia.</li><li>Autentifikácia a obmedzenie sieťovej dostupnosti.</li><li>ACL pre povolené témy.</li><li>TLS so správnym overovaním certifikátov.</li><li>Overiteľný a udržiavateľný aktualizačný mechanizmus.</li></ol>
+<h3>Pri úniku tokenu</h3>
+<ul><li>zneplatniť dotknutý token,</li><li>prideliť nový,</li><li>preveriť záznamy,</li><li>zistiť príčinu úniku,</li><li>opraviť spôsob ukladania.</li></ul>
+<p>Samotná zmena názvu témy nie je náhradou prístupových práv.</p>
+<h2>6. Overenie a zápis</h2>
+<p><strong>41 – 45 min</strong></p>
+<ol><li>Je autentifikácia to isté ako autorizácia?  </li></ol>
+<p><strong>Nie.</strong></p>
+<ol><li>Zaručí Wi-Fi heslo bezpečnosť celej aplikácie?  </li></ol>
+<p><strong>Nie.</strong></p>
+<ol><li>Chráni CRC pred úmyselným falšovaním správ?  </li></ol>
+<p><strong>Nie.</strong></p>
+<ol><li>Prečo má mať zariadenie vlastný token?  </li></ol>
+<p><strong>Možno ho samostatne obmedziť, sledovať a zneplatniť.</strong></p>
+<blockquote><p>Bezpečnosť IoT zahŕňa zariadenie, komunikáciu, server aj správu prístupov.  </p><p>Autentifikácia overuje identitu, autorizácia určuje oprávnenia.  </p><p>TLS chráni spojenie pri správnom overovaní protistrany.  </p><p>Každému zariadeniu prideľujeme iba potrebné práva.  </p><p>Aktualizácie, ochrana kľúčov a možnosť zneplatnenia prístupu patria do návrhu od začiatku.</p></blockquote>
+<hr>
+<p>Celok <strong>9</strong> je pripravený ako <strong>deväť 45-minútových hodín</strong> s výkladom, praktickými ukážkami, úlohami a zápisom do zošita.</p><section class="sources"><h2>Zdroje na &#271;al&#353;ie &#353;t&#250;dium</h2><ul><li><a href="https://docs.espressif.com/projects/arduino-esp32/en/latest/api/wifi.html">Arduino-ESP32 Wi-Fi API</a></li><li><a href="https://docs.wokwi.com/guides/esp32-wifi">Wokwi ESP32 Wi-Fi and guest network</a></li><li><a href="https://www.rfc-editor.org/rfc/rfc9293.html">TCP, IETF RFC 9293</a></li><li><a href="https://www.rfc-editor.org/rfc/rfc768.html">UDP, IETF RFC 768</a></li><li><a href="https://www.rfc-editor.org/rfc/rfc9110.html">HTTP Semantics, IETF RFC 9110</a></li><li><a href="https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html">MQTT 5.0, OASIS specification</a></li><li><a href="https://mosquitto.org/documentation/">Eclipse Mosquitto documentation</a></li><li><a href="https://www.mosquitto.org/documentation/authentication-methods/">Mosquitto authentication and access control</a></li><li><a href="https://www.bluetooth.com/bluetooth-le-primer/">Bluetooth LE primer and GATT</a></li><li><a href="https://csrc.nist.gov/pubs/ir/8259/a/final">NIST IoT Device Cybersecurity Baseline</a></li><li><a href="https://owasp.org/projects/iot-security-verification-standard">OWASP IoT Security Verification Standard</a></li></ul></section><footer><p>Predn&#225;&#353;ka 9.9 &#183; V&#253;po&#269;tov&#225; technika &#183; Celok 09</p><p><a href="9.8%20Spracovanie%20a%20ukladanie%20dat.html">&#8592; Predch&#225;dzaj&#250;ca t&#233;ma</a> &#183; <a href="index.html#celok-09">Osnova celku 09</a></p></footer></main><script src="../theme.js" defer></script><script>document.addEventListener('click',async event=>{const b=event.target.closest('[data-copy-code]');if(!b)return;const c=document.getElementById(b.dataset.copyCode),s=document.getElementById('status-'+b.dataset.copyCode);try{await navigator.clipboard.writeText(c.innerText);s.textContent='K\u00f3d bol skop\u00edrovan\u00fd.'}catch{s.textContent='Kop\u00edrovanie sa nepodarilo. Ozna\u010dte k\u00f3d a skop\u00edrujte ho ru\u010dne.'}})</script></body></html>
