@@ -1,0 +1,278 @@
+<!doctype html>
+<html lang="sk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101827">
+  <meta name="description" content="Prednáška o pollingu a udalostnom riadení v embedded systémoch: princípy, rozdiely, príklady a výber prístupu.">
+  <title>4.3 Polling a udalostné riadenie | Výpočtová technika</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f7f8fa;
+      --surface: #fff;
+      --text: #1c2330;
+      --muted: #5b6678;
+      --accent: #1f6feb;
+      --border: #d9dee7;
+      --note: #fff4d6;
+      --green: #18743a;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme]) {
+        color-scheme: dark;
+        --bg: #12161d;
+        --text: #e6eaf1;
+        --surface: #1b212b;
+        --muted: #9aa6b8;
+        --accent: #5aa2ff;
+        --border: #2d3644;
+        --note: #3a3017;
+        --green: #63d58a;
+      }
+    }
+    :root[data-theme="light"] { color-scheme: light; }
+    :root[data-theme="dark"] {
+      color-scheme: dark;
+      --bg: #12161d;
+      --text: #e6eaf1;
+      --surface: #1b212b;
+      --muted: #9aa6b8;
+      --accent: #5aa2ff;
+      --border: #2d3644;
+      --note: #3a3017;
+      --green: #63d58a;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--bg); color: var(--text); font: 16px/1.65 system-ui, -apple-system, "Segoe UI", sans-serif; }
+    a { color: var(--accent); }
+    .global-course-nav { display: flex; flex-wrap: wrap; gap: .55rem; align-items: center; width: min(100% - 2rem, 1000px); margin: .75rem auto 0; font: 600 .9rem/1.4 system-ui, -apple-system, "Segoe UI", sans-serif; }
+    .global-course-nav a { display: inline-block; padding: .4rem .7rem; border: 1px solid var(--border); border-radius: .55rem; text-decoration: none; color: inherit; background: var(--surface); }
+    .global-course-nav a:hover { text-decoration: underline; }
+    .global-course-nav a:focus-visible, a:focus-visible, button:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+    main { width: min(100% - 2rem, 860px); margin: auto; padding: 1rem 0 3rem; }
+    main :is(p, li, td, dd, blockquote) { text-align: justify; text-justify: inter-word; }
+    header { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: .6rem; }
+    .crumb, .muted, .caption { color: var(--muted); }
+    h1 { font-size: clamp(1.8rem, 5vw, 2.6rem); line-height: 1.2; margin: .8rem 0; }
+    h2 { margin-top: 2rem; font-size: 1.4rem; }
+    h3 { margin-top: 1.4rem; font-size: 1.1rem; }
+    .subtitle { color: var(--muted); }
+    .tags { display: flex; flex-wrap: wrap; gap: .45rem; margin: 1rem 0; }
+    .tag { padding: 2px 9px; border: 1px solid var(--border); border-radius: 999px; background: var(--surface); font-size: 13px; }
+    .card, .note { margin: 1rem 0; padding: 1rem 1.1rem; border: 1px solid var(--border); border-radius: 12px; background: var(--surface); }
+    .note { background: var(--note); }
+    .safety-notice { margin: 1rem 0; padding: 14px 17px; border: 1px solid var(--border); border-left: 5px solid var(--accent); border-radius: 12px; background: var(--note); }
+    .safety-notice strong { display: block; margin-bottom: .25rem; }
+    .scroll { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { padding: .65rem .7rem; border: 1px solid var(--border); text-align: left; vertical-align: top; }
+    th { background: var(--surface); }
+    pre { margin: .65rem 0 1rem; padding: 1rem; border-radius: 9px; overflow-x: auto; background: #0f172a; color: #e2e8f0; font: 14px/1.55 ui-monospace, SFMono-Regular, Consolas, monospace; }
+    code { font-family: ui-monospace, SFMono-Regular, Consolas, monospace; }
+    :not(pre) > code { padding: .08rem .28rem; border-radius: 4px; background: color-mix(in srgb, var(--border) 55%, transparent); }
+    .output { border-left: 4px solid var(--green); }
+    .sources, footer { margin-top: 2rem; padding-top: 1rem; border-top: 1px solid var(--border); }
+    footer { color: var(--muted); font-size: 14px; }
+    .glossary-list { display: grid; grid-template-columns: minmax(8rem, .35fr) 1fr; gap: .3rem .8rem; }
+    .glossary-list dt { font-weight: 750; }
+    .glossary-list dd { margin: 0; }
+    @media (max-width: 620px) { main { width: min(100% - 1.2rem, 860px); } }
+    @media (max-width: 520px) { .glossary-list { grid-template-columns: 1fr; gap: .1rem; } .glossary-list dd { margin-bottom: .5rem; } }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; } }
+  </style>
+  <script src="../lesson-top.js" defer></script>
+</head>
+<body>
+  <nav class="global-course-nav" aria-label="Navigácia kurzov">
+    <a href="index.html">Výpočtová technika – osnova</a>
+    <a href="../index.html">Všetky kurzy</a>
+    <a href="../nastavenia.html">Nastavenia vzhľadu</a>
+  </nav>
+  <main>
+    <header>
+      <div>
+        <p class="crumb"><a href="index.html">Výpočtová technika</a> · Vstupno-výstupný systém, prerušenia a časovanie</p>
+        <h1>4.3 Polling a udalostné riadenie</h1>
+        <p class="subtitle">Dva spôsoby, ako zariadenie zistí, že sa zmenil vstup alebo nastal čas vykonať úlohu.</p>
+      </div>
+    </header>
+    <div class="tags" aria-label="Témy prednášky">
+      <span class="tag">Polling</span><span class="tag">Udalosť</span><span class="tag">Odozva</span><span class="tag">Embedded systém</span>
+    </div>
+    <div class="safety-notice" role="note">
+      <strong>Bezpečnosť pri práci s elektronikou</strong>
+      Pri skúšaní vstupov používajte iba zapojenie a napájanie schválené vyučujúcim. Vodiče neprepojujte na zapnutom zariadení, ak to pracovný postup výslovne nepovoľuje.
+    </div>
+
+    <section aria-labelledby="plan-hodiny">
+      <h2 id="plan-hodiny">Časový plán hodiny</h2>
+      <div class="scroll">
+        <table class="timeline">
+          <thead><tr><th>Čas</th><th>Činnosť</th><th>Výsledok</th></tr></thead>
+          <tbody>
+            <tr><td>0–5 min</td><td>Motivačná otázka: ako zariadenie zistí stlačenie tlačidla?</td><td>Žiak opíše aspoň jeden možný spôsob zistenia zmeny vstupu.</td></tr>
+            <tr><td>5–15 min</td><td>Polling: opakované čítanie a vyhodnocovanie vstupu</td><td>Žiak vysvetlí princíp a význam intervalu kontroly.</td></tr>
+            <tr><td>15–25 min</td><td>Udalostné riadenie: reakcia na oznámenú zmenu</td><td>Žiak rozlíši udalosť od nepretržitého zisťovania stavu.</td></tr>
+            <tr><td>25–37 min</td><td>Porovnanie a návrh riadenia tlačidla a snímača</td><td>Žiak vyberie prístup pre jednoduché zadanie a zdôvodní výber.</td></tr>
+            <tr><td>37–45 min</td><td>Kontrolné otázky a záver</td><td>Žiak pomenuje výhody, obmedzenia a jeden hybridný návrh.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <h2>Ciele vyučovacej hodiny</h2>
+    <p>Po absolvovaní hodiny žiak dokáže:</p>
+    <ul>
+      <li>vysvetliť polling ako opakované zisťovanie stavu vstupu alebo periférie;</li>
+      <li>opísať udalostné riadenie ako spracovanie oznámenia o zmene alebo dokončení činnosti;</li>
+      <li>porovnať oba prístupy z hľadiska odozvy, využitia času procesora a rizika prehliadnutia krátkej zmeny;</li>
+      <li>navrhnúť vhodný spôsob obsluhy tlačidla alebo snímača a uviesť dôvod svojho výberu.</li>
+    </ul>
+
+    <h2>1. Motivácia: tlačidlo, ktoré zariadenie ešte nevidelo</h2>
+    <p>Predstavte si riadiacu jednotku, ktorá má po stlačení tlačidla zapnúť kontrolku. Program musí najprv zistiť, že sa vstup zmenil. Môže sa naň pravidelne pozerať, alebo môže dostať oznámenie, keď zmena nastane.</p>
+    <div class="note"><strong>Otázka na úvod:</strong> Ak program skontroluje tlačidlo raz za sekundu, čo sa stane, keď ho používateľ stlačí iba na desatinu sekundy?</div>
+    <p>Polling a udalostné riadenie sú dva bežné organizačné prístupy k vstupom. Nie sú to konkrétne typy snímačov a nie vždy ide o voľbu „iba jedno alebo iba druhé“: systém môže kombinovať oba spôsoby.</p>
+
+    <h2>2. Teoretický výklad</h2>
+    <h3>Polling: program sa pravidelne pýta</h3>
+    <p><strong>Polling</strong> (cyklické zisťovanie stavu) znamená, že program v opakovanom cykle číta vstup alebo sa pýta periférie, či nastala zmena. Pri tlačidle môže zistiť, či je práve stlačené; pri komunikácii sa môže pýtať, či už prišli dáta.</p>
+    <pre><code>opakuj stále:
+    stav = prečítaj_vstup()
+    ak stav je odlišný od predchádzajúceho:
+        spracuj_zmenu(stav)
+    predchádzajúci_stav = stav</code></pre>
+    <p>V jednoduchom mikrokontroléri môže takýto cyklus priebežne vykonávať aj inú prácu. Ak však iba opakovane číta vstup bez užitočnej činnosti alebo čakania, spotrebúva čas procesora. Interval medzi kontrolami ovplyvňuje, ako rýchlo program zmenu zistí.</p>
+    <div class="card">
+      <strong>Čo ovplyvňuje polling:</strong>
+      <ul>
+        <li><strong>Rýchlosť odozvy:</strong> zmena sa zistí pri najbližšej kontrole, nie nevyhnutne v okamihu, keď nastala.</li>
+        <li><strong>Interval kontroly:</strong> častejšie kontroly spravidla skrátia čakanie, no zvýšia frekvenciu vykonávania kontrolnej práce.</li>
+        <li><strong>Krátke impulzy:</strong> ak sa vstup zmení a vráti späť medzi dvoma kontrolami, program zmenu môže prehliadnuť.</li>
+        <li><strong>Jednoduchosť:</strong> postup je priamočiary a môže byť vhodný, ak sa vstup aj tak kontroluje pravidelne alebo je úloha nenáročná.</li>
+      </ul>
+    </div>
+
+    <h3>Udalostné riadenie: program spracuje oznámenie</h3>
+    <p>Pri <strong>udalostnom riadení</strong> program vykoná príslušnú obsluhu, keď dostane udalosť – napríklad informáciu o zmene vstupu, prijatí správy alebo dokončení merania. Zdroj udalosti môže systém upozorniť prostredníctvom prerušenia, komunikačnej knižnice, frontu správ alebo iného mechanizmu platformy.</p>
+    <pre><code>keď_príde_udalost(zmena_tlačidla):
+    zaznamenaj_udalost(zmena_tlačidla)
+
+hlavný_program:
+    opakuj:
+        ak je udalosť pripravená:
+            spracuj_udalost()</code></pre>
+    <p>Program nemusí neustále zisťovať stav každého vstupu. Odozva môže byť rýchla a čas procesora sa dá využiť na inú prácu alebo čakanie. Presné správanie a spotreba však závisia od hardvéru, operačného systému a spôsobu, akým je udalosť doručená.</p>
+
+    <h3>Udalosť, prerušenie a ISR nie sú synonymá</h3>
+    <p><strong>Udalosť</strong> je oznámenie, že nastala zaujímavá skutočnosť. <strong>Prerušenie</strong> je jeden z mechanizmov, ktorým môže hardvér alebo časovač upozorniť procesor, že treba vykonať obsluhu. Funkcia spustená pri spracovaní prerušenia sa nazýva <strong>ISR</strong> (<em>Interrupt Service Routine</em>).</p>
+    <p>Nie každá udalosť je prerušenie: udalosť môže čakať napríklad vo fronte, kým ju hlavná slučka alebo plánovač spracuje. A nie každé udalostné riadenie musí používať rovnaký mechanizmus. Podrobnejšiu prácu s prerušeniami a pravidlá pre ISR preberieme v samostatných témach.</p>
+    <div class="note"><strong>Dôležité:</strong> Obsluha prerušenia má byť v návrhu krátka a bezpečná. Zatiaľ si zapamätajte najmä rozdiel medzi oznámením udalosti a jej následným spracovaním; detaily synchronizácie patria k téme prerušení.</div>
+
+    <h3>Porovnanie prístupov</h3>
+    <div class="scroll">
+      <table>
+        <thead><tr><th>Vlastnosť</th><th>Polling</th><th>Udalostné riadenie</th></tr></thead>
+        <tbody>
+          <tr><td>Ako sa zistí zmena</td><td>Program pravidelne číta stav.</td><td>Zdroj oznámi udalosť; program ju následne spracuje.</td></tr>
+          <tr><td>Odozva</td><td>Závisí od intervalu a času ďalšej práce v cykle.</td><td>Môže byť rýchla, závisí od doručenia a spracovania udalosti.</td></tr>
+          <tr><td>Využitie procesora</td><td>Kontrolná práca sa opakuje; cyklus však môže robiť aj užitočnú prácu.</td><td>Netreba opakovane kontrolovať každý zdroj, no systém musí udalosti bezpečne spravovať.</td></tr>
+          <tr><td>Riziko krátkej zmeny</td><td>Krátka zmena medzi kontrolami môže uniknúť.</td><td>Udalosť sa môže zachytiť, ak ju podporuje zdroj a správne ju nakonfigurujeme.</td></tr>
+          <tr><td>Zložitosť návrhu</td><td>Často jednoduchý začiatok, no mnohé vstupy predlžujú cyklus.</td><td>Vyžaduje návrh obsluhy, poradia, frontov alebo synchronizácie podľa platformy.</td></tr>
+          <tr><td>Typické použitie</td><td>Pravidelné meranie alebo jednoduchá úloha, kde postačuje daná odozva.</td><td>Nepravidelné zmeny, správy alebo dokončenie operácie, ktoré netreba stále zisťovať.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>Hybridný prístup</h3>
+    <p>V reálnom návrhu sa prístupy často kombinujú. Udalosť môže upozorniť, že sú dostupné nové dáta; hlavný program ich potom prečíta a spracuje. Iný vstup sa môže kontrolovať v pravidelnom intervale. Výber závisí od požadovanej odozvy, dostupných periférií, spotreby, zložitosti a následkov zmeškanej udalosti.</p>
+
+    <h2>3. Názorné príklady</h2>
+    <h3>Príklad 1 – kontrola stavu tlačidla</h3>
+    <p>Riadiaca jednotka v slučke opakovane číta digitálny vstup tlačidla. Keď zistí rozdiel oproti predchádzajúcemu stavu, vyhodnotí zmenu a napríklad prepne stav kontrolky.</p>
+    <ul>
+      <li>Ak tlačidlo zostane stlačené dlhšie než interval medzi kontrolami, polling ho pravdepodobne zachytí.</li>
+      <li>Ak je stlačenie veľmi krátke, môže sa udiať medzi kontrolami a zostať nezistené.</li>
+      <li>Mechanické tlačidlo môže pri stlačení vytvoriť viac rýchlych zmien; ich potlačenie (debouncing) je samostatná téma.</li>
+    </ul>
+
+    <h3>Príklad 2 – dokončenie merania</h3>
+    <p>Periféria po dokončení merania môže oznámiť, že výsledok je pripravený. Program potom výsledok prevezme a pokračuje v spracovaní. Alternatívou je pravidelné zisťovanie príznaku „hotovo“. Ktorá možnosť je vhodná, závisí od schopností periférie, požiadaviek na odozvu a zložitosti systému.</p>
+
+    <h3>Príklad 3 – reakcia na izbovú teplotu</h3>
+    <p>Ak sa teplota mení pomaly a regulátor ju má vyhodnocovať napríklad v pravidelných intervaloch, polling môže byť postačujúci. Ak treba reagovať na asynchrónnu správu alebo rýchlu zmenu stavu, vhodnejšie môže byť udalostné oznámenie. Pred návrhom treba určiť, ako rýchlo musí systém reagovať a čo sa stane pri oneskorení.</p>
+
+    <h2>4. Samostatná práca</h2>
+    <div class="card">
+      <h3>Úloha A – povinná: vyberte spôsob obsluhy</h3>
+      <p>Pre každú situáciu navrhnite polling, udalostné riadenie alebo ich kombináciu. Ku každej voľbe napíšte jednu vetu zdôvodnenia.</p>
+      <ol>
+        <li>Každú sekundu odčítať teplotu z pomaly sa meniaceho prostredia.</li>
+        <li>Zachytiť krátke stlačenie tlačidla, ktoré môže nastať kedykoľvek.</li>
+        <li>Po dokončení prenosu spracovať prijaté dáta, pričom zariadenie robí aj ďalšie úlohy.</li>
+      </ol>
+      <p><strong>Kritérium úspechu:</strong> návrh spomenie požadovanú odozvu, interval alebo mechanizmus oznámenia a vysvetlí aspoň jedno obmedzenie.</p>
+    </div>
+    <div class="card">
+      <h3>Úloha B – návrh cyklu</h3>
+      <p>Napíšte pseudokód pre zariadenie, ktoré v pravidelnom cykle kontroluje tlačidlo. Program má reagovať iba na novú zmenu do stlačeného stavu, nie pri každom priechode slučkou, keď tlačidlo stále držíme.</p>
+      <p><strong>Nápoveda:</strong> porovnajte aktuálny a predchádzajúci stav.</p>
+    </div>
+    <div class="card">
+      <h3>Úloha C – rozšírenie</h3>
+      <p>Navrhnite systém, v ktorom udalosť oznámi príchod správy a hlavný program ju spracuje. Čo by sa malo stať, ak príde ďalšia správa skôr, než sa spracuje prvá?</p>
+    </div>
+
+    <h2>5. Opakovanie a overenie vedomostí</h2>
+    <ol>
+      <li>Čo robí program pri pollingu?</li>
+      <li>Prečo môže krátka zmena vstupu pri pomalom pollingu uniknúť?</li>
+      <li>Čo znamená udalostné riadenie?</li>
+      <li>Prečo udalosť, prerušenie a ISR nie sú rovnaký pojem?</li>
+      <li>Uveďte jeden dôvod, pre ktorý môže byť vhodný hybridný návrh.</li>
+    </ol>
+    <p><strong>Očakávané odpovede:</strong> Pri pollingu program opakovane zisťuje stav; krátka zmena medzi dvoma kontrolami sa nemusí objaviť pri žiadnom čítaní; pri udalostnom riadení program spracúva oznámenie o zmene alebo dokončení; udalosť je oznámenie, prerušenie je jeden spôsob upozornenia procesora a ISR je obslužná rutina prerušenia; hybrid môže kombinovať pravidelné meranie s oznámeniami pre nepravidelné alebo časovo citlivé zmeny.</p>
+
+    <h3>Záverečná aktivita</h3>
+    <p>Dokončite vetu: „Polling zvolím, keď …; udalostné riadenie zvolím, keď …“ Doplňte aspoň jednu podmienku týkajúcu sa požadovanej odozvy.</p>
+
+    <section class="sources" aria-labelledby="sources-heading">
+      <h2 id="sources-heading">Odporúčané zdroje</h2>
+      <ul>
+        <li><a href="https://docs.arduino.cc/language-reference/en/functions/external-interrupts/attachInterrupt/" target="_blank" rel="noopener noreferrer">Arduino Language Reference: attachInterrupt()</a> – príklad hardvérového prerušenia; dostupné režimy a piny závisia od dosky.</li>
+        <li><a href="https://learn.microsoft.com/en-us/windows/win32/winmsg/about-messages-and-message-queues" target="_blank" rel="noopener noreferrer">Microsoft Learn: About Messages and Message Queues</a> – udalostné spracovanie správ a front správ v aplikáciách Windows.</li>
+        <li><a href="https://docs.arduino.cc/language-reference/" target="_blank" rel="noopener noreferrer">Arduino Language Reference</a> – referenčný prehľad funkcií vstupov, výstupov a periférií.</li>
+      </ul>
+      <p><strong>Poznámka k samoštúdiu:</strong> Prerušenia a obsluha udalostí sa líšia podľa dosky a knižnice. Pred použitím konkrétneho API overte dokumentáciu pre danú platformu; ukážky v tejto lekcii sú pseudokód, nie program pripravený na kompiláciu.</p>
+    </section>
+
+    <h2>Poznámky a povinné vedomosti</h2>
+    <ul>
+      <li>Polling znamená opakované zisťovanie stavu vstupu alebo periférie.</li>
+      <li>Interval pollingu ovplyvňuje čas, kedy program zmenu zaznamená; krátky impulz môže medzi kontrolami uniknúť.</li>
+      <li>Udalostné riadenie spracúva oznámenie o zmene, správe alebo dokončení operácie.</li>
+      <li>Prerušenie je jeden možný mechanizmus doručenia udalosti; ISR je rutina, ktorá prerušenie obsluhuje.</li>
+      <li>Polling a udalostné riadenie možno v jednom systéme kombinovať.</li>
+      <li>Voľbu zdôvodňujeme požadovanou odozvou, schopnosťami hardvéru a následkami zmeškanej zmeny.</li>
+    </ul>
+    <section class="card" aria-labelledby="glossary-heading">
+      <h2 id="glossary-heading">Register pojmov a skratiek</h2>
+      <dl class="glossary-list">
+        <dt>Polling</dt><dd>Opakované čítanie alebo zisťovanie stavu vstupu či periférie programom.</dd>
+        <dt>Udalosť</dt><dd>Oznámenie, že nastala zmena alebo dokončenie činnosti, ktorú má program spracovať.</dd>
+        <dt>Udalostné riadenie</dt><dd>Organizácia programu, pri ktorej sa obsluha vykoná v reakcii na doručené udalosti.</dd>
+        <dt>Prerušenie</dt><dd>Mechanizmus, ktorým hardvér alebo časovač upozorní procesor na potrebu obsluhy.</dd>
+        <dt>ISR</dt><dd><em>Interrupt Service Routine</em>, obslužná rutina prerušenia.</dd>
+        <dt>Odozva</dt><dd>Čas od zmeny alebo požiadavky po začiatok či dokončenie príslušnej reakcie systému.</dd>
+        <dt>Hybridný prístup</dt><dd>Návrh, ktorý kombinuje pravidelné kontroly a spracovanie udalostí podľa potrieb systému.</dd>
+        <dt>Debouncing</dt><dd>Potlačenie viacerých rýchlych zmien, ktoré môže spôsobiť mechanické tlačidlo pri jednom stlačení alebo uvoľnení.</dd>
+      </dl>
+    </section>
+    <footer>
+      <p>Materiály predmetu Výpočtová technika · <a href="index.html">Osnova predmetu</a> · <a href="../index.html">Všetky kurzy</a></p>
+    </footer>
+  </main>
+  <script type="module" src="../lesson-remote.js"></script>
+</body>
+</html>
