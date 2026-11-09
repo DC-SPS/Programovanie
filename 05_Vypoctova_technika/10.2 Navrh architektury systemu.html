@@ -1,0 +1,62 @@
+<!doctype html><html lang="sk"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="Návrh architektúry systému &#8211; tematick&#253; celok 10"><title>10.2 Návrh architektúry systému | V&#253;po&#269;tov&#225; technika</title><style>:root{color-scheme:light dark;--bg:#f7f8fa;--surface:#fff;--text:#1c2330;--muted:#5b6678;--accent:#1f6feb;--border:#d9dee7;--note:#fff4d6}@media(prefers-color-scheme:dark){:root{--bg:#12161d;--surface:#1b212b;--text:#e6eaf1;--muted:#9aa6b8;--accent:#5aa2ff;--border:#2d3644;--note:#3a3017}}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:16px/1.65 system-ui,-apple-system,"Segoe UI",sans-serif}a{color:var(--accent)}nav,main{width:min(100% - 2rem,900px);margin:auto}nav{display:flex;gap:.6rem;flex-wrap:wrap;padding:.8rem 0}nav a,.button{display:inline-block;padding:.45rem .75rem;border:1px solid var(--border);border-radius:.55rem;text-decoration:none;color:inherit;background:var(--surface)}main{padding:1rem 0 3rem}a:focus-visible,button:focus-visible{outline:3px solid var(--accent);outline-offset:3px}h1{font-size:clamp(1.8rem,5vw,2.6rem);line-height:1.2}h2{margin-top:2rem}h3{margin-top:1.5rem}.muted{color:var(--muted)}.scroll{overflow:auto}table{width:100%;border-collapse:collapse}th,td{padding:.6rem .7rem;border:1px solid var(--border);text-align:left;vertical-align:top}pre{margin:.65rem 0 1rem;padding:1rem;border-radius:9px;overflow:auto;background:#0f172a;color:#e2e8f0;font:14px/1.55 ui-monospace,Consolas,monospace}.code-actions{display:flex;gap:.5rem;flex-wrap:wrap}button{padding:.55rem .8rem;border:0;border-radius:8px;background:#4b91f1;color:#fff;font-weight:700;cursor:pointer}.sources,footer{margin-top:2rem;padding-top:1rem;border-top:1px solid var(--border)}blockquote,.note{margin:1rem 0;padding:1rem;border:1px solid var(--border);border-radius:12px;background:var(--surface)}@media(max-width:600px){nav,main{width:calc(100% - 1.2rem)}}</style></head><body><nav aria-label="Navig&#225;cia kurzov"><a href="index.html#celok-10">V&#253;po&#269;tov&#225; technika &#183; osnova</a><a href="../index.html">V&#353;etky kurzy</a><a href="../nastavenia.html">Nastavenia vzh&#318;adu</a></nav><main><header><p class="muted"><a href="index.html#celok-10">V&#253;po&#269;tov&#225; technika</a> &#183; Tematick&#253; celok 10 &#183; Predn&#225;&#353;ka 10.2</p><h1>10.2 Návrh architektúry systému</h1><p class="muted">N&#225;vrh a realiz&#225;cia embedded syst&#233;mu &#183; 45 min&#250;t</p></header><div class="note"><strong>Simul&#225;cia:</strong> Uk&#225;&#382;ky C++ mo&#382;no prenies&#357; do Wokwi ESP32. Samostatn&#225; regula&#269;n&#225; logika vy&#382;aduje sk&#250;&#353;obn&#253; program; simul&#225;tor over&#237; logiku a kompil&#225;ciu, nie skuto&#269;n&#253; sn&#237;ma&#269;, ovl&#225;da&#269; ventil&#225;tora ani nap&#225;jac&#237; zdroj. V re&#225;lnom zapojen&#237; pou&#382;&#237;vajte vhodn&#253; n&#237;zkonap&#228;&#357;ov&#253; ventil&#225;tor a ovl&#225;da&#269;.</div><p><strong>Trvanie:</strong> 45 minút <strong>Nadväznosť:</strong> Analýza zadania.</p>
+<h2>Ciele hodiny</h2>
+<p>Žiak má vedieť:</p>
+<ul><li>rozdeliť systém na funkčné bloky,</li><li>vybrať primeranú platformu,</li><li>navrhnúť rozhrania a dátové toky,</li><li>pripraviť základný plán napájania a pinov,</li><li>navrhnúť štruktúru programu.</li></ul>
+<h2>Časový plán</h2>
+<div class="scroll"><table><thead><tr><th>Čas</th><th>Obsah</th></tr></thead><tbody><tr><td>0 – 5 min</td><td>Od požiadaviek k blokom</td></tr><tr><td>5 – 15 min</td><td>Výber platformy</td></tr><tr><td>15 – 27 min</td><td>Hardvérová architektúra</td></tr><tr><td>27 – 36 min</td><td>Softvérová architektúra</td></tr><tr><td>36 – 41 min</td><td>Návrhová úloha</td></tr><tr><td>41 – 45 min</td><td>Overenie a zápis</td></tr></tbody></table></div>
+<h2>1. Čo je architektúra?</h2>
+<p><strong>0 – 5 min</strong></p>
+<p><strong>Architektúra opisuje hlavné časti systému, ich zodpovednosti a vzájomné prepojenia.</strong></p>
+<p>Príklad:</p>
+<pre><code>Snímač → Riadiaca jednotka → Výkonový ovládač → Ventilátor
+                   ↓
+              Displej alebo LED
+                   ↓
+          Voliteľná komunikácia</code></pre>
+<p>Bloková schéma vysvetľuje funkcie. Elektrická schéma následne určí konkrétne zapojenie.</p>
+<h2>2. Výber platformy</h2>
+<p><strong>5 – 15 min</strong></p>
+<div class="scroll"><table><thead><tr><th>Platforma</th><th>Vhodnosť pre školský projekt</th></tr></thead><tbody><tr><td>Arduino Uno</td><td>Jednoduchá lokálna regulácia</td></tr><tr><td>ESP32</td><td>Regulácia s Wi-Fi alebo BLE</td></tr><tr><td>Raspberry Pi</td><td>Databáza, web, kamera a náročnejšie spracovanie</td></tr><tr><td>MCU + Raspberry Pi</td><td>Oddelenie lokálneho riadenia a serverových služieb</td></tr></tbody></table></div>
+<p>Pre spoločný príklad zvolíme <strong>ESP32</strong>:</p>
+<ul><li>podporuje lokálne riadenie,</li><li>má vhodné periférie,</li><li>umožňuje neskoršie rozšírenie komunikácie.</li></ul>
+<p>Výber zdôvodníme požiadavkami, nie iba tým, že dosku poznáme.</p>
+<h2>3. Hardvérová architektúra</h2>
+<p><strong>15 – 27 min</strong></p>
+<h3>Funkčné bloky</h3>
+<div class="scroll"><table><thead><tr><th>Blok</th><th>Návrh</th></tr></thead><tbody><tr><td>Meranie</td><td>Digitálny teplotný snímač cez I²C</td></tr><tr><td>Riadenie</td><td>ESP32</td></tr><tr><td>Signalizácia</td><td>LED alebo displej</td></tr><tr><td>Výstup</td><td>Vhodný ovládač nízkonapäťového ventilátora</td></tr><tr><td>Napájanie</td><td>Zdroj dimenzovaný na dosku aj záťaž</td></tr></tbody></table></div>
+<h3>Tabuľka rozhraní</h3>
+<div class="scroll"><table><thead><tr><th>Spojenie</th><th>Rozhranie</th><th>Čo overujeme</th></tr></thead><tbody><tr><td>Snímač – ESP32</td><td>I²C</td><td>Napätie, adresa, pull-up rezistory</td></tr><tr><td>ESP32 – indikácia</td><td>GPIO</td><td>Prúd, polarita</td></tr><tr><td>ESP32 – ovládač</td><td>GPIO alebo PWM</td><td>Úrovne, aktívny stav</td></tr><tr><td>ESP32 – server</td><td>Wi-Fi</td><td>Dostupnosť, autentifikácia</td></tr></tbody></table></div>
+<p>Konkrétne piny vyberieme podľa použitej dosky.</p>
+<h3>Napájanie</h3>
+<p>Pri návrhu overujeme:</p>
+<ul><li>menovité napätia,</li><li>bežný aj rozbehový prúd ventilátora,</li><li>možnosti regulátorov,</li><li>spoločnú referenciu,</li><li>ochranu a filtráciu podľa záťaže.</li></ul>
+<p><strong>Ventilátor nenapájame z GPIO.</strong> Použijeme vhodný ovládač a ochranné prvky podľa typu záťaže.</p>
+<h3>Počiatočný stav</h3>
+<p>Určíme, čo sa deje ešte pred spustením programu. Definovaný stav môže vyžadovať externý rezistor na riadiacom vstupe ovládača.</p>
+<h2>4. Softvérová architektúra</h2>
+<p><strong>27 – 36 min</strong></p>
+<p>Program rozdelíme podľa zodpovedností:</p>
+<pre><code>Obsluha snímača
+      ↓
+Kontrola platnosti merania
+      ↓
+Regulačná logika
+      ↓
+Ovládanie výstupu
+
+Samostatne:
+zobrazenie, diagnostika a komunikácia</code></pre>
+<h3>Prečo oddeliť reguláciu od snímača?</h3>
+<p>Regulačnú logiku môžeme testovať vloženými hodnotami aj bez skutočného snímača.</p>
+<h3>Stavový návrh</h3>
+<div class="scroll"><table><thead><tr><th>Stav</th><th>Správanie</th></tr></thead><tbody><tr><td>Inicializácia</td><td>Nastavenie periférií a počiatočných výstupov</td></tr><tr><td>Čakanie na meranie</td><td>Čakanie najviac po určený limit</td></tr><tr><td>Prevádzka</td><td>Regulácia s hysteréziou</td></tr><tr><td>Porucha</td><td>Oznámenie chyby a definovaný výstup</td></tr></tbody></table></div>
+<p>Pri krátkej aplikácii postačuje neblokujúca hlavná slučka. RTOS zavádzame vtedy, keď prináša zmysluplné rozdelenie činností.</p>
+<h2>5. Návrhová úloha</h2>
+<p><strong>36 – 41 min</strong></p>
+<p>Pre vlastný projekt vytvorte:</p>
+<ol><li>blokovú schému,</li><li>tabuľku vstupov a výstupov,</li><li>zoznam rozhraní,</li><li>základný plán napájania,</li><li>tri softvérové moduly.</li></ol>
+<p>Spolužiak skontroluje, či každý požadovaný vstup a výstup má v návrhu miesto.</p>
+<h2>6. Zápis</h2>
+<p><strong>41 – 45 min</strong></p>
+<blockquote><p>Architektúra rozdeľuje systém na bloky a definuje ich rozhrania.  </p><p>Platformu vyberáme podľa požiadaviek.  </p><p>Hardvérový návrh zahŕňa napätia, prúdy, piny a napájanie.  </p><p>Softvér rozdeľujeme podľa zodpovedností.  </p><p>Oddelenie logiky od periférií uľahčuje testovanie.</p></blockquote>
+<p><strong>Výstup hodiny:</strong> bloková schéma, tabuľka rozhraní a návrh programu.</p><section class="sources"><h2>Zdroje na &#271;al&#353;ie &#353;t&#250;dium</h2><ul><li><a href="https://docs.wokwi.com/guides/esp32">Wokwi ESP32 simulation</a></li><li><a href="https://docs.wokwi.com/guides/esp32-wifi">Wokwi ESP32 Wi-Fi guest network</a></li><li><a href="https://docs.wokwi.com/getting-started/supported-hardware">Wokwi supported hardware</a></li><li><a href="https://google.github.io/googletest/primer.html">GoogleTest Primer: unit tests and assertions</a></li></ul></section><footer><p>Predn&#225;&#353;ka 10.2 &#183; V&#253;po&#269;tov&#225; technika &#183; Celok 10</p><p><a href="10.1%20Analyza%20zadania.html">&#8592; Predch&#225;dzaj&#250;ca lekcia</a> &#183; <a href="index.html#celok-10">Osnova celku 10</a> &#183; <a href="10.3%20Testovanie%20a%20diagnostika.html">Nasleduj&#250;ca lekcia &#8594;</a></p></footer></main><script src="../theme.js" defer></script><script>document.addEventListener('click',async event=>{const b=event.target.closest('[data-copy-code]');if(!b)return;const c=document.getElementById(b.dataset.copyCode),s=document.getElementById('status-'+b.dataset.copyCode);try{await navigator.clipboard.writeText(c.innerText);s.textContent='K\u00f3d bol skop\u00edrovan\u00fd.'}catch{s.textContent='Kop\u00edrovanie sa nepodarilo. Ozna\u010dte k\u00f3d a skop\u00edrujte ho ru\u010dne.'}})</script></body></html>

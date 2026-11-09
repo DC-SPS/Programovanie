@@ -1,0 +1,66 @@
+<!doctype html><html lang="sk"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="Dokumentácia embedded systému &#8211; tematick&#253; celok 10"><title>10.4 Dokumentácia embedded systému | V&#253;po&#269;tov&#225; technika</title><style>:root{color-scheme:light dark;--bg:#f7f8fa;--surface:#fff;--text:#1c2330;--muted:#5b6678;--accent:#1f6feb;--border:#d9dee7;--note:#fff4d6}@media(prefers-color-scheme:dark){:root{--bg:#12161d;--surface:#1b212b;--text:#e6eaf1;--muted:#9aa6b8;--accent:#5aa2ff;--border:#2d3644;--note:#3a3017}}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:16px/1.65 system-ui,-apple-system,"Segoe UI",sans-serif}a{color:var(--accent)}nav,main{width:min(100% - 2rem,900px);margin:auto}nav{display:flex;gap:.6rem;flex-wrap:wrap;padding:.8rem 0}nav a,.button{display:inline-block;padding:.45rem .75rem;border:1px solid var(--border);border-radius:.55rem;text-decoration:none;color:inherit;background:var(--surface)}main{padding:1rem 0 3rem}a:focus-visible,button:focus-visible{outline:3px solid var(--accent);outline-offset:3px}h1{font-size:clamp(1.8rem,5vw,2.6rem);line-height:1.2}h2{margin-top:2rem}h3{margin-top:1.5rem}.muted{color:var(--muted)}.scroll{overflow:auto}table{width:100%;border-collapse:collapse}th,td{padding:.6rem .7rem;border:1px solid var(--border);text-align:left;vertical-align:top}pre{margin:.65rem 0 1rem;padding:1rem;border-radius:9px;overflow:auto;background:#0f172a;color:#e2e8f0;font:14px/1.55 ui-monospace,Consolas,monospace}.code-actions{display:flex;gap:.5rem;flex-wrap:wrap}button{padding:.55rem .8rem;border:0;border-radius:8px;background:#4b91f1;color:#fff;font-weight:700;cursor:pointer}.sources,footer{margin-top:2rem;padding-top:1rem;border-top:1px solid var(--border)}blockquote,.note{margin:1rem 0;padding:1rem;border:1px solid var(--border);border-radius:12px;background:var(--surface)}@media(max-width:600px){nav,main{width:calc(100% - 1.2rem)}}</style></head><body><nav aria-label="Navig&#225;cia kurzov"><a href="index.html#celok-10">V&#253;po&#269;tov&#225; technika &#183; osnova</a><a href="../index.html">V&#353;etky kurzy</a><a href="../nastavenia.html">Nastavenia vzh&#318;adu</a></nav><main><header><p class="muted"><a href="index.html#celok-10">V&#253;po&#269;tov&#225; technika</a> &#183; Tematick&#253; celok 10 &#183; Predn&#225;&#353;ka 10.4</p><h1>10.4 Dokumentácia embedded systému</h1><p class="muted">N&#225;vrh a realiz&#225;cia embedded syst&#233;mu &#183; 45 min&#250;t</p></header><div class="note"><strong>Simul&#225;cia:</strong> Uk&#225;&#382;ky C++ mo&#382;no prenies&#357; do Wokwi ESP32. Samostatn&#225; regula&#269;n&#225; logika vy&#382;aduje sk&#250;&#353;obn&#253; program; simul&#225;tor over&#237; logiku a kompil&#225;ciu, nie skuto&#269;n&#253; sn&#237;ma&#269;, ovl&#225;da&#269; ventil&#225;tora ani nap&#225;jac&#237; zdroj. V re&#225;lnom zapojen&#237; pou&#382;&#237;vajte vhodn&#253; n&#237;zkonap&#228;&#357;ov&#253; ventil&#225;tor a ovl&#225;da&#269;.</div><p><strong>Trvanie:</strong> 45 minút <strong>Nadväznosť:</strong> Návrh a testovanie.</p>
+<h2>Ciele hodiny</h2>
+<p>Žiak má vedieť:</p>
+<ul><li>vysvetliť účel technickej dokumentácie,</li><li>pripraviť prehľadnú štruktúru projektu,</li><li>zdokumentovať zapojenie a rozhrania,</li><li>napísať návod na zostavenie a spustenie,</li><li>rozlíšiť komentár v kóde a projektovú dokumentáciu.</li></ul>
+<h2>Časový plán</h2>
+<div class="scroll"><table><thead><tr><th>Čas</th><th>Obsah</th></tr></thead><tbody><tr><td>0 – 5 min</td><td>Projekt musí vedieť použiť aj niekto iný</td></tr><tr><td>5 – 16 min</td><td>Obsah dokumentácie</td></tr><tr><td>16 – 26 min</td><td>Hardvérová dokumentácia</td></tr><tr><td>26 – 35 min</td><td>Softvér a návod</td></tr><tr><td>35 – 41 min</td><td>Kontrola spolužiakom</td></tr><tr><td>41 – 45 min</td><td>Overenie a zápis</td></tr></tbody></table></div>
+<h2>1. Na čo je dokumentácia?</h2>
+<p><strong>0 – 5 min</strong></p>
+<p>Dokumentácia má umožniť:</p>
+<ul><li>pochopiť účel systému,</li><li>zostaviť ho,</li><li>spustiť správnu verziu programu,</li><li>overiť jeho funkcie,</li><li>nájsť príčinu poruchy,</li><li>pokračovať vo vývoji.</li></ul>
+<p><strong>Fotografia hotového zariadenia sama osebe nenahrádza schému a návod.</strong></p>
+<h2>2. Odporúčaná štruktúra</h2>
+<p><strong>5 – 16 min</strong></p>
+<ol><li>Názov, autor a verzia.</li><li>Účel a požiadavky.</li><li>Bloková architektúra.</li><li>Zoznam súčiastok.</li><li>Elektrická schéma a zapojenie.</li><li>Softvérová architektúra.</li><li>Zostavenie, nahratie a konfigurácia.</li><li>Návod na používanie.</li><li>Testy a výsledky.</li><li>Obmedzenia, známe chyby a možnosti rozšírenia.</li><li>Použité zdroje a licencie.</li></ol>
+<p>Rozsah prispôsobujeme projektu. Jednoduchý školský výrobok nepotrebuje desiatky strán opakovaného textu.</p>
+<h2>3. Hardvérová dokumentácia</h2>
+<p><strong>16 – 26 min</strong></p>
+<h3>Zoznam súčiastok</h3>
+<div class="scroll"><table><thead><tr><th>Položka</th><th>Počet</th><th>Dôležité údaje</th></tr></thead><tbody><tr><td>Riadiaca doska</td><td>1</td><td>Presný model</td></tr><tr><td>Teplotný snímač</td><td>1</td><td>Typ a rozhranie</td></tr><tr><td>Ventilátor</td><td>1</td><td>Napätie a prúd</td></tr><tr><td>Ovládač</td><td>1</td><td>Typ a zaťažiteľnosť</td></tr><tr><td>Zdroj</td><td>1</td><td>Napätie a dostupný prúd</td></tr></tbody></table></div>
+<h3>Tabuľka zapojenia</h3>
+<div class="scroll"><table><thead><tr><th>Signál</th><th>Pin dosky</th><th>Pripojenie</th><th>Poznámka</th></tr></thead><tbody><tr><td>SDA</td><td>Podľa návrhu</td><td>SDA snímača</td><td>Pull-up na vhodné napätie</td></tr><tr><td>SCL</td><td>Podľa návrhu</td><td>SCL snímača</td><td>I²C</td></tr><tr><td>Riadenie</td><td>Podľa návrhu</td><td>Vstup ovládača</td><td>Uviesť aktívnu úroveň</td></tr><tr><td>GND</td><td>GND</td><td>Spoločná referencia</td><td>Podľa zapojenia</td></tr></tbody></table></div>
+<p>Uvádzame presný model dosky, pretože rovnaké označenie platformy nemusí znamenať rovnaké piny.</p>
+<h3>Čo má byť v schéme?</h3>
+<ul><li>hodnoty súčiastok,</li><li>napájacie napätia,</li><li>názvy signálov,</li><li>polarita,</li><li>ochranné prvky,</li><li>konektory.</li></ul>
+<p>Fotografie dopĺňajú schému a pomáhajú identifikovať fyzické rozmiestnenie.</p>
+<h2>4. Softvér a návod na spustenie</h2>
+<p><strong>26 – 35 min</strong></p>
+<p>Príklad štruktúry:</p>
+<pre><code>projekt/
+├── README.md
+├── docs/
+│   ├── schema.pdf
+│   └── testy.md
+├── src/
+│   └── hlavny_program
+└── config.example</code></pre>
+<h3>README má odpovedať</h3>
+<ul><li>Čo projekt robí?</li><li>Aký hardvér potrebuje?</li><li>Aké verzie nástrojov a knižníc používa?</li><li>Ako sa program zostaví a nahrá?</li><li>Kde sa nastavujú prahy?</li><li>Ako spoznáme správnu prevádzku?</li><li>Ako systém bezpečne vypneme?</li></ul>
+<h3>Príklad prevádzkového návodu</h3>
+<blockquote><p>Po zapnutí zariadenie inicializuje snímač. Po získaní platného merania zobrazuje teplotu. Pri dosiahnutí 28 °C zapne ventilátor. Vypne ho pri poklese na 26 °C. Pri chýbajúcom meraní oznámi poruchu a použije definovaný poruchový výstup.</p></blockquote>
+<h3>Komentáre v programe</h3>
+<p>Užitočný komentár vysvetľuje dôvod:</p>
+<p class="muted">Platforma: cpp</p><pre><code id="lesson-10-4-code-2">// Rozdiel prahov obmedzuje časté prepínanie výstupu.</code></pre><div class="code-actions"><button type="button" data-copy-code="lesson-10-4-code-2">Kop&#237;rova&#357; k&#243;d</button><a class="button" href="https://wokwi.com/projects/new/esp32" target="_blank" rel="noopener noreferrer">Otvori&#357; Wokwi ESP32</a></div><p id="status-lesson-10-4-code-2" class="muted" aria-live="polite"></p>
+<p>Menej užitočný komentár iba opakuje príkaz:</p>
+<p class="muted">Platforma: cpp</p><pre><code id="lesson-10-4-code-3">int pocet = 0;
+
+void setup() {
+    Serial.begin(115200);
+}
+
+void loop() {
+    // Zvýši počet o jedna.
+    ++pocet;
+    Serial.println(pocet);
+    delay(1000);
+}</code></pre><div class="code-actions"><button type="button" data-copy-code="lesson-10-4-code-3">Kop&#237;rova&#357; k&#243;d</button><a class="button" href="https://wokwi.com/projects/new/esp32" target="_blank" rel="noopener noreferrer">Otvori&#357; Wokwi ESP32</a></div><p id="status-lesson-10-4-code-3" class="muted" aria-live="polite"></p>
+<p>Do odovzdávanej dokumentácie nevkladáme skutočné heslá, tokeny ani súkromné kľúče.</p>
+<h2>5. Kontrola spolužiakom</h2>
+<p><strong>35 – 41 min</strong></p>
+<p>Spolužiak skúsi iba podľa dokumentácie zistiť:</p>
+<ol><li>potrebné súčiastky,</li><li>napájanie,</li><li>zapojenie snímača,</li><li>spôsob nahratia,</li><li>očakávanú reakciu na poruchu.</li></ol>
+<p>Ak musí niečo hádať, dokumentáciu doplníme.</p>
+<h2>6. Zápis</h2>
+<p><strong>41 – 45 min</strong></p>
+<blockquote><p>Dokumentácia umožňuje projekt pochopiť, zostaviť, používať a overiť.  </p><p>Obsahuje požiadavky, schému, súčiastky, softvér, návod a testy.  </p><p>Musí zodpovedať skutočne odovzdanej verzii.  </p><p>Fotografia nenahrádza elektrickú schému.  </p><p>Prihlasovacie a kryptografické tajomstvá do dokumentácie nepatria.</p></blockquote>
+<p><strong>Výstup hodiny:</strong> dokumentácia projektu použiteľná ďalším človekom.</p><section class="sources"><h2>Zdroje na &#271;al&#353;ie &#353;t&#250;dium</h2><ul><li><a href="https://docs.wokwi.com/guides/esp32">Wokwi ESP32 simulation</a></li><li><a href="https://docs.wokwi.com/guides/esp32-wifi">Wokwi ESP32 Wi-Fi guest network</a></li><li><a href="https://docs.wokwi.com/getting-started/supported-hardware">Wokwi supported hardware</a></li><li><a href="https://google.github.io/googletest/primer.html">GoogleTest Primer: unit tests and assertions</a></li></ul></section><footer><p>Predn&#225;&#353;ka 10.4 &#183; V&#253;po&#269;tov&#225; technika &#183; Celok 10</p><p><a href="10.3%20Testovanie%20a%20diagnostika.html">&#8592; Predch&#225;dzaj&#250;ca lekcia</a> &#183; <a href="index.html#celok-10">Osnova celku 10</a> &#183; <a href="10.5%20Integracia%20vyhodnotenie%20a%20obhajoba%20projektu.html">Nasleduj&#250;ca lekcia &#8594;</a></p></footer></main><script src="../theme.js" defer></script><script>document.addEventListener('click',async event=>{const b=event.target.closest('[data-copy-code]');if(!b)return;const c=document.getElementById(b.dataset.copyCode),s=document.getElementById('status-'+b.dataset.copyCode);try{await navigator.clipboard.writeText(c.innerText);s.textContent='K\u00f3d bol skop\u00edrovan\u00fd.'}catch{s.textContent='Kop\u00edrovanie sa nepodarilo. Ozna\u010dte k\u00f3d a skop\u00edrujte ho ru\u010dne.'}})</script></body></html>
