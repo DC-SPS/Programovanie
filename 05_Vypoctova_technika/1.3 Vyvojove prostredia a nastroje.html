@@ -1,0 +1,77 @@
+<!doctype html><html lang="sk"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="Vývojové prostredia a nástroje – tematický celok 01"><title>1.3 Vývojové prostredia a nástroje | Výpočtová technika</title><style>:root{color-scheme:light dark;--bg:#f7f8fa;--surface:#fff;--text:#1c2330;--muted:#5b6678;--accent:#1f6feb;--border:#d9dee7}@media(prefers-color-scheme:dark){:root{--bg:#12161d;--surface:#1b212b;--text:#e6eaf1;--muted:#9aa6b8;--accent:#83c5ff;--border:#2d3644}}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:16px/1.65 system-ui,-apple-system,"Segoe UI",sans-serif}a{color:var(--accent)}nav,main{width:min(100% - 2rem,900px);margin:auto}nav{display:flex;gap:.6rem;flex-wrap:wrap;padding:.8rem 0}nav a,.button{display:inline-block;padding:.45rem .75rem;border:1px solid var(--border);border-radius:.55rem;text-decoration:none;color:inherit;background:var(--surface)}main{padding:1rem 0 3rem}a:focus-visible,button:focus-visible{outline:3px solid var(--accent);outline-offset:3px}h1{font-size:clamp(1.8rem,5vw,2.6rem);line-height:1.2}h2{margin-top:2rem}h3{margin-top:1.5rem}.muted{color:var(--muted)}.scroll{overflow:auto}.formula{margin:1rem 0;text-align:center;font-family:ui-monospace,Consolas,monospace}table{width:100%;border-collapse:collapse}th,td{padding:.6rem .7rem;border:1px solid var(--border);text-align:left;vertical-align:top}pre{margin:.65rem 0 1rem;padding:1rem;border-radius:9px;overflow:auto;background:#0f172a;color:#e2e8f0;font:14px/1.55 ui-monospace,Consolas,monospace}.code-actions{display:flex;gap:.5rem;flex-wrap:wrap;align-items:center}button{padding:.55rem .8rem;border:0;border-radius:8px;background:#4b91f1;color:#fff;font-weight:700;cursor:pointer}.simulator,.sources,footer{margin-top:2rem;padding-top:1rem;border-top:1px solid var(--border)}blockquote{margin:1rem 0;padding:1rem;border:1px solid var(--border);border-radius:12px;background:var(--surface)}@media(max-width:600px){nav,main{width:calc(100% - 1.2rem)}}</style></head><body><nav aria-label="Navigácia kurzov"><a href="index.html#celok-01">Výpočtová technika · osnova celku 01</a><a href="../index.html">Všetky kurzy</a><a href="../nastavenia.html">Nastavenia vzhľadu</a></nav><main><header><p class="muted"><a href="index.html#celok-01">Výpočtová technika</a> · Tematický celok 01 · Prednáška 1.3</p><h1>1.3 Vývojové prostredia a nástroje</h1><p class="muted">Úvod do mikroprocesorových a embedded systémov · 45 minút</p></header><p><strong>Trvanie:</strong> 45 minút <strong>Nadväznosť:</strong> Základné princípy embedded systémov.</p>
+<h2>Ciele hodiny</h2>
+<p>Žiak má vedieť:</p>
+<ul><li>opísať postup od zdrojového kódu k programu v zariadení,</li><li>rozlíšiť editor, kompilátor, linker a debugger,</li><li>vysvetliť rozdiel medzi nahrávaním a ladením,</li><li>použiť základné funkcie vývojového prostredia,</li><li>rozlíšiť chybu prekladu a chybu behu.</li></ul>
+<h2>Časový plán</h2>
+<div class="scroll"><table><thead><tr><th>Čas</th><th>Obsah</th></tr></thead><tbody><tr><td>0 – 5 min</td><td>Ako vznikne program v zariadení</td></tr><tr><td>5 – 17 min</td><td>Vývojový reťazec</td></tr><tr><td>17 – 26 min</td><td>Prehľad prostredí</td></tr><tr><td>26 – 37 min</td><td>Praktická ukážka</td></tr><tr><td>37 – 41 min</td><td>Diagnostika chýb</td></tr><tr><td>41 – 45 min</td><td>Overenie a zápis</td></tr></tbody></table></div>
+<h2>1. Zdrojový program nestačí</h2>
+<p><strong>0 – 5 min</strong></p>
+<p>Mikrokontrolér spravidla nevykonáva priamo text C alebo C++.</p>
+<p>Zjednodušený postup:</p>
+<pre><code>Zdrojový kód
+     ↓
+Preklad a zostavenie
+     ↓
+Výsledný program
+     ↓
+Nahratie do zariadenia
+     ↓
+Spustenie a overenie</code></pre>
+<h2>2. Vývojový reťazec</h2>
+<p><strong>5 – 17 min</strong></p>
+<div class="scroll"><table><thead><tr><th>Nástroj</th><th>Úloha</th></tr></thead><tbody><tr><td>Editor</td><td>Písanie zdrojového kódu</td></tr><tr><td>Kompilátor</td><td>Preklad vyššieho jazyka</td></tr><tr><td>Assembler</td><td>Preklad assemblerového zápisu</td></tr><tr><td>Linker</td><td>Spája časti programu a knižnice</td></tr><tr><td>Nahrávací nástroj</td><td>Prenáša program do zariadenia</td></tr><tr><td>Debugger</td><td>Sleduje a riadi vykonávanie</td></tr><tr><td>Sériový monitor</td><td>Zobrazuje komunikáciu</td></tr><tr><td>Správca verzií</td><td>Uchováva históriu zmien</td></tr></tbody></table></div>
+<p><strong>IDE – Integrated Development Environment – spája viac nástrojov do jedného prostredia.</strong></p>
+<h3>Nahrávanie a ladenie</h3>
+<ul><li><strong>Nahratie:</strong> uloženie programu do cieľového zariadenia.</li><li><strong>Ladenie:</strong> zisťovanie priebehu a príčin chýb.</li></ul>
+<p>Nahrávací bootloader nemusí poskytovať hardvérové ladenie.</p>
+<h3>Debugger</h3>
+<p>Umožňuje podľa podpory hardvéru:</p>
+<ul><li>nastaviť breakpoint,</li><li>krokovať program,</li><li>čítať premenné a registre,</li><li>sledovať zásobník volaní.</li></ul>
+<p>Zastavenie debuggerom mení časové správanie zariadenia. Pri riadení výstupov na to musíme myslieť.</p>
+<h2>3. Prehľad prostredí</h2>
+<p><strong>17 – 26 min</strong></p>
+<div class="scroll"><table><thead><tr><th>Prostredie</th><th>Typické použitie</th></tr></thead><tbody><tr><td>Arduino IDE</td><td>Arduino a podporované dosky</td></tr><tr><td>PlatformIO</td><td>Projekty pre rôzne embedded platformy</td></tr><tr><td>STM32CubeIDE</td><td>Vývoj a ladenie STM32</td></tr><tr><td>ESP-IDF</td><td>Natívny vývoj pre podporované ESP čipy</td></tr><tr><td>Thonny</td><td>Výučba Pythonu a podporovaných MicroPython dosiek</td></tr><tr><td>Terminál a editor v Linuxe</td><td>Python, C/C++ a správa SBC</td></tr></tbody></table></div>
+<p>STM32CubeMX poskytuje konfiguráciu čipu, pinov a generovanie inicializačného kódu. Jeho funkcie môžu byť dostupné aj cez integráciu s ďalšími nástrojmi podľa verzie.</p>
+<h3>Knižnice</h3>
+<p>Knižnica poskytuje hotové funkcie, napríklad ovládač displeja.</p>
+<p>Pri projekte evidujeme jej názov a verziu. Rôzne verzie môžu mať odlišné API.</p>
+<h2>4. Praktická ukážka v Arduino IDE</h2>
+<p><strong>26 – 37 min</strong></p>
+<p>Postup:</p>
+<ol><li>Pripojiť podporovanú dosku.</li><li>Vybrať správny model dosky.</li><li>Vybrať port.</li><li>Otvoriť alebo napísať program.</li><li>Spustiť preklad.</li><li>Nahrať program.</li><li>Overiť správanie.</li></ol>
+<h3>Program pre Arduino Uno R3</h3>
+<pre><code>void setup() {
+  pinMode(LED_BUILTIN, OUTPUT);
+}
+
+void loop() {
+  digitalWrite(LED_BUILTIN, HIGH);
+  delay(500);
+
+  digitalWrite(LED_BUILTIN, LOW);
+  delay(500);
+}</code></pre>
+<p>LED svieti približne pol sekundy a pol sekundy nesvieti.</p>
+<p><strong>Celá perióda je približne jedna sekunda.</strong></p>
+<p>Pri inej doske overíme prítomnosť a polaritu zabudovanej LED.</p>
+<h3>Zmena</h3>
+<p>Žiaci upravia oba intervaly na 250 ms a vysvetlia výsledok.</p>
+<p><strong>Odpoveď:</strong> Celá perióda bude približne 500 ms, frekvencia približne 2 Hz.</p>
+<h2>5. Diagnostika chýb</h2>
+<p><strong>37 – 41 min</strong></p>
+<div class="scroll"><table><thead><tr><th>Problém</th><th>Čo overiť</th></tr></thead><tbody><tr><td>Program sa nepreloží</td><td>Syntax, názvy, knižnice</td></tr><tr><td>Preklad funguje, nahratie nie</td><td>Dosku, port, kábel, režim nahrávania</td></tr><tr><td>Nahratie prebehne, zariadenie nereaguje</td><td>Zapojenie, piny, logiku</td></tr><tr><td>Sériový výpis je nečitateľný</td><td>Rýchlosť a nastavenie portu</td></tr></tbody></table></div>
+<p>USB kábel môže byť iba napájací. Taký kábel nemusí poskytovať dátové spojenie.</p>
+<p>Pri chybe čítame najmä prvé relevantné hlásenie, nie iba posledný riadok výpisu.</p>
+<h2>6. Zápis</h2>
+<p><strong>41 – 45 min</strong></p>
+<blockquote><p>Vývojový reťazec premieňa zdrojový kód na program pre cieľové zariadenie.  </p><p>IDE spája editor a ďalšie nástroje.  </p><p>Kompilátor prekladá, linker spája časti programu.  </p><p>Nahrávanie a ladenie sú rozdielne operácie.  </p><p>Úspešný preklad ešte nedokazuje správnosť programu.  </p><p>Verzie nástrojov a knižníc sú súčasťou dokumentácie projektu.</p></blockquote>
+<section class="simulator"><h2>Praktická ukážka vo Wokwi</h2><p>Vložte sketch do Arduino IDE s vybranou doskou Arduino Uno R3. Zabudovaná LED svieti a zhasína v polsekundových intervaloch.</p><div class="code-actions"><button type="button" data-copy-code="lesson-sketch">Kopírovať kód</button><a class="button" href="https://wokwi.com/projects/new/arduino-uno" target="_blank" rel="noopener">Otvoriť Wokwi: Arduino Uno R3 (ATmega328P)</a><span id="status-lesson-sketch" role="status" aria-live="polite"></span></div><pre><code id="lesson-sketch">void setup() {
+    pinMode(LED_BUILTIN, OUTPUT);
+}
+
+void loop() {
+    digitalWrite(LED_BUILTIN, HIGH);
+    delay(500);
+    digitalWrite(LED_BUILTIN, LOW);
+    delay(500);
+}</code></pre></section><section class="sources"><h2>Zdroje na ďalšie štúdium</h2><ul><li><a href="https://docs.arduino.cc/language-reference/" target="_blank" rel="noopener noreferrer">Arduino language reference</a></li><li><a href="https://docs.arduino.cc/software/ide/" target="_blank" rel="noopener noreferrer">Arduino IDE documentation</a></li><li><a href="https://docs.wokwi.com/parts/wokwi-arduino-uno" target="_blank" rel="noopener noreferrer">Wokwi Arduino Uno R3</a></li></ul></section><footer><p>Prednáška 1.3 · Výpočtová technika · Celok 01</p><p><a href="1.2%20Embedded%20systemy%20-%20principy%20a%20oblasti%20pouzitia.html">← Predchádzajúca prednáška</a> <a href="1.4%20Architektury%20MCU%20a%20SBC.html">Nasledujúca prednáška →</a></p></footer></main><script src="../theme.js" defer></script><script>document.addEventListener('click',async event=>{const b=event.target.closest('[data-copy-code]');if(!b)return;const c=document.getElementById(b.dataset.copyCode),s=document.getElementById('status-'+b.dataset.copyCode);try{await navigator.clipboard.writeText(c.innerText);s.textContent='Kód bol skopírovaný.'}catch{s.textContent='Kopírovanie sa nepodarilo. Označte kód a skopírujte ho ručne.'}})</script></body></html>

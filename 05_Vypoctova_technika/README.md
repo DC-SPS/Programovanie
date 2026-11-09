@@ -8,7 +8,12 @@ perifériám, komunikácii a návrhu zariadení pre internet vecí.
 Prehľad tematických celkov a dostupných materiálov je na stránke
 [Výpočtová technika](./index.html). Spracované sú tieto prednášky:
 
-- [1.1 Embedded systémy – princípy a oblasti](./1.1%20Embedded%20systemy%20-%20principy%20a%20oblasti.html)
+- [Mikroprocesor a mikrokontrolér](./1.1%20Mikroprocesor%20a%20mikrokontroler.html)
+- [Embedded systémy – princípy a oblasti použitia](./1.2%20Embedded%20systemy%20-%20principy%20a%20oblasti%20pouzitia.html)
+- [Vývojové prostredia a nástroje](./1.3%20Vyvojove%20prostredia%20a%20nastroje.html)
+- [Architektúry MCU a SBC](./1.4%20Architektury%20MCU%20a%20SBC.html)
+- [STM32 a ARM Cortex-M](./1.5%20STM32%20a%20ARM%20Cortex-M.html)
+- [Jednodoskové počítače a Raspberry Pi](./1.6%20Jednodoskove%20pocitace%20a%20Raspberry%20Pi.html)
 - [Von Neumannova a Harvardova architektúra](./2.1%20Von%20Neumannova%20a%20Harvardova%20architektura.html)
 - [Architektúra MCU, CPU, ALU, registre](./2.2%20Architektura%20MCU%20-%20CPU%2C%20ALU%20a%20registre.html)
 - [Inštrukčný cyklus mikrokontroléra](./2.3%20Instrukcny%20cyklus%20mikrokontrolera.html)

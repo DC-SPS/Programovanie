@@ -1,0 +1,64 @@
+<!doctype html><html lang="sk"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="Embedded systémy – princípy a oblasti použitia – tematický celok 01"><title>1.2 Embedded systémy – princípy a oblasti použitia | Výpočtová technika</title><style>:root{color-scheme:light dark;--bg:#f7f8fa;--surface:#fff;--text:#1c2330;--muted:#5b6678;--accent:#1f6feb;--border:#d9dee7}@media(prefers-color-scheme:dark){:root{--bg:#12161d;--surface:#1b212b;--text:#e6eaf1;--muted:#9aa6b8;--accent:#83c5ff;--border:#2d3644}}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:16px/1.65 system-ui,-apple-system,"Segoe UI",sans-serif}a{color:var(--accent)}nav,main{width:min(100% - 2rem,900px);margin:auto}nav{display:flex;gap:.6rem;flex-wrap:wrap;padding:.8rem 0}nav a,.button{display:inline-block;padding:.45rem .75rem;border:1px solid var(--border);border-radius:.55rem;text-decoration:none;color:inherit;background:var(--surface)}main{padding:1rem 0 3rem}a:focus-visible,button:focus-visible{outline:3px solid var(--accent);outline-offset:3px}h1{font-size:clamp(1.8rem,5vw,2.6rem);line-height:1.2}h2{margin-top:2rem}h3{margin-top:1.5rem}.muted{color:var(--muted)}.scroll{overflow:auto}.formula{margin:1rem 0;text-align:center;font-family:ui-monospace,Consolas,monospace}table{width:100%;border-collapse:collapse}th,td{padding:.6rem .7rem;border:1px solid var(--border);text-align:left;vertical-align:top}pre{margin:.65rem 0 1rem;padding:1rem;border-radius:9px;overflow:auto;background:#0f172a;color:#e2e8f0;font:14px/1.55 ui-monospace,Consolas,monospace}.code-actions{display:flex;gap:.5rem;flex-wrap:wrap;align-items:center}button{padding:.55rem .8rem;border:0;border-radius:8px;background:#4b91f1;color:#fff;font-weight:700;cursor:pointer}.simulator,.sources,footer{margin-top:2rem;padding-top:1rem;border-top:1px solid var(--border)}blockquote{margin:1rem 0;padding:1rem;border:1px solid var(--border);border-radius:12px;background:var(--surface)}@media(max-width:600px){nav,main{width:calc(100% - 1.2rem)}}</style></head><body><nav aria-label="Navigácia kurzov"><a href="index.html#celok-01">Výpočtová technika · osnova celku 01</a><a href="../index.html">Všetky kurzy</a><a href="../nastavenia.html">Nastavenia vzhľadu</a></nav><main><header><p class="muted"><a href="index.html#celok-01">Výpočtová technika</a> · Tematický celok 01 · Prednáška 1.2</p><h1>1.2 Embedded systémy – princípy a oblasti použitia</h1><p class="muted">Úvod do mikroprocesorových a embedded systémov · 45 minút</p></header><p><strong>Trvanie:</strong> 45 minút <strong>Nadväznosť:</strong> Mikroprocesor a mikrokontrolér.</p>
+<h2>Ciele hodiny</h2>
+<p>Žiak má vedieť:</p>
+<ul><li>vysvetliť pojem embedded systém,</li><li>identifikovať jeho vstupy a výstupy,</li><li>rozlíšiť meranie a riadenie,</li><li>uviesť oblasti použitia,</li><li>pomenovať základné prevádzkové požiadavky.</li></ul>
+<h2>Časový plán</h2>
+<div class="scroll"><table><thead><tr><th>Čas</th><th>Obsah</th></tr></thead><tbody><tr><td>0 – 5 min</td><td>Počítač zabudovaný do výrobku</td></tr><tr><td>5 – 16 min</td><td>Funkčný model embedded systému</td></tr><tr><td>16 – 27 min</td><td>Oblasti použitia</td></tr><tr><td>27 – 35 min</td><td>Prevádzkové požiadavky</td></tr><tr><td>35 – 41 min</td><td>Návrhová aktivita</td></tr><tr><td>41 – 45 min</td><td>Overenie a zápis</td></tr></tbody></table></div>
+<h2>1. Čo znamená embedded?</h2>
+<p><strong>0 – 5 min</strong></p>
+<p><strong>Embedded systém je výpočtový systém zabudovaný do zariadenia, kde zabezpečuje konkrétne funkcie.</strong></p>
+<p>Používateľ často nevníma počítač, ale hotový výrobok: práčku, merač alebo regulátor.</p>
+<p>Embedded systém môže obsahovať mikrokontrolér, aplikačný procesor alebo kombináciu viacerých prvkov.</p>
+<h2>2. Funkčný model</h2>
+<p><strong>5 – 16 min</strong></p>
+<pre><code>Snímače a používateľ
+         ↓
+Vstupy → spracovanie → výstupy
+                         ↓
+                Akčné členy a zobrazenie</code></pre>
+<h3>Snímač</h3>
+<p>Premieňa fyzikálnu veličinu na využiteľný signál.</p>
+<p>Príklady:</p>
+<ul><li>teplotný snímač,</li><li>snímač svetla,</li><li>snímač polohy.</li></ul>
+<h3>Akčný člen</h3>
+<p>Vykonáva fyzickú činnosť:</p>
+<ul><li>motor,</li><li>ventil,</li><li>ohrievač,</li><li>osvetlenie.</li></ul>
+<h3>Meranie a riadenie</h3>
+<ul><li><strong>Monitorovanie:</strong> systém získava a zobrazuje údaje.</li><li><strong>Riadenie:</strong> systém podľa pravidiel ovplyvňuje výstupy.</li><li><strong>Spätnoväzbové riadenie:</strong> systém meria výsledok svojho pôsobenia a podľa neho upravuje činnosť.</li></ul>
+<p>Príklad: ventilátor ovplyvňuje teplotu, ktorú systém opakovane meria.</p>
+<h2>3. Oblasti použitia</h2>
+<p><strong>16 – 27 min</strong></p>
+<div class="scroll"><table><thead><tr><th>Oblasť</th><th>Príklad</th><th>Dôležitá požiadavka</th></tr></thead><tbody><tr><td>Domácnosť</td><td>Práčka</td><td>Spoľahlivá postupnosť činností</td></tr><tr><td>Automobilová technika</td><td>Riadiace jednotky</td><td>Časovanie a odolnosť</td></tr><tr><td>Priemysel</td><td>Regulátor stroja</td><td>Dostupnosť a diagnostika</td></tr><tr><td>Zdravotnícka technika</td><td>Meracie zariadenie</td><td>Presnosť a požiadavky podľa účelu</td></tr><tr><td>Poľnohospodárstvo</td><td>Zavlažovanie</td><td>Úspora energie a odolnosť</td></tr><tr><td>IoT</td><td>Sieťový snímač</td><td>Komunikácia a zabezpečenie</td></tr><tr><td>Spotrebná elektronika</td><td>Tlačiareň</td><td>Spracovanie údajov a ovládanie</td></tr></tbody></table></div>
+<p>Zaradenie medzi embedded systémy neznamená automaticky, že všetky tieto zariadenia majú rovnaké bezpečnostné alebo časové požiadavky.</p>
+<h2>4. Prevádzkové požiadavky</h2>
+<p><strong>27 – 35 min</strong></p>
+<p>Pri návrhu zvažujeme:</p>
+<ul><li>spotrebu a zdroj energie,</li><li>teplotu a prostredie,</li><li>čas reakcie,</li><li>pamäť a výkon,</li><li>poruchové stavy,</li><li>aktualizácie,</li><li>dostupnosť náhradných súčiastok.</li></ul>
+<h3>Reakcia na poruchu</h3>
+<p>Systém má vedieť, čo robiť pri:</p>
+<ul><li>odpojenom snímači,</li><li>neplatnej hodnote,</li><li>výpadku siete,</li><li>reštarte.</li></ul>
+<p><strong>Definovaný poruchový stav je súčasťou návrhu, nie dodatočný detail.</strong></p>
+<p>Príklad: pri chybe merania sa zobrazí porucha a výstup prejde do stavu určeného zadaním.</p>
+<h2>5. Návrhová aktivita</h2>
+<p><strong>35 – 41 min</strong></p>
+<p>Navrhni automatické zavlažovanie.</p>
+<p>Urči:</p>
+<ol><li>snímače,</li><li>akčné členy,</li><li>rozhodovacie pravidlo,</li><li>napájanie,</li><li>reakciu na chybu snímača.</li></ol>
+<p><strong>Možné riešenie:</strong></p>
+<ul><li>vstup: vlhkosť pôdy,</li><li>výstup: ventil alebo čerpadlo cez ovládač,</li><li>pravidlo: zavlažovať pri nízkej vlhkosti s časovým limitom,</li><li>porucha: oznámiť chybu a nevykonávať neobmedzené zavlažovanie.</li></ul>
+<h2>6. Overenie a zápis</h2>
+<p><strong>41 – 45 min</strong></p>
+<ol><li>Musí byť embedded systém pripojený na internet? <strong>Nie.</strong></li><li>Je motor snímač? <strong>V bežnom uvedenom použití je akčný člen.</strong></li><li>Môže embedded systém používať Linux? <strong>Áno.</strong></li></ol>
+<blockquote><p>Embedded systém vykonáva konkrétne funkcie v zariadení.  </p><p>Vstupy získava zo snímačov a od používateľa.  </p><p>Výstupmi ovláda akčné členy alebo poskytuje informácie.  </p><p>Návrh musí rešpektovať výkon, spotrebu, časovanie a poruchy.  </p><p>Embedded systém môže fungovať bez OS, s RTOS alebo s iným operačným systémom.</p></blockquote>
+<section class="simulator"><h2>Praktická ukážka vo Wokwi</h2><p>Pripojte potenciometer medzi 3V3 a GND a jeho stredný vývod na GPIO34. Ukážka používa ESP32 DevKit a mení LED podľa analógového vstupu.</p><div class="code-actions"><button type="button" data-copy-code="lesson-sketch">Kopírovať kód</button><a class="button" href="https://wokwi.com/projects/new/esp32" target="_blank" rel="noopener">Otvoriť Wokwi: Wokwi ESP32 DevKit</a><span id="status-lesson-sketch" role="status" aria-live="polite"></span></div><pre><code id="lesson-sketch">const int SENSOR_PIN = 34;
+const int LED_PIN = 2;
+
+void setup() {
+    pinMode(LED_PIN, OUTPUT);
+}
+
+void loop() {
+    const int sensorValue = analogRead(SENSOR_PIN);
+    digitalWrite(LED_PIN, sensorValue &gt; 2048 ? HIGH : LOW);
+    delay(20);
+}</code></pre></section><section class="sources"><h2>Zdroje na ďalšie štúdium</h2><ul><li><a href="https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32/esp32-devkitc/user_guide.html" target="_blank" rel="noopener noreferrer">ESP32 DevKitC V4 – dokumentácia (Espressif)</a></li><li><a href="https://docs.wokwi.com/guides/esp32" target="_blank" rel="noopener noreferrer">Wokwi ESP32 simulator</a></li><li><a href="https://docs.wokwi.com/getting-started/supported-hardware" target="_blank" rel="noopener noreferrer">Wokwi supported hardware</a></li></ul></section><footer><p>Prednáška 1.2 · Výpočtová technika · Celok 01</p><p><a href="1.1%20Mikroprocesor%20a%20mikrokontroler.html">← Predchádzajúca prednáška</a> <a href="1.3%20Vyvojove%20prostredia%20a%20nastroje.html">Nasledujúca prednáška →</a></p></footer></main><script src="../theme.js" defer></script><script>document.addEventListener('click',async event=>{const b=event.target.closest('[data-copy-code]');if(!b)return;const c=document.getElementById(b.dataset.copyCode),s=document.getElementById('status-'+b.dataset.copyCode);try{await navigator.clipboard.writeText(c.innerText);s.textContent='Kód bol skopírovaný.'}catch{s.textContent='Kopírovanie sa nepodarilo. Označte kód a skopírujte ho ručne.'}})</script></body></html>
