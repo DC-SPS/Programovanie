@@ -9,6 +9,18 @@ Prehľad tematických celkov a dostupných materiálov je na stránke
 [Výpočtová technika](./index.html). Spracované sú tieto prednášky:
 
 - [1.1 Embedded systémy – princípy a oblasti](./1.1%20Embedded%20systemy%20-%20principy%20a%20oblasti.html)
+- [Von Neumannova a Harvardova architektúra](./2.1%20Von%20Neumannova%20a%20Harvardova%20architektura.html)
+- [Architektúra MCU, CPU, ALU, registre](./2.2%20Architektura%20MCU%20-%20CPU%2C%20ALU%20a%20registre.html)
+- [Inštrukčný cyklus mikrokontroléra](./2.3%20Instrukcny%20cyklus%20mikrokontrolera.html)
+- [Architektonické prístupy (RISC, CISC a ARM)](./2.4%20Architektonicke%20pristupy%20-%20RISC%2C%20CISC%20a%20ARM.html)
+- [Von Neumannova a Harvardova architektúra](./2.1%20Von%20Neumannova%20a%20Harvardova%20architektura.html)
+- [Architektúra MCU, CPU, ALU, registre](./2.2%20Architektura%20MCU%20-%20CPU%2C%20ALU%20a%20registre.html)
+- [Inštrukčný cyklus mikrokontroléra](./2.3%20Instrukcny%20cyklus%20mikrokontrolera.html)
+- [Architektonické prístupy (RISC, CISC a ARM)](./2.4%20Architektonicke%20pristupy%20-%20RISC%2C%20CISC%20a%20ARM.html)
+- [Von Neumannova a Harvardova architektúra](./2.1%20Von%20Neumannova%20a%20Harvardova%20architektura.html)
+- [Architektúra MCU, CPU, ALU, registre](./2.2%20Architektura%20MCU%20-%20CPU%2C%20ALU%20a%20registre.html)
+- [Inštrukčný cyklus mikrokontroléra](./2.3%20Instrukcny%20cyklus%20mikrokontrolera.html)
+- [Architektonické prístupy (RISC, CISC a ARM)](./2.4%20Architektonicke%20pristupy%20-%20RISC%2C%20CISC%20a%20ARM.html)
 - [3.1 Binárna sústava](./3.1%20Binarna%20sustava.html)
 - [3.2 Hexadecimálna sústava, bity a bajty](./3.2%20Hexadecimalna%20sustava%20-%20bity%20a%20bajty.html)
 - [3.3 Dátové typy a veľkosť dát](./3.3%20Datove%20typy%20a%20velkost%20dat.html)
@@ -51,7 +63,17 @@ Prehľad tematických celkov a dostupných materiálov je na stránke
 - [7.5 Synchronizácia úloh](./7.5%20Synchronizacia%20uloh.html)
 - [7.6 RTOS – princíp a použitie](./7.6%20RTOS%20-%20princip%20a%20pouzitie.html)
 
-Predn&#225;&#353;ky tematick&#253;ch celkov 3 a&#382; 10 s&#250; ur&#269;en&#233; na 45 min&#250;t.
+- [Von Neumannova a Harvardova architektúra](./2.1%20Von%20Neumannova%20a%20Harvardova%20architektura.html)
+- [Architektúra MCU, CPU, ALU, registre](./2.2%20Architektura%20MCU%20-%20CPU%2C%20ALU%20a%20registre.html)
+- [Inštrukčný cyklus mikrokontroléra](./2.3%20Instrukcny%20cyklus%20mikrokontrolera.html)
+- [Architektonické prístupy (RISC, CISC a ARM)](./2.4%20Architektonicke%20pristupy%20-%20RISC%2C%20CISC%20a%20ARM.html)
+
+- [Von Neumannova a Harvardova architektúra](./2.1%20Von%20Neumannova%20a%20Harvardova%20architektura.html)
+- [Architektúra MCU, CPU, ALU, registre](./2.2%20Architektura%20MCU%20-%20CPU%2C%20ALU%20a%20registre.html)
+- [Inštrukčný cyklus mikrokontroléra](./2.3%20Instrukcny%20cyklus%20mikrokontrolera.html)
+- [Architektonické prístupy (RISC, CISC a ARM)](./2.4%20Architektonicke%20pristupy%20-%20RISC%2C%20CISC%20a%20ARM.html)
+
+Predn&#225;&#353;ky tematick&#253;ch celkov 2 a&#382; 10
 
 ## Tematick&#253; celok 8 &#8211; Jednodoskov&#233; po&#269;&#237;ta&#269;e a ich opera&#269;n&#253; syst&#233;m
 

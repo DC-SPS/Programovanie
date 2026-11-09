@@ -1,0 +1,110 @@
+<!doctype html><html lang="sk"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="2.1 Von Neumannova a Harvardova architektúra – tematický celok 02"><title>2.1 Von Neumannova a Harvardova architektúra | Výpočtová technika</title><style>:root{color-scheme:light dark;--bg:#f7f8fa;--surface:#fff;--text:#1c2330;--muted:#5b6678;--accent:#1f6feb;--border:#d9dee7}@media(prefers-color-scheme:dark){:root{--bg:#12161d;--surface:#1b212b;--text:#e6eaf1;--muted:#9aa6b8;--accent:#83c5ff;--border:#2d3644}}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:16px/1.65 system-ui,-apple-system,"Segoe UI",sans-serif}a{color:var(--accent)}nav,main{width:min(100% - 2rem,900px);margin:auto}nav{display:flex;gap:.6rem;flex-wrap:wrap;padding:.8rem 0}nav a,.button{display:inline-block;padding:.45rem .75rem;border:1px solid var(--border);border-radius:.55rem;text-decoration:none;color:inherit;background:var(--surface)}main{padding:1rem 0 3rem}a:focus-visible,button:focus-visible{outline:3px solid var(--accent);outline-offset:3px}h1{font-size:clamp(1.8rem,5vw,2.6rem);line-height:1.2}h2{margin-top:2rem}h3{margin-top:1.5rem}.muted{color:var(--muted)}.scroll{overflow:auto}.formula{margin:1rem 0;text-align:center;font-family:ui-monospace,Consolas,monospace}table{width:100%;border-collapse:collapse}th,td{padding:.6rem .7rem;border:1px solid var(--border);text-align:left;vertical-align:top}pre{margin:.65rem 0 1rem;padding:1rem;border-radius:9px;overflow:auto;background:#0f172a;color:#e2e8f0;font:14px/1.55 ui-monospace,Consolas,monospace}.code-actions{display:flex;gap:.5rem;flex-wrap:wrap;align-items:center}button{padding:.55rem .8rem;border:0;border-radius:8px;background:#4b91f1;color:#fff;font-weight:700;cursor:pointer}.sources,footer,.simulator{margin-top:2rem;padding-top:1rem;border-top:1px solid var(--border)}blockquote{margin:1rem 0;padding:1rem;border:1px solid var(--border);border-radius:12px;background:var(--surface)}@media(max-width:600px){nav,main{width:calc(100% - 1.2rem)}}</style></head><body><nav aria-label="Navigácia kurzov"><a href="index.html#celok-02">Výpočtová technika · osnova</a><a href="../index.html">Všetky kurzy</a><a href="../nastavenia.html">Nastavenia vzhľadu</a></nav><main><header><p class="muted"><a href="index.html#celok-02">Výpočtová technika</a> · Tematický celok 02 · Prednáška 2.1</p><h1>2.1 Von Neumannova a Harvardova architektúra</h1><p class="muted">Architektúra mikrokontroléra · 45 minút</p></header><p><strong>Trvanie:</strong> 45 minút <strong>Pomôcky:</strong> tabuľa, kartičky „inštrukcia“, „údaj“, „CPU“ a „pamäť“.</p>
+<h3>Ciele hodiny</h3>
+<p>Žiak má vedieť:</p>
+<ul><li>vysvetliť úlohu procesora, pamäte a zberníc,</li><li>rozlíšiť von Neumannovu a harvardskú architektúru,</li><li>opísať ich základné výhody a obmedzenia,</li><li>vysvetliť pojem modifikovaná harvardská architektúra,</li><li>zaradiť AVR a moderné procesory bez neprimeraného zjednodušovania.</li></ul>
+<h3>Časový plán</h3>
+<div class="scroll"><table><thead><tr><th>Čas</th><th>Obsah</th></tr></thead><tbody><tr><td>0 – 5 min</td><td>Kde sú uložené program a údaje</td></tr><tr><td>5 – 13 min</td><td>Základné bloky počítača</td></tr><tr><td>13 – 23 min</td><td>Von Neumannova architektúra</td></tr><tr><td>23 – 33 min</td><td>Harvardova architektúra</td></tr><tr><td>33 – 40 min</td><td>Porovnanie a konkrétne platformy</td></tr><tr><td>40 – 45 min</td><td>Overenie a zápis</td></tr></tbody></table></div>
+<h3>1. Program a údaje</h3>
+<p><strong>0 – 5 min</strong></p>
+<p>Procesor potrebuje počas práce získavať:</p>
+<ul><li><strong>inštrukcie</strong> – čo má vykonať,</li><li><strong>údaje</strong> – s čím má pracovať.</li></ul>
+<p>Príklad:</p>
+<pre><code>vysledok = teplota + 2;</code></pre>
+<p>Procesor vykoná inštrukcie na získanie hodnoty, sčítanie a uloženie výsledku.</p>
+<p><strong>Architektúra určuje aj to, ako sú procesor, programová pamäť a dátová pamäť prepojené.</strong></p>
+<p><strong>Otázka pre triedu:</strong> Je inštrukcia „sčítaj“ to isté ako číslo, ktoré sčítavame?</p>
+<p>*Odpoveď: Nie. Inštrukcia určuje činnosť, údaj je jej vstupom alebo výsledkom.*</p>
+<h3>2. Základné bloky</h3>
+<p><strong>5 – 13 min</strong></p>
+<div class="scroll"><table><thead><tr><th>Blok</th><th>Úloha</th></tr></thead><tbody><tr><td>CPU</td><td>Vykonáva inštrukcie</td></tr><tr><td>Pamäť</td><td>Uchováva program a údaje</td></tr><tr><td>Vstupy a výstupy</td><td>Prepájajú systém s okolím</td></tr><tr><td>Zbernice</td><td>Prenášajú adresy, údaje a riadiace signály</td></tr></tbody></table></div>
+<h4>Druhy prenášaných informácií</h4>
+<ul><li><strong>Adresa:</strong> určuje vybrané miesto alebo zariadenie.</li><li><strong>Dáta:</strong> predstavujú prenášaný obsah.</li><li><strong>Riadenie:</strong> určuje napríklad čítanie alebo zápis.</li></ul>
+<p>Zbernica nemusí mať pri každom type systému jednoduchú podobu skupiny viditeľných vodičov. Ide aj o vnútorné prepojenia čipu.</p>
+<h3>3. Von Neumannova architektúra</h3>
+<p><strong>13 – 23 min</strong></p>
+<p>V základnom modeli majú program a údaje <strong>spoločný pamäťový priestor a spoločnú cestu prístupu z CPU</strong>.</p>
+<pre><code>             ┌─────────────────┐
+             │       CPU       │
+             └────────┬────────┘
+                      │
+              spoločná cesta
+                      │
+             ┌────────┴────────┐
+             │     Pamäť       │
+             │ program + údaje │
+             └─────────────────┘</code></pre>
+<h4>Výhody</h4>
+<ul><li>Jednotný adresový priestor.</li><li>Rovnaký základný mechanizmus prístupu k programu a údajom.</li><li>Flexibilné využitie pamäťového priestoru.</li></ul>
+<h4>Obmedzenie</h4>
+<p>Načítanie inštrukcie a prístup k údajom môžu súperiť o spoločnú prenosovú cestu.</p>
+<p>Toto obmedzenie sa označuje ako <strong>von Neumannovo úzke hrdlo</strong>.</p>
+<p>Neznamená to, že každý moderný procesor musí pri každej inštrukcii jednoducho striedať jeden prenos programu a jeden prenos údajov. Cache a ďalšie mechanizmy situáciu výrazne menia.</p>
+<h4>Aktivita</h4>
+<p>Jeden žiak predstavuje CPU a druhý pamäť. Kartičky s inštrukciami a údajmi odovzdávajú cez jednu „bránu“.</p>
+<p>Trieda sleduje, ako spoločná cesta obmedzuje súčasný prenos.</p>
+<h3>4. Harvardova architektúra</h3>
+<p><strong>23 – 33 min</strong></p>
+<p>V základnom modeli sú program a údaje uložené v <strong>oddelených pamäťových priestoroch</strong>, ku ktorým vedú samostatné cesty.</p>
+<pre><code>┌────────────────┐       ┌────────────────┐
+│ Pamäť programu │       │ Pamäť údajov   │
+└───────┬────────┘       └────────┬───────┘
+        │                        │
+        └──────────┐  ┌──────────┘
+                   │  │
+                ┌──┴──┴──┐
+                │  CPU   │
+                └────────┘</code></pre>
+<h4>Výhody</h4>
+<ul><li>Možnosť súčasne získavať inštrukciu a pristupovať k údajom.</li><li>Programová a dátová pamäť môžu mať rozdielne vlastnosti.</li><li>Môžu používať rozdielnu šírku slova alebo spôsob adresovania.</li></ul>
+<h4>Obmedzenia</h4>
+<ul><li>Prístup k programovým údajom môže vyžadovať osobitné inštrukcie.</li><li>Pamäťové priestory sa nepoužívajú vždy rovnakým spôsobom.</li><li>Organizácia môže byť pre programátora zložitejšia.</li></ul>
+<h4>AVR ako príklad</h4>
+<p>ATmega328P používa harvardské usporiadanie:</p>
+<ul><li>program je vo Flash,</li><li>pracovné údaje sú v dátovom priestore vrátane SRAM,</li><li>programový a dátový priestor sú oddelené.</li></ul>
+<p>Procesor však dokáže pomocou príslušných mechanizmov čítať aj údaje uložené vo Flash.</p>
+<h3>5. Moderné riešenia</h3>
+<p><strong>33 – 40 min</strong></p>
+<h4>Modifikovaná harvardská architektúra</h4>
+<p>Moderné procesory často kombinujú vlastnosti oboch prístupov:</p>
+<ul><li>oddelené cesty alebo cache pre inštrukcie a dáta,</li><li>spoločnú hlavnú pamäť alebo jednotný pohľad na adresy.</li></ul>
+<p>Preto nemožno všetky procesory označiť iba podľa toho, či fyzicky obsahujú jednu RAM.</p>
+<h4>Porovnanie</h4>
+<div class="scroll"><table><thead><tr><th>Vlastnosť</th><th>Von Neumannov model</th><th>Harvardský model</th></tr></thead><tbody><tr><td>Programový a dátový priestor</td><td>Spoločný</td><td>Oddelený</td></tr><tr><td>Prístupové cesty</td><td>Spoločná</td><td>Samostatné</td></tr><tr><td>Súčasný prístup k inštrukcii a dátam</td><td>Obmedzený spoločnou cestou</td><td>Umožnený oddelenými cestami</td></tr><tr><td>Práca s programovou pamäťou</td><td>Jednotnejšia</td><td>Môže vyžadovať osobitný prístup</td></tr></tbody></table></div>
+<p>Procesory ARM používané v Raspberry Pi majú podľa konkrétneho jadra zložitejšiu pamäťovú hierarchiu, často s oddelenými inštrukčnými a dátovými cache.</p>
+<p>Ani ESP32 nemá jeden univerzálny jednoduchý model pre všetky varianty. Rozlišujeme konkrétny čip a jeho pamäťovú organizáciu.</p>
+<h3>6. Overenie a zápis</h3>
+<p><strong>40 – 45 min</strong></p>
+<p><strong>Pamäťový priestor programu a údajov a základná cesta prístupu.</strong></p>
+<ol><li>Čo je spoločné vo von Neumannovom modeli?  </li></ol>
+<p><strong>Programovú a dátovú pamäť aj prístupové cesty.</strong></p>
+<ol><li>Čo oddeľuje harvardský model?  </li></ol>
+<p><strong>Nie. Môže na to poskytovať osobitné mechanizmy.</strong></p>
+<ol><li>Znamená Harvardova architektúra nemožnosť čítať konštanty z Flash?  </li></ol>
+<h4>Zápis do zošita</h4>
+<blockquote><p>Von Neumannova architektúra používa spoločný priestor programu a údajov.  </p></blockquote>
+<blockquote><p>Harvardova architektúra oddeľuje programový a dátový priestor.  </p></blockquote>
+<blockquote><p>Oddelené cesty umožňujú súčasný prístup k inštrukciám a údajom.  </p></blockquote>
+<blockquote><p>AVR je príklad harvardského usporiadania.  </p></blockquote>
+<blockquote><p>Moderné procesory často kombinujú vlastnosti oboch prístupov.</p></blockquote>
+<section class="simulator"><h2>Praktická ukážka: čítanie vstupu a riadenie LED</h2><p>Úplný program skopírujte do online simulátora Arduino Uno. Simulátor predstavuje mikrokontrolér ATmega328P a umožňuje sledovať vykonávanie programu. Zapojte tlačidlo medzi pin 2 a GND.</p><div class="code-actions"><button type="button" data-copy-code="sketch">Kopírovať kód</button><a class="button" href="https://wokwi.com/projects/new/arduino-uno" target="_blank" rel="noopener">Otvoriť online simulátor Arduino Uno (Wokwi)</a><span id="status-sketch" role="status" aria-live="polite"></span></div><pre><code id="sketch">const byte LED_PIN = LED_BUILTIN;
+const byte INPUT_PIN = 2;
+volatile bool inputChanged = false;
+
+void onInputChange() {
+    inputChanged = true;
+}
+
+void setup() {
+    pinMode(LED_PIN, OUTPUT);
+    pinMode(INPUT_PIN, INPUT_PULLUP);
+    attachInterrupt(digitalPinToInterrupt(INPUT_PIN), onInputChange, FALLING);
+}
+
+void loop() {
+    if (inputChanged) {
+        noInterrupts();
+        inputChanged = false;
+        interrupts();
+        digitalWrite(LED_PIN, !digitalRead(LED_PIN));
+    }
+}</code></pre></section><section class="sources"><h2>Zdroje na ďalšie štúdium</h2><ul><li><a href="https://ww1.microchip.com/downloads/en/devicedoc/atmel-7810-automotive-microcontrollers-atmega328p_datasheet.pdf" target="_blank" rel="noopener">Datasheet ATmega328P (Microchip)</a></li><li><a href="https://onlinedocs.microchip.com/oxy/GUID-74578654-4F5F-4B29-9F3C-6C3B1F1DF670-en-US-2/GUID-3A867580-03F1-4E43-8949-9FA8E3B4DF3F.html" target="_blank" rel="noopener">AVR instruction execution timing (Microchip)</a></li><li><a href="https://docs.wokwi.com/getting-started/supported-hardware" target="_blank" rel="noopener">Wokwi supported hardware</a></li></ul></section><footer><p>Prednáška 2.1 · Výpočtová technika · Celok 02</p><p> <a href="2.2%20Architektura%20MCU%20-%20CPU%2C%20ALU%20a%20registre.html">Nasledujúca prednáška →</a></p></footer></main><script src="../theme.js" defer></script><script>document.addEventListener('click',async event=>{const b=event.target.closest('[data-copy-code]');if(!b)return;const c=document.getElementById(b.dataset.copyCode),s=document.getElementById('status-'+b.dataset.copyCode);try{await navigator.clipboard.writeText(c.innerText);s.textContent='Kód bol skopírovaný.'}catch{s.textContent='Kopírovanie sa nepodarilo. Označte kód a skopírujte ho ručne.'}})</script></body></html>

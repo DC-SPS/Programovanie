@@ -1,0 +1,94 @@
+<!doctype html><html lang="sk"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="2.2 Architektúra MCU – CPU, ALU a registre – tematický celok 02"><title>2.2 Architektúra MCU – CPU, ALU a registre | Výpočtová technika</title><style>:root{color-scheme:light dark;--bg:#f7f8fa;--surface:#fff;--text:#1c2330;--muted:#5b6678;--accent:#1f6feb;--border:#d9dee7}@media(prefers-color-scheme:dark){:root{--bg:#12161d;--surface:#1b212b;--text:#e6eaf1;--muted:#9aa6b8;--accent:#83c5ff;--border:#2d3644}}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:16px/1.65 system-ui,-apple-system,"Segoe UI",sans-serif}a{color:var(--accent)}nav,main{width:min(100% - 2rem,900px);margin:auto}nav{display:flex;gap:.6rem;flex-wrap:wrap;padding:.8rem 0}nav a,.button{display:inline-block;padding:.45rem .75rem;border:1px solid var(--border);border-radius:.55rem;text-decoration:none;color:inherit;background:var(--surface)}main{padding:1rem 0 3rem}a:focus-visible,button:focus-visible{outline:3px solid var(--accent);outline-offset:3px}h1{font-size:clamp(1.8rem,5vw,2.6rem);line-height:1.2}h2{margin-top:2rem}h3{margin-top:1.5rem}.muted{color:var(--muted)}.scroll{overflow:auto}.formula{margin:1rem 0;text-align:center;font-family:ui-monospace,Consolas,monospace}table{width:100%;border-collapse:collapse}th,td{padding:.6rem .7rem;border:1px solid var(--border);text-align:left;vertical-align:top}pre{margin:.65rem 0 1rem;padding:1rem;border-radius:9px;overflow:auto;background:#0f172a;color:#e2e8f0;font:14px/1.55 ui-monospace,Consolas,monospace}.code-actions{display:flex;gap:.5rem;flex-wrap:wrap;align-items:center}button{padding:.55rem .8rem;border:0;border-radius:8px;background:#4b91f1;color:#fff;font-weight:700;cursor:pointer}.sources,footer,.simulator{margin-top:2rem;padding-top:1rem;border-top:1px solid var(--border)}blockquote{margin:1rem 0;padding:1rem;border:1px solid var(--border);border-radius:12px;background:var(--surface)}@media(max-width:600px){nav,main{width:calc(100% - 1.2rem)}}</style></head><body><nav aria-label="Navigácia kurzov"><a href="index.html#celok-02">Výpočtová technika · osnova</a><a href="../index.html">Všetky kurzy</a><a href="../nastavenia.html">Nastavenia vzhľadu</a></nav><main><header><p class="muted"><a href="index.html#celok-02">Výpočtová technika</a> · Tematický celok 02 · Prednáška 2.2</p><h1>2.2 Architektúra MCU – CPU, ALU a registre</h1><p class="muted">Architektúra mikrokontroléra · 45 minút</p></header><p><strong>Trvanie:</strong> 45 minút <strong>Nadväznosť:</strong> Pamäťové architektúry.</p>
+<h3>Ciele hodiny</h3>
+<p>Žiak má vedieť:</p>
+<ul><li>pomenovať hlavné časti mikrokontroléra,</li><li>rozlíšiť CPU a celý MCU,</li><li>vysvetliť funkciu ALU a riadiacej jednotky,</li><li>opísať význam registrov,</li><li>vysvetliť úlohu PC, SP a stavových príznakov.</li></ul>
+<h3>Časový plán</h3>
+<div class="scroll"><table><thead><tr><th>Čas</th><th>Obsah</th></tr></thead><tbody><tr><td>0 – 5 min</td><td>Mikrokontrolér ako celok</td></tr><tr><td>5 – 15 min</td><td>CPU, riadiaca jednotka a ALU</td></tr><tr><td>15 – 27 min</td><td>Registre</td></tr><tr><td>27 – 35 min</td><td>Pamäte a periférie</td></tr><tr><td>35 – 41 min</td><td>Model vykonania operácie</td></tr><tr><td>41 – 45 min</td><td>Overenie a zápis</td></tr></tbody></table></div>
+<h3>1. Čo obsahuje MCU?</h3>
+<p><strong>0 – 5 min</strong></p>
+<p><strong>Mikrokontrolér spája procesorové jadro, pamäte a periférie do jedného integrovaného obvodu.</strong></p>
+<pre><code>┌───────────────────────────────────────┐
+│                  MCU                  │
+│                                       │
+│  CPU ↔ pamäte ↔ vnútorné prepojenia    │
+│                    ↕                  │
+│       GPIO, časovače, ADC, UART...     │
+└───────────────────────────────────────┘</code></pre>
+<p><strong>CPU je časť MCU.</strong> Tieto pojmy nie sú totožné.</p>
+<h3>2. CPU a ALU</h3>
+<p><strong>5 – 15 min</strong></p>
+<h4>CPU</h4>
+<p>Procesorové jadro zabezpečuje vykonávanie inštrukcií.</p>
+<p>Obsahuje alebo používa najmä:</p>
+<ul><li>riadiacu jednotku,</li><li>ALU,</li><li>registre,</li><li>vnútorné dátové cesty.</li></ul>
+<h4>Riadiaca jednotka</h4>
+<ul><li>dekóduje inštrukcie,</li><li>organizuje jednotlivé kroky,</li><li>vytvára riadiace signály.</li></ul>
+<h4>ALU</h4>
+<p><strong>Arithmetic Logic Unit – aritmeticko-logická jednotka.</strong></p>
+<p>Vykonáva napríklad:</p>
+<ul><li>sčítanie a odčítanie,</li><li>AND, OR a XOR,</li><li>porovnávanie,</li><li>posuny podľa možností procesora.</li></ul>
+<p>Nie každá operácia vyššieho programovacieho jazyka má vlastnú hardvérovú jednotku. Napríklad delenie alebo výpočty s desatinnými číslami môžu na niektorých MCU vyžadovať viac inštrukcií a knižničný kód.</p>
+<h3>3. Registre</h3>
+<p><strong>15 – 27 min</strong></p>
+<p><strong>Register je malé rýchlo dostupné úložisko používané procesorom alebo perifériou.</strong></p>
+<h4>Pracovné registre</h4>
+<p>Uchovávajú operandy a výsledky.</p>
+<p>ATmega328P má <strong>32 pracovných 8-bitových registrov R0 až R31</strong>. Niektoré dvojice sa používajú aj ako adresové registre.</p>
+<h4>Špeciálne registre</h4>
+<div class="scroll"><table><thead><tr><th>Register</th><th>Úloha</th></tr></thead><tbody><tr><td>PC – program counter</td><td>Určuje miesto vykonávania programu</td></tr><tr><td>SP – stack pointer</td><td>Určuje aktuálnu pozíciu zásobníka</td></tr><tr><td>Stavový register</td><td>Uchováva príznaky výsledkov a riadenia</td></tr></tbody></table></div>
+<p>Presná definícia hodnoty PC počas jednotlivých fáz závisí od architektúry. Pre základný model predstavuje informáciu, odkiaľ procesor získava alebo bude získavať inštrukcie.</p>
+<h4>Stavové príznaky</h4>
+<p>Na AVR napríklad:</p>
+<div class="scroll"><table><thead><tr><th>Príznak</th><th>Význam</th></tr></thead><tbody><tr><td>Z – Zero</td><td>Výsledok príslušnej operácie je nula</td></tr><tr><td>C – Carry</td><td>Prenos alebo výpožička podľa operácie</td></tr><tr><td>N – Negative</td><td>Indikuje najvyšší bit výsledku</td></tr><tr><td>V – Overflow</td><td>Znamienkové pretečenie</td></tr><tr><td>I</td><td>Globálne povolenie prerušení</td></tr></tbody></table></div>
+<p>Nie každá inštrukcia mení všetky príznaky.</p>
+<h4>Príklad</h4>
+<p>Pri 8-bitovom neznamienkovom sčítaní:</p>
+<pre><code>255 + 1 → spodných 8 bitov je 0</code></pre>
+<p>Pri zodpovedajúcej inštrukcii môže byť:</p>
+<ul><li><code>Z = 1</code>,</li><li><code>C = 1</code>.</li></ul>
+<p>Prenos pri neznamienkovom výpočte a znamienkové pretečenie nie sú rovnaký jav.</p>
+<h3>4. Pamäte a periférie</h3>
+<p><strong>27 – 35 min</strong></p>
+<h4>Pamäte</h4>
+<ul><li>Flash: program a konštanty,</li><li>SRAM: pracovné údaje,</li><li>EEPROM: nastavenia na čipoch, ktoré ju poskytujú.</li></ul>
+<h4>Periférie</h4>
+<div class="scroll"><table><thead><tr><th>Periféria</th><th>Úloha</th></tr></thead><tbody><tr><td>GPIO</td><td>Digitálne vstupy a výstupy</td></tr><tr><td>Časovač</td><td>Počítanie času alebo impulzov</td></tr><tr><td>ADC</td><td>Prevod analógového signálu</td></tr><tr><td>UART</td><td>Asynchrónna sériová komunikácia</td></tr><tr><td>SPI a I²C</td><td>Komunikácia s ďalšími obvodmi</td></tr><tr><td>Watchdog</td><td>Dohľad nad postupom programu</td></tr></tbody></table></div>
+<p>Periférie môžu pracovať čiastočne nezávisle od CPU. Časovač napríklad počíta impulzy aj počas vykonávania iného kódu.</p>
+<h4>Dva druhy registrov</h4>
+<p>Rozlišujeme:</p>
+<ul><li>pracovné registre CPU,</li><li>konfiguračné a stavové registre periférií.</li></ul>
+<p>Napríklad <code>PORTB</code> na AVR ovláda GPIO port. Nie je to všeobecný pracovný register typu R16.</p>
+<h3>5. Model vykonania operácie</h3>
+<p><strong>35 – 41 min</strong></p>
+<p>Úloha:</p>
+<pre><code>vysledok = a + b;</code></pre>
+<p>Zjednodušený priebeh:</p>
+<ol><li>Získaj hodnotu <code>a</code>.</li><li>Získaj hodnotu <code>b</code>.</li><li>Umiestni operandy do vhodných registrov.</li><li>ALU vykoná sčítanie.</li><li>Ulož výsledok.</li><li>Podľa inštrukcie aktualizuj príznaky.</li></ol>
+<p>Kompilátor môže postup optimalizovať. Premenné môžu zostať v registroch a niektoré výpočty sa môžu vykonať už pri preklade.</p>
+<h4>Úloha pre žiakov</h4>
+<p>Priraď funkciu:</p>
+<ul><li>ALU,</li><li>PC,</li><li>SP,</li><li>ADC,</li><li>UART.</li></ul>
+<p><strong>Riešenie:</strong> výpočty; miesto v programe; zásobník; analógový prevod; sériový prenos.</p>
+<h3>6. Overenie a zápis</h3>
+<p><strong>41 – 45 min</strong></p>
+<ol><li>Je MCU iba ALU? <strong>Nie.</strong></li><li>Má každý mikrokontrolér ADC? <strong>Nie, závisí od typu.</strong></li><li>Je register to isté ako súbor na úložisku? <strong>Nie.</strong></li></ol>
+<h4>Zápis do zošita</h4>
+<blockquote><p>MCU obsahuje CPU, pamäte a periférie.  </p></blockquote>
+<blockquote><p>CPU vykonáva inštrukcie. Riadiaca jednotka organizuje ich priebeh.  </p></blockquote>
+<blockquote><p>ALU vykonáva aritmetické a logické operácie.  </p></blockquote>
+<blockquote><p>Registre uchovávajú operandy, výsledky, adresy a riadiace informácie.  </p></blockquote>
+<blockquote><p>PC súvisí s vykonávaním programu, SP so zásobníkom.  </p></blockquote>
+<blockquote><p>Stavové príznaky opisujú výsledky vybraných operácií.</p></blockquote>
+<section class="simulator"><h2>Praktická ukážka: čítanie vstupu a riadenie LED</h2><p>Úplný program skopírujte do online simulátora Arduino Uno. Simulátor predstavuje mikrokontrolér ATmega328P a umožňuje sledovať vykonávanie programu. Zapojte tlačidlo medzi pin 2 a GND.</p><div class="code-actions"><button type="button" data-copy-code="sketch">Kopírovať kód</button><a class="button" href="https://wokwi.com/projects/new/arduino-uno" target="_blank" rel="noopener">Otvoriť online simulátor Arduino Uno (Wokwi)</a><span id="status-sketch" role="status" aria-live="polite"></span></div><pre><code id="sketch">const byte LED_PIN = LED_BUILTIN;
+const byte SENSOR_PIN = A0;
+unsigned int sensorValue = 0;
+
+void setup() {
+    pinMode(LED_PIN, OUTPUT);
+}
+
+void loop() {
+    sensorValue = analogRead(SENSOR_PIN);
+    digitalWrite(LED_PIN, sensorValue &gt; 512 ? HIGH : LOW);
+    delay(20);
+}</code></pre></section><section class="sources"><h2>Zdroje na ďalšie štúdium</h2><ul><li><a href="https://ww1.microchip.com/downloads/en/devicedoc/atmel-7810-automotive-microcontrollers-atmega328p_datasheet.pdf" target="_blank" rel="noopener">Datasheet ATmega328P (Microchip)</a></li><li><a href="https://docs.wokwi.com/getting-started/supported-hardware" target="_blank" rel="noopener">Wokwi supported hardware</a></li></ul></section><footer><p>Prednáška 2.2 · Výpočtová technika · Celok 02</p><p><a href="2.1%20Von%20Neumannova%20a%20Harvardova%20architektura.html">← Predchádzajúca prednáška</a> <a href="2.3%20Instrukcny%20cyklus%20mikrokontrolera.html">Nasledujúca prednáška →</a></p></footer></main><script src="../theme.js" defer></script><script>document.addEventListener('click',async event=>{const b=event.target.closest('[data-copy-code]');if(!b)return;const c=document.getElementById(b.dataset.copyCode),s=document.getElementById('status-'+b.dataset.copyCode);try{await navigator.clipboard.writeText(c.innerText);s.textContent='Kód bol skopírovaný.'}catch{s.textContent='Kopírovanie sa nepodarilo. Označte kód a skopírujte ho ručne.'}})</script></body></html>
