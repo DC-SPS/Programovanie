@@ -9,6 +9,13 @@ Prehľad tematických celkov a dostupných materiálov je na stránke
 [Výpočtová technika](./index.html). Spracované sú tieto prednášky:
 
 - [1.1 Embedded systémy – princípy a oblasti](./1.1%20Embedded%20systemy%20-%20principy%20a%20oblasti.html)
+- [3.1 Binárna sústava](./3.1%20Binarna%20sustava.html)
+- [3.2 Hexadecimálna sústava, bity a bajty](./3.2%20Hexadecimalna%20sustava%20-%20bity%20a%20bajty.html)
+- [3.3 Dátové typy a veľkosť dát](./3.3%20Datove%20typy%20a%20velkost%20dat.html)
+- [3.4 Bitové operácie](./3.4%20Bitove%20operacie.html)
+- [3.5 Druhy pamätí (Flash, SRAM, EEPROM)](./3.5%20Druhy%20pamati%20Flash%20SRAM%20EEPROM.html)
+- [3.6 Memory map a adresovanie](./3.6%20Memory%20map%20a%20adresovanie.html)
+- [3.7 Zásobník a ukazovatele](./3.7%20Zasobnik%20a%20ukazovatele.html)
 - [4.1 GPIO – všeobecné digitálne vstupy a výstupy](./4.1%20GPIO%20-%20digitalne%20vstupy%20a%20vystupy.html)
 - [4.2 Konfigurácia vstupov a výstupov](./4.2%20Konfiguracia%20vstupov%20a%20vystupov.html)
 - [4.3 Polling a udalostné riadenie](./4.3%20Polling%20a%20udalostne%20riadenie.html)
@@ -18,5 +25,5 @@ Prehľad tematických celkov a dostupných materiálov je na stránke
 - [4.7 Časovače a časovanie](./4.7%20Casovace%20a%20casovanie.html)
 - [4.8 Watchdog timer](./4.8%20Watchdog%20timer.html)
 
-Ostatné témy z 65-bodovej osnovy sú zatiaľ vedené ako plán učiva. Každá
-prednáška tematického celku 4 je určená na 45 minút.
+Ostatné témy z 65-bodovej osnovy sú zatiaľ vedené ako plán učiva. Prednášky
+tematických celkov 3 a 4 sú určené na 45 minút.
