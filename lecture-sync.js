@@ -58,7 +58,7 @@ import { firebaseConfig } from "./firebase-config.js";
   ui.innerHTML = `
     <nav class="lecture-sync-controls__course" aria-label="Návrat na stránku kurzu">
       <a data-course-home>← Prehľad kurzu</a>
-      <a href="/index.html">Všetky kurzy</a>
+      <a data-all-courses>Všetky kurzy</a>
     </nav>
     <div class="lecture-sync-controls__row lecture-sync-controls__row--play">
       <button type="button" class="ctl-play" data-action="play" aria-pressed="false">▶ Prehrať</button>
@@ -78,8 +78,16 @@ import { firebaseConfig } from "./firebase-config.js";
     <span class="lecture-sync-controls__status" data-status data-state="offline" role="status" aria-live="polite"></span>
     <details class="lecture-sync-controls__pair" data-pair hidden><summary>Zobraziť QR kód na pripojenie</summary><div class="lecture-sync-controls__qr-wrap"><img class="lecture-sync-controls__qr" data-qr alt="QR kód na pripojenie zariadenia"></div></details>
   `;
-  const courseDirectory = decodeURIComponent(location.pathname.split("/").filter(Boolean)[0] || "");
-  $(`[data-course-home]`).href = courseDirectory ? `/${encodeURIComponent(courseDirectory)}/index.html` : "/index.html";
+  const pathParts = decodeURIComponent(location.pathname).split("/").filter(Boolean);
+  const currentDirectory = pathParts.slice(0, -1);
+  const courseDirectory = pathParts[0] || "";
+  const relativeHref = (targetParts) => {
+    let shared = 0;
+    while (shared < currentDirectory.length && shared < targetParts.length && currentDirectory[shared] === targetParts[shared]) shared += 1;
+    return [...Array(currentDirectory.length - shared).fill(".."), ...targetParts.slice(shared).map(encodeURIComponent)].join("/") || "./";
+  };
+  $(`[data-course-home]`).href = relativeHref(courseDirectory ? [courseDirectory, "index.html"] : ["index.html"]);
+  $(`[data-all-courses]`).href = relativeHref(["index.html"]);
   section.prepend(ui);
 
   const status = $(`[data-status]`);
