@@ -16,12 +16,16 @@ import { firebaseConfig } from "./firebase-config.js";
   document.body.prepend(section);
   const panelStyle = document.createElement("style");
   panelStyle.textContent = `
-    body.lecture-sync-layout{display:grid;grid-template-columns:minmax(0,1fr) 300px;align-items:start;column-gap:1rem}
+    body.lecture-sync-layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(260px,300px);align-items:start;column-gap:1rem}
     body.lecture-sync-layout>.global-course-nav{grid-column:1/-1}
-    body.lecture-sync-layout>main,body.lecture-sync-layout>.wrap,body.lecture-sync-layout>.w{grid-column:1;grid-row:2;width:100%!important;max-width:900px!important;min-width:0;margin:1rem auto 0!important;padding-bottom:1rem!important}
+    body.lecture-sync-layout>main,body.lecture-sync-layout>.wrap,body.lecture-sync-layout>.w{grid-column:1;grid-row:2;width:100%!important;max-width:none!important;min-width:0;margin:1rem 0 0!important;padding-bottom:1rem!important}
     .lesson-side-panel{position:sticky!important;grid-column:2;grid-row:2;top:1rem!important;right:auto!important;z-index:5000!important;width:300px!important;max-height:calc(100vh - 2rem)!important;margin:1rem 0 1rem!important;overflow-y:auto!important;overflow-x:hidden!important;padding:.5rem!important;border:1px solid var(--line)!important;border-radius:.8rem!important;background:var(--bg)!important;box-shadow:0 12px 38px #0003!important}
     .lecture-sync-controls{--ctl-play:#facc15;--ctl-nav:#2563eb;--ctl-session:#c2410c;container-type:inline-size;display:grid;gap:.5rem;padding:.6rem;border:1px solid var(--line);border-radius:.7rem;background:var(--card);color:var(--fg);font:13px/1.4 system-ui,"Segoe UI",sans-serif}
     .lecture-sync-controls__row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));align-items:stretch;gap:9px;min-width:0}
+    .lecture-sync-controls__course{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.4rem}
+    .lecture-sync-controls__course a{display:flex;align-items:center;justify-content:center;min-height:40px;padding:.35rem .4rem;border:1px solid var(--line);border-radius:.5rem;background:var(--bg);color:var(--fg);font-size:.72rem;font-weight:700;line-height:1.2;text-align:center;text-decoration:none}
+    .lecture-sync-controls__course a:hover{text-decoration:underline}
+    .lecture-sync-controls__course a:focus-visible{outline:3px solid var(--fg);outline-offset:2px}
     .lecture-sync-controls button,.lecture-sync-controls select{width:100%;min-width:0;min-height:48px;padding:.45rem .55rem;border:2px solid transparent;border-radius:.5rem;background:var(--ctl-session);color:#fff;font:700 .82rem/1.15 system-ui,"Segoe UI",sans-serif;text-align:center;white-space:nowrap;cursor:pointer}
     .lecture-sync-controls .ctl-play{min-height:56px;background:var(--ctl-play);color:#172033}
     .lecture-sync-controls .ctl-nav{background:var(--ctl-nav);color:#fff}
@@ -50,7 +54,12 @@ import { firebaseConfig } from "./firebase-config.js";
 
   const ui = document.createElement("section");
   ui.className = "lecture-sync-controls";
+  const $ = (selector) => ui.querySelector(selector);
   ui.innerHTML = `
+    <nav class="lecture-sync-controls__course" aria-label="Návrat na stránku kurzu">
+      <a data-course-home>← Prehľad kurzu</a>
+      <a href="/index.html">Všetky kurzy</a>
+    </nav>
     <div class="lecture-sync-controls__row lecture-sync-controls__row--play">
       <button type="button" class="ctl-play" data-action="play" aria-pressed="false">▶ Prehrať</button>
       <button type="button" class="ctl-play" data-action="pause" aria-pressed="false">⏸ Pauza</button>
@@ -69,9 +78,10 @@ import { firebaseConfig } from "./firebase-config.js";
     <span class="lecture-sync-controls__status" data-status data-state="offline" role="status" aria-live="polite"></span>
     <details class="lecture-sync-controls__pair" data-pair hidden><summary>Zobraziť QR kód na pripojenie</summary><div class="lecture-sync-controls__qr-wrap"><img class="lecture-sync-controls__qr" data-qr alt="QR kód na pripojenie zariadenia"></div></details>
   `;
+  const courseDirectory = decodeURIComponent(location.pathname.split("/").filter(Boolean)[0] || "");
+  $(`[data-course-home]`).href = courseDirectory ? `/${encodeURIComponent(courseDirectory)}/index.html` : "/index.html";
   section.prepend(ui);
 
-  const $ = (selector) => ui.querySelector(selector);
   const status = $(`[data-status]`);
   const targetStatus = $(`[data-target-status]`);
   const pairBox = $(`[data-pair]`);

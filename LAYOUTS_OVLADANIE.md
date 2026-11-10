@@ -13,6 +13,8 @@ Tieto pokyny používajte pri úprave prednášky alebo inej obsahovej stránky 
 
 Spoločný panel prednášky má podľa podpory príslušného modulu obsahovať:
 
+- **Návrat ku kurzom:** stále viditeľné odkazy na prehľad aktuálneho kurzu a na všetky kurzy. Odkaz na prehľad smeruje do `index.html` modulu, odkaz na všetky kurzy do koreňového `index.html`.
+
 - **Čítanie prednášky:** Prehrať, Zastaviť, Pozastaviť/Pokračovať a Prehrať znova. Tlačidlá majú správne odrážať stav prehrávania a pri nedostupnom rozhraní hlasu sa má zobraziť zrozumiteľný stav.
 - **Nastavenia hlasu:** rýchlosť čítania, výber dostupného hlasu a hlasitosť čítania. Nastavenia, ktoré spoločný skript ukladá, ponechajte perzistentné. Ovládanie hlasitosti sa týka hlasu prednášky, nie hlasitosti zariadenia.
 - **Hodiny a Pomodoro:** názov a kontext aktuálnej prednášky, čas a časové pásmo, spustenie/pozastavenie/vynulovanie 45-minútovej hodiny a ovládanie Pomodoro, ak ich modul poskytuje.
@@ -23,10 +25,12 @@ Na úzkych obrazovkách panel musí zostať použiteľný, nesmie zakrývať obs
 ## Implementačné pravidlá
 
 - Uprednostnite existujúci spoločný skript a štýly. Nevkladajte ich kód znovu do HTML každej prednášky.
-- Nevytvárajte duplicitný prehrávač v HTML. `lesson-voice.js` vytvorí prehrávač automaticky pre očíslované prednášky, keď stránka načíta `theme.js` alebo `lesson-top.js` a neobsahuje vlastný `.narration-controls`.
-- Ak stránka obsahuje starý vlastný `.narration-controls`, overte, či tým neblokuje spoločný prehrávač. Pri migrácii odstráňte iba duplicitný blok prehrávania; existujúci panel synchronizácie, časovače a Pomodoro zachovajte.
+- Nevytvárajte duplicitný prehrávač. `lesson-voice.js` vytvorí prehrávač automaticky pre očíslované prednášky, keď stránka načíta `theme.js` alebo `lesson-top.js` a neobsahuje vlastný `.narration-controls`.
+- Ak stránka načítava `c-lecture-controls.js`, zachovajte jeho očakávané prvky `.narration-controls` a identifikátory `play-reading`, `stop-reading`, `pause-reading`, `replay-reading`, `narration-speed`, `narration-voice`, `narration-volume`, `narration-volume-value` a `reading-status`. Tento skript zároveň pripája časovač hodiny a Pomodoro. Neodstraňujte tieto prvky bez migrácie všetkých ich funkcií.
+- Pri migrácii na automatický prehrávač `lesson-voice.js` odstráňte staré ovládanie len vtedy, keď stránka už nezávisí od `c-lecture-controls.js` na prehrávanie ani časovače. Zachovajte synchronizáciu, navigáciu kurzov, časovače a Pomodoro.
 - V Python module používajte `../lesson-top.js` pre HTML priamo v `01_Python/` a `../../lesson-top.js` pre HTML v jeho podpriečinkoch. Prehľad `index.html` je výnimka podľa `01_Python/AGENTS.md`.
 - Zachovajte `lecture-sync.js` na stránkach, ktoré už poskytujú synchronizáciu. Jeho panel môže zdieľať kontajner `.lesson-side-panel` s prehrávačom.
+- V rozložení synchronizovanej prednášky nechajte hlavný obsah vyplniť dostupný priestor vedľa bočného panela. Odkazy na prehľad kurzu a všetky kurzy umiestnite priamo do panela tak, aby zostali dostupné aj pri posúvaní stránky.
 - Zachovajte poradie načítania a deduplikáciu spoločných skriptov. Nevkladajte druhú inštanciu ovládania, ak ho stránka už vytvára dynamicky.
 - Odkazy na lokálne skripty, štýly a obrázky musia byť relatívne k HTML súboru a musia viesť na existujúce súbory.
 - Nevytvárajte ani neprepisujte screenshoty používateľa. Použite ich ako vizuálnu referenciu.
