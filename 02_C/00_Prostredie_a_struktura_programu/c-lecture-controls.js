@@ -1,4 +1,4 @@
-﻿(() => {
+(() => {
     const studentButton = document.getElementById("student-mode") || document.getElementById("student") || document.getElementById("bs");
     const teacherButton = document.getElementById("teacher-mode") || document.getElementById("teacher") || document.getElementById("bt");
     const setTeacherMode = (enabled) => {
