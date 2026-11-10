@@ -1,4 +1,12 @@
 (function () {
+  var currentThemeScript = document.currentScript;
+  if (currentThemeScript && !document.querySelector('script[data-lesson-voice-loader]')) {
+    var voiceLoader = document.createElement("script");
+    voiceLoader.src = new URL("lesson-voice.js", currentThemeScript.src).href;
+    voiceLoader.dataset.lessonVoiceLoader = "true";
+    voiceLoader.defer = true;
+    document.head.appendChild(voiceLoader);
+  }
   var storageKey = "python-materials-theme";
   var root = document.documentElement;
   var choices = document.querySelectorAll("[data-theme-choice]");
