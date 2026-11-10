@@ -73,6 +73,9 @@
   let lastQueue = [];
   let paused = false;
   let token = 0;
+  let activeBlock = 0;
+  let activeStart = 0;
+  let highlightedBlock = -1;
   if (!supported) status.textContent = "Tento prehliadač nepodporuje hlasové čítanie.";
 
   try {
@@ -93,10 +96,17 @@
   populateVoices();
   speech?.addEventListener("voiceschanged", populateVoices);
 
-  const textBlocks = () => [...main.querySelectorAll("h2,h3,p,li,td,th,pre")]
+  const narrationNodes = [...main.querySelectorAll("h2,h3,p,li,td,th,pre")]
     .filter((node) => !node.closest("header,footer,nav,.lesson-clock,.lesson-side-panel,.lesson-export-sections,.sources,.teacher-note,.note,.safety-notice,[aria-hidden='true']"))
-    .map((node) => node.innerText.trim())
-    .filter((text) => text.length > 0);
+    .filter((node) => node.innerText.trim().length > 0);
+  const textBlocks = () => narrationNodes.map((node) => node.innerText.trim());
+  const emitReadingState = (isReading, isPaused = false) => {
+    const currentNode = narrationNodes[activeBlock];
+    const headings = [...main.querySelectorAll("h2")].filter((heading) => !heading.closest(".sources,footer"));
+    let section = 0;
+    headings.forEach((heading, index) => { if (heading.compareDocumentPosition(currentNode) & Node.DOCUMENT_POSITION_FOLLOWING) section = index; });
+    window.dispatchEvent(new CustomEvent("lesson-reading-state", { detail: { isReading, isPaused, section, block: activeBlock, chunk: 0 } }));
+  };
 
   const render = () => {
     const reading = supported && speech.speaking;
@@ -115,15 +125,17 @@
       paused = false;
       render();
       status.textContent = "Prednáška bola prečítaná.";
+      emitReadingState(false);
       return;
     }
+    activeBlock = activeStart + Math.max(0, lastQueue.length - queue.length - 1);
     const utterance = new SpeechSynthesisUtterance(text);
     const selected = voices.find((voice) => voice.voiceURI === voiceSelect.value) || voices.find((voice) => voice.lang.toLowerCase().startsWith("sk"));
     utterance.lang = selected?.lang || "sk-SK";
     utterance.voice = selected || null;
     utterance.rate = Number(rateSelect.value);
     utterance.volume = Number(volumeInput.value) / 100;
-    utterance.onstart = () => { if (run === token) render(); };
+    utterance.onstart = () => { if (run === token) { render(); emitReadingState(true, paused); } };
     utterance.onend = () => { if (run === token) speakNext(run); };
     utterance.onerror = (event) => {
       if (run !== token || ["canceled", "interrupted"].includes(event.error)) return;
@@ -133,12 +145,14 @@
     };
     speech.speak(utterance);
   };
-  const start = (items) => {
+  const start = (items, startIndex = 0) => {
     if (!supported) { status.textContent = "Tento prehliadač nepodporuje hlasové čítanie."; return; }
     token += 1;
     speech.cancel();
     queue = [...items];
     lastQueue = [...items];
+    activeStart = Math.max(0, Number(startIndex) || 0);
+    activeBlock = activeStart;
     paused = false;
     status.textContent = "Čítanie sa spúšťa.";
     render();
@@ -153,10 +167,11 @@
     speech.cancel();
     status.textContent = "Čítanie je zastavené.";
     render();
+      emitReadingState(false);
   });
   pauseButton.addEventListener("click", () => {
-    if (paused) { speech.resume(); paused = false; status.textContent = "Čítanie pokračuje."; }
-    else if (speech.speaking) { speech.pause(); paused = true; status.textContent = "Čítanie je pozastavené."; }
+    if (paused) { speech.resume(); paused = false; status.textContent = "Čítanie pokračuje."; emitReadingState(true, false); }
+    else if (speech.speaking) { speech.pause(); paused = true; status.textContent = "Čítanie je pozastavené."; emitReadingState(true, true); }
     render();
   });
   replayButton.addEventListener("click", () => start(lastQueue));
@@ -165,5 +180,30 @@
   volumeInput.addEventListener("input", () => { $('[data-voice-volume-value]').textContent = `${volumeInput.value} %`; });
   volumeInput.addEventListener("change", () => { try { localStorage.setItem(volumeKey, volumeInput.value); } catch (_) {} });
   window.addEventListener("beforeunload", () => { token += 1; speech?.cancel(); }, { once: true });
+  window.lessonSpeechRemote = Object.freeze({
+    play: () => playButton.click(),
+    pauseResume: () => pauseButton.click(),
+    pause: () => { if (speech?.speaking && !paused) pauseButton.click(); },
+    resume: () => { if (paused) pauseButton.click(); },
+    stop: () => stopButton.click(),
+    replay: () => replayButton.click(),
+    restartLesson: () => start(textBlocks()),
+    playFrom: (block = 0) => {
+      const startIndex = Math.max(0, Number(block) || 0);
+      start(textBlocks().slice(startIndex), startIndex);
+    },
+    getBlockCount: () => narrationNodes.length,
+    getSectionStart: (sectionIndex) => {
+      const headings = [...main.querySelectorAll("h2")].filter((heading) => !heading.closest(".sources,footer"));
+      const heading = headings[sectionIndex];
+      return Math.max(0, narrationNodes.indexOf(heading));
+    },
+    highlightBlock: (blockIndex) => {
+      if (highlightedBlock >= 0) narrationNodes[highlightedBlock]?.removeAttribute("data-reading-target");
+      highlightedBlock = Math.max(0, Math.min(narrationNodes.length - 1, Number(blockIndex) || 0));
+      narrationNodes[highlightedBlock]?.setAttribute("data-reading-target", "true");
+    },
+    getState: () => ({ isReading: Boolean(speech?.speaking || paused), isPaused: paused, block: activeBlock, chunk: 0 }),
+  });
   render();
 })();
