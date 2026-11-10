@@ -1,6 +1,6 @@
 # Téma 4 · Hodina 19: Historický úvod a normy jazyka C++
 
-> **Interaktívna verzia v štýle prednášok Pythonu:** [Otvoriť vizuálnu prednášku s prepínačom žiak/učiteľ, kopírovaním kódu a samoopravným kvízom](https://programovanie-sps.vercel.app/03_C%2B%2B/Kurz_2_rocnik/lekcie/01_Uvod_a_normy_C%2B%2B.html).
+> **Interaktívna verzia v štýle prednášok Pythonu:** [Otvoriť vizuálnu prednášku s prepínačom žiak/učiteľ, kopírovaním kódu a samoopravným kvízom](./01_Uvod_a_normy_C++.html).
 
 **Veľká téma:** Úvod do programovania v štruktúrovanom programovacom jazyku
 **Miesto v kurze:** 19. z 66 vyučovacích hodín; prvá zo štyroch hodín úvodnej témy

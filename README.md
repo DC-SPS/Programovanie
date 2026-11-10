@@ -100,7 +100,7 @@ Prednášky používajú Google Authentication a Realtime Database. Prihlasovani
 
 1. Vytvor projekt vo [Firebase Console](https://console.firebase.google.com/) alebo použi projekt `programovanie-sps`.
 2. V **Authentication → Sign-in method** povoľ poskytovateľa **Google**.
-3. V **Authentication → Settings → Authorized domains** pridaj doménu nasadenia (napr. `programovanie-sps.vercel.app`) a doménu na lokálny vývoj (`localhost`, ak ju Firebase projekt povoľuje).
+3. V **Authentication → Settings → Authorized domains** pridaj doménu produkčného nasadenia `programovanie-gules.vercel.app` a doménu na lokálny vývoj (`localhost`, ak ju Firebase projekt povoľuje).
 4. V **Realtime Database** vytvor databázu v regióne **europe-west1**. Webová URL musí byť `https://programovanie-sps-default-rtdb.europe-west1.firebasedatabase.app`. Ak Firebase pridelí inú URL alebo názov databázy, aktualizuj `databaseURL` v `firebase-config.js` podľa URL zobrazenej v konzole.
 5. Nasaď pravidlá z repozitára: `npx firebase-tools deploy --only database --project programovanie-sps`. Pravidlá povoľujú čítanie a zápis iba prihlásenému vlastníkovi pod `/sessions/{uid}` a `/presence/{uid}`.
 6. Over, že `apiKey`, `authDomain`, `projectId` a `appId` v `firebase-config.js` patria k webovej aplikácii tohto Firebase projektu.
