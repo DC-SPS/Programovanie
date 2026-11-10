@@ -821,13 +821,7 @@
       const lessonClock = document.querySelector(".lesson-clock");
       const sidePanel = document.querySelector(".lesson-side-panel");
       if (!lessonClock || !sidePanel) return;
-      sidePanel.prepend(lessonClock);
-
-      const clockBody = lessonClock.querySelector(".lesson-clock__body");
-      lessonClock.querySelector(".lesson-clock__progress")?.remove();
-      if (!clockBody) return;
-      const lessonTitle = clockBody.querySelector(".lesson-clock__title")?.textContent.trim() || "4.1";
-      clockBody.replaceChildren();
+      const lessonTitle = lessonClock.querySelector(".lesson-clock__title")?.textContent.trim() || document.title;
 
       const make = (tag, className, text) => {
         const element = document.createElement(tag);
@@ -835,24 +829,6 @@
         if (text) element.textContent = text;
         return element;
       };
-      const lessonTimer = make("section", "lesson-duration");
-      lessonTimer.setAttribute("aria-label", "45-min\u00fatov\u00fd \u010dasova\u010d vyu\u010dovacej hodiny");
-      const lessonHeading = make("div", "lesson-duration-heading");
-      lessonHeading.append(make("strong", "", "\u010cas celej hodiny"));
-      const lessonTime = make("time", "lesson-duration-time", "45:00");
-      lessonTime.setAttribute("aria-label", "Zost\u00e1vaj\u00faci \u010das celej vyu\u010dovacej hodiny");
-      lessonHeading.append(lessonTime);
-      const lessonControls = make("div", "lesson-duration-controls");
-      const startButton = make("button", "", "Spusti\u0165 hodinu");
-      startButton.type = "button";
-      const pauseButton = make("button", "", "Pozastavi\u0165");
-      pauseButton.type = "button";
-      pauseButton.disabled = true;
-      const resetButton = make("button", "", "Vynulova\u0165");
-      resetButton.type = "button";
-      lessonControls.append(startButton, pauseButton, resetButton);
-      lessonTimer.append(lessonHeading, lessonControls);
-
       const pomodoro = make("section", "pomodoro-panel");
       pomodoro.setAttribute("aria-label", "Pomodoro \u010dasova\u010d pr\u00e1ce a oddychu");
       const heading = make("div", "pomodoro-heading");
@@ -866,6 +842,16 @@
       heading.append(readout);
       const context = make("div", "pomodoro-context");
       context.append(make("strong", "pomodoro-context-title", lessonTitle));
+
+      const controls = make("div", "pomodoro-controls");
+      const startButton = make("button", "", "Spusti\u0165");
+      startButton.type = "button";
+      const pauseButton = make("button", "", "Pozastavi\u0165");
+      pauseButton.type = "button";
+      pauseButton.disabled = true;
+      const resetButton = make("button", "", "Vynulova\u0165");
+      resetButton.type = "button";
+      controls.append(startButton, pauseButton, resetButton);
 
       const sliders = make("div", "pomodoro-sliders");
       const addSlider = (label, min, max, step, initial) => {
@@ -885,7 +871,7 @@
       };
       const workSlider = addSlider("Pr\u00e1ca", 5, 60, 5, 25);
       const relaxSlider = addSlider("Relax", 1, 15, 1, 5);
-      pomodoro.append(heading, context, sliders);
+      pomodoro.append(heading, context, controls, sliders);
       clockBody.append(lessonTimer, pomodoro);
 
       const toast = make("div", "pomodoro-toast");
@@ -895,9 +881,7 @@
       document.body.append(toast);
 
       let phase = "work";
-      let lessonRemaining = 45 * 60 * 1000;
       let pomodoroRemaining = 25 * 60 * 1000;
-      let lessonEndAt = 0;
       let pomodoroEndAt = 0;
       let intervalId = 0;
       let toastTimeout = 0;
@@ -908,7 +892,6 @@
       };
       const phaseName = () => phase === "work" ? "PR\u00c1CA" : "RELAX";
       const render = () => {
-        lessonTime.textContent = format(lessonRemaining);
         pomodoroTime.textContent = format(pomodoroRemaining);
         phaseLabel.textContent = phaseName();
         phaseLabel.dataset.phase = phase;
@@ -920,24 +903,9 @@
         window.clearTimeout(toastTimeout);
         toastTimeout = window.setTimeout(() => { toast.hidden = true; }, 5000);
       };
-      const stopAtLessonEnd = () => {
-        window.clearInterval(intervalId);
-        intervalId = 0;
-        lessonRemaining = 0;
-        render();
-        startButton.disabled = false;
-        startButton.textContent = "Spusti\u0165 znova";
-        pauseButton.disabled = true;
-        notify("Koniec 45-min\u00fatovej vyu\u010dovacej hodiny.", "relax");
-      };
       const tick = () => {
         const now = Date.now();
-        lessonRemaining = Math.max(0, lessonEndAt - now);
         pomodoroRemaining = Math.max(0, pomodoroEndAt - now);
-        if (lessonRemaining === 0) {
-          stopAtLessonEnd();
-          return;
-        }
         if (pomodoroRemaining === 0) {
           phase = phase === "work" ? "relax" : "work";
           pomodoroRemaining = durationFor(phase);
@@ -949,13 +917,10 @@
       startButton.addEventListener("click", () => {
         if (intervalId) return;
         const now = Date.now();
-        lessonEndAt = now + lessonRemaining;
         pomodoroEndAt = now + pomodoroRemaining;
         intervalId = window.setInterval(tick, 200);
         startButton.disabled = true;
-        startButton.textContent = "Hodina be\u017e\u00ed";
         pauseButton.disabled = false;
-        notify("Spusten\u00e1 hodina \u00b7 Pomodoro PR\u00c1CA");
       });
       pauseButton.addEventListener("click", () => {
         if (!intervalId) return;
@@ -971,11 +936,10 @@
         window.clearInterval(intervalId);
         intervalId = 0;
         phase = "work";
-        lessonRemaining = 45 * 60 * 1000;
         pomodoroRemaining = durationFor("work");
         render();
         startButton.disabled = false;
-        startButton.textContent = "Spusti\u0165 hodinu";
+        startButton.textContent = "Spusti\u0165";
         pauseButton.disabled = true;
         toast.hidden = true;
       });
@@ -992,10 +956,7 @@
       bindSlider(workSlider, "work");
       bindSlider(relaxSlider, "relax");
       render();
-      const clockDisclosure = make("details", "lesson-clock-disclosure");
-      const clockSummary = make("summary", "", "Časovače hodiny a Pomodoro");
-      clockDisclosure.append(clockSummary, lessonClock);
-      sidePanel.append(clockDisclosure);
+      sidePanel.prepend(pomodoro);
     });
 
     let printSheet = null;
