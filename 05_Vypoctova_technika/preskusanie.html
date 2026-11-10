@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="sk">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Kontrolné otázky a odpovede na opakovanie predmetu Výpočtová technika.">
+  <title>Preskúšanie | Výpočtová technika</title><link rel="stylesheet" href="course-sections.css"><script src="../theme.js" defer></script>
+</head>
+<body><main class="course-page">
+  <nav class="global-course-nav" aria-label="Navigácia kurzov"><a href="index.html">Kurz Výpočtová technika</a><a href="../index.html">Všetky kurzy</a></nav>
+  <header class="course-hero"><span class="eyebrow">Výpočtová technika · 03</span><h1>Preskúšanie</h1><p>Najprv skúste odpovedať bez pomoci. Potom rozbaľte kontrolnú odpoveď a doplňte, čo vám chýbalo.</p></header>
+  <nav class="section-nav" aria-label="Časti kurzu"><a href="teoreticka_cast.html">Teoretická časť</a><a href="cvicenia.html">Cvičenia</a><a href="preskusanie.html" aria-current="page">Preskúšanie</a></nav>
+  <p class="course-note">Materiál slúži na samostatné opakovanie a prípravu na ústne alebo praktické overenie. Neurčuje oficiálne hodnotenie ani klasifikačné kritériá.</p>
+  <section class="question-grid" aria-label="Kontrolné otázky">
+    <details class="question-card"><summary>1. Aký je rozdiel medzi mikroprocesorom a mikrokontrolérom?</summary><div class="question-answer"><p>Mikrokontrolér integruje CPU, pamäť a periférie do jedného obvodu na riadenie zariadenia. Mikroprocesor typicky potrebuje externé pamäte a ďalšie obvody.</p></div></details>
+    <details class="question-card"><summary>1. Čo je embedded systém a uveďte jeho príklad.</summary><div class="question-answer"><p>Je to počítačový systém zabudovaný do zariadenia, ktorý plní určenú úlohu; napríklad regulátor teploty alebo riadenie práčky.</p></div></details>
+    <details class="question-card"><summary>2. Ako sa líši Harvardova a von Neumannova architektúra?</summary><div class="question-answer"><p>Harvardova architektúra oddeľuje pamäť a zbernice programu a údajov. Von Neumannova používa spoločný priestor alebo cestu pre program aj údaje.</p></div></details>
+    <details class="question-card"><summary>2. Na čo slúži ALU a registre?</summary><div class="question-answer"><p>ALU vykonáva aritmetické a logické operácie. Registre sú malé a rýchle úložiská priamo v procesore pre práve spracúvané hodnoty a stav.</p></div></details>
+    <details class="question-card"><summary>3. Preveďte 173 do binárnej sústavy a určte počet bitov jedného bajtu.</summary><div class="question-answer"><p>173₁₀ = 10101101₂. Jeden bajt má 8 bitov.</p></div></details>
+    <details class="question-card"><summary>3. Na čo slúžia Flash, SRAM a EEPROM?</summary><div class="question-answer"><p>Flash typicky uchováva program, SRAM je rýchla pracovná pamäť a EEPROM uchováva menšie údaje aj po vypnutí napájania.</p></div></details>
+    <details class="question-card"><summary>4. Kedy je vhodné použiť prerušenie namiesto pollingu?</summary><div class="question-answer"><p>Keď sa udalosť objavuje nepravidelne a procesor môže medzi udalosťami vykonávať inú prácu alebo šetriť energiu. Obsluha má byť krátka.</p></div></details>
+    <details class="question-card"><summary>4. Čo spôsobuje zákmit tlačidla a ako ho potlačíte?</summary><div class="question-answer"><p>Mechanický kontakt môže pri stlačení krátko viackrát zmeniť stav. Potlačí sa časovým filtrom v softvéri alebo vhodným hardvérovým obvodom.</p></div></details>
+    <details class="question-card"><summary>5. Čo robí ADC a čo vyjadruje rozlíšenie prevodníka?</summary><div class="question-answer"><p>ADC prevádza analógové napätie na číselnú hodnotu. Rozlíšenie určuje počet možných úrovní; pri N bitoch je ich 2ᴺ.</p></div></details>
+    <details class="question-card"><summary>5. Ako PWM mení výkon dodaný záťaži?</summary><div class="question-answer"><p>Rýchlym prepínaním výstupu mení pomer času zapnutia k celej perióde. Tento pomer sa nazýva strieda a ovplyvňuje priemerný výkon.</p></div></details>
+    <details class="question-card"><summary>6. V čom sa líšia UART, I²C a SPI?</summary><div class="question-answer"><p>UART je asynchrónne sériové spojenie, I²C používa dve spoločné vodičové linky s adresovaním a SPI používa hodinový signál a samostatné výberové signály zariadení.</p></div></details>
+    <details class="question-card"><summary>6. Na čo slúži Modbus RTU?</summary><div class="question-answer"><p>Je to sériový protokol požiadaviek a odpovedí používaný na komunikáciu medzi riadiacimi a priemyselnými zariadeniami; správy obsahujú adresu a kontrolu chyby.</p></div></details>
+    <details class="question-card"><summary>7. Čo je úloha a čo plánovač v RTOS?</summary><div class="question-answer"><p>Úloha predstavuje samostatnú činnosť programu. Plánovač rozhoduje, ktorá pripravená úloha dostane čas procesora podľa pravidiel a priorít systému.</p></div></details>
+    <details class="question-card"><summary>7. Prečo treba chrániť zdieľané údaje medzi úlohami?</summary><div class="question-answer"><p>Súbežné čítanie a zápis môže vytvoriť nekonzistentný stav. Používajú sa napríklad mutexy alebo bezpečné fronty správ.</p></div></details>
+    <details class="question-card"><summary>8. Kedy zvoliť SBC a kedy mikrokontrolér?</summary><div class="question-answer"><p>SBC je vhodný pre plnohodnotný operačný systém, sieťové služby a väčšie aplikácie. Mikrokontrolér je vhodný na priamu, úspornú a časovo predvídateľnú riadiacu úlohu.</p></div></details>
+    <details class="question-card"><summary>8. Na čo slúži SSH pri správe SBC?</summary><div class="question-answer"><p>Umožňuje bezpečný vzdialený terminálový prístup cez sieť, napríklad na konfiguráciu systému a kontrolu služieb.</p></div></details>
+    <details class="question-card"><summary>9. Akú úlohu má broker v MQTT?</summary><div class="question-answer"><p>Prijíma správy od odosielateľov a podľa tém ich distribuuje prihláseným odberateľom; zariadenia tak nemusia poznať adresy všetkých príjemcov.</p></div></details>
+    <details class="question-card"><summary>9. Uveďte dve opatrenia na zabezpečenie IoT zariadenia.</summary><div class="question-answer"><p>Použite jedinečné silné prihlasovacie údaje, šifrovanú komunikáciu, pravidelné aktualizácie a obmedzte sieťové oprávnenia zariadenia.</p></div></details>
+    <details class="question-card"><summary>10. Aké kroky má obsahovať návrh embedded systému?</summary><div class="question-answer"><p>Analýzu požiadaviek, návrh architektúry a rozhraní, realizáciu, testovanie, diagnostiku a dokumentáciu.</p></div></details>
+    <details class="question-card"><summary>10. Ako má vyzerať dobrý testovací prípad?</summary><div class="question-answer"><p>Má jasne určené predpoklady, vstupné podmienky alebo podnet a očakávaný výsledok, s ktorým sa porovná skutočné správanie.</p></div></details>
+  </section>
+  <section class="assessment-panel"><h2>Záverečná kontrola</h2><p>Vyberte si jeden systém z cvičení a bez poznámok vysvetlite jeho blokovú schému, tok údajov, spôsob komunikácie, bezpečnostné riziká a dva testovacie prípady. Potom si skontrolujte, či viete obhájiť každé rozhodnutie.</p></section>
+  <footer><a href="index.html">Kurz Výpočtová technika</a><a href="../index.html">Všetky kurzy</a></footer>
+</main></body></html>

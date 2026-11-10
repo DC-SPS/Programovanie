@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="sk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101827">
+  <meta name="description" content="Teoretická časť predmetu Výpočtová technika: osnova desiatich tematických celkov a 66 prednášok.">
+  <title>Teoretická časť | Výpočtová technika</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f7f8fa;
+      --surface: #fff;
+      --text: #1c2330;
+      --muted: #5b6678;
+      --accent: #1f6feb;
+      --border: #d9dee7;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme]) {
+        color-scheme: dark;
+        --bg: #101827;
+        --surface: #182437;
+        --text: #edf3fc;
+        --muted: #b4c2d6;
+        --accent: #83c5ff;
+        --border: #2b3b52;
+      }
+    }
+    :root[data-theme="light"] { color-scheme: light; }
+    :root[data-theme="dark"] {
+      color-scheme: dark;
+      --bg: #101827;
+      --surface: #182437;
+      --text: #edf3fc;
+      --muted: #b4c2d6;
+      --accent: #83c5ff;
+      --border: #2b3b52;
+    }
+    * { box-sizing: border-box; }
+    body {
+      min-height: 100vh;
+      margin: 0;
+      background: radial-gradient(ellipse at 50% -20%, #27466b 0, var(--bg) 58%);
+      color: var(--text);
+      font: 16px/1.6 system-ui, -apple-system, "Segoe UI", sans-serif;
+    }
+    .page { width: min(100% - 2rem, 1000px); margin-inline: auto; }
+    .global-course-nav { display: flex; flex-wrap: wrap; gap: .55rem; margin-top: .75rem; }
+    .global-course-nav a, .account-link {
+      display: inline-block;
+      padding: .4rem .7rem;
+      border: 1px solid var(--border);
+      border-radius: .55rem;
+      color: inherit;
+      background: var(--surface);
+      text-decoration: none;
+    }
+    a:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+    header { padding: clamp(3rem, 8vw, 6rem) 0 2.5rem; }
+    .eyebrow, .tag {
+      color: var(--accent);
+      font-size: .82rem;
+      font-weight: 700;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+    }
+    h1 { margin: .5rem 0; font-size: clamp(2.2rem, 6vw, 4rem); line-height: 1.1; letter-spacing: -.04em; }
+    header p { max-width: 720px; margin: .75rem 0; color: var(--muted); font-size: 1.08rem; }
+    .course-stats, .module-jump { display: flex; flex-wrap: wrap; gap: .6rem; margin: 1rem 0; }
+    .course-stats span, .module-jump a {
+      padding: .45rem .7rem;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      color: var(--text);
+      background: var(--surface);
+      text-decoration: none;
+    }
+    .outline-note { padding: .8rem 1rem; border-left: 4px solid var(--accent); border-radius: .4rem; background: var(--surface); color: var(--muted); }
+    .course-module { margin: 2rem 0; scroll-margin-top: 1rem; }
+    .course-module-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: .6rem; padding-bottom: .65rem; border-bottom: 1px solid var(--border); }
+    .course-module-head h2 { margin: .3rem 0; font-size: clamp(1.3rem, 3vw, 1.8rem); }
+    .course-module-head p { margin: 0; color: var(--muted); }
+    .topic-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); gap: .55rem; padding: 0; list-style: none; }
+    .topic-list li { min-width: 0; padding: .75rem .9rem; border: 1px solid var(--border); border-radius: .75rem; background: var(--surface); }
+    .topic-list a { color: var(--accent); font-weight: 700; }
+    .topic-list .planned { color: var(--muted); }
+    footer { margin-top: 3rem; padding: 1rem 0 2rem; border-top: 1px solid var(--border); color: var(--muted); }
+    footer a { color: var(--accent); }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; } }
+  </style>
+  <link rel="stylesheet" href="../course-overview.css">
+  <script src="../theme.js" defer></script>
+</head>
+<body>
+  <nav class="global-course-nav page" aria-label="Navigácia kurzov">
+    <a href="index.html">Výber časti kurzu</a>
+    <a href="cvicenia.html">Cvičenia</a>
+    <a href="preskusanie.html">Preskúšanie</a>
+    <a href="../index.html">Všetky kurzy</a>
+    <a href="../01_Python/index.html">Python</a>
+    <a href="../nastavenia.html">Nastavenia vzhľadu</a>
+  </nav>
+  <div class="page">
+    <header class="course-hero">
+      <div class="course-hero-copy">
+        <div class="eyebrow">Teoretická časť · Embedded systémy · IoT</div>
+        <h1>Teoretická časť</h1>
+        <p>Prehľad všetkých desiatich tematických celkov a 66 prednášok od mikrokontrolérov po návrh embedded systémov.</p>
+        <div class="course-stats">
+          <span>10 tematických celkov</span>
+          <span>66 tém v osnove</span>
+          <span>Mikrokontroléry a SBC</span>
+          <span>Embedded systémy a IoT</span>
+        </div>
+        <a class="account-link" href="../login.html">Prihlásenie a informácie o účte</a>
+      </div>
+    </header>
+    <main>
+      <nav class="module-jump" aria-label="Tematické celky">
+        <a href="#celok-01">01 · Úvod</a>
+        <a href="#celok-02">02 · Architektúra</a>
+        <a href="#celok-03">03 · Pamäť a dáta</a>
+        <a href="#celok-04">04 · I/O a časovanie</a>
+        <a href="#celok-05">05 · Analógové a výkonové</a>
+        <a href="#celok-06">06 · Komunikácia</a>
+        <a href="#celok-07">07 · RTOS</a>
+        <a href="#celok-08">08 · SBC a OS</a>
+        <a href="#celok-09">09 · IoT</a>
+        <a href="#celok-10">10 · Návrh systému</a>
+      </nav>
+      <p class="outline-note"><strong>Stav materi&#225;lov:</strong> Preh&#318;ad zachov&#225;va v&#353;etk&#253;ch 66 t&#233;m. Predn&#225;&#353;ky tematick&#253;ch celkov 01 a&#382; 10 s&#250; spracovan&#233; ako samostatn&#233; 45-min&#250;tov&#233; materi&#225;ly.</p>
+
+      <div class="course-modules">
+        <section class="course-module" id="celok-01" aria-labelledby="nadpis-01">
+          <div class="course-module-head"><div><span class="eyebrow">Tematický celok 01</span><h2 id="nadpis-01">Úvod do mikroprocesorových a embedded systémov</h2></div><p>6 tém</p></div>
+          <ul class="topic-list"><li><a href="1.1%20Mikroprocesor%20a%20mikrokontroler.html">Mikroprocesor a mikrokontrolér</a></li><li><a href="1.2%20Embedded%20systemy%20-%20principy%20a%20oblasti%20pouzitia.html">Embedded systémy – princípy a oblasti použitia</a></li><li><a href="1.3%20Vyvojove%20prostredia%20a%20nastroje.html">Vývojové prostredia a nástroje</a></li><li><a href="1.4%20Architektury%20MCU%20a%20SBC.html">Architektúry MCU a SBC</a></li><li><a href="1.5%20STM32%20a%20ARM%20Cortex-M.html">STM32 a ARM Cortex-M</a></li><li><a href="1.6%20Jednodoskove%20pocitace%20a%20Raspberry%20Pi.html">Jednodoskové počítače a Raspberry Pi</a></li></ul>
+        </section>
+        <section class="course-module" id="celok-02" aria-labelledby="nadpis-02">
+          <div class="course-module-head"><div><span class="eyebrow">Tematický celok 02</span><h2 id="nadpis-02">Architektúra mikrokontroléra</h2></div><p>4 témy</p></div>
+          <ul class="topic-list">
+            <li><a href="2.1%20Von%20Neumannova%20a%20Harvardova%20architektura.html">Von Neumannova a Harvardova architektúra</a></li>
+            <li><a href="2.2%20Architektura%20MCU%20-%20CPU%2C%20ALU%20a%20registre.html">Architektúra MCU, CPU, ALU, registre</a></li>
+            <li><a href="2.3%20Instrukcny%20cyklus%20mikrokontrolera.html">Inštrukčný cyklus mikrokontroléra</a></li>
+            <li><a href="2.4%20Architektonicke%20pristupy%20-%20RISC%2C%20CISC%20a%20ARM.html">Architektonické prístupy (RISC, CISC a ARM)</a></li>
+          </ul>
+        </section>
+        <section class="course-module" id="celok-03" aria-labelledby="nadpis-03">
+          <div class="course-module-head"><div><span class="eyebrow">Tematický celok 03</span><h2 id="nadpis-03">Pamäťový systém a dátová reprezentácia</h2></div><p>7 tém</p></div>
+          <ul class="topic-list">
+            <li><a href="3.1%20Binarna%20sustava.html">Binárna sústava</a></li>
+            <li><a href="3.2%20Hexadecimalna%20sustava%20-%20bity%20a%20bajty.html">Hexadecimálna sústava, bity a bajty</a></li>
+            <li><a href="3.3%20Datove%20typy%20a%20velkost%20dat.html">Dátové typy a veľkosť dát</a></li>
+            <li><a href="3.4%20Bitove%20operacie.html">Bitové operácie</a></li>
+            <li><a href="3.5%20Druhy%20pamati%20Flash%20SRAM%20EEPROM.html">Druhy pamätí (Flash, SRAM, EEPROM)</a></li>
+            <li><a href="3.6%20Memory%20map%20a%20adresovanie.html">Memory map a adresovanie</a></li>
+            <li><a href="3.7%20Zasobnik%20a%20ukazovatele.html">Zásobník a ukazovatele</a></li>
+          </ul>
+        </section>
+        <section class="course-module" id="celok-04" aria-labelledby="nadpis-04">
+          <div class="course-module-head"><div><span class="eyebrow">Tematický celok 04</span><h2 id="nadpis-04">Vstupno-výstupný systém, prerušenia a časovanie</h2></div><p>8 tém</p></div>
+          <ul class="topic-list">
+            <li><a href="4.1%20GPIO%20-%20digitalne%20vstupy%20a%20vystupy.html">GPIO – všeobecné digitálne vstupy a výstupy</a></li>
+            <li><a href="4.2%20Konfiguracia%20vstupov%20a%20vystupov.html">Konfigurácia vstupov a výstupov</a></li>
+            <li><a href="4.3%20Polling%20a%20udalostne%20riadenie.html">Polling a udalostné riadenie</a></li>
+            <li><a href="4.4%20Prerusenia%20a%20ISR.html">Prerušenia a ISR</a></li>
+            <li><a href="4.5%20Pravidla%20prace%20v%20ISR.html">Pravidlá práce v ISR</a></li>
+            <li><a href="4.6%20Debouncing%20-%20potlacenie%20zakmitov.html">Debouncing – potlačenie zákmitov kontaktov</a></li>
+            <li><a href="4.7%20Casovace%20a%20casovanie.html">Časovače a časovanie</a></li>
+            <li><a href="4.8%20Watchdog%20timer.html">Watchdog timer</a></li>
+          </ul>
+        </section>
+        <section class="course-module" id="celok-05" aria-labelledby="nadpis-05">
+          <div class="course-module-head"><div><span class="eyebrow">Tematický celok 05</span><h2 id="nadpis-05">Analógové a výkonové periférie</h2></div><p>6 tém</p></div>
+          <ul class="topic-list">
+            <li><a href="5.1%20Analogovy%20a%20digitalny%20signal.html">Analógové a digitálne signály</a></li>
+            <li><a href="5.2%20ADC%20-%20princip%20cinnosti.html">ADC – princíp činnosti</a></li>
+            <li><a href="5.3%20Vzorkovanie%20a%20kvantovanie.html">Vzorkovanie a kvantovanie</a></li>
+            <li><a href="5.4%20DAC%20-%20princip%20a%20pouzitie.html">DAC – princíp a použitie</a></li>
+            <li><a href="5.5%20PWM%20-%20princip%20cinnosti.html">PWM – princíp činnosti</a></li>
+            <li><a href="5.6%20Filtracia%20kalibracia%20a%20presnost%20merania.html">Filtrácia, kalibrácia a presnosť merania</a></li>
+          </ul>
+        </section>
+        <section class="course-module" id="celok-06" aria-labelledby="nadpis-06">
+          <div class="course-module-head"><div><span class="eyebrow">Tematický celok 06</span><h2 id="nadpis-06">Komunikačné rozhrania a protokoly</h2></div><p>8 tém</p></div>
+          <ul class="topic-list">
+            <li><a href="6.1%20Seriova%20a%20paralelna%20komunikacia.html">Sériová a paralelná komunikácia</a></li>
+            <li><a href="6.2%20UART.html">UART</a></li>
+            <li><a href="6.3%20I2C.html">I²C</a></li>
+            <li><a href="6.4%20SPI.html">SPI</a></li>
+            <li><a href="6.5%20RS-232%20a%20RS-485.html">RS-232 a RS-485</a></li>
+            <li><a href="6.6%20Modbus%20RTU.html">Modbus RTU</a></li>
+            <li><a href="6.7%20USB%20a%20dalsie%20rozhrania.html">USB a ďalšie rozhrania</a></li>
+            <li><a href="6.8%20Komunikacne%20protokoly%20-%20ramce%20a%20adresovanie.html">Komunikačné protokoly – rámce a adresovanie</a></li>
+          </ul>
+        </section>
+        <section class="course-module" id="celok-07" aria-labelledby="nadpis-07">
+          <div class="course-module-head"><div><span class="eyebrow">Tematický celok 07</span><h2 id="nadpis-07">Embedded a reálne operačné systémy</h2></div><p>6 tém</p></div>
+          <ul class="topic-list">
+              <li><a href="7.1%20Realne%20a%20embedded%20OS.html">Reálne a embedded OS</a></li>
+              <li><a href="7.2%20Operacny%20system%20v%20embedded%20systemoch.html">Operačný systém v embedded systémoch</a></li>
+              <li><a href="7.3%20Multitasking.html">Multitasking</a></li>
+              <li><a href="7.4%20Scheduler%20-%20planovac%20uloh.html">Scheduler – plánovač úloh</a></li>
+              <li><a href="7.5%20Synchronizacia%20uloh.html">Synchronizácia úloh</a></li>
+              <li><a href="7.6%20RTOS%20-%20princip%20a%20pouzitie.html">RTOS – princíp a použitie</a></li>
+          </ul>
+        </section>
+        <section class="course-module" id="celok-08" aria-labelledby="nadpis-08">
+          <div class="course-module-head"><div><span class="eyebrow">Tematick&#253; celok 08</span><h2 id="nadpis-08">Jednodoskov&#233; po&#269;&#237;ta&#269;e a ich opera&#269;n&#253; syst&#233;m</h2></div><p>7 t&#233;m</p></div>
+          <ul class="topic-list">
+            <li><a href="8.1%20SBC%20jednodoskove%20pocitace.html">SBC – jednodoskové počítače</a></li>
+            <li><a href="8.2%20MCU%20verzus%20SBC.html">MCU verzus SBC</a></li>
+            <li><a href="8.3%20Linux%20v%20embedded%20systemoch.html">Linux v embedded systémoch</a></li>
+            <li><a href="8.4%20Suborovy%20system.html">Súborový systém</a></li>
+            <li><a href="8.5%20Procesy%20a%20sluzby.html">Procesy a služby</a></li>
+            <li><a href="8.6%20SSH%20a%20vzdialena%20sprava.html">SSH a vzdialená správa</a></li>
+            <li><a href="8.7%20GPIO%20v%20Linuxe.html">GPIO v Linuxe</a></li>
+          </ul>
+        </section>
+        <section class="course-module" id="celok-09" aria-labelledby="nadpis-09">
+          <div class="course-module-head"><div><span class="eyebrow">Tematick&#253; celok 09</span><h2 id="nadpis-09">IoT &#8211; architekt&#250;ra, komunik&#225;cia a bezpe&#269;nos&#357;</h2></div><p>9 t&#233;m</p></div>
+          <ul class="topic-list">
+            <li><a href="9.1%20IoT%20architektura.html">IoT architektúra</a></li>
+            <li><a href="9.2%20TCPIP%20a%20IP%20komunikacia.html">TCP/IP a IP komunikácia</a></li>
+            <li><a href="9.3%20Wi-Fi.html">Wi-Fi</a></li>
+            <li><a href="9.4%20Bluetooth%20a%20BLE.html">Bluetooth a BLE</a></li>
+            <li><a href="9.5%20HTTP%20a%20REST%20API.html">HTTP a REST API</a></li>
+            <li><a href="9.6%20MQTT.html">MQTT</a></li>
+            <li><a href="9.7%20IoT%20broker%20a%20komunikacia%20zariadeni%201.html">IoT broker a komunikácia zariadení 1</a></li>
+            <li><a href="9.8%20Spracovanie%20a%20ukladanie%20dat.html">Spracovanie a ukladanie dát</a></li>
+            <li><a href="9.9%20Bezpecnost%20IoT%20zariadeni.html">Bezpečnosť IoT zariadení</a></li>
+          </ul>
+        </section>
+        <section class="course-module" id="celok-10" aria-labelledby="nadpis-10">
+          <div class="course-module-head"><div><span class="eyebrow">Tematický celok 10</span><h2 id="nadpis-10">Návrh a realizácia embedded systému</h2></div><p>5 tém</p></div>
+          <ul class="topic-list">
+            <li><a href="10.1%20Analyza%20zadania.html">Analýza zadania</a></li>
+            <li><a href="10.2%20Navrh%20architektury%20systemu.html">Návrh architektúry systému</a></li>
+            <li><a href="10.3%20Testovanie%20a%20diagnostika.html">Testovanie a diagnostika</a></li>
+            <li><a href="10.4%20Dokumentacia%20embedded%20systemu.html">Dokumentácia embedded systému</a></li>
+            <li><a href="10.5%20Integracia%20vyhodnotenie%20a%20obhajoba%20projektu.html">Integrácia, vyhodnotenie a obhajoba</a></li>
+          </ul>
+        </section>
+      </div>
+    </main>
+    <footer><a href="../index.html">Všetky kurzy</a> · <a href="../01_Python/index.html">Kurz Python</a> · Materiály k predmetu Výpočtová technika</footer>
+  </div>
+  <script type="module" src="../lesson-remote.js"></script>
+</body>
+</html>

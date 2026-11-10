@@ -5,8 +5,13 @@ perifériám, komunikácii a návrhu zariadení pre internet vecí.
 
 ## Osnova a materiály
 
-Prehľad tematických celkov a dostupných materiálov je na stránke
-[Výpočtová technika](./index.html). Spracované sú tieto prednášky:
+Kurz je rozdelený do troch častí:
+
+- [Teoretická časť – osnova a prednášky](./teoreticka_cast.html)
+- [Cvičenia](./cvicenia.html)
+- [Preskúšanie a kontrolné otázky](./preskusanie.html)
+
+Prehľad častí kurzu je na stránke [Výpočtová technika](./index.html). Spracované prednášky sú dostupné aj priamo:
 
 - [Mikroprocesor a mikrokontrolér](./1.1%20Mikroprocesor%20a%20mikrokontroler.html)
 - [Embedded systémy – princípy a oblasti použitia](./1.2%20Embedded%20systemy%20-%20principy%20a%20oblasti%20pouzitia.html)
