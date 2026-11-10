@@ -77,7 +77,7 @@ Po absolvovaní kurzu študent:
 
 Rozsah uvedený v tabuľke tvorí 66 vyučovacích hodín vrátane viac-hodinových tém. V dodanom rozvrhu nie je samostatná téma priradená k hodine 10; toto chýbajúce miesto ponechávame označené na potvrdenie, nie na domyslené doplnenie.
 
-Rozpísané materiály sú v priečinku [`lekcie/`](./lekcie/). Aktuálne rozpracovaná lekcia je **hodina 19**: [otvoriť interaktívnu prednášku 4.1 – Historický úvod a normy jazyka C++](https://programovanie-sps.vercel.app/03_C%2B%2B/Kurz_2_rocnik/lekcie/01_Uvod_a_normy_C%2B%2B.html); [zdrojový Markdown](./lekcie/01_Uvod_a_normy_C++.md). Číslovka `01` v názve súboru označuje prvú rozpísanú lekciu v tomto priečinku; jej miesto v učebnej ceste je hodina 19 z 66.
+Rozpísané materiály sú v priečinku [`lekcie/`](./lekcie/). Aktuálne rozpracovaná lekcia je **hodina 19**: [otvoriť interaktívnu prednášku 4.1 – Historický úvod a normy jazyka C++](./lekcie/01_Uvod_a_normy_C++.html); [zdrojový Markdown](./lekcie/01_Uvod_a_normy_C++.md). Číslovka `01` v názve súboru označuje prvú rozpísanú lekciu v tomto priečinku; jej miesto v učebnej ceste je hodina 19 z 66.
 
 ### Samostatné zadanie a prezentácia
 

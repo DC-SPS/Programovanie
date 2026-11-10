@@ -6,7 +6,7 @@ const status = document.getElementById("auth-status");
 
 const translatedProxyHost = window.location.hostname.endsWith(".translate.goog");
 if (translatedProxyHost) {
-  const originalLoginUrl = new URL("https://programovanie-sps.vercel.app/login.html");
+  const originalLoginUrl = new URL("https://programovanie-gules.vercel.app/login.html");
   const requestedNext = new URLSearchParams(window.location.search).get("next");
   if (isLocalPath(requestedNext)) originalLoginUrl.searchParams.set("next", normalizeLocalPath(requestedNext));
   status.textContent = "Prihlasovanie sa presúva na pôvodnú doménu kurzu, kde ho Firebase povoľuje.";
