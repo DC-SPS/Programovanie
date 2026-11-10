@@ -59,5 +59,5 @@
 
 ## Assumptions
 - Rozsahom je všetkých 66 očíslovaných prednášok VYT, ktoré zdieľajú koreňové ovládacie skripty.
-- Osem prednášok s `c-lecture-controls.js` zachová svoj vlastný prehrávač a Pomodoro; úpravy spoločného štýlu sa na ne aplikujú iba tam, kde neporušia ich identifikátory/API.
+- Osem prednášok s `c-lecture-controls.js` zachová vlastný prehrávač čítania; starý duplicitný časovač nahradí spoločný čas hodiny a Pomodoro.
 - Synchronizácia zostáva obmedzená existujúcim Firebase účtom a API; ak zdieľanie nie je dostupné, UI musí stav jasne oznámiť.

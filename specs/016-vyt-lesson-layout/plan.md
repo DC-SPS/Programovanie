@@ -3,7 +3,7 @@
 **Branch**: `016-vyt-lesson-layout` | **Date**: 2026-11-10 | **Spec**: [spec.md](spec.md)
 
 ## Summary
-Upraviť zdieľané skripty tak, aby všetky VYT prednášky mali kompaktnú navigáciu, čitateľnú hlavičku hodiny a bočný panel so stabilným poradím a zjednotenými interakciami. Zachovať HTML obsahu, existujúce API, navigačné ciele a osem stránok so špecifickým C prehrávačom.
+Upraviť zdieľané skripty tak, aby všetky VYT prednášky mali kompaktnú navigáciu, čitateľnú hlavičku hodiny a bočný panel so stabilným poradím a zjednotenými interakciami. Zachovať HTML obsahu, existujúce API a navigačné ciele; na ôsmich starších stránkach ponechať špecifické čítanie a nahradiť duplicitné časovače spoločnými ovládacími prvkami.
 
 ## Technical Context
 **Language/Version**: JavaScript ES modules, HTML, CSS  
@@ -35,6 +35,6 @@ Upraviť zdieľané skripty tak, aby všetky VYT prednášky mali kompaktnú nav
 - `specs/016-vyt-lesson-layout/`: špecifikácia, plán a úlohy
 
 ## Risks
-- Osem stránok C používa vlastný prehrávač; spoločné vizuálne poradie ich nesmie zdvojiť ani meniť ich API.
+- Osem stránok C používa vlastný prehrávač čítania; spoločné vizuálne poradie nesmie meniť jeho API ani zobrazovať duplicitné časovače.
 - Synchronizácia môže byť neprihlásená/offline; stav pripojenia zostane viditeľný a obnoviteľný.
 - Ak prehliadač nie je dostupný, vizuálne overenie sa musí označiť ako neuskutočnené, nie úspešné.
