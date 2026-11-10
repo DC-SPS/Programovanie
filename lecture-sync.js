@@ -6,8 +6,17 @@ import { firebaseConfig } from "./firebase-config.js";
   const root = document.querySelector("main, .wrap, .w");
   if (!root) return;
 
+  if (!document.querySelector('script[src$="/lesson-pomodoro.js"]')) {
+    const pomodoroLoader = document.createElement("script");
+    pomodoroLoader.src = new URL("./lesson-pomodoro.js", import.meta.url).href;
+    pomodoroLoader.defer = true;
+    document.head.append(pomodoroLoader);
+  }
+
   const sdkVersion = "10.14.1";
   const headings = [...root.querySelectorAll("h2")].filter((heading) => !heading.closest(".sources, footer"));
+  const topicNumber = root.querySelector("h1")?.textContent.match(/^\s*(\d+)/)?.[1] || "01";
+  const courseSection = topicNumber.padStart(2, "0");
   const deviceId = getDeviceId();
   const section = document.querySelector(".lesson-side-panel") || document.createElement("aside");
   section.classList.add("lesson-side-panel");
@@ -49,34 +58,83 @@ import { firebaseConfig } from "./firebase-config.js";
     @container (max-width:280px){.lecture-sync-controls button,.lecture-sync-controls select{padding-inline:.15rem;font-size:.64rem;letter-spacing:-.025em}.lecture-sync-controls .ctl-session[data-action="connect"]{font-size:.58rem}.lecture-sync-controls select{padding-right:.1rem}}
     @media(max-width:768px){body.lecture-sync-layout{display:block;overflow-x:hidden}body.lecture-sync-layout>main,body.lecture-sync-layout>.wrap,body.lecture-sync-layout>.w{width:100%!important;max-width:100%!important;margin:0!important}.lesson-side-panel{position:sticky!important;top:env(safe-area-inset-top,0px)!important;right:auto!important;bottom:auto!important;left:auto!important;z-index:5000!important;width:100%!important;max-height:30vh!important;overflow-y:auto!important;margin:0!important;padding:.3rem!important;border-radius:0 0 .65rem .65rem!important;background:var(--bg)!important;box-shadow:0 4px 12px #0003!important}.lesson-side-panel .narration-controls{padding:.3rem!important}.lecture-sync-controls{padding:.4rem;gap:.35rem}.lecture-sync-controls__row{gap:8px}.lecture-sync-controls button,.lecture-sync-controls select{min-height:48px;font-size:.78rem}.lecture-sync-controls__row--play button{min-height:56px}.lecture-sync-controls__pair[open] .lecture-sync-controls__qr{width:96px;height:96px}main,.wrap,.w{min-width:0;max-width:100%;overflow-wrap:anywhere}}
     @media print{.lecture-sync-controls{display:none!important}}
+    body.lecture-sync-layout{grid-template-columns:minmax(0,1fr) minmax(280px,300px);gap:0 24px;padding-inline:clamp(12px,2vw,28px);overflow-x:hidden}
+    body.lecture-sync-layout>nav:not(.global-course-nav){grid-column:1/-1;grid-row:1;display:flex;align-items:center;gap:12px;min-height:60px;min-width:0;width:100%!important;margin:0;padding:8px 0}
+    body.lecture-sync-layout>nav:not(.global-course-nav)>a:first-child{flex:1 1 auto;min-width:0;margin-right:auto;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    body.lecture-sync-layout>nav:not(.global-course-nav)>a:not(:first-child){flex:0 0 auto;white-space:nowrap}
+    body.lecture-sync-layout>.global-course-nav{grid-column:1/-1;grid-row:1;display:flex;align-items:center;gap:12px;min-height:60px;min-width:0;width:100%!important;margin:0;padding:8px 0}
+    body.lecture-sync-layout>.global-course-nav>a:first-child{flex:1 1 auto;min-width:0;margin-right:auto;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    body.lecture-sync-layout>.global-course-nav>a:not(:first-child){flex:0 0 auto;white-space:nowrap}
+    body.lecture-sync-layout>main,body.lecture-sync-layout>.wrap,body.lecture-sync-layout>.w{grid-column:1;grid-row:2;margin:0!important;padding-top:0!important}
+    .lesson-side-panel{grid-column:2;grid-row:2;top:8px!important;width:100%!important;max-height:calc(100vh - 16px)!important;margin:0!important;padding:16px!important;border:0!important;border-left:1px solid var(--line,var(--border,#d9dee7))!important;border-radius:0!important;background:transparent!important;box-shadow:none!important;backdrop-filter:none!important;display:flex!important;flex-direction:column;gap:16px;scrollbar-gutter:stable}
+    .lecture-sync-navigation,.lecture-sync-device,.lesson-pomodoro,.pomodoro-panel,.lesson-voice-controls{order:initial;min-width:0;color:var(--fg,var(--text,#182230));font:400 .9rem/1.45 system-ui,"Segoe UI",sans-serif}
+    .lecture-sync-navigation{order:0;display:grid;gap:12px;padding:0 0 16px;border-bottom:1px solid var(--line,var(--border,#d9dee7))}
+    .lecture-sync-controls__course{display:flex;flex-wrap:wrap;gap:8px}
+    .lecture-sync-controls__course a,.lecture-sync-controls__section-nav button,.lecture-sync-device button,.lecture-sync-device select,.lecture-sync-controls__pair button{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:8px 12px;border:1px solid var(--line,var(--border,#cbd4df));border-radius:8px;background:var(--surface,var(--bg,#fff));color:var(--fg,var(--text,#182230));font:600 .875rem/1.25 system-ui,"Segoe UI",sans-serif;text-decoration:none;cursor:pointer}
+    .lecture-sync-controls__section-nav{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:center;gap:8px}
+    .lecture-sync-controls__section-nav button:first-child{grid-column:1;grid-row:2}
+    .lecture-sync-controls__section-nav button[data-action="next"]{grid-column:2;grid-row:2}
+    .lecture-sync-controls__section-nav [data-section-label]{grid-column:1/-1;grid-row:1;justify-self:center;white-space:nowrap;font-size:.875rem;font-variant-numeric:tabular-nums}
+    .lecture-sync-controls__section-nav button:hover:not(:disabled),.lecture-sync-controls__course a:hover,.lecture-sync-device button:hover:not(:disabled){border-color:#1d70c9;background:color-mix(in srgb,#1d70c9 8%,var(--surface,var(--bg,#fff)))}
+    .lecture-sync-controls__section-nav button:focus-visible,.lecture-sync-controls__course a:focus-visible,.lecture-sync-device button:focus-visible,.lecture-sync-device select:focus-visible,.lecture-sync-device summary:focus-visible{outline:3px solid #1d70c9;outline-offset:2px}
+    .lecture-sync-controls__section-nav button:disabled{opacity:.5;cursor:not-allowed}
+    .lecture-sync-device{order:2;display:grid;gap:10px;padding:0 0 16px;border-bottom:1px solid var(--line,var(--border,#d9dee7))}
+    .lecture-sync-device__heading{margin:0;font-size:1rem;line-height:1.3}
+    .lecture-sync-controls__device-status{padding:0;margin:0;font-size:.875rem;line-height:1.45}
+    .lecture-sync-controls__status{position:static;width:auto;height:auto;padding:0;margin:0;overflow:visible;clip:auto;white-space:normal;border:0;font-size:.875rem;line-height:1.45}
+    .lecture-sync-device [data-action="connect"]{width:100%;background:#1d70c9;color:#fff;border-color:#1d70c9}
+    .lecture-sync-device__manage{border-top:1px solid var(--line,var(--border,#d9dee7));padding-top:4px}
+    .lecture-sync-device__manage summary,.lecture-sync-controls__pair summary{min-height:44px;display:flex;align-items:center;font-size:.875rem;font-weight:600;cursor:pointer}
+    .lecture-sync-device__target{display:grid;gap:6px;margin:8px 0;font-size:.875rem}
+    .lecture-sync-device__target select{width:100%}
+    .lecture-sync-controls__pair{margin:8px 0 0;text-align:left}
+    .lecture-sync-controls__qr-wrap{display:grid;justify-items:center;gap:12px;padding:8px}
+    .lecture-sync-controls__qr{width:220px;height:220px;padding:10px;box-sizing:content-box;border-radius:4px}
+    .lecture-sync-controls__pair[open] .lecture-sync-controls__qr{width:220px;height:220px}
+    .lecture-sync-controls__unlock{width:100%;background:#1d70c9!important;color:#fff!important}
+    .lesson-pomodoro,.pomodoro-panel{order:1}.lesson-voice-controls{order:3}
+    body.lecture-sync-layout .lesson-side-panel .narration-controls{order:3;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px;margin:0;padding:16px 0 0;border:0;border-top:1px solid var(--line,var(--border,#d9dee7));border-radius:0;background:transparent;color:var(--fg,var(--text,#182230));font:400 .9rem/1.45 system-ui,"Segoe UI",sans-serif}
+    body.lecture-sync-layout .narration-controls button,body.lecture-sync-layout .narration-controls select{min-width:0;min-height:44px;padding:8px 10px;border:1px solid var(--line,var(--border,#cbd4df));border-radius:8px;background:var(--surface,var(--bg,#fff));color:var(--fg,var(--text,#182230));font:600 .875rem/1.25 system-ui,"Segoe UI",sans-serif}
+    body.lecture-sync-layout .narration-controls #play-reading{grid-column:1/-1;border-color:#1d70c9;background:#1d70c9;color:#fff}
+    body.lecture-sync-layout .narration-controls #pause-reading{display:none!important}
+    body.lecture-sync-layout .narration-controls .narration-settings{grid-column:1/-1;border-top:1px solid var(--line,var(--border,#d9dee7));padding-top:4px}
+    body.lecture-sync-layout .narration-settings summary{min-height:44px;display:flex;align-items:center;font-size:.875rem;font-weight:600;cursor:pointer}
+    body.lecture-sync-layout .narration-controls label{font-size:.875rem;line-height:1.4}
+    body.lecture-sync-layout .narration-controls input[type="range"]{width:100%;min-height:44px;accent-color:#1d70c9}
+    body.lecture-sync-layout .narration-controls .narration-status,body.lecture-sync-layout .narration-controls .narration-continuous-status{grid-column:1/-1;margin:0;font-size:.875rem;line-height:1.45}
+    body.lecture-sync-layout .narration-controls button:focus-visible,body.lecture-sync-layout .narration-controls select:focus-visible,body.lecture-sync-layout .narration-settings summary:focus-visible{outline:3px solid #1d70c9;outline-offset:2px}
+    @media(max-width:900px){body.lecture-sync-layout{display:flex;flex-direction:column;gap:0;padding-inline:clamp(12px,3vw,24px)}body.lecture-sync-layout>nav:not(.global-course-nav),body.lecture-sync-layout>.global-course-nav{order:0;width:100%!important;min-height:60px;flex-wrap:wrap}body.lecture-sync-layout>main,body.lecture-sync-layout>.wrap,body.lecture-sync-layout>.w{order:1;width:100%!important;max-width:100%!important;margin:0!important;padding-top:0!important}body.lecture-sync-layout>.lesson-side-panel{position:static!important;order:2;width:100%!important;max-height:none!important;overflow:visible!important;padding:16px 0!important;border:0!important;border-top:1px solid var(--line,var(--border,#d9dee7))!important;border-radius:0!important;background:transparent!important;box-shadow:none!important}}
+    @media(max-width:480px){body.lecture-sync-layout>nav:not(.global-course-nav){gap:6px}body.lecture-sync-layout>nav:not(.global-course-nav)>a{font-size:.8rem;padding-inline:8px}.lecture-sync-controls__pair[open] .lecture-sync-controls__qr{width:200px;height:200px}.lecture-sync-controls__section-nav{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px}}
   `;
   document.head.append(panelStyle);
 
   const ui = document.createElement("section");
-  ui.className = "lecture-sync-controls";
-  const $ = (selector) => ui.querySelector(selector);
+  ui.className = "lecture-sync-navigation";
+  const deviceUi = document.createElement("section");
+  deviceUi.className = "lecture-sync-device";
+  const $ = (selector) => ui.querySelector(selector) || deviceUi.querySelector(selector);
   ui.innerHTML = `
     <nav class="lecture-sync-controls__course" aria-label="Návrat na stránku kurzu">
-      <a data-course-home>← Prehľad kurzu</a>
+      <a data-course-home>Výpočtová technika – osnova celku ${courseSection}</a>
       <a data-all-courses>Všetky kurzy</a>
     </nav>
-    <div class="lecture-sync-controls__row lecture-sync-controls__row--play">
-      <button type="button" class="ctl-play" data-action="play" aria-pressed="false">▶ Prehrať</button>
-      <button type="button" class="ctl-play" data-action="pause" aria-pressed="false">⏸ Pauza</button>
+    <div class="lecture-sync-controls__section-nav" aria-label="Navigácia v prednáške">
+      <button type="button" data-action="previous" aria-label="Predchádzajúca sekcia">← Predchádzajúca</button>
+      <span data-section-label role="status" aria-live="polite">Sekcia 1 z ${headings.length}</span>
+      <button type="button" data-action="next" aria-label="Ďalšia sekcia">Ďalšia →</button>
     </div>
-    <div class="lecture-sync-controls__row">
-      <button type="button" class="ctl-nav" data-action="previous" aria-label="Predošlá sekcia" title="Prejde na začiatok predchádzajúcej sekcie">◀ Predošlá</button>
-      <button type="button" class="ctl-nav" data-action="next" aria-label="Ďalšia sekcia" title="Prejde na začiatok nasledujúcej sekcie">Ďalšia ▶</button>
-    </div>
-    <div class="lecture-sync-controls__row">
-      <button type="button" class="ctl-session" data-action="connect" aria-label="Prihlásiť a zdieľať prednášku" title="Prihlási sa a zobrazí QR kód na pripojenie ďalšieho zariadenia">Prihlásiť / zdieľať</button>
-      <select class="ctl-session" data-action="target" aria-label="Hlas hrá na" title="Vyber zariadenie, ktoré bude čítať nahlas. Druhé zariadenie je telefón alebo počítač pripojený cez QR kód."><option value="this">Toto zariadenie</option><option value="other" disabled>Druhé zariadenie</option></select>
-    </div>
-    <p class="lecture-sync-controls__device-status" data-target-status role="status" aria-live="polite">Prihlás sa a pripoj druhé zariadenie cez QR kód.</p>
-    <div class="lecture-sync-controls__progress" data-progress hidden><span data-progress-label></span><div class="lecture-sync-controls__track" role="progressbar" aria-label="Priebeh prednášky" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div class="lecture-sync-controls__fill"></div></div></div>
-    <button type="button" class="ctl-session lecture-sync-controls__unlock" data-action="unlock" hidden>Klepni pre povolenie zvuku</button>
-    <span class="lecture-sync-controls__status" data-status data-state="offline" role="status" aria-live="polite"></span>
-    <details class="lecture-sync-controls__pair" data-pair hidden><summary>Zobraziť QR kód na pripojenie</summary><div class="lecture-sync-controls__qr-wrap"><img class="lecture-sync-controls__qr" data-qr alt="QR kód na pripojenie zariadenia"></div></details>
+    <div class="lecture-sync-controls__progress" data-progress hidden><div class="lecture-sync-controls__track" role="progressbar" aria-label="Priebeh prednášky" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div class="lecture-sync-controls__fill"></div></div></div>
+  `;
+  deviceUi.innerHTML = `
+    <h2 class="lecture-sync-device__heading">Pripojenie zariadenia</h2>
+    <p class="lecture-sync-controls__status" data-status data-state="offline" role="status" aria-live="polite">Nepripojené. Prihláste sa, ak chcete synchronizovať.</p>
+    <p class="lecture-sync-controls__device-status" data-target-status role="status" aria-live="polite">Druhé zariadenie zatiaľ nie je pripojené.</p>
+    <button type="button" class="ctl-session" data-action="connect" aria-label="Prihlásiť sa a zdieľať prednášku">Prihlásiť sa a zdieľať</button>
+    <details class="lecture-sync-device__manage"><summary>Spravovať pripojenie</summary>
+      <label class="lecture-sync-device__target">Hlas prehráva na<select data-action="target" aria-label="Zariadenie na prehrávanie hlasu"><option value="this">Toto zariadenie</option><option value="other" disabled>Druhé zariadenie</option></select></label>
+      <details class="lecture-sync-controls__pair" data-pair hidden><summary>Pripojiť ďalšie zariadenie</summary><div class="lecture-sync-controls__qr-wrap"><img class="lecture-sync-controls__qr" data-qr alt="QR kód na pripojenie ďalšieho zariadenia"><button type="button" data-copy-pair>Skopírovať odkaz</button></div></details>
+    </details>
+    <button type="button" class="ctl-session lecture-sync-controls__unlock" data-action="unlock" hidden>Povoliť zvuk</button>
   `;
   const pathParts = decodeURIComponent(location.pathname).split("/").filter(Boolean);
   const currentDirectory = pathParts.slice(0, -1);
@@ -86,21 +144,38 @@ import { firebaseConfig } from "./firebase-config.js";
     while (shared < currentDirectory.length && shared < targetParts.length && currentDirectory[shared] === targetParts[shared]) shared += 1;
     return [...Array(currentDirectory.length - shared).fill(".."), ...targetParts.slice(shared).map(encodeURIComponent)].join("/") || "./";
   };
-  $(`[data-course-home]`).href = relativeHref(courseDirectory ? [courseDirectory, "index.html"] : ["index.html"]);
+  $(`[data-course-home]`).href = `${relativeHref(courseDirectory ? [courseDirectory, "teoreticka_cast.html"] : ["index.html"])}${courseDirectory ? `#celok-${courseSection}` : ""}`;
   $(`[data-all-courses]`).href = relativeHref(["index.html"]);
-  section.prepend(ui);
+  const existingCourseNav = document.querySelector("body > nav.global-course-nav");
+  if (existingCourseNav) {
+    const existingCourseLink = existingCourseNav.querySelector("a:first-child");
+    if (existingCourseLink) {
+      existingCourseLink.textContent = `Výpočtová technika – osnova celku ${courseSection}`;
+      existingCourseLink.href = `${relativeHref([courseDirectory, "teoreticka_cast.html"])}#celok-${courseSection}`;
+    }
+    if (!existingCourseNav.querySelector('a[href*="nastavenia.html"]')) {
+      const appearanceLink = document.createElement("a");
+      appearanceLink.href = relativeHref(["nastavenia.html"]);
+      appearanceLink.textContent = "Nastavenia vzhľadu";
+      existingCourseNav.append(appearanceLink);
+    }
+  }
+  section.append(ui, deviceUi);
 
   const status = $(`[data-status]`);
   const targetStatus = $(`[data-target-status]`);
   const pairBox = $(`[data-pair]`);
   const qr = $(`[data-qr]`);
+  const copyPairButton = $(`[data-copy-pair]`);
   const unlockButton = $(`[data-action="unlock"]`);
   const progress = $(`[data-progress]`);
   const progressLabel = $(`[data-progress-label]`);
   const progressBar = $(`[role="progressbar"]`);
   const progressFill = $(`[data-progress] .lecture-sync-controls__fill`);
+  const sectionLabel = $(`[data-section-label]`);
   const urlParams = new URLSearchParams(location.search);
   let pendingUid = urlParams.get("lectureSyncUid") || "";
+  let pairUrlForCopy = "";
   let navigationIntent = urlParams.get("lectureSyncNavigate") === "1";
   let activeUid = "";
   let dbApi;
@@ -121,23 +196,23 @@ import { firebaseConfig } from "./firebase-config.js";
     status.dataset.state = state;
   };
   const renderReadingState = (detail = {}) => {
-    const playing = Boolean(detail.isReading && !detail.isPaused);
-    const paused = Boolean(detail.isReading && detail.isPaused);
-    $(`[data-action="play"]`).setAttribute("aria-pressed", String(playing));
-    $(`[data-action="pause"]`).setAttribute("aria-pressed", String(paused));
-    $(`[data-action="play"]`).disabled = playing;
-    $(`[data-action="pause"]`).disabled = !playing;
+    if (sectionLabel && Number.isInteger(detail.sectionCount) && detail.sectionCount > 0) {
+      const sectionNumber = Math.min(detail.sectionCount, Math.max(1, Number(detail.section || 0) + 1));
+      sectionLabel.textContent = `Sekcia ${sectionNumber} z ${detail.sectionCount}`;
+      $(`[data-action="previous"]`).disabled = sectionNumber <= 1;
+      $(`[data-action="next"]`).disabled = sectionNumber >= detail.sectionCount;
+    }
     unlockButton.hidden = !detail.needsUnlock;
     if (Number.isInteger(detail.sectionCount) && detail.sectionCount > 0) {
       const sectionNumber = Math.min(detail.sectionCount, Math.max(1, Number(detail.section || 0) + 1));
       const percentage = Math.round((Number(detail.block || 0) / Math.max(1, Number(detail.blockCount || 1))) * 100);
       progress.hidden = false;
-      progressLabel.textContent = `Sekcia ${sectionNumber} z ${detail.sectionCount}`;
+      if (progressLabel) progressLabel.textContent = `Sekcia ${sectionNumber} z ${detail.sectionCount}`;
       progressBar.setAttribute("aria-valuenow", String(percentage));
       progressFill.style.width = `${percentage}%`;
     }
   };
-  renderReadingState();
+  renderReadingState({ section: 0, sectionCount: headings.length });
   const changeState = (values) => {
     if (applyRemote) return;
     Object.assign(localState, values);
@@ -194,6 +269,7 @@ import { firebaseConfig } from "./firebase-config.js";
   const selectSection = (index, shouldPlay = true) => {
     const bounded = Math.max(0, Math.min(headings.length - 1, index));
     if (!headings.length) return;
+    renderReadingState({ section: bounded, sectionCount: headings.length });
     speechReady = speechReady || shouldPlay;
     unlockButton.hidden = true;
     const blockIndex = window.lessonSpeechRemote?.getSectionStart?.(bounded) ?? 0;
@@ -223,33 +299,14 @@ import { firebaseConfig } from "./firebase-config.js";
   });
   $(`[data-action="previous"]`).addEventListener("click", () => selectSection(Number(localState.section || 0) - 1));
   $(`[data-action="next"]`).addEventListener("click", () => selectSection(Number(localState.section || 0) + 1));
-  $(`[data-action="play"]`).addEventListener("click", () => {
-    speechReady = true;
-    unlockButton.hidden = true;
-    const readerState = window.lessonSpeechRemote?.getState?.();
-    const wasInProgress = Boolean(localState.playing || localState.paused || readerState?.isReading);
-    const wasPaused = Boolean(localState.paused || readerState?.isPaused);
-    const block = wasInProgress ? Number(localState.block || 0) : 0;
-    const section = wasInProgress ? Number(localState.section || 0) : 0;
-    const playOnDevice = getPlaybackDevice();
-    changeState({
-      section, block, chunk: wasInProgress ? Number(localState.chunk || 0) : 0,
-      playing: true, paused: false, playOnDevice, playCommand: Number(localState.playCommand || 0) + 1,
-    });
-    appliedPlayCommand = localState.playCommand;
-    if (playOnDevice === deviceId) {
-      if (wasPaused) window.lessonSpeechRemote?.resume?.();
-      else window.lessonSpeechRemote?.playFrom?.(block, wasInProgress ? Number(localState.chunk || 0) : 0);
+  copyPairButton.addEventListener("click", async () => {
+    try {
+      if (!pairUrlForCopy) throw new Error("Pair URL is not ready");
+      await navigator.clipboard.writeText(pairUrlForCopy);
+      targetStatus.textContent = "Odkaz na pripojenie bol skopírovaný.";
+    } catch (_) {
+      targetStatus.textContent = "Odkaz sa nepodarilo skopírovať. Skontrolujte povolenia prehliadača.";
     }
-    else {
-      applyRemote = true;
-      window.lessonSpeechRemote?.pause?.();
-      window.setTimeout(() => { applyRemote = false; }, 0);
-    }
-  });
-  $(`[data-action="pause"]`).addEventListener("click", () => {
-    window.lessonSpeechRemote?.pauseResume?.();
-    changeState({ playing: false, paused: true });
   });
   unlockButton.addEventListener("click", () => {
     speechReady = true;
@@ -312,6 +369,7 @@ import { firebaseConfig } from "./firebase-config.js";
     renderReadingState(detail);
     const playing = Boolean(detail.isReading && !detail.isPaused);
     const section = Number.isInteger(detail.section) ? detail.section : localState.section;
+    renderReadingState({ ...detail, section, sectionCount: headings.length });
     changeState({
       section,
       block: Number.isInteger(detail.block) ? detail.block : localState.block,
@@ -368,8 +426,9 @@ import { firebaseConfig } from "./firebase-config.js";
     pairUrl.searchParams.set("lectureSyncUid", uid);
     pairUrl.searchParams.delete("remoteMirror");
     pairUrl.searchParams.delete("session");
+    pairUrlForCopy = pairUrl.toString();
     pairBox.hidden = false;
-    pairBox.open = !window.matchMedia("(max-width: 768px)").matches;
+    pairBox.open = false;
     import("https://cdn.jsdelivr.net/npm/qrcode@1.5.4/+esm").then((module) => {
       const QRCode = module.default;
       QRCode.toDataURL(pairUrl.toString(), { width: 220, margin: 1 })
@@ -465,6 +524,7 @@ import { firebaseConfig } from "./firebase-config.js";
     }
     applyRemote = true;
     localState = { ...localState, ...remote };
+    renderReadingState({ section: Number(remote.section || 0), sectionCount: headings.length });
     document.body.classList.toggle("teacher", remote.mode === "teacher");
     const teacherButton = document.querySelector("#teacher, #teacher-mode, #bt");
     const studentButton = document.querySelector("#student, #student-mode, #bs");

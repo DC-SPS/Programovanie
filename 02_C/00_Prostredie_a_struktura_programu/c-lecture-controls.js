@@ -23,6 +23,7 @@
     const volumeSelect = document.getElementById("narration-volume");
     const volumeValue = document.getElementById("narration-volume-value");
     const narrationControls = playButton?.closest(".narration-controls");
+    const useSingleReadingAction = decodeURIComponent(location.pathname).includes("/05_Vypoctova_technika/");
     if (narrationControls && !narrationControls.querySelector(".narration-settings")) {
       const settings = document.createElement("details");
       settings.className = "narration-settings";
@@ -165,7 +166,7 @@
     };
 
     const updateControls = () => {
-      playButton.disabled = !speechSupported || isReading;
+      playButton.disabled = !speechSupported || (isReading && !useSingleReadingAction);
       stopButton.disabled = !isReading;
       pauseButton.disabled = !isReading;
       pauseButton.textContent = isPaused ? "▶ Pokračovať" : "⏸ Pozastaviť";
@@ -173,6 +174,11 @@
         "aria-label",
         isPaused ? "Pokračovať v čítaní" : "Pozastaviť čítanie",
       );
+      if (useSingleReadingAction) {
+        pauseButton.hidden = true;
+        playButton.textContent = !isReading ? "Prehrať" : isPaused ? "Pokračovať" : "Pozastaviť";
+        playButton.setAttribute("aria-label", !isReading ? "Prehrať prednášku nahlas" : isPaused ? "Pokračovať v čítaní" : "Pozastaviť čítanie prednášky");
+      }
       replayButton.disabled = !speechSupported || previousSelection.length === 0;
       window.dispatchEvent(new CustomEvent("lesson-reading-state", {
         detail: {
@@ -306,7 +312,11 @@
 
     const syncPlayButton = document.querySelector('.lecture-sync-controls [data-action="play"]');
     const syncPauseButton = document.querySelector('.lecture-sync-controls [data-action="pause"]');
-    playButton.addEventListener("click", () => syncPlayButton ? syncPlayButton.click() : startReading(getSelectedItems()));
+    playButton.addEventListener("click", () => {
+      if (useSingleReadingAction && isReading) { pauseButton.click(); return; }
+      if (syncPlayButton) syncPlayButton.click();
+      else startReading(getSelectedItems());
+    });
     stopButton.addEventListener("click", () => stopReading());
     pauseButton.addEventListener("click", () => {
       if (syncPauseButton) { syncPauseButton.click(); return; }
@@ -398,6 +408,7 @@
       restartSpeechForSetting("Rýchlosť " + label + " je nastavená.");
     });
     updateControls();
+    if (useSingleReadingAction && !readingStatus.textContent) readingStatus.textContent = "Čítanie je pripravené.";
     const restartCurrent = () => {
       const current = activeItem || previousSelection.find(({ block }) => block === activeBlock);
       if (current) startReading([current]);
@@ -818,6 +829,7 @@
     installContinuousReader();
 
     document.addEventListener("DOMContentLoaded", () => {
+      if (decodeURIComponent(location.pathname).includes("/05_Vypoctova_technika/")) return;
       const lessonClock = document.querySelector(".lesson-clock");
       const sidePanel = document.querySelector(".lesson-side-panel");
       if (!lessonClock || !sidePanel) return;

@@ -3,7 +3,6 @@
 
   if (document.documentElement.dataset.lessonPomodoroReady === "true") return;
   document.documentElement.dataset.lessonPomodoroReady = "true";
-  const title = document.querySelector("h1")?.textContent.trim() || "Prednáška";
   const panel = document.querySelector(".lesson-side-panel") || document.createElement("aside");
   panel.classList.add("lesson-side-panel");
   panel.setAttribute("aria-label", "Ovládanie prednášky");
@@ -11,69 +10,84 @@
 
   const style = document.createElement("style");
   style.textContent = `
-    .lesson-side-panel{display:flex;flex-direction:column;gap:.55rem}
-    .lesson-pomodoro{order:-1;padding:.65rem;border:1px solid var(--line,var(--border,#2b5674));border-radius:.7rem;background:var(--card,var(--surface,#0b1b2a));color:var(--fg,var(--text,#e6f6ff));font:600 .8rem/1.35 system-ui,"Segoe UI",sans-serif}
-    .lesson-pomodoro__head,.lesson-pomodoro__controls,.lesson-pomodoro__ranges{display:flex;align-items:center;justify-content:space-between;gap:.35rem}
-    .lesson-pomodoro__head{margin-bottom:.4rem;color:#bae6fd;font-weight:800}
-    .lesson-pomodoro__time{font:800 1.25rem/1.2 Consolas,monospace;font-variant-numeric:tabular-nums;color:#fff}
-    .lesson-pomodoro__controls{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));margin-bottom:.5rem}
-    .lesson-pomodoro button{min-width:0;min-height:42px;padding:.3rem;border:1px solid var(--line,var(--border,#32617e));border-radius:.45rem;background:var(--bg,var(--surface,#12334b));color:inherit;font-family:inherit;font-size:.72rem;font-weight:700;line-height:1.2;cursor:pointer}
-    .lesson-pomodoro button:focus-visible,.lesson-pomodoro input:focus-visible{outline:3px solid #fde047;outline-offset:2px}
-    .lesson-pomodoro__ranges{align-items:flex-start}
-    .lesson-pomodoro label{display:grid;gap:.2rem;flex:1;min-width:0;font-size:.68rem}
-    .lesson-pomodoro input{width:100%;accent-color:#38bdf8}
-    .lesson-pomodoro__status{margin:.35rem 0 0;color:#a8bdcf;font-size:.68rem}
-    @media(max-width:768px){.lesson-pomodoro{padding:.4rem}.lesson-pomodoro__controls{gap:.25rem}.lesson-pomodoro button{min-height:40px}}
+    .lesson-pomodoro{order:1;display:grid;gap:.75rem;padding:1rem 0;border-block:1px solid var(--line,var(--border,#d9dee7));color:var(--fg,var(--text,#182230));font:400 .9rem/1.4 system-ui,"Segoe UI",sans-serif}
+    .lesson-pomodoro__heading{display:flex;align-items:center;justify-content:space-between;gap:.75rem;margin:0}
+    .lesson-pomodoro__heading h2{margin:0;font-size:1rem;line-height:1.3}
+    .lesson-pomodoro__phase{display:inline-flex;align-items:center;min-height:28px;padding:.15rem .55rem;border:1px solid var(--line,var(--border,#d9dee7));border-radius:999px;font-size:.875rem;font-weight:700}
+    .lesson-pomodoro[data-phase="work"] .lesson-pomodoro__phase{border-color:#177b58}
+    .lesson-pomodoro[data-phase="break"] .lesson-pomodoro__phase{border-color:#a96b00}
+    .lesson-pomodoro__time{font:800 2rem/1.1 Consolas,"Cascadia Code",monospace;font-variant-numeric:tabular-nums;letter-spacing:.02em}
+    .lesson-pomodoro__actions{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:.5rem}
+    .lesson-pomodoro button{min-width:0;min-height:44px;padding:.55rem .75rem;border:1px solid var(--line,var(--border,#cbd4df));border-radius:.5rem;background:var(--surface,var(--bg,#fff));color:var(--fg,var(--text,#182230));font:650 .9rem/1.2 system-ui,"Segoe UI",sans-serif;cursor:pointer}
+    .lesson-pomodoro [data-toggle]{border-color:#1d70c9;background:#1d70c9;color:#fff}
+    .lesson-pomodoro button:hover:not(:disabled){filter:brightness(.95)}
+    .lesson-pomodoro button:focus-visible,.lesson-pomodoro input:focus-visible,.lesson-pomodoro summary:focus-visible{outline:3px solid #1d70c9;outline-offset:2px}
+    .lesson-pomodoro button:disabled{opacity:.55;cursor:not-allowed}
+    .lesson-pomodoro__settings{border-top:1px solid var(--line,var(--border,#d9dee7));padding-top:.55rem}
+    .lesson-pomodoro__settings summary{min-height:44px;display:flex;align-items:center;color:var(--mut,var(--muted,#536176));font-size:.875rem;font-weight:600;cursor:pointer}
+    .lesson-pomodoro__ranges{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;padding:.5rem 0}
+    .lesson-pomodoro label{display:grid;gap:.3rem;min-width:0;font-size:.875rem;font-weight:600}
+    .lesson-pomodoro output{font-variant-numeric:tabular-nums;color:var(--mut,var(--muted,#536176))}
+    .lesson-pomodoro input{width:100%;min-height:44px;accent-color:#1d70c9}
+    .lesson-pomodoro__status{margin:0;color:var(--mut,var(--muted,#536176));font-size:.875rem}
+    @media(max-width:768px){.lesson-pomodoro{padding:.75rem 0}.lesson-pomodoro__time{font-size:1.8rem}}
     @media print{.lesson-pomodoro{display:none!important}}
   `;
   document.head.append(style);
 
   const card = document.createElement("section");
   card.className = "lesson-pomodoro";
-  card.setAttribute("aria-label", "Časovač Pomodoro");
+  card.dataset.phase = "work";
+  card.setAttribute("aria-labelledby", "lesson-pomodoro-title");
   card.innerHTML = `
-    <div class="lesson-pomodoro__head"><span>Pomodoro · PRÁCA</span><strong class="lesson-pomodoro__time" data-time>25:00</strong></div>
-    <div class="lesson-pomodoro__controls">
-      <button type="button" data-start>Spustiť</button><button type="button" data-pause disabled>Pozastaviť</button><button type="button" data-reset>Vynulovať</button>
-    </div>
-    <div class="lesson-pomodoro__ranges">
-      <label>Práca <output data-work-value>25 min</output><input data-work type="range" min="5" max="60" step="5" value="25" aria-label="Dĺžka práce v minútach"></label>
-      <label>Oddych <output data-rest-value>5 min</output><input data-rest type="range" min="1" max="15" step="1" value="5" aria-label="Dĺžka oddychu v minútach"></label>
-    </div><p class="lesson-pomodoro__status" data-status role="status" aria-live="polite"></p>`;
-  panel.prepend(card);
+    <div class="lesson-pomodoro__heading"><h2 id="lesson-pomodoro-title">Pomodoro</h2><span class="lesson-pomodoro__phase" data-phase-label>Práca</span></div>
+    <strong class="lesson-pomodoro__time" data-time aria-label="Zostávajúci čas Pomodoro">25:00</strong>
+    <div class="lesson-pomodoro__actions"><button type="button" data-toggle aria-pressed="false">Spustiť</button><button type="button" data-reset>Vynulovať</button></div>
+    <details class="lesson-pomodoro__settings"><summary>Nastaviť dĺžku práce a prestávky</summary>
+      <div class="lesson-pomodoro__ranges">
+        <label>Práca <output data-work-value>25 min</output><input data-work type="range" min="5" max="60" step="5" value="25" aria-label="Dĺžka práce v minútach"></label>
+        <label>Prestávka <output data-break-value>5 min</output><input data-break type="range" min="1" max="15" step="1" value="5" aria-label="Dĺžka prestávky v minútach"></label>
+      </div>
+    </details>
+    <p class="lesson-pomodoro__status" data-status role="status" aria-live="polite">Časovač je pripravený.</p>`;
+  panel.append(card);
 
   const $ = (selector) => card.querySelector(selector);
   const time = $(`[data-time]`);
-  const startButton = $(`[data-start]`);
-  const pauseButton = $(`[data-pause]`);
+  const toggleButton = $(`[data-toggle]`);
   const resetButton = $(`[data-reset]`);
   const work = $(`[data-work]`);
-  const rest = $(`[data-rest]`);
+  const pauseDuration = $(`[data-break]`);
   const status = $(`[data-status]`);
   try {
     const savedWork = Number(localStorage.getItem("lesson-pomodoro.work"));
-    const savedRest = Number(localStorage.getItem("lesson-pomodoro.rest"));
+    const savedBreak = Number(localStorage.getItem("lesson-pomodoro.rest"));
     if (savedWork >= 5 && savedWork <= 60 && savedWork % 5 === 0) work.value = String(savedWork);
-    if (savedRest >= 1 && savedRest <= 15) rest.value = String(savedRest);
+    if (savedBreak >= 1 && savedBreak <= 15) pauseDuration.value = String(savedBreak);
   } catch (_) { /* Predvolené časy fungujú aj bez úložiska. */ }
+
   let phase = "work";
   let remaining = Number(work.value) * 60;
   let deadline = 0;
   let interval = 0;
   let isPaused = false;
-  const label = () => phase === "work" ? "PRÁCA" : "ODDYCH";
+  const phaseName = () => phase === "work" ? "Práca" : "Prestávka";
+  const durationForPhase = () => Number((phase === "work" ? work : pauseDuration).value) * 60;
   const render = () => {
     time.textContent = `${String(Math.floor(remaining / 60)).padStart(2, "0")}:${String(remaining % 60).padStart(2, "0")}`;
-    card.querySelector(".lesson-pomodoro__head span").textContent = `Pomodoro · ${label()}`;
-    startButton.disabled = Boolean(interval);
-    startButton.textContent = isPaused ? "Pokračovať" : "Spustiť";
-    pauseButton.disabled = !interval;
-    work.disabled = rest.disabled = Boolean(interval);
+    $(`[data-phase-label]`).textContent = phaseName();
+    card.dataset.phase = phase === "work" ? "work" : "break";
+    toggleButton.textContent = interval ? "Pozastaviť" : isPaused ? "Pokračovať" : "Spustiť";
+    toggleButton.setAttribute("aria-label", `${toggleButton.textContent} časovač Pomodoro`);
+    toggleButton.setAttribute("aria-pressed", String(Boolean(interval)));
+    work.disabled = pauseDuration.disabled = Boolean(interval);
+    $(`[data-work-value]`).textContent = `${work.value} min`;
+    $(`[data-break-value]`).textContent = `${pauseDuration.value} min`;
   };
   const finishPhase = () => {
-    phase = phase === "work" ? "rest" : "work";
-    remaining = Number((phase === "work" ? work : rest).value) * 60;
-    status.textContent = phase === "rest" ? `Práca skončila: ${title}. Začína oddych.` : "Oddych sa skončil. Začína ďalší pracovný blok.";
+    phase = phase === "work" ? "break" : "work";
+    remaining = durationForPhase();
+    status.textContent = phase === "break" ? "Pracovný blok sa skončil. Začína prestávka." : "Prestávka sa skončila. Začína ďalší pracovný blok.";
   };
   const tick = () => {
     remaining = Math.max(0, Math.ceil((deadline - Date.now()) / 1000));
@@ -82,37 +96,39 @@
     render();
   };
   const updateSetting = () => {
-    remaining = Number((phase === "work" ? work : rest).value) * 60;
-    $(`[data-work-value]`).textContent = `${work.value} min`;
-    $(`[data-rest-value]`).textContent = `${rest.value} min`;
+    if (!interval) remaining = durationForPhase();
     try {
       localStorage.setItem("lesson-pomodoro.work", work.value);
-      localStorage.setItem("lesson-pomodoro.rest", rest.value);
-    } catch (_) { /* Zmena platí pre aktuálnu stránku aj bez úložiska. */ }
-    status.textContent = "Nastavenie časovača bolo aktualizované.";
+      localStorage.setItem("lesson-pomodoro.rest", pauseDuration.value);
+    } catch (_) { /* Nové nastavenie platí aj bez úložiska. */ }
+    status.textContent = "Dĺžka pracovného bloku a prestávky bola aktualizovaná.";
     render();
   };
-  startButton.addEventListener("click", () => {
-    deadline = Date.now() + remaining * 1000;
-    isPaused = false;
-    interval = window.setInterval(tick, 250);
-    status.textContent = `${label()}: časovač je spustený.`;
-    render();
-  });
-  pauseButton.addEventListener("click", () => {
-    window.clearInterval(interval); interval = 0; isPaused = true;
-    status.textContent = "Časovač je pozastavený.";
+  toggleButton.addEventListener("click", () => {
+    if (interval) {
+      clearInterval(interval);
+      interval = 0;
+      isPaused = true;
+      status.textContent = `Časovač je pozastavený. Zostáva ${phaseName().toLowerCase()}.`;
+    } else {
+      deadline = Date.now() + remaining * 1000;
+      isPaused = false;
+      interval = window.setInterval(tick, 250);
+      status.textContent = `${phaseName()}: časovač beží.`;
+    }
     render();
   });
   resetButton.addEventListener("click", () => {
-    window.clearInterval(interval); interval = 0; isPaused = false; phase = "work"; remaining = Number(work.value) * 60;
-    status.textContent = "Časovač bol vynulovaný.";
+    clearInterval(interval);
+    interval = 0;
+    isPaused = false;
+    phase = "work";
+    remaining = durationForPhase();
+    status.textContent = "Časovač bol vynulovaný. Režim: práca.";
     render();
   });
   work.addEventListener("input", updateSetting);
-  rest.addEventListener("input", updateSetting);
-  $(`[data-work-value]`).textContent = `${work.value} min`;
-  $(`[data-rest-value]`).textContent = `${rest.value} min`;
-  window.addEventListener("pagehide", () => window.clearInterval(interval), { once: true });
+  pauseDuration.addEventListener("input", updateSetting);
+  window.addEventListener("pagehide", () => clearInterval(interval), { once: true });
   render();
 })();
